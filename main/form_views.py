@@ -220,7 +220,8 @@ def patient_form_view(request):
                 t.campaign.add(Campaign.objects.get(
                     name=request.session['campaign']))
                 t.save()
-                create_new_patient(form.cleaned_data)
+                if os.environ.get('QLDB_ENABLED') == "TRUE":
+                    create_new_patient(form.cleaned_data)
                 DatabaseChangeLog.objects.create(action="Create", model="Patient", instance=str(t),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if t.id != '' and t.id != None:
@@ -272,7 +273,8 @@ def patient_encounter_form_view(request, id=None):
                 encounter = form.save(commit=False)
                 encounter.patient = p
                 encounter.save()
-                create_new_patient_encounter(form.cleaned_data)
+                if os.environ.get('QLDB_ENABLED') == "TRUE":
+                    create_new_patient_encounter(form.cleaned_data)
                 DatabaseChangeLog.objects.create(action="Create", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if 'submit_encounter' in request.POST:

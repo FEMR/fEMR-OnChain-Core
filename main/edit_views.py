@@ -241,7 +241,8 @@ def patient_edit_form_view(request, id=None):
                 t.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="Patient", instance=str(t),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
-                update_patient(form.cleaned_data)
+                if os.environ.get('QLDB_ENABLED') == "TRUE":
+                    update_patient(form.cleaned_data)
                 form = PatientForm()
                 error = "Form submitted successfully."
                 return render(request, "data/patient_submitted.html", {'patient_id': t.id})
@@ -280,7 +281,8 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 encounter.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
-                update_patient_encounter(form.cleaned_data)
+                if os.environ.get('QLDB_ENABLED') == "TRUE":
+                    update_patient_encounter(form.cleaned_data)
                 if 'submit_encounter' in request.POST:
                     return render(request, 'data/encounter_submitted.html')
                 elif 'submit_refer' in request.POST:
