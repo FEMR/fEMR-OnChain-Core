@@ -1,0 +1,182 @@
+:root {
+    --primary: #c60000;
+    --dark: #363636;
+    --light: #fff;
+    --grey: #9f9f9f;
+    --bg-color: #363636;
+    /* 	--bg-color: #a1060f; */
+    /* 	--bg-color: #fff; */
+}
+
+/* ---- reset ---- */
+body {
+    margin: 0;
+    /* 	font: normal 75% Arial, Helvetica, sans-serif; */
+    font-family: 'Open Sans', sans-serif;
+}
+
+.btn-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus,
+.btn-primary:not(:disabled):not(.disabled):active {
+    background: #f90000;
+    border-color: #f90000;
+}
+
+main {
+    /* 		color: white; */
+    min-height: calc(100vh - 110px);
+}
+
+footer {
+    background: var(--dark);
+	color: white;
+}
+
+footer a {
+    color: var(--grey);
+}
+
+.page-login main {
+    position: relative; 
+}
+.form-signin.container-sm {
+    /*max-width: 360px;*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.container-sm {
+    max-width: 360px;
+}
+
+
+.form-control {
+    border-radius: 0;
+    /* 	border-color: transparent; */
+    border-color: var(--dark);
+    padding: 1.5rem .75rem;
+    background-color: rgba(255, 255, 255, .75);
+}
+
+.btn-group-lg>.btn,
+.btn-lg {
+    border-radius: 0;
+}
+
+main .container-fluid {
+    padding: 0;
+    min-height: calc(100vh - 85px - 54px);
+}
+
+.nav-link__badge .badge {
+	background: var(--primary);
+	border-radius: 2px;
+}
+
+.jumbotron {
+    background-color: rgba(233, 236, 239, .7);
+    max-width: 640px;
+	margin: 0 auto;
+    /* 	background-color: rgba(159, 159, 159, .7); */
+}
+
+.bg-dark-femr {
+    background-color: var(--dark);
+}
+
+.nav-pills .nav-link {
+	background-color: rgba(255, 255, 255, .75);
+	color: var(--primary);
+	margin-right: 5px;
+	border: solid 1px var(--dark);
+}
+
+.nav-pills .nav-link:hover { 
+	background-color: var(--red);
+	color: white;
+}
+
+.nav-pills .nav-link.active {
+	background-color: var(--primary);
+	color: white;
+}
+
+.row-tall {
+	min-height: calc(100vh - 120px)
+}
+
+.bg-dark-femr {
+	background-color: var(--dark);
+}
+
+.btn-secondary {
+    background-color: var(--grey);
+}
+
+.navbar {
+    min-height: 54px;
+}
+
+@media screen and (min-width: 721px) {
+    main .container-fluid {
+		padding: 0;
+		min-height: calc(100vh - 50px - 54px);
+	}
+	.navbar-dark {
+		padding: 0 15px;
+	}
+	.navbar-dark .navbar-nav .nav-link {
+		border-left: 1px solid white;
+		padding: 15px;
+	}
+	.navbar-nav.ml-auto li:last-of-type .dropdown-menu {
+		right: 0;
+		left: initial;
+	}
+	
+	.nav-link__badge {
+		position: relative;
+	}
+	.nav-link__badge .badge {
+		position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);		
+	}	
+}
+
+
+input, textarea { 
+    color: #000; 
+}
+.placeholder { 
+    color: #aaa; 
+}
+
+.custom-control-input:checked~.custom-control-label::before {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+#add-patient .btn-group-toggle .btn {
+    padding: 12px;
+}
+
+#add-patient
+.gj-datepicker-bootstrap .gj-icon {
+    top: 14px;
+}
+
+#add-patient
+.gj-datepicker-bootstrap [role=right-icon] button {
+    border: var(--dark) 1px solid;
+}

@@ -1,0 +1,16 @@
+{% extends 'data/base_login.html' %}
+
+{% block content %}
+<section>
+    <p>
+        If we have this email address on file, the associated username has been sent.
+    </p>
+    <p>
+        If you don't receive an email, please make sure you've entered the address you registered with,
+        and check your spam folder.
+    </p>
+    <p>
+        <a href="{% url 'main:index' %}">Return to login.</a>
+    </p>
+</section>
+{% endblock %}

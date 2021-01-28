@@ -1,0 +1,23 @@
+.idea/
+venv/
+**/__pycache__/**
+docs/build
+db.sqlite3
+.vscode
+.vagrant
+/femr_onchain/__pycache__
+/main/__pycache__
+/main/migrations/__pycache__
+.Vagrantfile.un~
+Vagrantfile~
+.elasticbeanstalk
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+.bash_history
+.cache/
+.sudo_as_admin_successful
+.config/
+.npm/
+*.log

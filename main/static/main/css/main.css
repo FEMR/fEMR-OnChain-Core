@@ -1,0 +1,43 @@
+/* Chrome, Safari, Edge, Opera */
+#id_mean_arterial_pressure::-webkit-outer-spin-button,
+#id_mean_arterial_pressure::-webkit-inner-spin-button,
+#id_body_mass_index::-webkit-outer-spin-button,
+#id_body_mass_index::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+#id_mean_arterial_pressure,
+#id_body_mass_index {
+  -moz-appearance: textfield;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+.page-content {
+  flex: 1 0 auto;
+}
+
+#footer {
+  flex-shrink: none;
+  color: white;
+}
+
+/* Formatting date widgets */
+.selectdatewidget {
+  display: inline-block;
+}
+
+select[name$="_day"].selectdatewidget {
+  width: 27%;
+}
+select[name$="_month"].selectdatewidget {
+  width: 38%;
+}
+select[name$="_year"].selectdatewidget {
+  width: 35%;
+}

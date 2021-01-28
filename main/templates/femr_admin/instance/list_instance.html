@@ -1,0 +1,65 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+<div class="row">
+    <div class="col-md-6">
+        <h2>Active Instances</h2>
+        <div><a class="btn btn-primary" href="{% url 'main:new_instance' %}">New Instance</a></div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Contact</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in active_instances %}
+                <tr>
+                    <th scope="row">{{ o.id }}</th>
+                    <td>{{ o.name }}</td>
+                    <td>{{ o.main_contact }}</td>
+                    <td><a href="{% url 'main:edit_instance' id=o.id %}">Edit</a></td>
+                    {% if o.active %}
+                    <td><a href="{% url 'main:lock_instance_view' id=o.id %}">Lock Instance</a></td>
+                    {% else %}
+                    <td><a href="{% url 'main:unlock_instance_view' id=o.id %}">Unlock Instance</a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <h2>Inactive Instances</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Contact</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in inactive_instances %}
+                <tr>
+                    <th scope="row">{{ o.id }}</th>
+                    <td>{{ o.name }}</td>
+                    <td>{{ o.main_contact }}</td>
+                    <td><a href="{% url 'main:edit_instance' id=o.id %}">Edit</a></td>
+                    {% if o.active %}
+                    <td><a href="{% url 'main:lock_instance_view' id=o.id %}">Lock Instance</a></td>
+                    {% else %}
+                    <td><a href="{% url 'main:unlock_instance_view' id=o.id %}">Unlock Instance</a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+<div class="row">
+    <div class="col-md-6">
+        <h2>Active Campaigns</h2>
+        <div><a class="btn btn-primary" href="{% url 'main:new_campaign' %}">New Campaign</a></div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Instance</th>
+                    <th scope="col">Name</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in active_campaigns %}
+                <tr>
+                    <th scope="row">{{ o.id }}</th>
+                    <td>{{ o.instance }}</td>
+                    <td>{{ o.name }}</td>
+                    <td><a href="{% url 'main:edit_campaign' id=o.id %}">Edit</a></td>
+                    {% if o.active %}
+                    <td><a href="{% url 'main:lock_campaign_view' id=o.id %}">Lock Campaign</a></td>
+                    {% else %}
+                    <td><a href="{% url 'main:unlock_campaign_view' id=o.id %}">Unlock Campaign</a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <h2>Inactive Campaigns</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Instance</th>
+                    <th scope="col">Name</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in inactive_campaigns %}
+                <tr>
+                    <th scope="row">{{ o.id }}</th>
+                    <td>{{ o.instance }}</td>
+                    <td>{{ o.name }}</td>
+                    {% if o.active %}
+                    <td><a href="{% url 'main:lock_campaign_view' id=o.id %}">Lock Campaign</a></td>
+                    {% else %}
+                    <td><a href="{% url 'main:unlock_campaign_view' id=o.id %}">Unlock Campaign</a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+<html>
+
+<head>
+    <title>
+        Database Change Log - {{ today_time }}
+    </title>
+    <style>
+        table {
+            border-collapse: separate;
+            border-spacing: 1em 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Database Change Log - {{ today_time }}</h1>
+</body>
+
+<table>
+    <thead>
+        <tr>
+            <th>
+                Action
+            </th>
+            <th>
+                Model
+            </th>
+            <th>
+                Case
+            </th>
+            <th>
+                IP Address
+            </th>
+            <th>
+                User
+            </th>
+            <th>
+                Timestamp
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in log %}
+        <tr>
+            <td>{{ line.action }}</td>
+            <td>{{ line.model }}</td>
+            <td>{{ line.instance }}</td>
+            <td>{{ line.ip }}</td>
+            <td>{{ line.username }}</td>
+            <td>{{ line.timestamp }} GMT</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</html>

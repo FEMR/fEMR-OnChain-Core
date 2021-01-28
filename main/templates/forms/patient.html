@@ -1,0 +1,118 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tz %}
+<form action="{% url 'main:patient_edit_form_view' id=patient_id %}" method="post"
+    onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+    {% csrf_token %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-10">
+                <div class="row bg-light">
+                    <div class="form-group col-md-6">
+                        <div>
+                            <div>{{ form.first_name|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.middle_name|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.last_name|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.suffix|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.social_security_number|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.date_of_birth|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.sex_assigned_at_birth|as_crispy_field }}</div>
+                        </div>
+                        <div id="explain_box" style="display:none;visibility:hidden;">
+                            <div>{{ form.explain|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.race|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.ethnicity|as_crispy_field }}</div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <div>
+                            <div>{{ form.address1|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.address2|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.city|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.zip_code|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.state|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.age|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.phone_number|as_crispy_field }}</div>
+                            <div>{{ form.shared_phone_number|as_crispy_field }}</div>
+                        </div>
+                        <div>
+                            <div>{{ form.email_address|as_crispy_field }}</div>
+                            <div>{{ form.shared_email_address|as_crispy_field }}</div>
+                        </div>
+                    </div>
+                    <a href="{% url 'main:referral_form_view' patient_id %}">Refer to another campaign</a>
+                </div>
+                <div class="row bg-light">
+                    <div class="col-md-6">
+                        <a href="{% url 'main:patient_encounter_form_view' patient_id %}">Start New Encounter</a>
+                    </div>
+                    <div class="col-md-6">
+                        <a target="_blank" href="{% url 'main:patient_export' patient_id %}">Export Patient</a>
+                    </div>
+                    <table class="table">
+                        <tbody>
+                            {% for en in encounters %}
+                            <tr>
+                                <th scope="row">{{ en.id }}</th>
+                                <td>{{ en.timestamp }}</td>
+                                <td><a href="{% url 'main:encounter_edit_form_view' patient_id en.id %}">View/Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <input class="btn btn-primary ml-auto" type="reset" value="Reset Fields" />
+                </div>
+                <div class="col-md-6">
+                    <input class="btn btn-primary ml-auto" type="submit" value="Submit Patient" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(document).on("keydown", ":input:not(textarea)", function (event) {
+        return event.key != "Enter";
+    });
+</script>
+<script src="{% static 'main/js/bmi_calc.js' %}"></script>
+<script src="{% static 'main/js/birth_sex_options.js' %}"></script>
+<script src="{% static 'main/js/node_modules/inputmask/dist/jquery.inputmask.min.js' %}"></script>
+<script src="{% static 'main/js/inputmasks.js' %}"></script>
+<script src="{% static 'main/js/max_date_fix.js' %}"></script>
+<script src="{% static 'main/js/age_calc.js' %}"></script>
+{% endblock %}
