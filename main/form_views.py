@@ -5,6 +5,7 @@ If one is not found, they will direct to the appropriate error page.
 """
 from main.femr_admin_views import get_client_ip
 import math
+import os
 from django.shortcuts import render, redirect
 
 from .forms import AllergyForm, ImmunizationForm, ProblemForm, ProcedureForm, MedicationForm, LabTestForm, TestForm, \
