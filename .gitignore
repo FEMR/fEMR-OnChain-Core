@@ -21,3 +21,4 @@ Vagrantfile~
 .config/
 .npm/
 *.log
+**/.DS_Store
