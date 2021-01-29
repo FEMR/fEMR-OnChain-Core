@@ -13,8 +13,14 @@ from django.utils import timezone
 
 from crispy_forms.helper import FormHelper
 
-from .models import Allergy, Immunization, Problem, Procedure, Medication, LabTest, Test, Patient, HealthConcern, \
-    PatientEncounter, fEMRUser, Campaign, Instance, Contact
+from .models import Patient, PatientEncounter, fEMRUser, Campaign, Instance, Contact
+
+
+class DateInputOverride(DateInput):
+    """
+    Overrides the form type for date inputs.
+    """
+    input_type = 'date'
 
 
 class RegisterForm(Form):
@@ -36,104 +42,6 @@ class LoginForm(Form):
     username = CharField(label="Username", max_length=100)
     password = CharField(label="Password", widget=PasswordInput)
     remember_me = BooleanField(required=False)
-
-
-class AllergyForm(ModelForm):
-    """
-    Data entry form - Allergy
-    """
-
-    class Meta:
-        """
-        Metaclass controlling model references.
-        """
-        model = Allergy
-        fields = '__all__'
-
-
-class ImmunizationForm(ModelForm):
-    """
-    Data entry form - Immunization
-    """
-
-    class Meta:
-        """
-        Metaclass controlling model references.
-        """
-        model = Immunization
-        fields = '__all__'
-
-
-class ProblemForm(ModelForm):
-    """
-    Data entry form - Problem
-    """
-
-    class Meta:
-        """
-        Metaclass controlling model references.
-        """
-        model = Problem
-        fields = '__all__'
-
-
-class ProcedureForm(ModelForm):
-    """
-    Data entry form - Procedure
-    """
-
-    class Meta:
-        """
-        Metaclass controlling model references.
-        """
-        model = Procedure
-        fields = '__all__'
-
-
-class MedicationForm(ModelForm):
-    """
-    Data entry form - Medication
-    """
-
-    class Meta:
-        """
-        Metaclass controlling model references.
-        """
-        model = Medication
-        fields = '__all__'
-
-
-class LabTestForm(ModelForm):
-    """
-    Data entry form - LabTest
-    """
-
-    class Meta:
-        """
-        Metaclass controlling model references.
-        """
-        model = LabTest
-        fields = '__all__'
-
-
-class TestForm(ModelForm):
-    """
-    Data entry form - Test
-    """
-
-    class Meta:
-        """
-        Metaclass controlling model references.
-        """
-        model = Test
-        fields = '__all__'
-
-
-class DateInputOverride(DateInput):
-    """
-    Overrides the form type for date inputs.
-    """
-    input_type = 'date'
 
 
 class PatientForm(ModelForm):
@@ -310,19 +218,6 @@ class PatientEncounterForm(ModelForm):
         widgets = {
             'community_health_worker_notes': Textarea(attrs={'rows': 4, 'cols': 40})
         }
-
-
-class HealthConcernForm(ModelForm):
-    """
-    Data entry form - HealthConcern
-    """
-
-    class Meta:
-        """
-        Metaclass controlling model references.
-        """
-        model = HealthConcern
-        fields = '__all__'
 
 
 class UserForm(UserCreationForm):

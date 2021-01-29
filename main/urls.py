@@ -36,12 +36,8 @@ from main.admin_views import add_user_to_campaign, add_users_to_campaign, admin_
 from .api_views import UserViewSet, GroupViewSet, PatientViewSet, PatientEncounterViewSet, InstanceViewSet, CampaignViewSet
 from .auth_views import all_locked, not_logged_in, login_view, logout_view, permission_denied
 from .edit_views import patient_edit_form_view, encounter_edit_form_view, patient_export_view
-from .form_views import allergy_form_view, health_concern_form_view, immunization_form_view, \
-    lab_test_form_view, medication_form_view, patient_form_view, problem_form_view, \
-    procedure_form_view, referral_form_view, test_form_view, patient_encounter_form_view
-from .list_views import allergy_list_view, health_concern_list_view, immunization_list_view, lab_test_list_view, \
-    medication_list_view, patient_csv_export_view, patient_list_view, problem_list_view, procedure_list_view, test_list_view, \
-    search_patient_list_view, filter_patient_list_view
+from .form_views import patient_form_view, referral_form_view, patient_encounter_form_view
+from .list_views import patient_csv_export_view, patient_list_view, search_patient_list_view, filter_patient_list_view
 from .views import forgot_username, index, home, healthcheck
 from .femr_admin_views import edit_contact_view, lock_campaign_view, new_campaign_view, new_contact_view, new_instance_view, edit_campaign_view, edit_instance_view, \
     list_campaign_view, list_instance_view, femr_admin_home, change_campaign, unlock_campaign_view
@@ -69,19 +65,7 @@ urlpatterns = [
     url(r'^permissioned_denied/$', permission_denied, name='permission_denied'),
     url(r'^all_locked/$', all_locked, name='all_locked'),
     url(r'^healthcheck/$', healthcheck, name='healthcheck'),
-
-    url(r'^allergy_form_view/$', allergy_form_view, name='allergy_form_view'),
-    url(r'^health_concern_form_view/$', health_concern_form_view,
-        name='health_concern_form_view'),
-    url(r'^immunization_form_view/$', immunization_form_view,
-        name='immunization_form_view'),
-    url(r'^lab_test_form_view/$', lab_test_form_view, name='lab_test_form_view'),
-    url(r'^medication_form_view/$', medication_form_view,
-        name='medication_form_view'),
     url(r'^patient_form_view/$', patient_form_view, name='patient_form_view'),
-    url(r'^problem_form_view/$', problem_form_view, name='problem_form_view'),
-    url(r'^procedure_form_view/$', procedure_form_view, name='procedure_form_view'),
-    url(r'^test_form_view/$', test_form_view, name='test_form_view'),
 
     path(r'patient_edit_form_view/<int:id>',
          patient_edit_form_view, name='patient_edit_form_view'),
@@ -92,25 +76,12 @@ urlpatterns = [
         
     path(r'referral_form/<int:id>', referral_form_view, name='referral_form_view'),
 
-    url(r'^allergy_list_view/$', allergy_list_view, name='allergy_list_view'),
-    url(r'^health_concern_list_view/$', health_concern_list_view,
-        name='health_concern_list_view'),
-    url(r'^immunization_list_view/$', immunization_list_view,
-        name='immunization_list_view'),
-    url(r'^lab_test_list_view/$', lab_test_list_view, name='lab_test_list_view'),
-    url(r'^medication_list_view/$', medication_list_view,
-        name='medication_list_view'),
-
     url(r'^patient_list_view/$', patient_list_view, name='patient_list_view'),
     url(r'^patient_csv_export_view/$', patient_csv_export_view, name='patient_csv_export_view'),
     url(r'^search_patient_list_view/$', search_patient_list_view,
         name='search_patient_list_view'),
     url(r'^filter_patient_list_view/$', filter_patient_list_view,
         name='filter_patient_list_view'),
-
-    url(r'^problem_list_view/$', problem_list_view, name='problem_list_view'),
-    url(r'^procedure_list_view/$', procedure_list_view, name='procedure_list_view'),
-    url(r'^test_list_view/$', test_list_view, name='test_list_view'),
 
     url(r'^superuser_home/$', admin_home, name="superuser_home"),
     url(r'^set_timezone/$', set_timezone, name="set_timezone"),

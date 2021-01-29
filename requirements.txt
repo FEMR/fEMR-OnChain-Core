@@ -5,7 +5,7 @@ autopep8==1.5.4
 boto3==1.14.61
 botocore==1.17.61
 colorama==0.4.3
-Django==3.1.1
+Django==3.1.5
 django-axes==5.9.1
 django-crispy-forms==1.9.2
 django-localflavor==3.0.1
@@ -25,7 +25,7 @@ pyqldb==3.0.0
 python-dateutil==2.8.1
 python-stdnum==1.14
 pytz==2020.1
-safety==1.9.0
+safety==1.10.3
 s3transfer==0.3.3
 six==1.15.0
 sqlparse==0.3.1

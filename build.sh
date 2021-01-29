@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# Template Setup Script
-
 export DEBUG=True
 export SECRET_KEY=$(tr </dev/urandom -dc 'A-Za-z0-9!"#$%&'\''()*+,-./:;<=>?@[\]^_`{|}~' | head -c 50)
-export QLDB_ENABLED="FALSE"  # Toggles QLDB on or off.
-export qldb_name=""
+export QLDB_ENABLED="TRUE"  # Toggles QLDB on or off.
+export qldb_name="fEMR-OnChain-Test"
 export ADMIN_NAME=""
 export ADMIN_EMAIL=""
 export EMAIL_HOST=""
@@ -19,6 +17,7 @@ function all() {
   pip3 install -r requirements.txt
   python3 -m safety check -r requirements.txt
   python3 manage.py check
+  # documents
   migrate
   static
   run_tests
@@ -58,6 +57,13 @@ function static() {
 
 function run() {
   python3 manage.py runserver 0.0.0.0:8081
+}
+
+function documents() {
+  pushd docs || exit
+  make html
+  cp -r build/html/* .
+  popd
 }
 
 function reset_migrations() {

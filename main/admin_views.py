@@ -215,7 +215,7 @@ def get_audit_logs_view(request):
             except ObjectDoesNotExist:
                 data = ""
             return render(request, 'admin/audit_log_list.html',
-                          {'user': request.user,
+                          {'user': request.user, 'selected': 6,
                            'log': data, 'page_name': 'Login Log'})
         else:
             return redirect('main:permission_denied')
@@ -294,7 +294,10 @@ def filter_audit_logs_view(request):
                 'timestamp'), reverse=True)
             return render(request, 'admin/audit_log_list.html',
                           {'user': request.user, 'selected': selected,
-                           'log': data, 'page_name': 'Login Log'})
+                           'log': data, 'page_name': 'Login Log',
+                           'filter_day': request.GET["date_filter_day"],
+                           'filter_start': request.GET["date_filter_start"],
+                           'filter_end': request.GET["date_filter_end"]})
         else:
             return redirect('main:permission_denied')
     else:
@@ -341,7 +344,7 @@ def get_database_logs_view(request):
             except ObjectDoesNotExist:
                 data = list()
             return render(request, 'admin/database_log_list.html',
-                          {'user': request.user,
+                          {'user': request.user, 'selected': 6,
                            'list_view': data, 'page_name': 'Patient Change Log'})
         else:
             return redirect('main:permission_denied')
@@ -368,17 +371,17 @@ def filter_database_logs_view(request):
                     timestamp_from = timezone.now() - timedelta(days=7)
                     timestamp_to = timezone.now()
                     data = DatabaseChangeLog.objects.exclude(model__in=excludemodels).filter(timestamp__gte=timestamp_from,
-                                                            timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                                                             timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign']))
                     data = set(list(itertools.chain(data, DatabaseChangeLog.objects.exclude(model__in=excludemodels).filter(timestamp__gte=timestamp_from,
-                                                                                           timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])))))
+                                                                                                                            timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])))))
                     selected = 2
                 elif request.GET["filter_list"] == "3":
                     timestamp_from = timezone.now() - timedelta(days=30)
                     timestamp_to = timezone.now()
                     data = DatabaseChangeLog.objects.exclude(model__in=excludemodels).filter(timestamp__gte=timestamp_from,
-                                                            timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                                                             timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign']))
                     data = set(list(itertools.chain(data, DatabaseChangeLog.objects.exclude(model__in=excludemodels).filter(timestamp__gte=timestamp_from,
-                                                                                           timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])))))
+                                                                                                                            timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])))))
                     selected = 3
                 elif request.GET["filter_list"] == "4":
                     try:
@@ -387,9 +390,9 @@ def filter_database_logs_view(request):
                         timestamp_to = datetime.strptime(
                             request.GET["date_filter_day"], "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=0)
                         data = DatabaseChangeLog.objects.exclude(model__in=excludemodels).filter(timestamp__gte=timestamp_from,
-                                                                timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                                                                 timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign']))
                         data = set(list(itertools.chain(data, DatabaseChangeLog.objects.exclude(model__in=excludemodels).filter(timestamp__gte=timestamp_from,
-                                                                                               timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])))))
+                                                                                                                                timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])))))
                     except ValueError:
                         data = list()
                     selected = 4
@@ -400,9 +403,9 @@ def filter_database_logs_view(request):
                         timestamp_to = datetime.strptime(
                             request.GET["date_filter_end"], "%Y-%m-%d") + timedelta(days=1)
                         data = DatabaseChangeLog.objects.exclude(model__in=excludemodels).filter(timestamp__gte=timestamp_from,
-                                                                timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                                                                 timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign']))
                         data = set(list(itertools.chain(data, DatabaseChangeLog.objects.exclude(model__in=excludemodels).filter(timestamp__gte=timestamp_from,
-                                                                                               timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])))))
+                                                                                                                                timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])))))
                     except ValueError:
                         data = list()
                     selected = 5
@@ -421,7 +424,10 @@ def filter_database_logs_view(request):
                 'timestamp'), reverse=True)
             return render(request, 'admin/database_log_list.html',
                           {'user': request.user, 'selected': selected,
-                           'list_view': data, 'page_name': 'Patient Change Log'})
+                           'list_view': data, 'page_name': 'Patient Change Log',
+                           'filter_day': request.GET["date_filter_day"],
+                           'filter_start': request.GET["date_filter_start"],
+                           'filter_end': request.GET["date_filter_end"]})
         else:
             return redirect('main:permission_denied')
     else:
