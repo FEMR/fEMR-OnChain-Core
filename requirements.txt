@@ -11,7 +11,7 @@ django-crispy-forms==1.9.2
 django-localflavor==3.0.1
 django-session-security==2.6.6
 django-timezone-utils==0.13
-djangorestframework==3.11.2
+djangorestframework==3.12.2
 docutils==0.15
 ionhash==1.1.0
 isort==5.5.2
@@ -29,7 +29,7 @@ safety==1.10.3
 s3transfer==0.3.3
 six==1.15.0
 sqlparse==0.3.1
-toml==0.10.1
+toml==0.10.2
 typed-ast==1.4.2
 urllib3==1.25.10
 wrapt==1.12.1
