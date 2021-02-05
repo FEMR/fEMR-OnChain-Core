@@ -21,7 +21,7 @@ mccabe==0.6.1
 psycopg2==2.8.6
 pycodestyle==2.6.0
 pylint==2.6.0
-pyqldb==3.0.0
+pyqldb==3.1.0
 python-dateutil==2.8.1
 python-stdnum==1.14
 pytz==2020.1
