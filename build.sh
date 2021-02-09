@@ -78,11 +78,6 @@ function createsuperuser() {
   python3 manage.py createsuperuser
 }
 
-function setup() {
-  python3 manage.py creategroups
-  python3 manage.py createadmin
-}
-
 function shell() {
   python3 manage.py shell
 }
@@ -112,11 +107,6 @@ all-run)
 
 all)
   all
-  ;;
-
-setup)
-  all
-  setup
   ;;
 
 reset_migrations)
