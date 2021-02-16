@@ -17,7 +17,7 @@
         {% csrf_token %}
         <select name="campaign">
             {% for campaign in campaigns %}
-            <option value="{{ campaign }}" {% if campaign.name==selected_campaign %} selected {% endif %}>
+            <option value="{{ campaign }}" {% if campaign.name is selected_campaign %} selected {% endif %}>
                 {{ campaign }}
             </option>
             {% endfor %}
