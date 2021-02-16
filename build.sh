@@ -74,6 +74,11 @@ function reset_migrations() {
   python3 manage.py showmigrations
 }
 
+function setup() {
+  python3 manage.py creategroups
+  python3 manage.py createadmin
+}
+
 function createsuperuser() {
   python3 manage.py createsuperuser
 }
@@ -98,6 +103,11 @@ test)
 
 run)
   run
+  ;;
+
+setup)
+  all
+  setup
   ;;
 
 all-run)
