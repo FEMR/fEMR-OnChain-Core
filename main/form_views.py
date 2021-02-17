@@ -68,7 +68,7 @@ def patient_form_view(request):
                                                           'shared_email_error': shared_email_error,
                                                           'match_list': match,
                                                           'form': form,
-                                                          'page_name': 'New Patient'
+                                                          'page_name': 'New Patient',
                                                           'page_tip': "Complete form with patient demographics as instructed. Any box with an asterix (*) is required. Shared contact information would be if two patients have a household phone or email that they share, for example."})
     else:
         return redirect('/not_logged_in')
