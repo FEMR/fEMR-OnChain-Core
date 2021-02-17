@@ -68,7 +68,8 @@ def patient_form_view(request):
                                                           'shared_email_error': shared_email_error,
                                                           'match_list': match,
                                                           'form': form,
-                                                          'page_name': 'New Patient'})
+                                                          'page_name': 'New Patient'
+                                                          'page_tip': "Complete form with patient demographics as instructed. Any box with an asterix (*) is required. Shared contact information would be if two patients have a household phone or email that they share, for example."})
     else:
         return redirect('/not_logged_in')
 
@@ -139,7 +140,8 @@ def patient_encounter_form_view(request, id=None):
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/encounter.html',
                       {'form': form, 'page_name': 'New Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
-                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': id, 'units': units})
+                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': id, 'units': units,
+                       'page_tip': "Complete form with patient vitals as instructed. Any box with an asterix (*) is required. For max efficiency, use 'tab' to navigate through this page."})
     else:
         return redirect('/not_logged_in')
 

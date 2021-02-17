@@ -2,15 +2,9 @@
 {% block content %}
 <div>
     Welcome to fEMR On-Chain v1.0.2, {{ user.first_name }} {{ user.last_name }}!
-    <a href="#" data-toggle="popover" data-trigger="focus"
-        data-content="This will appear when clicked. You can click anywhere else to dismiss it."><i
-            class="fa fa-question-circle"></i></a>
 </div>
 <div>
     Please select a tab at the top, search below, or select a campaign below to get started!
-    <a href="#" data-toggle="popover" data-trigger="hover"
-        data-content="This will appear when the question mark is touched by the cursor. Leaving the area will dismiss it."><i
-            class="fa fa-question-circle"></i></a>
 </div>
 <div class="input-group mt-3">
     <form action="{% url 'main:change_campaign' %}" method="POST">
@@ -24,6 +18,9 @@
         </select>
         <input type="submit" value="Set Campaign">
     </form>
+    <a href="#" data-toggle="popover" data-trigger="hover"
+        data-content="'Campaign' refers to location of clinic or screening event. Campaign selected will appear at the top of the screen next to the fEMR logo."><i
+            class="fa fa-question-circle"></i></a>
 </div>
 <form action="{% url 'main:search_patient_list_view' %}" class="form-inline my-2 my-lg-0" method="get">
     <div class="input-group mt-3">

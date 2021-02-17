@@ -37,7 +37,8 @@ def patient_list_view(request):
             data = list()
         return render(request, 'list/patient.html',
                       {'user': request.user,
-                       'list_view': data, 'page_name': 'Manager'})
+                       'list_view': data, 'page_name': 'Manager',
+                       'page_tip': 'This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.'})
     else:
         return redirect('main:not_logged_in')
 

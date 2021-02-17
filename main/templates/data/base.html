@@ -24,6 +24,9 @@
             <img src="https://demo.teamfemr.org/assets/img/52749c927045848ae798e9df58dcc0dd-logo_color_sm.png"
                 width="60" alt="">
         </a>
+        <a href="#" data-toggle="popover" data-trigger="hover"
+            data-content="Make sure you are using Google Chrome. Make sure Campaign is set to the correct clinic location or program. It is easiest to tab through each screen. For help contact Help@TeamfEMR.org."><i
+                class="fa fa-question-circle"></i></a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
             aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,6 +89,10 @@
             <div class="container" id="page">
                 <div class="row">
                     <h1>{{ page_name }}</h1>
+                    {% if page_tip %}
+                    <a href="#" data-toggle="popover" data-trigger="hover" data-content="{{ page_tip }}"><i
+                            class="fa fa-question-circle"></i></a>
+                    {% end if %}
                 </div>
                 {% block content %}
                 {% endblock %}

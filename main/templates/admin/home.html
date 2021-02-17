@@ -2,9 +2,29 @@
 {% block content %}
 <div>
     <div>Logged in as {{ user.first_name }} {{ user.last_name }}.</div>
-    <div><a href="{% url 'main:list_users_view' %}">User Management</a></div>
-    <div><a href="{% url 'main:get_audit_logs_view' %}">Access Audit Log Management</a></div>
-    <div><a href="{% url 'main:get_database_logs_view' %}">Database Access Log Management</a></div>
-    <div><a href="{% url 'main:patient_csv_export_view' %}">Export Deidentified Patient Data</a></div>
+    <div>
+        <a href="{% url 'main:list_users_view' %}">User Management</a>
+        <a href="#" data-toggle="popover" data-trigger="hover"
+            data-content="Click here to create new users or edit existing users."><i
+                class="fa fa-question-circle"></i></a>
+    </div>
+    <div>
+        <a href="{% url 'main:get_audit_logs_view' %}">Access Audit Log Management</a>
+        <a href="#" data-toggle="popover" data-trigger="hover"
+            data-content="Cick here to see who has logged in and out of fEMR On-Chain."><i
+                class="fa fa-question-circle"></i></a>
+    </div>
+    <div>
+        <a href="{% url 'main:get_database_logs_view' %}">Database Access Log Management</a>
+        <a href="#" data-toggle="popover" data-trigger="hover"
+            data-content="Click here to see who edited or accessed patient records."><i
+                class="fa fa-question-circle"></i></a>
+    </div>
+    <div>
+        <a href="{% url 'main:patient_csv_export_view' %}">Export Deidentified Patient Data</a>
+        <a href="#" data-toggle="popover" data-trigger="hover"
+            data-content="Click here to export all patient data in a CSV file format"><i
+                class="fa fa-question-circle"></i></a>
+    </div>
 </div>
 {% endblock %}
