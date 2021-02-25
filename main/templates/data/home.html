@@ -1,4 +1,5 @@
 {% extends "data/base.html" %}
+{% load campaign_tags %}
 {% block content %}
 <div>
     Welcome to fEMR On-Chain v1.0.4, {{ user.first_name }} {{ user.last_name }}!
@@ -11,7 +12,7 @@
         {% csrf_token %}
         <select name="campaign">
             {% for campaign in campaigns %}
-            <option value="{{ campaign }}" {% if campaign is selected_campaign %} selected {% endif %}>
+            <option value="{{ campaign }}" {% if campaign|is_selected:selected_campaign %} selected {% endif %}>
                 {{ campaign }}
             </option>
             {% endfor %}

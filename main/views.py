@@ -97,7 +97,7 @@ def forgot_username(request):
 
 def help_messages_off(request):
     if request.user.is_authenticated:
-        request.session['tags_off'] = True
+        request.session['tags_off'] = None if request.session['tags_off'] else True
         return redirect(request.META.get('HTTP_REFERER', '/'))
     else:
         return redirect('main:not_logged_in')
