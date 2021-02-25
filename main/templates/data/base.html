@@ -1,5 +1,6 @@
 {% load static %}
 {% load user_tags %}
+{% load help_tags %}
 <html>
 
 <head>
@@ -16,6 +17,14 @@
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css'>
     <link href="{% static 'main/css/main.css' %}" media="screen" rel="stylesheet">
     <link href="{% static 'main/assets/styles.css' %}" media="screen" rel="stylesheet">
+    {% if request.session|is_help_off %}
+    <style>
+        .fa-question-circle {
+            visibility: hidden;
+            display: none;
+        }
+    </style>
+    {% endif %}
 </head>
 
 <body class="page-home">
@@ -75,6 +84,8 @@
                         {{ request.user }}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownTwo">
+                        <a class="dropdown-item" href="{% url 'main:help_messages_off' %}">Turn Off Help Messages</a>
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'main:logout_view' %}">Logout</a>
@@ -106,7 +117,7 @@
                 <div class="col-sm-12 col-md-4">
                 </div>
                 <div class="col-sm-12 col-md-4 text-center">
-                    v1.0.2
+                    v1.0.4
                 </div>
                 <div class="col-sm-12 col-md-4">
                 </div>

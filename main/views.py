@@ -93,3 +93,11 @@ def forgot_username(request):
     else:
         form = ForgotUsernameForm()
         return render(request, 'data/forgot_username.html', {'form': form})
+
+
+def help_messages_off(request):
+    if request.user.is_authenticated:
+        request.session['tags_off'] = True
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+    else:
+        return redirect('main:not_logged_in')

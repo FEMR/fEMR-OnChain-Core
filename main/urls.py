@@ -38,7 +38,7 @@ from .auth_views import all_locked, not_logged_in, login_view, logout_view, perm
 from .edit_views import patient_edit_form_view, encounter_edit_form_view, patient_export_view
 from .form_views import patient_form_view, referral_form_view, patient_encounter_form_view
 from .list_views import patient_csv_export_view, patient_list_view, search_patient_list_view, filter_patient_list_view
-from .views import forgot_username, index, home, healthcheck
+from .views import forgot_username, index, home, healthcheck, help_messages_off
 from .femr_admin_views import edit_contact_view, lock_campaign_view, new_campaign_view, new_contact_view, new_instance_view, edit_campaign_view, edit_instance_view, \
     list_campaign_view, list_instance_view, femr_admin_home, change_campaign, unlock_campaign_view
 from main.views import set_timezone
@@ -147,4 +147,6 @@ urlpatterns = [
         name='get_auth_token'),
 
     url(r'^forgot_username', forgot_username, name='forgot_username'),
+
+    url(r'^help_messages_off', help_messages_off, name='help_messages_off'),
 ]

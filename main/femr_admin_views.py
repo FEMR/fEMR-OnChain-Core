@@ -18,17 +18,16 @@ def femr_admin_home(request):
 def change_campaign(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            if request.method == 'POST':
-                campaign = request.POST.get('campaign', None)
-                if campaign is not None:
-                    request.session['campaign'] = campaign
-                    AuditEntry.objects.create(action='user_changed_campaigns',
-                                              ip=get_client_ip(request),
-                                              username=request.user.username,
-                                              campaign=Campaign.objects.get(name=request.session['campaign']))
-                else:
-                    campaign = "RECOVERY MODE"
-                return redirect('main:home')
+            campaign = request.POST.get('campaign', None)
+            if campaign is not None:
+                request.session['campaign'] = campaign
+                AuditEntry.objects.create(action='user_changed_campaigns',
+                                            ip=get_client_ip(request),
+                                            username=request.user.username,
+                                            campaign=Campaign.objects.get(name=request.session['campaign']))
+            else:
+                campaign = "RECOVERY MODE"
+            return redirect('main:home')
         else:
             return redirect('main:index')
     else:

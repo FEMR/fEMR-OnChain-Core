@@ -32,6 +32,10 @@ body {
   display: inline-block;
 }
 
+.fa-question-circle {
+  color: red;
+}
+
 select[name$="_day"].selectdatewidget {
   width: 27%;
 }
