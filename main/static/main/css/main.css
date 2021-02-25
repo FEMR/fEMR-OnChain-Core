@@ -33,7 +33,7 @@ body {
 }
 
 .fa-question-circle {
-  color: red;
+  color: #c60000;
 }
 
 select[name$="_day"].selectdatewidget {
