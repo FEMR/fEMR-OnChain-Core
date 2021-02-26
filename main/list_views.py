@@ -167,7 +167,8 @@ def filter_patient_list_view(request):
                        'selected': selected,
                        'filter_day': request.GET["date_filter_day"],
                        'filter_start': request.GET["date_filter_start"],
-                       'filter_end': request.GET["date_filter_end"]})
+                       'filter_end': request.GET["date_filter_end"],
+                       'page_tip': 'This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.'})
     else:
         return redirect('main:not_logged_in')
 
@@ -197,7 +198,8 @@ def search_patient_list_view(request):
             data = list()
         return render(request, 'list/patient.html',
                       {'user': request.user,
-                       'list_view': data})
+                       'list_view': data,
+                       'page_tip': 'This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.'})
     else:
         return redirect('main:not_logged_in')
 
