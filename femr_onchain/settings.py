@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'axes',
     'session_security',
+    'django_user_agents',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -67,6 +68,7 @@ MIDDLEWARE = [
     'session_security.middleware.SessionSecurityMiddleware',
     'main.middleware.TimezoneMiddleware',
     'main.middleware.CampaignActivityCheckMiddleware',
+    'django_user_agents.middleware.UserAgentMiddleware',
 ]
 
 ROOT_URLCONF = 'femr_onchain.urls'

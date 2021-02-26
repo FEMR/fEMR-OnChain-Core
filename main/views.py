@@ -18,7 +18,10 @@ def index(request):
     :param request: A Django request object.
     :return: A template rendered as an HTTPResponse.
     """
-    return redirect('main:login_view')
+    if request.user_agent.browser.family != "Chrome" and request.user_agent.browser.family != "Firefox":
+        return render(request, 'data/stop.html')
+    else:
+        return redirect('main:login_view')
 
 
 def home(request):
