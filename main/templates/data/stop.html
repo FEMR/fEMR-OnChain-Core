@@ -1,14 +1,7 @@
-<html>
-
-<head>
-    <title>Wait!</title>
-</head>
-
-<body>
-    <p>It seems you're not using Google Chrome. Please <a href="https://www.google.com/chrome/">download
-            Chrome
-            here</a>, or switch if you already have it installed.</p>
-    <p>All functionally has not been tested against other browsers, and may not work correctly. Thank you!</p>
-</body>
-
-</html>
+{% extends "data/base_login.html" %}
+{% block content %}
+<p>It seems you're not using Google Chrome. Please <a href="https://www.google.com/chrome/">download
+        Chrome
+        here</a>, or switch if you already have it installed.</p>
+<p>All functionally has not been tested against other browsers, and may not work correctly. Thank you!</p>
+{% endblock %}
