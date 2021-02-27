@@ -18,6 +18,7 @@ def index(request):
     :param request: A Django request object.
     :return: A template rendered as an HTTPResponse.
     """
+    print(request.user_agent.browser.family)
     if request.user_agent.browser.family != "Chrome" and request.user_agent.browser.family != "Firefox":
         return render(request, 'data/stop.html')
     else:

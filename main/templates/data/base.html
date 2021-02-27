@@ -33,7 +33,7 @@
             <img src="https://demo.teamfemr.org/assets/img/52749c927045848ae798e9df58dcc0dd-logo_color_sm.png"
                 width="60" alt="">
         </a>
-        <a href="#" data-toggle="popover" data-trigger="hover"
+        <a id="main_popover" href="#" data-toggle="popover" data-trigger="hover"
             data-content="Make sure you are using Google Chrome. Make sure Campaign is set to the correct clinic location or program. It is easiest to tab through each screen. For help contact Help@TeamfEMR.org."><i
                 class="fa fa-question-circle"></i></a>
 
@@ -101,8 +101,8 @@
                 <div class="row">
                     <h1>{{ page_name }}</h1>
                     {% if page_tip %}
-                    <a href="#" data-toggle="popover" data-trigger="hover" data-content="{{ page_tip }}"><i
-                            class="fa fa-question-circle"></i></a>
+                    <a id="page_popover" href="#" data-toggle="popover" data-trigger="hover"
+                        data-content="{{ page_tip }}"><i class="fa fa-question-circle"></i></a>
                     {% endif %}
                 </div>
                 {% block content %}
@@ -128,9 +128,24 @@
 
     <script>
         $(document).ready(function () {
+            console.log("Firing popover event.");
             $('[data-toggle="popover"]').popover();
         });
     </script>
+    {% if page_name == "Manager" %}
+    <script>
+        $(window).on('load', function () {
+            // Pure jank. Sorry about this.
+            console.log("Reloading popovers for this page.");
+            var main = $("#main_popover");
+            main.removeAttr('id');
+            main.popover('show');
+            var page = $("#page_popover");
+            page.removeAttr('id');
+            page.popover('show');
+        });
+    </script>
+    {% endif %}
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js'></script>
 </body>
