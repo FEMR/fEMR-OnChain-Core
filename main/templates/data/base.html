@@ -132,20 +132,6 @@
             $('[data-toggle="popover"]').popover();
         });
     </script>
-    {% if page_name == "Manager" %}
-    <script>
-        $(window).on('load', function () {
-            // Pure jank. Sorry about this.
-            console.log("Reloading popovers for this page.");
-            var main = $("#main_popover");
-            main.removeAttr('id');
-            main.popover('show');
-            var page = $("#page_popover");
-            page.removeAttr('id');
-            page.popover('show');
-        });
-    </script>
-    {% endif %}
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js'></script>
 </body>

@@ -29,7 +29,3 @@ function check_dates() {
   }
   return good;
 }
-
-$(document).ready(function () {
-  $('[data-toggle="popover"]').popover('disable');
-});
