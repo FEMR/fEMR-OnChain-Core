@@ -20,7 +20,7 @@
                 <tr>
                     <th scope="row">{{ o.id }}</th>
                     <td>{{ o.name }}</td>
-                    <td>{{ o.main_contact }}</td>
+                    <td><a href="{% url 'main:view_contact' id=o.main_contact.id %}">{{ o.main_contact }}</a></td>
                     <td><a href="{% url 'main:edit_instance' id=o.id %}">Edit</a></td>
                     {% if o.active %}
                     <td><a href="{% url 'main:lock_instance_view' id=o.id %}">Lock Instance</a></td>
@@ -49,7 +49,7 @@
                 <tr>
                     <th scope="row">{{ o.id }}</th>
                     <td>{{ o.name }}</td>
-                    <td>{{ o.main_contact }}</td>
+                    <td><a href="{% url 'main:view_contact' id=o.main_contact.id %}">{{ o.main_contact }}</a></td>
                     <td><a href="{% url 'main:edit_instance' id=o.id %}">Edit</a></td>
                     {% if o.active %}
                     <td><a href="{% url 'main:lock_instance_view' id=o.id %}">Lock Instance</a></td>

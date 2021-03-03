@@ -1,0 +1,16 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+<div>
+    <div>
+        <strong>{{ instance.first_name }} {{ instance.last_name }}</strong>
+    </div>
+    <div>
+        Email Address: {{ instance.email_address }}
+    </div>
+    <div>
+        Phone Number: {{ instance.phone_number }}
+    </div>
+</div>
+<div><a href="{% url 'main:list_instance' %}">Back</a></div>
+{% endblock %}

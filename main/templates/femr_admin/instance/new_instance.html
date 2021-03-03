@@ -35,7 +35,11 @@
     </div>
   </div>
 </form>
+{% if show %}
+<div id="contact_form_div">
+{% else %}
 <div id="contact_form_div" style="visibility: collapse;">
+{% endif %}
   <form action="{% url 'main:new_contact' %}" method="post"
     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
     {% csrf_token %}
