@@ -125,6 +125,12 @@ main .container-fluid {
     min-height: 54px;
 }
 
+@media screen and (min-height: 530px) {
+    #header_image {
+        display: none;
+    }
+}
+
 @media screen and (min-width: 721px) {
     main .container-fluid {
 		padding: 0;
@@ -150,6 +156,6 @@ main .container-fluid {
         bottom: -10px;
         left: 50%;
         transform: translateX(-50%);		
-	}	
+	}
 }
 
