@@ -45,3 +45,9 @@ select[name$="_month"].selectdatewidget {
 select[name$="_year"].selectdatewidget {
   width: 35%;
 }
+
+@media only screen and (max-width: 1026px) {
+  #header_logo {
+    display: none;
+  }
+}
