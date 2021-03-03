@@ -84,7 +84,7 @@ def new_instance_view(request):
             else:
                 form = InstanceForm()
                 contact_form = ContactForm()
-            return render(request, 'femr_admin/instance/new_instance.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Instance'})
+            return render(request, 'femr_admin/instance/new_instance.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Instance', 'show': False})
         else:
             return redirect('main:permission_denied')
     else:
@@ -94,14 +94,16 @@ def new_instance_view(request):
 def new_contact_view(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='fEMR Admin').exists():
+            form = InstanceForm()
+            contact_form = ContactForm()
             if request.method == 'POST':
-                form = ContactForm(request.POST)
-                if form.is_valid():
-                    t = form.save()
+                contact_form = ContactForm(request.POST)
+                if contact_form.is_valid():
+                    t = contact_form.save()
                     t.save()
                     DatabaseChangeLog.objects.create(action="Create", model="Contact", instance=str(t),
                                                      ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            return render(request, 'femr_admin/instance/new_instance.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Instance', 'show': True})
         else:
             return redirect('main:permission_denied')
     else:
@@ -148,6 +150,17 @@ def edit_contact_view(request, id=None):
             else:
                 form = Campaign(instance=instance)
                 return render(request, 'femr_admin/contact/edit_contact.html', {'form': form, 'page_name': 'Edit Contact'})
+        else:
+            return redirect('main:permission_denied')
+    else:
+        return redirect('main:not_logged_in')
+
+
+def view_contact_view(request, id=None):
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name='fEMR Admin').exists():
+            instance = Contact.objects.get(pk=id)
+            return render(request, 'femr_admin/contact/contact_info.html', {'instance': instance, 'page_name': 'Contact Info'})
         else:
             return redirect('main:permission_denied')
     else:

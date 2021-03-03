@@ -40,7 +40,7 @@ from .form_views import patient_form_view, referral_form_view, patient_encounter
 from .list_views import patient_csv_export_view, patient_list_view, search_patient_list_view, filter_patient_list_view
 from .views import forgot_username, index, home, healthcheck, help_messages_off
 from .femr_admin_views import edit_contact_view, lock_campaign_view, new_campaign_view, new_contact_view, new_instance_view, edit_campaign_view, edit_instance_view, \
-    list_campaign_view, list_instance_view, femr_admin_home, change_campaign, unlock_campaign_view
+    list_campaign_view, list_instance_view, femr_admin_home, change_campaign, unlock_campaign_view, view_contact_view
 from main.views import set_timezone
 from main import hl7
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
@@ -134,6 +134,7 @@ urlpatterns = [
     path(r'edit_instance/<int:id>', edit_instance_view, name='edit_instance'),
     url(r'^new_instance/$', new_instance_view, name='new_instance'),
     path(r'edit_contact/<int:id>', edit_contact_view, name='edit_contact'),
+    path(r'view_contact/<int:id>', view_contact_view, name='view_contact'),
     url(r'^new_contact/$', new_contact_view, name='new_contact'),
     path(r'patient_export/<int:id>', patient_export_view, name='patient_export'),
 
