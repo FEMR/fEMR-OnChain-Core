@@ -125,7 +125,7 @@ main .container-fluid {
     min-height: 54px;
 }
 
-@media screen and (min-height: 530px) {
+@media screen and (max-height: 650px) {
     #header_image {
         display: none;
     }
