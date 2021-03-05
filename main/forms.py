@@ -267,6 +267,12 @@ class fEMRAdminUserForm(UserCreationForm):
         ]
 
 
+def filter_campaigns_for_instances(user):
+    campaigns = user.campaigns.all()
+    instances = [c.instance for c in campaigns]
+    return Campaign.objects.filter(instance__in=instances)
+
+
 class UserUpdateForm(UserChangeForm):
     """
     Data entry form - fEMRUser
@@ -275,9 +281,10 @@ class UserUpdateForm(UserChangeForm):
     groups = ModelMultipleChoiceField(queryset=Group.objects.exclude(
         name="fEMR Admin").exclude(name="Manager"), required=False)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.fields['campaigns'].queryset = filter_campaigns_for_instances(user)
 
     class Meta:
         model = fEMRUser

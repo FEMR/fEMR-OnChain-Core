@@ -129,7 +129,7 @@ def update_user_view(request, id=None):
         if request.method == 'POST':
             form = fEMRAdminUserUpdateForm(request.POST or None,
                                            instance=m) if request.user.groups.filter(
-                name='fEMR Admin').exists() else UserUpdateForm(request.POST or None,
+                name='fEMR Admin').exists() else UserUpdateForm(request.user, request.POST or None,
                                                                 instance=m)
             if form.is_valid():
                 t = form.save()
@@ -141,7 +141,7 @@ def update_user_view(request, id=None):
                 error = "Form is invalid."
         else:
             form = fEMRAdminUserUpdateForm(instance=m) if request.user.groups.filter(
-                name='fEMR Admin').exists() else UserUpdateForm(instance=m)
+                name='fEMR Admin').exists() else UserUpdateForm(request.user, instance=m)
         return render(request, 'admin/user_edit_form.html', {'error': error,
                                                              'form': form,
                                                              'user_id': id,
