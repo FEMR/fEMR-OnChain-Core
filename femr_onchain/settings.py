@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'main.apps.MainConfig',
+    'appMR',
     'crispy_forms',
     'axes',
     'session_security',

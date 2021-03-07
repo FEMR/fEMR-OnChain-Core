@@ -105,6 +105,10 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     'history_of_hypertension': m.history_of_hypertension,
                     'history_of_high_cholesterol': m.history_of_high_cholesterol,
                     'alcohol': m.alcohol,
+                    'diagnoses': m.diagnoses,
+                    'treatments': m.treatments,
+                    'chief_complaint': m.chief_complaint,
+                    'patient_history': m.patient_history,
                     'community_health_worker_notes': m.community_health_worker_notes,
                     'body_height_primary': math.floor(
                         ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12),

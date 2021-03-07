@@ -55,7 +55,7 @@ class PatientForm(ModelForm):
         self.fields['date_of_birth'].widget.attrs['maxlength'] = "6"
         self.fields['date_of_birth'].widget.attrs[
             'pattern'] = "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$"
-        self.fields['phone_number'].widget.attrs['required'] = True
+        self.fields['phone_number'].widget.attrs['required'] = False
         self.fields['email_address'].widget.attrs['required'] = False
         self.fields['social_security_number'].widget.attrs['minlength'] = "4"
         self.fields['zip_code'].widget.attrs['minlength'] = "5"
@@ -216,6 +216,10 @@ class PatientEncounterForm(ModelForm):
             'alcohol': 'History of Substance/Alcohol Abuse',
         }
         widgets = {
+            'diagnoses': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'treatments': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'chief_complaint': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'patient_history': Textarea(attrs={'rows': 4, 'cols': 40}),
             'community_health_worker_notes': Textarea(attrs={'rows': 4, 'cols': 40})
         }
 

@@ -42,12 +42,14 @@ function clean() {
 function migrate() {
   pwd
   python3 manage.py makemigrations main
+  python3 manage.py makemigrations appMR
   python3 manage.py makemigrations
   python3 manage.py migrate
 }
 
 function makemigrations() {
   python3 manage.py makemigrations main
+  python3 manage.py makemigrations appMR
   python3 manage.py makemigrations
 }
 
@@ -88,6 +90,10 @@ function shell() {
 }
 
 case "$1" in
+
+startapp)
+  python3 manage.py startapp $2
+  ;;
 
 clean)
   clean

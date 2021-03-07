@@ -224,6 +224,15 @@ class PatientEncounter(models.Model):
     weeks_pregnant = models.IntegerField(
         validators=[MaxValueValidator(45), MinValueValidator(1)], null=True, blank=True)
 
+    diagnoses = models.CharField(
+        max_length=500, null=True, blank=True)
+    treatments = models.CharField(
+        max_length=500, null=True, blank=True)
+    chief_complaint = models.CharField(
+        max_length=500, null=True, blank=True)
+    patient_history = models.CharField(
+        max_length=500, null=True, blank=True)
+    
     community_health_worker_notes = models.CharField(
         max_length=500, null=True, blank=True)
 
