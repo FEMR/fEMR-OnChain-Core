@@ -27,7 +27,6 @@ def __get_dev(request):
 
 def new_bug_view(request, ticket_type=0):
     if request.user.is_authenticated:
-        ticket_type = 0 if ticket_type == 1 else 1
         dev, bug_list, done_list = __get_dev(request)
         if request.method == 'POST':
             form = SupportTicketForm(request.POST)
@@ -47,6 +46,15 @@ def new_bug_view(request, ticket_type=0):
 
 
 def bug_list_view(request, ticket_type=0):
+    if request.user.is_authenticated:
+        form = SupportTicketForm()
+        dev, bug_list, done_list = __get_dev(request)
+        return render(request, 'appMR/bug_list.html', {'open': ticket_type, 'bug_list': bug_list, 'done_list': done_list, 'dev': dev, 'form': form})
+    else:
+        return redirect('appMR:not_logged_in')
+
+
+def change_bug_list_view(request, ticket_type=0):
     if request.user.is_authenticated:
         ticket_type = 0 if ticket_type == 1 else 1
         form = SupportTicketForm()
@@ -103,6 +111,7 @@ def post_comment_view(request, bug_id=None):
                     t.comment,
                     [m.reporter.email],
                     reply_to=[os.environ.get('DEFAULT_FROM_EMAIL')]).send()
+                comment_form = CommentForm()
         comments = m.comments.all()
         return render(request, 'appMR/bug_detail.html', {'bug_id': m.id, 'dev': dev, 'form': form, 'comment_form': comment_form, 'comments': comments})
     else:

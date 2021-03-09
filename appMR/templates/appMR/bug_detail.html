@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-lg-6">
         <div>
-            <h3>Edit Ticket</h3>
+            <h3>Edit Ticket - {{ bug_id }}</h3>
         </div>
         <div>
             <form action="{% url 'appMR:bug_detail_view' id=bug_id %}" method="post">
