@@ -86,7 +86,8 @@ def patient_encounter_form_view(request, id=None):
             return redirect('main:home')
         p = Patient.objects.get(pk=id)
         if request.method == "POST":
-            units = Campaign.objects.get(name=request.session['campaign']).units
+            units = Campaign.objects.get(
+                name=request.session['campaign']).units
             form = PatientEncounterForm(request.POST, unit=units)
             if form.is_valid():
                 encounter = form.save(commit=False)
@@ -104,7 +105,8 @@ def patient_encounter_form_view(request, id=None):
                 else:
                     return render(request, 'data/encounter_submitted.html')
         else:
-            units = Campaign.objects.get(name=request.session['campaign']).units
+            units = Campaign.objects.get(
+                name=request.session['campaign']).units
             form = PatientEncounterForm(unit=units)
             try:
                 encounter = PatientEncounter.objects.filter(
