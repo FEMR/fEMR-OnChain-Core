@@ -115,7 +115,7 @@ class PatientForm(ModelForm):
         fields = '__all__'
         exclude = ('campaign',)
         labels = {
-            'phone_number': 'Phone number*',
+            'phone_number': 'Phone number',
             'email_address': 'Email address'
         }
         widgets = {
