@@ -52,20 +52,23 @@ def patient_csv_export_view(request):
     """
     if request.user.is_authenticated:
         units = Campaign.objects.get(name=request.session['campaign']).units
+        telehealth = Campaign.objects.get(name=request.session['campaign']).telehealth
         resp = HttpResponse(content_type='text/csv')
         resp['Content-Disposition'] = 'attachment; filename="patient_export.csv"'
         writer = csv.writer(resp)
         if units == 'i':
-            writer.writerow(['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure', 'Heart Rate',
-                             'Body Temperature (F)', 'Height (ft)', 'Weight (lbs)', 'BMI', 'Oxygen Concentration', 'Glucose Level', 'History of Tobacco Use',
-                             'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol', 'History of Alchol Abuse/Substance Abuse',
-                             'Diagnoses', 'Treatments', 'Chief Complaint', 'Patient History', 'Community Health Worker Notes'])
+            title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure', 'Heart Rate',
+                            'Body Temperature (F)', 'Height (ft)', 'Weight (lbs)', 'BMI', 'Oxygen Concentration', 'Glucose Level', 'History of Tobacco Use',
+                            'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
+                            'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes']
         else:
-            writer.writerow(['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure',
-                             'Heart Rate', 'Body Temperature (C)', 'Height (m)', 'Weight (kg)', 'BMI', 'Oxygen Concentration', 'Glucose Level',
-                             'History of Tobacco Use', 'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
-                             'History of Alchol Abuse/Substance Abuse', 'Diagnoses', 'Treatments', 'Chief Complaint', 'Patient History',
-                             'Community Health Worker Notes'])
+            title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure',
+                            'Heart Rate', 'Body Temperature (C)', 'Height (m)', 'Weight (kg)', 'BMI', 'Oxygen Concentration', 'Glucose Level',
+                            'History of Tobacco Use', 'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
+                            'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes']
+        if telehealth:
+            title_row.extend(['Diagnoses', 'Treatments', 'Chief Complaint', 'Patient History'])
+        writer.writerow(title_row)
         try:
             data = Patient.objects.filter(
                 campaign=Campaign.objects.get(name=request.session['campaign']))
@@ -75,28 +78,29 @@ def patient_csv_export_view(request):
         for patient in data:
             for encounter in PatientEncounter.objects.filter(patient=patient):
                 if units == 'i':
-                    writer.writerow([id, encounter.timestamp, encounter.systolic_blood_pressure, encounter.diastolic_blood_pressure,
-                                     encounter.mean_arterial_pressure, encounter.heart_rate,
-                                     round(
-                                         (encounter.body_temperature * 9/5) + 32, 2),
-                                     "{0} {1}".format(
-                                         math.floor(
-                                             round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) // 12),
-                                         round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) % 12),
-                                     round(encounter.body_weight * 2.2046, 2),
-                                     encounter.body_mass_index, encounter.oxygen_concentration, encounter.glucose_level, encounter.smoking,
-                                     encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
-                                     encounter.alcohol, encounter.diagnoses, encounter.treatments, encounter.chief_complaint,
-                                     encounter.patient_history, encounter.community_health_worker_notes])
+                    row = [id, encounter.timestamp, encounter.systolic_blood_pressure, encounter.diastolic_blood_pressure,
+                            encounter.mean_arterial_pressure, encounter.heart_rate,
+                            round(
+                            (encounter.body_temperature * 9/5) + 32, 2),
+                            "{0} {1}".format(
+                            math.floor(
+                            round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) // 12),
+                            round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) % 12),
+                            round(encounter.body_weight * 2.2046, 2),
+                            encounter.body_mass_index, encounter.oxygen_concentration, encounter.glucose_level, encounter.smoking,
+                            encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
+                            encounter.alcohol, encounter.community_health_worker_notes]
                 else:
-                    writer.writerow([id, encounter.timestamp, encounter.systolic_blood_pressure, encounter.diastolic_blood_pressure,
-                                     encounter.mean_arterial_pressure, encounter.heart_rate, encounter.body_temperature,
-                                     "{0} {1}".format(
-                                         encounter.body_height_primary, encounter.body_height_secondary), encounter.body_weight,
-                                         encounter.body_mass_index, encounter.oxygen_concentration, encounter.glucose_level, encounter.smoking,
-                                         encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
-                                         encounter.alcohol, encounter.diagnoses, encounter.treatments, encounter.chief_complaint,
-                                         encounter.patient_history, encounter.community_health_worker_notes])
+                    row = [id, encounter.timestamp, encounter.systolic_blood_pressure, encounter.diastolic_blood_pressure,
+                            encounter.mean_arterial_pressure, encounter.heart_rate, encounter.body_temperature,
+                            "{0} {1}".format(
+                            encounter.body_height_primary, encounter.body_height_secondary), encounter.body_weight,
+                            encounter.body_mass_index, encounter.oxygen_concentration, encounter.glucose_level, encounter.smoking,
+                            encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
+                            encounter.alcohol, encounter.community_health_worker_notes]
+                if telehealth:
+                    row.extend([encounter.diagnoses, encounter.treatments, encounter.chief_complaint, encounter.patient_history])
+                writer.writerow(row)
             id += 1
         return resp
     else:

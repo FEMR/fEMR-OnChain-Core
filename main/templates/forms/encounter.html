@@ -83,6 +83,7 @@
                         </div>
                     </div>
                 </div>
+                {% if telehealth %}
                 <div class="row">
                     <div class="form-group col-md-12">
                         {{ form.chief_complaint|as_crispy_field }}
@@ -101,6 +102,7 @@
                         {{ form.treatments|as_crispy_field}}
                     </div>
                 </div>
+                {% endif %}
                 <div class="row">
                     <div class="form-group col-md-12">
                         {{ form.community_health_worker_notes|as_crispy_field }}

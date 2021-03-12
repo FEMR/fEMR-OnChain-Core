@@ -519,6 +519,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
+                        {% if telehealth %}
                         <div class="row">
                             <label for="id_chief_complaint" class="form-check-label">
                                 Chief complaint:
@@ -551,6 +552,7 @@
                                 {{ encounter.treatments}}
                             </div>
                         </div>
+                        {% endif %}
                         <div class="row">
                             <label for="id_community_health_worker_notes" class="form-check-label">
                                 Community health worker notes:

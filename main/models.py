@@ -65,6 +65,7 @@ class Campaign(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
     units = models.CharField(max_length=30, choices=unit_choices, default="m")
+    telehealth = models.BooleanField(default=False)
     timezone = models.CharField(
         max_length=100, choices=COMMON_TIMEZONES_CHOICES)
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)

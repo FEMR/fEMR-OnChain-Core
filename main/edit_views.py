@@ -66,6 +66,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         units = Campaign.objects.get(name=request.session['campaign']).units
+        telehealth = Campaign.objects.get(name=request.session['campaign']).telehealth
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         if request.method == 'POST':
@@ -122,7 +123,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         return render(request, 'forms/edit_encounter.html',
                       {'form': form, 'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
     else:
         return redirect('/not_logged_in')
 
@@ -137,6 +138,7 @@ def patient_export_view(request, id=None):
             return render(request, 'export/patient_export.html', {
                 'patient': m,
                 'encounters': encounters,
+                'telehealth': Campaign.objects.get(name=request.session['campaign']).telehealth,
                 'units': Campaign.objects.get(name=request.session['campaign']).units
             })
     else:
