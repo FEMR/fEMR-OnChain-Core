@@ -84,11 +84,11 @@ def patient_encounter_form_view(request, id=None):
     if request.user.is_authenticated:
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
+        telehealth = Campaign.objects.get(name=request.session['campaign']).telehealth
         p = Patient.objects.get(pk=id)
         if request.method == "POST":
             units = Campaign.objects.get(
                 name=request.session['campaign']).units
-            telehealth = Campaign.objects.get(name=request.session['campaign']).telehealth
             form = PatientEncounterForm(request.POST, unit=units)
             if form.is_valid():
                 encounter = form.save(commit=False)
