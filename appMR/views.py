@@ -1,6 +1,6 @@
 import os
 
-from django.core.mail import EmailMessage
+from django.core.mail import send_mail
 
 from django.shortcuts import render, redirect, get_object_or_404
 
@@ -36,11 +36,11 @@ def new_bug_view(request, ticket_type=0):
                 t.status = '1'
                 t.active = True
                 t.save()
-                EmailMessage(
+                send_mail(
                     "New AppMR Ticket {0}".format(t.id),
                     t.description,
-                    [os.environ.get('DEV_EMAIL')],
-                    reply_to=[os.environ.get('DEFAULT_FROM_EMAIL')]).send()
+                    os.environ.get('DEFAULT_FROM_EMAIL'),
+                    [os.environ.get('DEV_EMAIL')])
                 form = SupportTicketForm()
             return render(request, 'appMR/bug_list.html', {'open': ticket_type, 'bug_list': bug_list, 'done_list': done_list, 'dev': dev, 'form': form})
         else:
@@ -111,11 +111,11 @@ def post_comment_view(request, bug_id=None):
                 t.save()
                 m.comments.add(t)
                 m.save()
-                EmailMessage(
+                send_mail(
                     "Response on AppMR Ticket {0}".format(bug_id),
                     t.comment,
-                    [m.reporter.email],
-                    reply_to=[os.environ.get('DEFAULT_FROM_EMAIL')]).send()
+                    os.environ.get('DEFAULT_FROM_EMAIL'),
+                    [os.environ.get('DEV_EMAIL')])
                 comment_form = CommentForm()
         comments = m.comments.all()
         return render(request, 'appMR/bug_detail.html', {'bug_id': m.id, 'dev': dev, 'form': form, 'comment_form': comment_form, 'comments': comments})
