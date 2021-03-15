@@ -205,7 +205,7 @@ def search_patient_list_view(request):
                 Q(last_name__icontains=request.GET['name_search']) |
                 Q(phone_number__icontains=request.GET['name_search']) |
                 Q(phone_number__icontains=__parse_phone_number(request.GET['name_search'])) |
-                Q(email_address=request.GET['name_search'])
+                Q(email_address__iexact=request.GET['name_search'])
             )
             for term in request.GET['name_search'].split():
                 data = set(list(itertools.chain(data, Patient.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
