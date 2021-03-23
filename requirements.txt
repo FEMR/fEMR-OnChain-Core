@@ -17,7 +17,7 @@ docutils==0.15
 ionhash==1.1.0
 isort==5.8.0
 jmespath==0.10.0
-lazy-object-proxy==1.4.3
+lazy-object-proxy==1.6.0
 mccabe==0.6.1
 psycopg2==2.8.6
 pycodestyle==2.7.0
