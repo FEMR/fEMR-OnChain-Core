@@ -38,6 +38,7 @@ pytz==2021.1
 requests==2.25.1
 s3transfer==0.3.6
 safety==1.10.3
+setuptools=54.2.0
 six==1.15.0
 sqlparse==0.4.1
 toml==0.10.2
