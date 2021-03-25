@@ -5,7 +5,7 @@ Defines a createadmin command extending manage.py.
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 
-from main.models import fEMRUser, Instance, Campaign
+from main.models import fEMRUser, Instance, Campaign, Contact
 from main.qldb_interface import create_tables
 
 
@@ -23,7 +23,13 @@ class Command(BaseCommand):
         @return:
         """
         if not Instance.objects.filter(name="Test").exists():
-            instance = Instance.objects.create()
+            c = Contact.objects.create(
+                first_name="Test",
+                last_name="Contact",
+                email_address="test@test.com",
+                phone_number="5551234567"
+            )
+            instance = Instance.objects.create(name="Test", main_contact=c)
             create_tables()
         else:
             instance = Instance.objects.get(name="Test")
