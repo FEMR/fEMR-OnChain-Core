@@ -103,6 +103,7 @@ def new_contact_view(request):
                     t.save()
                     DatabaseChangeLog.objects.create(action="Create", model="Contact", instance=str(t),
                                                      ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                    contact_form = ContactForm()
             return render(request, 'femr_admin/instance/new_instance.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Instance', 'show': True})
         else:
             return redirect('main:permission_denied')
