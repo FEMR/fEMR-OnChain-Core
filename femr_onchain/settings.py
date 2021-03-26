@@ -126,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'main.password_validators.NewPasswordValidator',
-    }
+    },
 ]
 
 # Internationalization
