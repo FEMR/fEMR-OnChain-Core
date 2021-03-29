@@ -160,6 +160,8 @@ def update_user_password_view(request, id=None):
             if form.is_valid():
                 t = form.save()
                 t.save()
+                m.change_password = True
+                m.save()
                 DatabaseChangeLog.objects.create(action="Change Password", model="User", instance=str(t),
                                                  ip=request.META.get('REMOTE_ADDR'), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 form = AdminPasswordForm()
