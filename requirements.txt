@@ -21,7 +21,7 @@ lazy-object-proxy==1.6.0
 mccabe==0.6.1
 psycopg2==2.8.6
 pycodestyle==2.7.0
-pylint==2.7.2
+pylint==2.7.3
 pyqldb==3.0.0
 python-dateutil==2.8.1
 python-stdnum==1.16
