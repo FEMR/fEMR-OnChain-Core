@@ -115,7 +115,7 @@ def post_comment_view(request, bug_id=None):
                     "Response on AppMR Ticket {0}".format(bug_id),
                     t.comment,
                     os.environ.get('DEFAULT_FROM_EMAIL'),
-                    [os.environ.get('DEV_EMAIL')])
+                    [os.environ.get('DEV_EMAIL'), t.author.email])
                 comment_form = CommentForm()
         comments = m.comments.all()
         return render(request, 'appMR/bug_detail.html', {'bug_id': m.id, 'dev': dev, 'form': form, 'comment_form': comment_form, 'comments': comments})
