@@ -2,10 +2,10 @@ Django==3.1.7
 PyYAML==5.4.1
 amazon.ion==0.5.0
 asgiref==3.3.1
-astroid==2.5.1
+astroid==2.5.2
 autopep8==1.5.6
-boto3==1.17.34
-botocore==1.20.34
+boto3==1.17.41
+botocore==1.20.41
 certifi==2020.12.5
 chardet==4.0.0
 click==7.1.2
@@ -17,7 +17,7 @@ django-localflavor==3.0.1
 django-session-security==2.6.6
 django-timezone-utils==0.13
 django-user-agents==0.4.0
-djangorestframework==3.12.2
+djangorestframework==3.12.4
 docutils==0.15
 dparse==0.5.1
 idna==2.10
