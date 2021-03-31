@@ -149,7 +149,7 @@ def edit_contact_view(request, id=None):
                                                      ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                     return render(request, "femr_admin/confirm/contact_submitted.html")
             else:
-                form = Campaign(instance=instance)
+                form = ContactForm(instance=instance)
                 return render(request, 'femr_admin/contact/edit_contact.html', {'form': form, 'page_name': 'Edit Contact'})
         else:
             return redirect('main:permission_denied')
