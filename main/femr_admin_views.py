@@ -150,7 +150,7 @@ def edit_contact_view(request, id=None):
                     return render(request, "femr_admin/confirm/contact_submitted.html")
             else:
                 form = ContactForm(instance=instance)
-                return render(request, 'femr_admin/contact/edit_contact.html', {'form': form, 'page_name': 'Edit Contact'})
+                return render(request, 'femr_admin/contact/edit_contact.html', {'form': form, 'page_name': 'Edit Contact', 'contact_id': id})
         else:
             return redirect('main:permission_denied')
     else:
