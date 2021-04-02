@@ -29,7 +29,7 @@ mccabe==0.6.1
 packaging==20.9
 psycopg2==2.8.6
 pycodestyle==2.7.0
-pylint==2.7.2
+pylint==2.7.4
 pyparsing==2.4.7
 pyqldb==3.0.0
 python-dateutil==2.8.1
