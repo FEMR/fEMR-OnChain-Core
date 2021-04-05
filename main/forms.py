@@ -150,7 +150,7 @@ class PatientEncounterForm(ModelForm):
         self.fields['heart_rate'].widget.attrs['min'] = 40
         self.fields['heart_rate'].widget.attrs['max'] = 170
         self.fields['respiratory_rate'].widget.attrs['min'] = 0
-        self.fields['body_temperature'].widget.attrs['step'] = 0.1
+        self.fields['body_temperature'].widget.attrs['step'] = 0.01
         self.fields['bmi_percentile'].widget.attrs['min'] = 0
         self.fields['body_mass_index'].widget.attrs['min'] = 0
         self.fields['body_mass_index'].widget.attrs['style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
