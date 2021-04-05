@@ -213,7 +213,7 @@ def get_audit_logs_view(request):
         if request.user.groups.filter(name='Admin').exists():
             try:
                 data = AuditEntry.objects.filter(campaign=Campaign.objects.get(
-                    name=request.session['campaign'])).order_by('timestamp')
+                    name=request.session['campaign'])).order_by('-timestamp')
             except ObjectDoesNotExist:
                 data = ""
             return render(request, 'admin/audit_log_list.html',
@@ -235,25 +235,25 @@ def filter_audit_logs_view(request):
                         datetime.today(), timezone.get_default_timezone())
                     now = now.astimezone(timezone.get_current_timezone())
                     data = AuditEntry.objects.filter(
-                        timestamp__date=now).order_by('timestamp').filter(campaign=Campaign.objects.get(name=request.session['campaign']))
+                        timestamp__date=now).order_by('-timestamp').filter(campaign=Campaign.objects.get(name=request.session['campaign']))
                     data = set(list(itertools.chain(
-                        data, AuditEntry.objects.filter(timestamp__date=now).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('timestamp'))))
+                        data, AuditEntry.objects.filter(timestamp__date=now).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('-timestamp'))))
                     selected = 1
                 elif request.GET["filter_list"] == "2":
                     timestamp_from = timezone.now() - timedelta(days=7)
                     timestamp_to = timezone.now()
                     data = AuditEntry.objects.filter(timestamp__gte=timestamp_from,
-                                                     timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('timestamp')
+                                                     timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('-timestamp')
                     data = set(list(itertools.chain(data, AuditEntry.objects.filter(timestamp__gte=timestamp_from,
-                                                                                    timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('timestamp'))))
+                                                                                    timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('-timestamp'))))
                     selected = 2
                 elif request.GET["filter_list"] == "3":
                     timestamp_from = timezone.now() - timedelta(days=30)
                     timestamp_to = timezone.now()
                     data = AuditEntry.objects.filter(timestamp__gte=timestamp_from,
-                                                     timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('timestamp')
+                                                     timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('-timestamp')
                     data = set(list(itertools.chain(data, AuditEntry.objects.filter(timestamp__gte=timestamp_from,
-                                                                                    timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('timestamp'))))
+                                                                                    timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('-timestamp'))))
                     selected = 3
                 elif request.GET["filter_list"] == "4":
                     try:
@@ -262,9 +262,9 @@ def filter_audit_logs_view(request):
                         timestamp_to = datetime.strptime(
                             request.GET["date_filter_day"], "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=0)
                         data = AuditEntry.objects.filter(timestamp__gte=timestamp_from,
-                                                         timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('timestamp')
+                                                         timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('-timestamp')
                         data = set(list(itertools.chain(data, AuditEntry.objects.filter(timestamp__gte=timestamp_from,
-                                                                                        timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('timestamp'))))
+                                                                                        timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('-timestamp'))))
                     except ValueError:
                         data = list()
                     selected = 4
@@ -275,16 +275,16 @@ def filter_audit_logs_view(request):
                         timestamp_to = datetime.strptime(
                             request.GET["date_filter_end"], "%Y-%m-%d") + timedelta(days=1)
                         data = AuditEntry.objects.filter(timestamp__gte=timestamp_from,
-                                                         timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('timestamp')
+                                                         timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('-timestamp')
                         data = set(list(itertools.chain(data, AuditEntry.objects.filter(timestamp__gte=timestamp_from,
-                                                                                        timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('timestamp'))))
+                                                                                        timestamp__lt=timestamp_to).filter(campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('-timestamp'))))
                     except ValueError:
                         data = list()
                     selected = 5
                 elif request.GET["filter_list"] == "6":
                     try:
                         data = AuditEntry.objects.filter(campaign=Campaign.objects.get(
-                            name=request.session['campaign'])).order_by('timestamp')
+                            name=request.session['campaign'])).order_by('-timestamp')
                     except ValueError:
                         data = list()
                     selected = 6
@@ -293,7 +293,7 @@ def filter_audit_logs_view(request):
             except ObjectDoesNotExist:
                 data = list()
             data = sorted(data, key=operator.attrgetter(
-                'timestamp'), reverse=True)
+                '-timestamp'), reverse=True)
             return render(request, 'admin/audit_log_list.html',
                           {'user': request.user, 'selected': selected,
                            'log': data, 'page_name': 'Login Log',
@@ -342,7 +342,7 @@ def get_database_logs_view(request):
             try:
                 excludemodels = ['Campaign', 'Instance']
                 data = DatabaseChangeLog.objects.exclude(model__in=excludemodels).filter(
-                    campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('timestamp')
+                    campaign=Campaign.objects.get(name=request.session['campaign'])).order_by('-timestamp')
             except ObjectDoesNotExist:
                 data = list()
             return render(request, 'admin/database_log_list.html',
@@ -423,7 +423,7 @@ def filter_database_logs_view(request):
             except ObjectDoesNotExist:
                 data = list()
             data = sorted(data, key=operator.attrgetter(
-                'timestamp'), reverse=True)
+                '-timestamp'), reverse=True)
             return render(request, 'admin/database_log_list.html',
                           {'user': request.user, 'selected': selected,
                            'list_view': data, 'page_name': 'Patient Change Log',
