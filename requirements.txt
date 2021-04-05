@@ -18,7 +18,7 @@ django-session-security==2.6.6
 django-timezone-utils==0.13
 django-user-agents==0.4.0
 djangorestframework==3.12.4
-docutils==0.15
+docutils==0.17
 dparse==0.5.1
 idna==2.10
 ionhash==1.1.0
