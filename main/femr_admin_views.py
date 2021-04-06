@@ -265,6 +265,8 @@ def unlock_campaign_view(request, id=None):
         if request.user.groups.filter(name='Admin').exists():
             m = get_object_or_404(Campaign, pk=id)
             m.active = True
+            m.instance.active = True
+            m.instance.save()
             m.save()
             return redirect('main:list_campaign')
         else:
