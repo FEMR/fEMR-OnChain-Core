@@ -1,7 +1,7 @@
 Django==3.1.7
 PyYAML==5.4.1
 amazon.ion==0.5.0
-asgiref==3.3.1
+asgiref==3.3.4
 astroid==2.5.2
 autopep8==1.5.6
 boto3==1.17.49
