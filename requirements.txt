@@ -42,7 +42,7 @@ setuptools==56.0.0
 six==1.15.0
 sqlparse==0.4.1
 toml==0.10.2
-typed-ast==1.4.2
+typed-ast==1.4.3
 ua-parser==0.10.0
 urllib3==1.26.4
 user-agents==2.2.0
