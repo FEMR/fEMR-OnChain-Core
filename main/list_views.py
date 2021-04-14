@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.utils.timezone import make_aware
 
 from .models import PatientEncounter, Patient, Campaign
 
@@ -78,7 +79,7 @@ def patient_csv_export_view(request):
         for patient in data:
             for encounter in PatientEncounter.objects.filter(patient=patient):
                 if units == 'i':
-                    row = [id, encounter.timestamp, encounter.systolic_blood_pressure, encounter.diastolic_blood_pressure,
+                    row = [id, make_aware(encounter.timestamp), encounter.systolic_blood_pressure, encounter.diastolic_blood_pressure,
                             encounter.mean_arterial_pressure, encounter.heart_rate,
                             round(
                             (encounter.body_temperature * 9/5) + 32, 2),
@@ -91,7 +92,7 @@ def patient_csv_export_view(request):
                             encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
                             encounter.alcohol, encounter.community_health_worker_notes]
                 else:
-                    row = [id, encounter.timestamp, encounter.systolic_blood_pressure, encounter.diastolic_blood_pressure,
+                    row = [id, make_aware(encounter.timestamp), encounter.systolic_blood_pressure, encounter.diastolic_blood_pressure,
                             encounter.mean_arterial_pressure, encounter.heart_rate, encounter.body_temperature,
                             "{0} m {1} cm".format(
                             encounter.body_height_primary, encounter.body_height_secondary), encounter.body_weight,
