@@ -38,7 +38,8 @@ def patient_list_view(request):
             data = list()
         return render(request, 'list/patient.html',
                       {'user': request.user,
-                       'list_view': data, 'page_name': 'Manager',
+                       'list_view': sorted(data, key=(lambda x: x.timestamp)),
+                       'page_name': 'Manager',
                        'page_tip': 'This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.'})
     else:
         return redirect('main:not_logged_in')
@@ -189,7 +190,8 @@ def filter_patient_list_view(request):
             data = list()
         return render(request, 'list/patient.html',
                       {'user': request.user,
-                       'list_view': data, 'page_name': 'Manager',
+                       'list_view': sorted(data, key=(lambda x: x.timestamp)),
+                       'page_name': 'Manager',
                        'selected': selected,
                        'filter_day': request.GET["date_filter_day"],
                        'filter_start': request.GET["date_filter_start"],
@@ -224,7 +226,7 @@ def search_patient_list_view(request):
             data = list()
         return render(request, 'list/patient.html',
                       {'user': request.user,
-                       'list_view': data,
+                       'list_view': sorted(data, key=(lambda x: x.timestamp)),
                        'page_tip': 'This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.'})
     else:
         return redirect('main:not_logged_in')
