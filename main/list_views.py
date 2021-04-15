@@ -13,7 +13,7 @@ from django.db.models import Q
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from django.utils.timezone import make_aware
+from pytz import timezone as pytz_timezone
 
 from .models import PatientEncounter, Patient, Campaign
 
@@ -76,11 +76,14 @@ def patient_csv_export_view(request):
         except ObjectDoesNotExist:
             data = list()
         id = 1
+        time_zone = Campaign.objects.get(name=request.session['campaign']).timezone
+        campaign_time_zone = pytz_timezone(time_zone)
+        campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
         for patient in data:
             for encounter in PatientEncounter.objects.filter(patient=patient):
                 if units == 'i':
                     row = [id,
-                            "{} {}".format(make_aware(encounter.timestamp), Campaign.objects.get(name=request.session['campaign']).timezone),
+                            "{} {}".format(encounter.timestamp.astimezone(campaign_time_zone), campaign_time_zone_b),
                             encounter.systolic_blood_pressure, encounter.diastolic_blood_pressure,
                             encounter.mean_arterial_pressure, encounter.heart_rate,
                             round(
@@ -95,7 +98,7 @@ def patient_csv_export_view(request):
                             encounter.alcohol, encounter.community_health_worker_notes]
                 else:
                     row = [id,
-                            "{} {}".format(make_aware(encounter.timestamp), Campaign.objects.get(name=request.session['campaign']).timezone),
+                            "{} {}".format(encounter.timestamp.astimezone(campaign_time_zone), campaign_time_zone_b),
                             encounter.systolic_blood_pressure, encounter.diastolic_blood_pressure,
                             encounter.mean_arterial_pressure, encounter.heart_rate, encounter.body_temperature,
                             "{0} m {1} cm".format(
