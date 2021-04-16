@@ -18,6 +18,13 @@ from pytz import timezone as pytz_timezone
 from .models import PatientEncounter, Patient, Campaign
 
 
+def get_latest_timestamp(patient):
+    try:
+        return PatientEncounter.objects.filter(patient=patient).order_by('-timestamp')[0].timestamp
+    except IndexError:
+        return patient.timestamp
+
+
 def patient_list_view(request):
     """
     Administrative/Clinician list of patients entered into the system.
@@ -38,7 +45,7 @@ def patient_list_view(request):
             data = list()
         return render(request, 'list/patient.html',
                       {'user': request.user,
-                       'list_view': sorted(data, key=(lambda x: x.timestamp)),
+                       'list_view': sorted(data, reverse=True, key=get_latest_timestamp),
                        'page_name': 'Manager',
                        'page_tip': 'This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.'})
     else:
@@ -190,7 +197,7 @@ def filter_patient_list_view(request):
             data = list()
         return render(request, 'list/patient.html',
                       {'user': request.user,
-                       'list_view': sorted(data, key=(lambda x: x.timestamp)),
+                       'list_view': sorted(data, reverse=True, key=get_latest_timestamp),
                        'page_name': 'Manager',
                        'selected': selected,
                        'filter_day': request.GET["date_filter_day"],
@@ -226,7 +233,7 @@ def search_patient_list_view(request):
             data = list()
         return render(request, 'list/patient.html',
                       {'user': request.user,
-                       'list_view': sorted(data, key=(lambda x: x.timestamp)),
+                       'list_view': sorted(data, reverse=True, key=get_latest_timestamp),
                        'page_tip': 'This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.'})
     else:
         return redirect('main:not_logged_in')
