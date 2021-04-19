@@ -10,7 +10,7 @@ certifi==2020.12.5
 chardet==4.0.0
 click==7.1.2
 colorama==0.4.4
-django-axes==5.13.1
+django-axes==5.14.0
 django-crispy-forms==1.11.2
 django-ipware==3.0.2
 django-localflavor==3.0.1
@@ -36,13 +36,13 @@ python-dateutil==2.8.1
 python-stdnum==1.16
 pytz==2021.1
 requests==2.25.1
-s3transfer==0.3.6
+s3transfer==0.3.7
 safety==1.10.3
 setuptools==56.0.0
 six==1.15.0
 sqlparse==0.4.1
 toml==0.10.2
-typed-ast==1.4.2
+typed-ast==1.4.3
 ua-parser==0.10.0
 urllib3==1.26.4
 user-agents==2.2.0
