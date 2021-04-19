@@ -165,7 +165,7 @@ def referral_form_view(request, id=None):
             return render(request, 'forms/referral.html', {
                 'patient_id': id,
                 'page_name': "Campaign Referral",
-                'campaigns': Campaign.objects.filter(instance=(Campaign.objects.get(name=request.session['campaign']).instance))
+                'campaigns': Campaign.objects.filter(instance=(Campaign.objects.get(name=request.session['campaign']).instance)).filter(active=True)
             })
     else:
         return redirect('/not_logged_in')
