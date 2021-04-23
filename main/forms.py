@@ -13,7 +13,7 @@ from django.utils import timezone
 
 from crispy_forms.helper import FormHelper
 
-from .models import Patient, PatientEncounter, fEMRUser, Campaign, Instance, Contact
+from .models import Patient, PatientEncounter, fEMRUser, Campaign, Instance, Contact, Vitals
 
 
 class DateInputOverride(DateInput):
@@ -134,52 +134,35 @@ class PatientEncounterForm(ModelForm):
     def __init__(self, *args, **kwargs):
         self.unit = kwargs.pop('unit', None)
         super(PatientEncounterForm, self).__init__(*args, **kwargs)
-        self.fields['diastolic_blood_pressure'].widget.attrs['min'] = 0
-        self.fields['systolic_blood_pressure'].widget.attrs['min'] = 0
         self.fields['body_height_primary'].widget.attrs['min'] = 0
         self.fields['body_height_primary'].widget.attrs['max'] = 10
         self.fields['body_height_secondary'].widget.attrs['min'] = 0
-        self.fields['oxygen_concentration'].widget.attrs['min'] = 70
-        self.fields['oxygen_concentration'].widget.attrs['max'] = 100
         self.fields['body_height_secondary'].widget.attrs['step'] = .01
         self.fields['body_height_secondary'].widget.attrs['maxlength'] = 4
         self.fields['body_height_secondary'].widget.attrs[
             'pattern'] = "^[0-9]{0,2}[\.]{0,1}[0-9]{0,2}$"
         self.fields['body_height_secondary'].widget.attrs['value'] = 0.00
         self.fields['body_mass_index'].widget.attrs['step'] = .1
-        self.fields['heart_rate'].widget.attrs['min'] = 40
-        self.fields['heart_rate'].widget.attrs['max'] = 170
-        self.fields['respiratory_rate'].widget.attrs['min'] = 0
-        self.fields['body_temperature'].widget.attrs['step'] = 0.01
         self.fields['bmi_percentile'].widget.attrs['min'] = 0
         self.fields['body_mass_index'].widget.attrs['min'] = 0
         self.fields['body_mass_index'].widget.attrs['style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
-        self.fields['mean_arterial_pressure'].widget.attrs['style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
         self.fields['body_mass_index'].widget.attrs['readonly'] = ""
-        self.fields['mean_arterial_pressure'].widget.attrs['readonly'] = ""
-        self.fields['glucose_level'].widget.attrs['min'] = 0
         self.fields['weeks_pregnant'].widget.attrs['min'] = 0
         self.fields['weeks_pregnant'].widget.attrs['max'] = 45
         if self.unit == 'i':
-            self.fields['body_temperature'].label = 'Body temperature - Fahrenheit'
             self.fields['body_weight'].label = 'Body weight - Pounds'
             self.fields['body_height_primary'].label = 'Height - Feet'
             self.fields['body_height_primary'].widget.attrs['max'] = 9
             self.fields['body_height_secondary'].label = 'Height - Inches'
             self.fields['body_height_secondary'].widget.attrs['max'] = 11.9
             self.fields['body_weight'].widget.attrs['min'] = 5
-            self.fields['body_temperature'].widget.attrs['min'] = 93
-            self.fields['body_temperature'].widget.attrs['max'] = 113
         else:
-            self.fields['body_temperature'].label = 'Body temperature - Celsius'
             self.fields['body_weight'].label = 'Body weight - Kilos'
             self.fields['body_height_primary'].label = 'Height - Meters'
             self.fields['body_height_primary'].widget.attrs['max'] = 3
             self.fields['body_height_secondary'].label = 'Height - Centimeters'
             self.fields['body_height_secondary'].widget.attrs['max'] = 100
             self.fields['body_weight'].widget.attrs['min'] = 0.25
-            self.fields['body_temperature'].widget.attrs['min'] = 34
-            self.fields['body_temperature'].widget.attrs['max'] = 45
 
     def clean_body_mass_index(self):
         if self.cleaned_data['body_mass_index'] < 5:
@@ -193,7 +176,6 @@ class PatientEncounterForm(ModelForm):
         m = super(PatientEncounterForm, self).save(commit=False)
         if self.unit == 'i':
             tmp = m.body_height_primary
-            m.body_temperature = (m.body_temperature - 32) * (5/9)
             m.body_height_primary = math.floor(
                 (((m.body_height_primary * 12) + m.body_height_secondary) * 2.54) // 100)
             m.body_height_secondary = (
@@ -210,10 +192,7 @@ class PatientEncounterForm(ModelForm):
         model = PatientEncounter
         fields = '__all__'
         labels = {
-            'mean_arterial_pressure': 'Mean Arterial Pressure',
             'body_mass_index': 'Body Mass Index',
-            'smoking': 'Tobacco Use Disorder',
-            'alcohol': 'History of Substance/Alcohol Abuse',
         }
         widgets = {
             'diagnoses': Textarea(attrs={'rows': 4, 'cols': 40}),
@@ -221,6 +200,65 @@ class PatientEncounterForm(ModelForm):
             'chief_complaint': Textarea(attrs={'rows': 4, 'cols': 40}),
             'patient_history': Textarea(attrs={'rows': 4, 'cols': 40}),
             'community_health_worker_notes': Textarea(attrs={'rows': 4, 'cols': 40})
+        }
+
+
+class VitalsForm(ModelForm):
+    """
+    Data entry form - Vitals
+    """
+
+    def __init__(self, *args, **kwargs):
+        self.unit = kwargs.pop('unit', None)
+        super(VitalsForm, self).__init__(*args, **kwargs)
+        self.fields['diastolic_blood_pressure'].widget.attrs['min'] = 0
+        self.fields['systolic_blood_pressure'].widget.attrs['min'] = 0
+        self.fields['oxygen_concentration'].widget.attrs['min'] = 70
+        self.fields['oxygen_concentration'].widget.attrs['max'] = 100
+        self.fields['heart_rate'].widget.attrs['min'] = 40
+        self.fields['heart_rate'].widget.attrs['max'] = 170
+        self.fields['respiratory_rate'].widget.attrs['min'] = 0
+        self.fields['body_temperature'].widget.attrs['step'] = 0.01
+        self.fields['mean_arterial_pressure'].widget.attrs['style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
+        self.fields['mean_arterial_pressure'].widget.attrs['readonly'] = ""
+        self.fields['glucose_level'].widget.attrs['min'] = 0
+        self.fields['weeks_pregnant'].widget.attrs['min'] = 0
+        self.fields['weeks_pregnant'].widget.attrs['max'] = 45
+        if self.unit == 'i':
+            self.fields['body_temperature'].label = 'Body temperature - Fahrenheit'
+            self.fields['body_temperature'].widget.attrs['min'] = 93
+            self.fields['body_temperature'].widget.attrs['max'] = 113
+        else:
+            self.fields['body_temperature'].label = 'Body temperature - Celsius'
+            self.fields['body_temperature'].widget.attrs['min'] = 34
+            self.fields['body_temperature'].widget.attrs['max'] = 45
+
+    def clean_body_mass_index(self):
+        if self.cleaned_data['body_mass_index'] < 5:
+            self.add_error('body_height_primary',
+                           "BMI shouldn't be less than 5%. Check these numbers.")
+            self.add_error(
+                'body_weight', "BMI shouldn't be less than 5%. Check these numbers.")
+        return self.cleaned_data['body_mass_index']
+
+    def save(self, commit=True):
+        m = super(VitalsForm, self).save(commit=False)
+        if self.unit == 'i':
+            m.body_temperature = (m.body_temperature - 32) * (5/9)
+        if commit:
+            m.save()
+        return m
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = Vitals
+        fields = '__all__'
+        labels = {
+            'mean_arterial_pressure': 'Mean Arterial Pressure',
+            'smoking': 'Tobacco Use Disorder',
+            'alcohol': 'History of Substance/Alcohol Abuse',
         }
 
 

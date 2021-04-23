@@ -186,32 +186,12 @@ class PatientEncounter(models.Model):
     patient = models.ForeignKey(
         Patient, on_delete=models.CASCADE, null=True, blank=True)
 
-    smoking = models.BooleanField(default=False)
-    history_of_diabetes = models.BooleanField(default=False)
-    history_of_hypertension = models.BooleanField(default=False)
-    history_of_high_cholesterol = models.BooleanField(default=False)
-    alcohol = models.BooleanField(default=False)
-
-    diastolic_blood_pressure = models.IntegerField(
-        validators=[MaxValueValidator(200), MinValueValidator(1)])
-    systolic_blood_pressure = models.IntegerField(
-        validators=[MaxValueValidator(200), MinValueValidator(1)])
-    mean_arterial_pressure = models.FloatField(
-        validators=[MinValueValidator(1)])
     body_height_primary = models.IntegerField(
         validators=[MaxValueValidator(8), MinValueValidator(0)])
     body_height_secondary = models.FloatField(
         validators=[ModifiedMaxValueValidator(100), MinValueValidator(0)])
     body_weight = models.FloatField(
         validators=[MaxValueValidator(500), MinValueValidator(0.25)])
-    heart_rate = models.IntegerField(
-        validators=[MaxValueValidator(170), MinValueValidator(40)])
-    respiratory_rate = models.IntegerField(
-        validators=[MaxValueValidator(500), MinValueValidator(1)], null=True, blank=True)
-    body_temperature = models.FloatField(
-        validators=[MaxValueValidator(200), MinValueValidator(1)])
-    oxygen_concentration = models.IntegerField(
-        validators=[MaxValueValidator(100), MinValueValidator(70)], null=True, blank=True)
     bmi_percentile = models.IntegerField(
         validators=[MaxValueValidator(100), MinValueValidator(1)], null=True, blank=True)
     weight_for_length_percentile = models.IntegerField(
@@ -220,10 +200,14 @@ class PatientEncounter(models.Model):
         validators=[MaxValueValidator(100), MinValueValidator(1)], null=True, blank=True)
     body_mass_index = models.FloatField(
         validators=[MaxValueValidator(500), MinValueValidator(0)], null=True, blank=True)
-    glucose_level = models.FloatField(
-        validators=[MaxValueValidator(500), MinValueValidator(1)], null=True, blank=True)
     weeks_pregnant = models.IntegerField(
         validators=[MaxValueValidator(45), MinValueValidator(1)], null=True, blank=True)
+
+    smoking = models.BooleanField(default=False)
+    history_of_diabetes = models.BooleanField(default=False)
+    history_of_hypertension = models.BooleanField(default=False)
+    history_of_high_cholesterol = models.BooleanField(default=False)
+    alcohol = models.BooleanField(default=False)
 
     diagnoses = models.CharField(
         max_length=500, null=True, blank=True)
@@ -252,15 +236,37 @@ class PatientEncounter(models.Model):
     def unit_aware_weight(self, unit):
         return self.body_weight if unit == "m" else (self.body_weight * 2.2046)
 
-    @property
-    def unit_aware_temperature(self, unit):
-        return self.body_temperature if unit == "m" else (self.body_temperature * 1.8) + 32
-
     def __str__(self):
         """
         Displays patient encounters in a more readable way.
         """
         return str(self.patient)
+
+
+class Vitals(models.Model):
+    encounter = models.ForeignKey(
+        PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
+    
+    diastolic_blood_pressure = models.IntegerField(
+        validators=[MaxValueValidator(200), MinValueValidator(1)])
+    systolic_blood_pressure = models.IntegerField(
+        validators=[MaxValueValidator(200), MinValueValidator(1)])
+    mean_arterial_pressure = models.FloatField(
+        validators=[MinValueValidator(1)])
+    heart_rate = models.IntegerField(
+        validators=[MaxValueValidator(170), MinValueValidator(40)])
+    respiratory_rate = models.IntegerField(
+        validators=[MaxValueValidator(500), MinValueValidator(1)], null=True, blank=True)
+    body_temperature = models.FloatField(
+        validators=[MaxValueValidator(200), MinValueValidator(1)])
+    oxygen_concentration = models.IntegerField(
+        validators=[MaxValueValidator(100), MinValueValidator(70)], null=True, blank=True)
+    glucose_level = models.FloatField(
+        validators=[MaxValueValidator(500), MinValueValidator(1)], null=True, blank=True)
+
+    @property
+    def unit_aware_temperature(self, unit):
+        return self.body_temperature if unit == "m" else (self.body_temperature * 1.8) + 32
 
 
 class fEMRUser(AbstractUser):
