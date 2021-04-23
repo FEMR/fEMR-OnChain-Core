@@ -37,7 +37,7 @@ python-stdnum==1.16
 pytz==2021.1
 PyYAML==5.4.1
 requests==2.25.1
-s3transfer==0.3.4
+s3transfer==0.4.2
 safety==1.10.3
 six==1.15.0
 sqlparse==0.4.1
