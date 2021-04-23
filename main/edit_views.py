@@ -8,8 +8,8 @@ import math
 import os
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import PatientForm, PatientEncounterForm
-from .models import Campaign, Patient, PatientEncounter, DatabaseChangeLog
+from .forms import PatientForm, PatientEncounterForm, VitalsForm
+from .models import Campaign, Patient, PatientEncounter, DatabaseChangeLog, Vitals
 from main.qldb_interface import update_patient, update_patient_encounter
 
 
@@ -69,13 +69,18 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         telehealth = Campaign.objects.get(name=request.session['campaign']).telehealth
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
+        v = Vitals.objects.filter(encounter=m)
         if request.method == 'POST':
             form = PatientEncounterForm(request.POST or None,
                                         instance=m, unit=units)
-            if form.is_valid():
+            vitals_form = VitalsForm(request.POST)
+            if form.is_valid() and vitals_form.is_valid():
                 encounter = form.save(commit=False)
+                vitals = vitals_form.save(commit=False)
                 encounter.patient = p
                 encounter.save()
+                vitals.encounter = encounter
+                vitals.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
@@ -92,15 +97,11 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                                              ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
             form = PatientEncounterForm(
                 instance=m, unit=units)
+            vitals_form = VitalsForm()
             if units == 'i':
                 form.initial = {
-                    'systolic_blood_pressure': m.systolic_blood_pressure,
-                    'diastolic_blood_pressure': m.diastolic_blood_pressure,
-                    'heart_rate': m.heart_rate,
-                    'oxygen_concentration': m.oxygen_concentration,
                     'glucose_level': m.glucose_level,
                     'body_mass_index': m.body_mass_index,
-                    'mean_arterial_pressure': m.mean_arterial_pressure,
                     'smoking': m.smoking,
                     'history_of_diabetes': m.history_of_diabetes,
                     'history_of_hypertension': m.history_of_hypertension,
@@ -116,12 +117,11 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     'body_height_secondary': round((
                         (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
                     'body_weight': round(m.body_weight * 2.2046, 2),
-                    'body_temperature': round((
-                        m.body_temperature * 9/5) + 32, 2)
                 }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
-                      {'form': form, 'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                      {'form': form, 'vitals': v, 'vitals_form': vitals_form,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
     else:
@@ -134,10 +134,14 @@ def patient_export_view(request, id=None):
             return redirect('main:home')
         m = get_object_or_404(Patient, pk=id)
         encounters = PatientEncounter.objects.filter(patient=m).order_by('-timestamp')
+        vitals_dictionary = dict()
+        for x in encounters:
+            vitals_dictionary[x] = list(Vitals.objects.filter(encounter=x))
         if request.method == 'GET':
             return render(request, 'export/patient_export.html', {
                 'patient': m,
                 'encounters': encounters,
+                'vitals': vitals_dictionary,
                 'telehealth': Campaign.objects.get(name=request.session['campaign']).telehealth,
                 'units': Campaign.objects.get(name=request.session['campaign']).units
             })

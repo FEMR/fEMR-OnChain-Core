@@ -7,14 +7,58 @@
     {% csrf_token %}
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-10">
+            <div class="col-4">
+                <div class="row">
+                    <h3>Vitals History</h3>
+                </div>
+                <div class="row">
+                    {% for v in vitals %}
+                    <div>
+                        <div class="row"><b>{{ v.timestamp }}</b></div>
+                        <div class="row">
+                            <div class="col-md-10">Systolic Blood Pressure</div>
+                            <div class="col-md-2">{{ v.systolic_blood_pressure }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Diastolic Blood Pressure</div>
+                            <div class="col-md-2">{{ v.diastolic_blood_pressure }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Mean Arterial Pressure</div>
+                            <div class="col-md-2">{{ v.mean_arterial_pressure }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Heart Rate</div>
+                            <div class="col-md-2">{{ v.heart_rate }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Respiratory Rate</div>
+                            <div class="col-md-2">{{ v.respiratory_rate }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Body Temperature</div>
+                            <div class="col-md-2">{{ v.body_temperature }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Oxygen Concentration</div>
+                            <div class="col-md-2">{{ v.oxygen_concentration }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Glucose Level</div>
+                            <div class="col-md-2">{{ v.glucose_level }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-8">
                 <div class="row bg-light">
                     <div class="form-group col-md-4">
                         <div>
-                            <div>{{ form.systolic_blood_pressure|as_crispy_field }}</div>
+                            <div>{{ vitals_form.systolic_blood_pressure|as_crispy_field }}</div>
                         </div>
                         <div>
-                            <div>{{ form.diastolic_blood_pressure|as_crispy_field }}</div>
+                            <div>{{ vitals_form.diastolic_blood_pressure|as_crispy_field }}</div>
                         </div>
                         {% if birth_sex == "f" %}
                         <div>
@@ -24,18 +68,18 @@
                     </div>
                     <div class="form-group col-md-4">
                         <div>
-                            <div>{{ form.heart_rate|as_crispy_field }}</div>
+                            <div>{{ vitals_form.heart_rate|as_crispy_field }}</div>
                         </div>
                         <div>
-                            <div>{{ form.body_temperature|as_crispy_field }}</div>
+                            <div>{{ vitals_form.body_temperature|as_crispy_field }}</div>
                         </div>
                     </div>
                     <div class="form-group col-md-4">
                         <div>
-                            <div>{{ form.oxygen_concentration|as_crispy_field }}</div>
+                            <div>{{ vitals_form.oxygen_concentration|as_crispy_field }}</div>
                         </div>
                         <div>
-                            <div>{{ form.glucose_level|as_crispy_field }}</div>
+                            <div>{{ vitals_form.glucose_level|as_crispy_field }}</div>
                         </div>
                     </div>
                 </div>
@@ -79,7 +123,7 @@
                     </div>
                     <div class="form-group col-md-4">
                         <div>
-                            <div>{{ form.mean_arterial_pressure|as_crispy_field }}</div>
+                            <div>{{ vitals_form.mean_arterial_pressure|as_crispy_field }}</div>
                         </div>
                     </div>
                 </div>
@@ -114,10 +158,12 @@
                     <input class="btn btn-primary ml-auto" type="reset" value="Reset Fields" />
                 </div>
                 <div class="col-md-4">
-                    <input class="btn btn-primary ml-auto" type="submit" value="Submit Encounter" id="submit_encounter" name="submit_encounter" />
+                    <input class="btn btn-primary ml-auto" type="submit" value="Submit Encounter" id="submit_encounter"
+                        name="submit_encounter" />
                 </div>
                 <div class="col-md-4">
-                    <input class="btn btn-primary ml-auto" type="submit" value="Submit and Refer" id="submit_refer" name="submit_refer" />
+                    <input class="btn btn-primary ml-auto" type="submit" value="Submit and Refer" id="submit_refer"
+                        name="submit_refer" />
                 </div>
             </div>
         </div>

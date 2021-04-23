@@ -3,7 +3,7 @@ Registers main fEMR-OnChain data model types to the backend administrative syste
 """
 from django.contrib import admin
 
-from .models import Patient, Contact, fEMRUser, PatientEncounter, AuditEntry, UnitsSetting, DatabaseChangeLog, Campaign, Instance
+from .models import Patient, Contact, fEMRUser, PatientEncounter, AuditEntry, UnitsSetting, DatabaseChangeLog, Campaign, Instance, Vitals
 
 admin.site.register(Patient)
 admin.site.register(fEMRUser)
@@ -14,3 +14,4 @@ admin.site.register(DatabaseChangeLog)
 admin.site.register(Campaign)
 admin.site.register(Instance)
 admin.site.register(Contact)
+admin.site.register(Vitals)

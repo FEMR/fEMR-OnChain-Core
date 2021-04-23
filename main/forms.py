@@ -222,8 +222,6 @@ class VitalsForm(ModelForm):
         self.fields['mean_arterial_pressure'].widget.attrs['style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
         self.fields['mean_arterial_pressure'].widget.attrs['readonly'] = ""
         self.fields['glucose_level'].widget.attrs['min'] = 0
-        self.fields['weeks_pregnant'].widget.attrs['min'] = 0
-        self.fields['weeks_pregnant'].widget.attrs['max'] = 45
         if self.unit == 'i':
             self.fields['body_temperature'].label = 'Body temperature - Fahrenheit'
             self.fields['body_temperature'].widget.attrs['min'] = 93

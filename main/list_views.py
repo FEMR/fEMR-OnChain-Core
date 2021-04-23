@@ -15,7 +15,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from pytz import timezone as pytz_timezone
 
-from .models import PatientEncounter, Patient, Campaign
+from .models import PatientEncounter, Patient, Campaign, Vitals
 
 
 def get_latest_timestamp(patient):
@@ -89,29 +89,30 @@ def patient_csv_export_view(request):
         campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
         for patient in data:
             for encounter in PatientEncounter.objects.filter(patient=patient):
+                vital = Vitals.objects.filter(encounter=encounter)[0]
                 if units == 'i':
                     row = [id,
                             "{} {}".format(encounter.timestamp.astimezone(campaign_time_zone), campaign_time_zone_b),
-                            encounter.systolic_blood_pressure, encounter.diastolic_blood_pressure,
-                            encounter.mean_arterial_pressure, encounter.heart_rate,
+                            vital.systolic_blood_pressure, vital.diastolic_blood_pressure,
+                            vital.mean_arterial_pressure, vital.heart_rate,
                             round(
-                            (encounter.body_temperature * 9/5) + 32, 2),
+                            (vital.body_temperature * 9/5) + 32, 2),
                             "{0}' {1}\"".format(
                             math.floor(
                             round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) // 12),
                             round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) % 12),
                             round(encounter.body_weight * 2.2046, 2),
-                            encounter.body_mass_index, encounter.oxygen_concentration, encounter.glucose_level, encounter.smoking,
+                            encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, vital.smoking,
                             encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
                             encounter.alcohol, encounter.community_health_worker_notes]
                 else:
                     row = [id,
                             "{} {}".format(encounter.timestamp.astimezone(campaign_time_zone), campaign_time_zone_b),
-                            encounter.systolic_blood_pressure, encounter.diastolic_blood_pressure,
-                            encounter.mean_arterial_pressure, encounter.heart_rate, encounter.body_temperature,
+                            vital.systolic_blood_pressure, vital.diastolic_blood_pressure,
+                            vital.mean_arterial_pressure, vital.heart_rate, vital.body_temperature,
                             "{0} m {1} cm".format(
                             encounter.body_height_primary, encounter.body_height_secondary), encounter.body_weight,
-                            encounter.body_mass_index, encounter.oxygen_concentration, encounter.glucose_level, encounter.smoking,
+                            encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, encounter.smoking,
                             encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
                             encounter.alcohol, encounter.community_health_worker_notes]
                 if telehealth:

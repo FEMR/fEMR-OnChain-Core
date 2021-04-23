@@ -264,6 +264,9 @@ class Vitals(models.Model):
     glucose_level = models.FloatField(
         validators=[MaxValueValidator(500), MinValueValidator(1)], null=True, blank=True)
 
+    timestamp = models.DateTimeField(
+        auto_now=True, editable=False, null=False, blank=False)
+
     @property
     def unit_aware_temperature(self, unit):
         return self.body_temperature if unit == "m" else (self.body_temperature * 1.8) + 32
@@ -297,10 +300,10 @@ class AuditEntry(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, blank=True, null=True)
 
     def __unicode__(self):
-        return '{0} - {1} - {2} - {3}'.format(self.action, self.username, self.ip, self.timestamp, self.campaign)
+        return '{0} - {1} - {2} - {3} - {4}'.format(self.action, self.username, self.ip, self.timestamp, self.campaign)
 
     def __str__(self):
-        return '{0} - {1} - {2} - {3}'.format(self.action, self.username, self.ip, self.timestamp, self.campaign)
+        return '{0} - {1} - {2} - {3} - {4}'.format(self.action, self.username, self.ip, self.timestamp, self.campaign)
 
 
 class DatabaseChangeLog(models.Model):
