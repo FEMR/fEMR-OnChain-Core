@@ -12,6 +12,7 @@ from django.forms.widgets import Textarea
 from django.utils import timezone
 
 from crispy_forms.helper import FormHelper
+from searchableselect.widgets import SearchableSelect
 
 from .models import Patient, PatientEncounter, fEMRUser, Campaign, Instance, Contact, Vitals
 
@@ -195,9 +196,9 @@ class PatientEncounterForm(ModelForm):
             'body_mass_index': 'Body Mass Index',
         }
         widgets = {
-            'diagnoses': Textarea(attrs={'rows': 4, 'cols': 40}),
-            'treatments': Textarea(attrs={'rows': 4, 'cols': 40}),
-            'chief_complaint': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'diagnoses': SearchableSelect(model='models.Diagnosis', search_field='text', limit=10),
+            'treatments': SearchableSelect(model='models.Treatment', search_field='text', limit=10),
+            'chief_complaint': SearchableSelect(model='models.ChiefComplaint', search_field='medication', limit=10),
             'patient_history': Textarea(attrs={'rows': 4, 'cols': 40}),
             'community_health_worker_notes': Textarea(attrs={'rows': 4, 'cols': 40})
         }

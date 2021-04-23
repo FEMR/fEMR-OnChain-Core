@@ -179,6 +179,59 @@ class ModifiedMaxValueValidator(BaseValidator):
         return a > b
 
 
+class ChiefComplaint(models.Model):
+    text = models.CharField(
+        max_length=1024,
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return str(self.text)
+
+
+class Diagnosis(models.Model):
+    text = models.CharField(
+        max_length=1024,
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return str(self.text)
+
+
+class Medication(models.Model):
+    text = models.CharField(
+        max_length=1024,
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return str(self.text)
+
+
+class AdministrationSchedule(models.Model):
+    text = models.CharField(
+        max_length=1024,
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return str(self.text)
+
+
+class Treatment(models.Model):
+    medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
+    administration_schedule = models.ForeignKey(AdministrationSchedule, on_delete=models.CASCADE)
+    days = models.IntegerField()
+
+    def __str__(self):
+        return str(self.medication)
+
+
 class PatientEncounter(models.Model):
     """
     Individual data point in a patient's medical record.
@@ -209,12 +262,9 @@ class PatientEncounter(models.Model):
     history_of_high_cholesterol = models.BooleanField(default=False)
     alcohol = models.BooleanField(default=False)
 
-    diagnoses = models.CharField(
-        max_length=500, null=True, blank=True)
-    treatments = models.CharField(
-        max_length=500, null=True, blank=True)
-    chief_complaint = models.CharField(
-        max_length=500, null=True, blank=True)
+    diagnoses = models.ManyToManyField(Diagnosis)
+    treatments = models.ManyToManyField(Treatment)
+    chief_complaint = models.ManyToManyField(ChiefComplaint)
     patient_history = models.CharField(
         max_length=500, null=True, blank=True)
     
