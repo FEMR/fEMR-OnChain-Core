@@ -100,7 +100,6 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
             vitals_form = VitalsForm()
             if units == 'i':
                 form.initial = {
-                    'glucose_level': m.glucose_level,
                     'body_mass_index': m.body_mass_index,
                     'smoking': m.smoking,
                     'history_of_diabetes': m.history_of_diabetes,
