@@ -262,9 +262,9 @@ class PatientEncounter(models.Model):
     history_of_high_cholesterol = models.BooleanField(default=False)
     alcohol = models.BooleanField(default=False)
 
-    diagnoses = models.ManyToManyField(Diagnosis)
-    treatments = models.ManyToManyField(Treatment)
-    chief_complaint = models.ManyToManyField(ChiefComplaint)
+    diagnoses = models.ManyToManyField(Diagnosis, blank=True)
+    treatments = models.ManyToManyField(Treatment, blank=True)
+    chief_complaint = models.ManyToManyField(ChiefComplaint, blank=True)
     patient_history = models.CharField(
         max_length=500, null=True, blank=True)
     

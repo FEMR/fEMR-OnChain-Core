@@ -84,14 +84,18 @@ def patient_encounter_form_view(request, id=None):
     if request.user.is_authenticated:
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
-        telehealth = Campaign.objects.get(name=request.session['campaign']).telehealth
+        telehealth = Campaign.objects.get(
+            name=request.session['campaign']).telehealth
         p = Patient.objects.get(pk=id)
         if request.method == "POST":
+            print("Post")
             units = Campaign.objects.get(
                 name=request.session['campaign']).units
-            form = PatientEncounterForm(request.POST, unit=units)
-            vitals_form = VitalsForm(request.POST)
-            if form.is_valid():
+            form = PatientEncounterForm(
+                request.POST, unit=units, prefix="form")
+            vitals_form = VitalsForm(request.POST, prefix="vitals_form")
+            if form.is_valid() and vitals_form.is_valid():
+                print("Valid")
                 encounter = form.save(commit=False)
                 vitals = vitals_form.save(commit=False)
                 encounter.patient = p
@@ -113,11 +117,15 @@ def patient_encounter_form_view(request, id=None):
                     return redirect('main:referral_form_view', **kwargs)
                 else:
                     return render(request, 'data/encounter_submitted.html')
+            else:
+                print(form.errors)
+                print(vitals_form.errors)
         else:
+            print("Get")
             units = Campaign.objects.get(
                 name=request.session['campaign']).units
-            form = PatientEncounterForm(unit=units)
-            vitals_form = VitalsForm()
+            form = PatientEncounterForm(unit=units, prefix="form")
+            vitals_form = VitalsForm(prefix="vitals_form")
             try:
                 encounter = PatientEncounter.objects.filter(
                     patient=p).order_by('timestamp')[0]
@@ -148,8 +156,7 @@ def patient_encounter_form_view(request, id=None):
                         'body_weight': round(encounter.body_weight, 2),
                     }
             except IndexError:
-                form = PatientEncounterForm(unit=units)
-                vitals_form = VitalsForm()
+                print("IndexError")
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/encounter.html',
                       {'form': form, 'vitals_form': vitals_form, 'page_name': 'New Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
