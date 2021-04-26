@@ -30,7 +30,7 @@ lazy-object-proxy==1.4.3
 mccabe==0.6.1
 packaging==20.9
 psycopg2==2.8.6
-pycodestyle==2.6.0
+pycodestyle==2.7.0
 pylint==2.7.2
 pyparsing==2.4.7
 pyqldb==3.0.0
