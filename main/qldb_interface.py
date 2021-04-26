@@ -4,6 +4,9 @@ Application-wide functions for interfacing with AWS QLDB.
 from pyqldb.driver.qldb_driver import QldbDriver
 
 import os
+import json
+
+from django.core.serializers.json import DjangoJSONEncoder
 
 try:
     LEDGER_NAME = os.environ['qldb_name']
@@ -94,6 +97,9 @@ def create_new_patient_encounter(patient_encounter: dict):
         """
         Internal function handling insertion of new patients.
         """
+        p['diagnoses'] = json.dumps(list(p['diagnoses']), cls=DjangoJSONEncoder)
+        p['treatments'] = json.dumps(list(p['treatments']), cls=DjangoJSONEncoder)
+        p['chief_complaint'] = json.dumps(list(p['chief_complaint']), cls=DjangoJSONEncoder)
         transaction_executor.execute_statement(
             "INSERT INTO PatientEncounter ?", p)
 
@@ -105,7 +111,11 @@ def create_new_patient_encounter(patient_encounter: dict):
 
 # noinspection PyTypeChecker
 def update_patient_encounter(patient_encounter: dict):
+    
     def insert_documents(transaction_executor, p: dict):
+        p['diagnoses'] = json.dumps(list(p['diagnoses']), cls=DjangoJSONEncoder)
+        p['treatments'] = json.dumps(list(p['treatments']), cls=DjangoJSONEncoder)
+        p['chief_complaint'] = json.dumps(list(p['chief_complaint']), cls=DjangoJSONEncoder)
         transaction_executor.execute_statement(
             "INSERT INTO PatientEncounter ?", p)
 

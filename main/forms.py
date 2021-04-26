@@ -12,9 +12,102 @@ from django.forms.widgets import Textarea
 from django.utils import timezone
 
 from crispy_forms.helper import FormHelper
-from searchableselect.widgets import SearchableSelect
+from crispy_forms.layout import Layout, Div, MultiField
+from selectable.forms import AutoCompleteSelectMultipleWidget
 
-from .models import Patient, PatientEncounter, fEMRUser, Campaign, Instance, Contact, Vitals
+from .lookups import ChiefComplaintLookup, TreatmentLookup, DiagnosisLookup, MedicationLookup, AdministrationScheduleLookup
+
+from .models import Patient, PatientEncounter, fEMRUser, Campaign, Instance, Contact, Vitals,\
+    ChiefComplaint, Treatment, Diagnosis, Medication, AdministrationSchedule
+
+
+class ChiefComplaintForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = ChiefComplaint
+        fields = '__all__'
+        labels = {
+            'text': 'Chief Complaint',
+        }
+
+
+class DiagnosisForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = Diagnosis
+        fields = '__all__'
+        labels = {
+            'text': 'Diagnosis'
+        }
+
+
+class MedicationForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = Medication
+        fields = '__all__'
+        labels = {
+            'text': 'Medication'
+        }
+
+
+class AdministrationScheduleForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = AdministrationSchedule
+        fields = '__all__'
+        labels = {
+            'text': 'Administration Schedule'
+        }
+
+
+class TreatmentForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            MultiField(
+                Div('medication'),
+                Div('administration_schedule'),
+                Div('days'),
+            ),
+        )
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = Treatment
+        fields = '__all__'
 
 
 class DateInputOverride(DateInput):
@@ -196,9 +289,9 @@ class PatientEncounterForm(ModelForm):
             'body_mass_index': 'Body Mass Index',
         }
         widgets = {
-            'diagnoses': SearchableSelect(model='models.Diagnosis', search_field='text', limit=10),
-            'treatments': SearchableSelect(model='models.Treatment', search_field='text', limit=10),
-            'chief_complaint': SearchableSelect(model='models.ChiefComplaint', search_field='medication', limit=10),
+            # 'diagnoses': AutoCompleteSelectMultipleWidget(DiagnosisLookup),
+            # 'treatments': AutoCompleteSelectMultipleWidget(TreatmentLookup),
+            # 'chief_complaint': AutoCompleteSelectMultipleWidget(ChiefComplaintLookup),
             'patient_history': Textarea(attrs={'rows': 4, 'cols': 40}),
             'community_health_worker_notes': Textarea(attrs={'rows': 4, 'cols': 40})
         }
@@ -325,7 +418,8 @@ class UserUpdateForm(UserChangeForm):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.fields['campaigns'].queryset = filter_campaigns_for_instances(user)
+        self.fields['campaigns'].queryset = filter_campaigns_for_instances(
+            user)
 
     class Meta:
         model = fEMRUser

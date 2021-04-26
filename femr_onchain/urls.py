@@ -26,5 +26,4 @@ urlpatterns = [
         name='password_reset_complete'),
     path('change_password/', change_password, name='change_password'),
     path('required_change_password/', required_change_password, name='required_change_password'),
-    url('^searchableselect/', include('searchableselect.urls')),
 ]

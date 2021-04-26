@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'axes',
     'session_security',
     'django_user_agents',
-    'searchableselect',
 ]
 
 AUTHENTICATION_BACKENDS = [
