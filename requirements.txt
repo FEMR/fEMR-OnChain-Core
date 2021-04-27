@@ -12,6 +12,7 @@ Django==3.1.7
 django-autocomplete-light==3.8.2
 django-axes==5.13.1
 django-crispy-forms==1.11.1
+django-elasticache==1.0.3
 django-ipware==3.0.2
 django-localflavor==3.0.1
 django-searchable-select==1.5.0
@@ -31,6 +32,7 @@ mccabe==0.6.1
 packaging==20.9
 psycopg2==2.8.6
 pycodestyle==2.7.0
+pylibmc==1.6.1
 pylint==2.7.2
 pyparsing==2.4.7
 pyqldb==3.0.0
