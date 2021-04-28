@@ -69,7 +69,7 @@ class Campaign(models.Model):
     timezone = models.CharField(
         max_length=100, choices=COMMON_TIMEZONES_CHOICES)
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
-    inventory = models.ForeignKey("Inventory", on_delete=models.CASCADE)
+    inventory = models.ForeignKey("Inventory", on_delete=models.CASCADE, blank=True, null=True)
 
     def __unicode__(self):
         return self.name
@@ -255,7 +255,7 @@ class PatientEncounter(models.Model):
     alcohol = models.BooleanField(default=False)
 
     diagnoses = models.ManyToManyField(Diagnosis, blank=True)
-    treatments = models.ManyToManyField(Treatment, blank=True)
+    treatments = models.ManyToManyField("Treatment", blank=True)
     chief_complaint = models.ManyToManyField(ChiefComplaint, blank=True)
     patient_history = models.CharField(
         max_length=500, null=True, blank=True)
@@ -333,14 +333,14 @@ class Treatment(models.Model):
     medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
     administration_schedule = models.ForeignKey(AdministrationSchedule, on_delete=models.CASCADE)
     days = models.IntegerField()
-    prescriber = models.ForeignKey(fEMRUser, on_delete=models.CASCADE)
+    prescriber = models.ForeignKey(fEMRUser, on_delete=models.CASCADE, default=1)
 
     def __str__(self):
         return str(self.medication)
 
 
 class InventoryEntry(models.Model):
-    medication = models.ForeignKey(medication, on_delete=models.CASCADE)
+    medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
     volume = models.IntegerField()
 
 
