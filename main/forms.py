@@ -14,8 +14,6 @@ from django.utils import timezone
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, MultiField
 
-from .lookups import ChiefComplaintLookup, TreatmentLookup, DiagnosisLookup, MedicationLookup, AdministrationScheduleLookup
-
 from .models import Patient, PatientEncounter, fEMRUser, Campaign, Instance, Contact, Vitals,\
     ChiefComplaint, Treatment, Diagnosis, Medication, AdministrationSchedule
 
