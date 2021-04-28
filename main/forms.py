@@ -13,7 +13,6 @@ from django.utils import timezone
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, MultiField
-from selectable.forms import AutoCompleteSelectMultipleWidget
 
 from .lookups import ChiefComplaintLookup, TreatmentLookup, DiagnosisLookup, MedicationLookup, AdministrationScheduleLookup
 
