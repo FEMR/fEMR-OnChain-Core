@@ -247,7 +247,6 @@ class PatientEncounter(models.Model):
     history_of_high_cholesterol = models.BooleanField(default=False)
     alcohol = models.BooleanField(default=False)
 
-    diagnoses = models.ManyToManyField(Diagnosis, blank=True)
     chief_complaint = models.ManyToManyField(ChiefComplaint, blank=True)
     patient_history = models.CharField(
         max_length=500, null=True, blank=True)
@@ -322,10 +321,10 @@ class fEMRUser(AbstractUser):
 
 
 class Treatment(models.Model):
-    medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
+    medication = models.ForeignKey(Medication, on_delete=models.CASCADE, null=True, blank=True)
     administration_schedule = models.CharField(
-        max_length=8, choices=administration_schedule_choices)
-    days = models.IntegerField()
+        max_length=8, choices=administration_schedule_choices, null=True, blank=True)
+    days = models.IntegerField(null=True, blank=True)
     prescriber = models.ForeignKey(
         fEMRUser, on_delete=models.CASCADE, null=True, blank=True)
     diagnosis = models.ForeignKey(Diagnosis, on_delete=models.CASCADE, null=True, blank=True)

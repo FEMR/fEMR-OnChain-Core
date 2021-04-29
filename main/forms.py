@@ -291,6 +291,10 @@ EncounterFormSet = inlineformset_factory(
         'days',
         'diagnosis',
     ),
+    widgets={
+        'medication': autocomplete.ModelSelect2(url='main:medication-autocomplete'),
+        'diagnosis': autocomplete.ModelSelect2(url='main:diagnosis-autocomplete'),
+    },
     extra=1,
     can_order=False,
     can_delete=False
