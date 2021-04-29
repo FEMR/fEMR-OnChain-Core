@@ -74,20 +74,3 @@ def medication_form_view(request, id=None):
     else:
         return redirect('/not_logged_in')
 
-
-def administration_schedule_form_view(request, id=None):
-    if request.user.is_authenticated:
-        if request.session['campaign'] == "RECOVERY MODE":
-            return redirect('main:home')
-        if request.method == "POST":
-            form = AdministrationScheduleForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return redirect('main:patient_list_view')
-        if request.method == "GET":
-            form = AdministrationScheduleForm()
-        return render(request, 'forms/generic.html', {
-            'form': form
-        })
-    else:
-        return redirect('/not_logged_in')
