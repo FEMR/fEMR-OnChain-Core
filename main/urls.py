@@ -15,7 +15,7 @@ from .list_views import patient_csv_export_view, patient_list_view, search_patie
 from .views import forgot_username, index, home, healthcheck, help_messages_off
 from .femr_admin_views import edit_contact_view, lock_campaign_view, new_campaign_view, new_contact_view, new_instance_view, edit_campaign_view, edit_instance_view, \
     list_campaign_view, list_instance_view, femr_admin_home, change_campaign, unlock_campaign_view, view_contact_view
-from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, medication_form_view, treatment_form_view, administration_schedule_form_view
+from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, medication_form_view, treatment_form_view
 from main.views import set_timezone
 from main import hl7
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
@@ -124,8 +124,6 @@ urlpatterns = [
     path(r'medication_form_view', medication_form_view,
          name='medication_form_view'),
     path(r'treatment_form_view', treatment_form_view, name='treatment_form_view'),
-    path(r'administration_schedule_form_view', administration_schedule_form_view,
-         name='administration_schedule_form_view'),
 
     path(r'add_users_to_campaign', add_users_to_campaign,
          name='add_users_to_campaign'),
