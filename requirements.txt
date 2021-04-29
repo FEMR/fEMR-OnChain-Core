@@ -9,6 +9,7 @@ chardet==4.0.0
 click==7.1.2
 colorama==0.4.4
 Django==3.1.7
+django-autocomplete-light==3.8.2
 django-axes==5.13.1
 django-crispy-forms==1.11.1
 django-elasticache==1.0.3
