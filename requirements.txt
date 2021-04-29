@@ -44,7 +44,7 @@ PyYAML==5.4.1
 redis==3.5.3
 redis-py-cluster==2.1.2
 requests==2.25.1
-s3transfer==0.3.4
+s3transfer==0.4.0
 safety==1.10.3
 six==1.15.0
 sqlparse==0.4.1
