@@ -8,7 +8,7 @@ import math
 import os
 from django.shortcuts import render, redirect
 
-from .forms import PatientForm, PatientEncounterForm, VitalsForm
+from .forms import PatientForm, PatientEncounterForm, VitalsForm, EncounterFormSet
 from .models import Campaign, Patient, DatabaseChangeLog, PatientEncounter, Vitals
 from .qldb_interface import create_new_patient, create_new_patient_encounter, update_patient_encounter
 
@@ -102,6 +102,12 @@ def patient_encounter_form_view(request, id=None):
                 encounter.save()
                 vitals.encounter = encounter
                 vitals.save()
+                treatment_form_set = EncounterFormSet(request.POST, instance=encounter)
+                if treatment_form_set.is_valid():
+                    encounter.save()
+                    treatment = treatment_form_set.save()
+                    treatment.prescriber = request.user
+                    treatment.save()
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     create_new_patient_encounter(form.cleaned_data)
                 DatabaseChangeLog.objects.create(action="Create", model="PatientEncounter", instance=str(encounter),
@@ -126,6 +132,7 @@ def patient_encounter_form_view(request, id=None):
                 name=request.session['campaign']).units
             form = PatientEncounterForm(unit=units, prefix="form")
             vitals_form = VitalsForm(prefix="vitals_form")
+            treatment_form_set = EncounterFormSet()
             try:
                 encounter = PatientEncounter.objects.filter(
                     patient=p).order_by('timestamp')[0]
@@ -159,7 +166,7 @@ def patient_encounter_form_view(request, id=None):
                 print("IndexError")
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/encounter.html',
-                      {'form': form, 'vitals_form': vitals_form, 'page_name': 'New Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                      {'form': form, 'vitals_form': vitals_form, 'treatment_form': treatment_form_set, 'page_name': 'New Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': id, 'units': units, 'telehealth': telehealth,
                        'page_tip': "Complete form with patient vitals as instructed. Any box with an asterix (*) is required. For max efficiency, use 'tab' to navigate through this page."})
     else:

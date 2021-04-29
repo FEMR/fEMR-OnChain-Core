@@ -10,6 +10,9 @@ from django.forms import ModelForm, Form, CharField, PasswordInput, DateInput, V
 from django.forms.models import ModelMultipleChoiceField
 from django.forms.widgets import Textarea
 from django.utils import timezone
+from django.forms.models import inlineformset_factory, BaseInlineFormSet
+
+from dal import autocomplete
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, MultiField
@@ -88,6 +91,9 @@ class TreatmentForm(ModelForm):
         """
         model = Treatment
         fields = '__all__'
+        widgets = {
+            'medication': autocomplete.ModelSelect2(url='main:medication-autocomplete'),
+        }
 
 
 class DateInputOverride(DateInput):
@@ -269,12 +275,26 @@ class PatientEncounterForm(ModelForm):
             'body_mass_index': 'Body Mass Index',
         }
         widgets = {
-            # 'diagnoses': AutoCompleteSelectMultipleWidget(DiagnosisLookup),
-            # 'treatments': AutoCompleteSelectMultipleWidget(TreatmentLookup),
-            # 'chief_complaint': AutoCompleteSelectMultipleWidget(ChiefComplaintLookup),
+            'diagnoses': autocomplete.ModelSelect2Multiple(url='main:diagnosis-autocomplete'),
+            'chief_complaint': autocomplete.ModelSelect2Multiple(url='main:chief-complaint-autocomplete'),
             'patient_history': Textarea(attrs={'rows': 4, 'cols': 40}),
             'community_health_worker_notes': Textarea(attrs={'rows': 4, 'cols': 40})
         }
+
+
+EncounterFormSet = inlineformset_factory(
+    PatientEncounter,
+    Treatment,
+    fields=(
+        'medication',
+        'administration_schedule',
+        'days',
+        'diagnosis',
+    ),
+    extra=1,
+    can_order=False,
+    can_delete=False
+)
 
 
 class VitalsForm(ModelForm):

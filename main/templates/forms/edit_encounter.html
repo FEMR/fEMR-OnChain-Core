@@ -143,7 +143,7 @@
                         {{ form.diagnoses|as_crispy_field }}
                     </div>
                     <div class="form-group col-md-6">
-                        {{ form.treatments|as_crispy_field}}
+                        {{ treatment_form|crispy}}
                     </div>
                 </div>
                 {% endif %}
@@ -169,6 +169,10 @@
         </div>
     </div>
 </form>
+
+<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+{{ form.media }}
+
 <script>
     $(document).on("keydown", ":input:not(textarea)", function (event) {
         return event.key != "Enter";

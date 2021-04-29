@@ -19,6 +19,7 @@ from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, m
 from main.views import set_timezone
 from main import hl7
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
+from .autocomplete_views import DiagnosisAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete
 
 app_name = 'main'
 
@@ -140,4 +141,20 @@ urlpatterns = [
     url(r'^forgot_username', forgot_username, name='forgot_username'),
 
     url(r'^help_messages_off', help_messages_off, name='help_messages_off'),
+
+    url(
+         r'^diagnosis-autocomplete/$',
+         DiagnosisAutocomplete.as_view(create_field='text'),
+         name='diagnosis-autocomplete',
+    ),
+    url(
+         r'^medication-autocomplete/$',
+         MedicationAutocomplete.as_view(create_field='text'),
+         name='medication-autocomplete',
+    ),
+    url(
+         r'^chief-complaint-autocomplete/$',
+         ChiefComplaintAutocomplete.as_view(create_field='text'),
+         name='chief-complaint-autocomplete',
+    ),
 ]

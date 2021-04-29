@@ -8,7 +8,7 @@ import math
 import os
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import PatientForm, PatientEncounterForm, VitalsForm
+from .forms import PatientForm, PatientEncounterForm, VitalsForm, EncounterFormSet
 from .models import Campaign, Patient, PatientEncounter, DatabaseChangeLog, Vitals
 from main.qldb_interface import update_patient, update_patient_encounter
 
@@ -66,7 +66,8 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         units = Campaign.objects.get(name=request.session['campaign']).units
-        telehealth = Campaign.objects.get(name=request.session['campaign']).telehealth
+        telehealth = Campaign.objects.get(
+            name=request.session['campaign']).telehealth
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
@@ -81,6 +82,13 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 encounter.save()
                 vitals.encounter = encounter
                 vitals.save()
+                treatment_form_set = EncounterFormSet(
+                    request.POST, instance=encounter)
+                if treatment_form_set.is_valid():
+                    encounter.save()
+                    treatment = treatment_form_set.save()
+                    treatment.prescriber = request.user
+                    treatment.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
@@ -98,6 +106,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
             form = PatientEncounterForm(
                 instance=m, unit=units)
             vitals_form = VitalsForm()
+            treatment_form_set = EncounterFormSet()
             if units == 'i':
                 form.initial = {
                     'body_mass_index': m.body_mass_index,
@@ -119,7 +128,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
-                      {'form': form, 'vitals': v, 'vitals_form': vitals_form,
+                      {'form': form, 'vitals': v, 'vitals_form': vitals_form, 'treatment_form': treatment_form_set,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
@@ -132,7 +141,8 @@ def patient_export_view(request, id=None):
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         m = get_object_or_404(Patient, pk=id)
-        encounters = PatientEncounter.objects.filter(patient=m).order_by('-timestamp')
+        encounters = PatientEncounter.objects.filter(
+            patient=m).order_by('-timestamp')
         vitals_dictionary = dict()
         for x in encounters:
             vitals_dictionary[x] = list(Vitals.objects.filter(encounter=x))

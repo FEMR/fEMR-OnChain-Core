@@ -248,7 +248,6 @@ class PatientEncounter(models.Model):
     alcohol = models.BooleanField(default=False)
 
     diagnoses = models.ManyToManyField(Diagnosis, blank=True)
-    treatments = models.ManyToManyField("Treatment", blank=True)
     chief_complaint = models.ManyToManyField(ChiefComplaint, blank=True)
     patient_history = models.CharField(
         max_length=500, null=True, blank=True)
@@ -328,7 +327,9 @@ class Treatment(models.Model):
         max_length=8, choices=administration_schedule_choices)
     days = models.IntegerField()
     prescriber = models.ForeignKey(
-        fEMRUser, on_delete=models.CASCADE, default=1)
+        fEMRUser, on_delete=models.CASCADE, null=True, blank=True)
+    diagnosis = models.ForeignKey(Diagnosis, on_delete=models.CASCADE, null=True, blank=True)
+    encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return str(self.medication)
