@@ -15,7 +15,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, MultiField
 
 from .models import Patient, PatientEncounter, fEMRUser, Campaign, Instance, Contact, Vitals,\
-    ChiefComplaint, Treatment, Diagnosis, Medication, AdministrationSchedule
+    ChiefComplaint, Treatment, Diagnosis, Medication
 
 
 class ChiefComplaintForm(ModelForm):
@@ -66,23 +66,6 @@ class MedicationForm(ModelForm):
         fields = '__all__'
         labels = {
             'text': 'Medication'
-        }
-
-
-class AdministrationScheduleForm(ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-
-    class Meta:
-        """
-        Metaclass controlling model references.
-        """
-        model = AdministrationSchedule
-        fields = '__all__'
-        labels = {
-            'text': 'Administration Schedule'
         }
 
 

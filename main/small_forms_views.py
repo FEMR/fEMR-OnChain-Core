@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from .forms import TreatmentForm, AdministrationScheduleForm, MedicationForm, DiagnosisForm, ChiefComplaintForm
+from .forms import TreatmentForm, MedicationForm, DiagnosisForm, ChiefComplaintForm
 
 
 def chief_complaint_form_view(request, id=None):

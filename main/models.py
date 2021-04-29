@@ -33,6 +33,9 @@ ethnicity_choices = (
     ('2', 'Not Hispanic or Latinx'),
     ('3', 'Nondisclosed'),
 )
+administration_schedule_choices = (
+    ()
+)
 
 
 class Contact(models.Model):
@@ -69,7 +72,8 @@ class Campaign(models.Model):
     timezone = models.CharField(
         max_length=100, choices=COMMON_TIMEZONES_CHOICES)
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
-    inventory = models.ForeignKey("Inventory", on_delete=models.CASCADE, blank=True, null=True)
+    inventory = models.ForeignKey(
+        "Inventory", on_delete=models.CASCADE, blank=True, null=True)
 
     def __unicode__(self):
         return self.name
@@ -213,17 +217,6 @@ class Medication(models.Model):
         return str(self.text)
 
 
-class AdministrationSchedule(models.Model):
-    text = models.CharField(
-        max_length=1024,
-        null=True,
-        blank=True
-    )
-
-    def __str__(self):
-        return str(self.text)
-
-
 class PatientEncounter(models.Model):
     """
     Individual data point in a patient's medical record.
@@ -259,7 +252,7 @@ class PatientEncounter(models.Model):
     chief_complaint = models.ManyToManyField(ChiefComplaint, blank=True)
     patient_history = models.CharField(
         max_length=500, null=True, blank=True)
-    
+
     community_health_worker_notes = models.CharField(
         max_length=500, null=True, blank=True)
 
@@ -288,7 +281,7 @@ class PatientEncounter(models.Model):
 class Vitals(models.Model):
     encounter = models.ForeignKey(
         PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
-    
+
     diastolic_blood_pressure = models.IntegerField(
         validators=[MaxValueValidator(200), MinValueValidator(1)])
     systolic_blood_pressure = models.IntegerField(
@@ -331,9 +324,11 @@ class fEMRUser(AbstractUser):
 
 class Treatment(models.Model):
     medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
-    administration_schedule = models.ForeignKey(AdministrationSchedule, on_delete=models.CASCADE)
+    administration_schedule = models.CharField(
+        max_length=8, choices=administration_schedule_choices)
     days = models.IntegerField()
-    prescriber = models.ForeignKey(fEMRUser, on_delete=models.CASCADE, default=1)
+    prescriber = models.ForeignKey(
+        fEMRUser, on_delete=models.CASCADE, default=1)
 
     def __str__(self):
         return str(self.medication)
@@ -358,7 +353,8 @@ class AuditEntry(models.Model):
     ip = models.GenericIPAddressField(null=True)
     username = models.CharField(max_length=256, null=True)
     timestamp = models.DateTimeField(auto_now=True)
-    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, blank=True, null=True)
+    campaign = models.ForeignKey(
+        Campaign, on_delete=models.CASCADE, blank=True, null=True)
 
     def __unicode__(self):
         return '{0} - {1} - {2} - {3} - {4}'.format(self.action, self.username, self.ip, self.timestamp, self.campaign)
@@ -396,7 +392,7 @@ def user_logged_in_callback(sender, request, user, **kwargs):
     else:
         campaign = None
     AuditEntry.objects.create(action='user_logged_in',
-                                  ip=ip, username=user.username, campaign=campaign)
+                              ip=ip, username=user.username, campaign=campaign)
 
 
 @receiver(user_logged_out)
@@ -411,7 +407,7 @@ def user_logged_out_callback(sender, request, user, **kwargs):
         else:
             campaign = None
         AuditEntry.objects.create(action='user_logged_out',
-                                    ip=ip, username=user.username, campaign=campaign)
+                                  ip=ip, username=user.username, campaign=campaign)
     except AttributeError:
         pass
 
