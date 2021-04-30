@@ -13,6 +13,7 @@ django-autocomplete-light==3.8.2
 django-axes==5.13.1
 django-crispy-forms==1.11.1
 django-elasticache==1.0.3
+django-elastipymemcache==2.0.4
 django-ipware==3.0.2
 django-localflavor==3.0.1
 django-redis-sessions==0.6.2
