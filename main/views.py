@@ -19,7 +19,7 @@ def index(request):
     :return: A template rendered as an HTTPResponse.
     """
     print(request.user_agent.browser.family)
-    if request.user_agent.browser.family != "Chrome" and request.user_agent.browser.family != "Firefox":
+    if request.user_agent.browser.family not in ["Chrome", "Firefox", "Firefox Mobile"]:
         return render(request, 'data/stop.html')
     else:
         return redirect('main:login_view')
