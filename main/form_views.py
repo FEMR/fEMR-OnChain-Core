@@ -93,7 +93,7 @@ def patient_encounter_form_view(request, id=None):
                 name=request.session['campaign']).units
             form = PatientEncounterForm(
                 request.POST, unit=units, prefix="form")
-            vitals_form = VitalsForm(request.POST, prefix="vitals_form")
+            vitals_form = VitalsForm(request.POST, unit=units, prefix="vitals_form")
             if form.is_valid() and vitals_form.is_valid():
                 print("Valid")
                 encounter = form.save(commit=False)
@@ -106,10 +106,14 @@ def patient_encounter_form_view(request, id=None):
                 if treatment_form_set.is_valid():
                     encounter.save()
                     treatment = treatment_form_set.save()
-                    treatment.prescriber = request.user
-                    treatment.save()
+                    for t in treatment:
+                        t.prescriber = request.user
+                        t.save()
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
-                    create_new_patient_encounter(form.cleaned_data)
+                    from .serializers import PatientEncounterSerializer
+                    encounter_data = PatientEncounterSerializer(encounter).data
+                    print(encounter_data)
+                    create_new_patient_encounter(encounter_data)
                 DatabaseChangeLog.objects.create(action="Create", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username,
                                                  campaign=Campaign.objects.get(name=request.session['campaign']))
@@ -131,7 +135,7 @@ def patient_encounter_form_view(request, id=None):
             units = Campaign.objects.get(
                 name=request.session['campaign']).units
             form = PatientEncounterForm(unit=units, prefix="form")
-            vitals_form = VitalsForm(prefix="vitals_form")
+            vitals_form = VitalsForm(unit=units, prefix="vitals_form")
             treatment_form_set = EncounterFormSet()
             try:
                 encounter = PatientEncounter.objects.filter(

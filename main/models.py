@@ -329,6 +329,8 @@ class Treatment(models.Model):
         fEMRUser, on_delete=models.CASCADE, null=True, blank=True)
     diagnosis = models.ForeignKey(Diagnosis, on_delete=models.CASCADE, null=True, blank=True)
     encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
+    timestamp = models.DateTimeField(
+        auto_now=True, editable=False, null=False, blank=False)
 
     def __str__(self):
         return str(self.medication)

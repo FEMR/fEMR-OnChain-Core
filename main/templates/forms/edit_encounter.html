@@ -50,6 +50,36 @@
                     </div>
                     {% endfor %}
                 </div>
+                <div class="row">
+                    <h3>Treatments History</h3>
+                </div>
+                <div class="row">
+                    {% for t in treatments %}
+                    <div>
+                        <div class="row"><b>{{ t.timestamp }}</b></div>
+                        <div class="row">
+                            <div class="col-md-10">Medication</div>
+                            <div class="col-md-2">{{ t.medication }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Administration Schedule</div>
+                            <div class="col-md-2">{{ t.administration_schedule }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Days</div>
+                            <div class="col-md-2">{{ t.days }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Diagnosis</div>
+                            <div class="col-md-2">{{ t.diagnosis }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Prescriber</div>
+                            <div class="col-md-2">{{ t.prescriber }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
             <div class="col-8">
                 <div class="row bg-light">

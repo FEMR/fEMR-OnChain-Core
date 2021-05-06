@@ -9,7 +9,7 @@ import os
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import PatientForm, PatientEncounterForm, VitalsForm, EncounterFormSet
-from .models import Campaign, Patient, PatientEncounter, DatabaseChangeLog, Vitals
+from .models import Campaign, Patient, PatientEncounter, DatabaseChangeLog, Vitals, Treatment
 from main.qldb_interface import update_patient, update_patient_encounter
 
 
@@ -71,10 +71,11 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
+        t = Treatment.objects.filter(encounter=m)
         if request.method == 'POST':
             form = PatientEncounterForm(request.POST or None,
                                         instance=m, unit=units)
-            vitals_form = VitalsForm(request.POST)
+            vitals_form = VitalsForm(request.POST, unit=units)
             if form.is_valid() and vitals_form.is_valid():
                 encounter = form.save(commit=False)
                 vitals = vitals_form.save(commit=False)
@@ -87,12 +88,15 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 if treatment_form_set.is_valid():
                     encounter.save()
                     treatment = treatment_form_set.save()
-                    treatment.prescriber = request.user
+                    for t in treatment:
+                        t.prescriber = request.user
                     treatment.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
-                    update_patient_encounter(form.cleaned_data)
+                    from .serializers import PatientEncounterSerializer
+                    encounter_data = PatientEncounterSerializer(encounter).data
+                    update_patient_encounter(encounter_data)
                 if 'submit_encounter' in request.POST:
                     return render(request, 'data/encounter_submitted.html')
                 elif 'submit_refer' in request.POST:
@@ -105,7 +109,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                                              ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
             form = PatientEncounterForm(
                 instance=m, unit=units)
-            vitals_form = VitalsForm()
+            vitals_form = VitalsForm(unit=units)
             treatment_form_set = EncounterFormSet()
             if units == 'i':
                 form.initial = {
@@ -115,9 +119,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     'history_of_hypertension': m.history_of_hypertension,
                     'history_of_high_cholesterol': m.history_of_high_cholesterol,
                     'alcohol': m.alcohol,
-                    'diagnoses': m.diagnoses,
-                    'treatments': m.treatments,
-                    'chief_complaint': m.chief_complaint,
+                    'chief_complaint': [c.pk for c in m.chief_complaint.all()],
                     'patient_history': m.patient_history,
                     'community_health_worker_notes': m.community_health_worker_notes,
                     'body_height_primary': math.floor(
@@ -128,7 +130,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
-                      {'form': form, 'vitals': v, 'vitals_form': vitals_form, 'treatment_form': treatment_form_set,
+                      {'form': form, 'vitals': v, 'treatments': t,'vitals_form': vitals_form, 'treatment_form': treatment_form_set,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
