@@ -286,14 +286,14 @@ EncounterFormSet = inlineformset_factory(
     PatientEncounter,
     Treatment,
     fields=(
+        'diagnosis',
         'medication',
         'administration_schedule',
         'days',
-        'diagnosis',
     ),
     widgets={
-        'medication': autocomplete.ModelSelect2(url='main:medication-autocomplete'),
         'diagnosis': autocomplete.ModelSelect2(url='main:diagnosis-autocomplete'),
+        'medication': autocomplete.ModelSelect2(url='main:medication-autocomplete'),
     },
     extra=1,
     can_order=False,
@@ -500,6 +500,7 @@ class CampaignForm(ModelForm):
         """
         model = Campaign
         fields = '__all__'
+        exclude = ('inventory',)
 
 
 class ContactForm(ModelForm):
