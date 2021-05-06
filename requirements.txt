@@ -4,8 +4,8 @@ amazon.ion==0.5.0
 asgiref==3.3.4
 astroid==2.5.6
 autopep8==1.5.7
-boto3==1.17.66
-botocore==1.20.66
+boto3==1.17.67
+botocore==1.20.67
 certifi==2020.12.5
 chardet==4.0.0
 click==7.1.2
@@ -48,7 +48,7 @@ requests==2.25.1
 s3transfer==0.4.0
 safety==1.10.3
 setuptools==56.1.0
-six==1.15.0
+six==1.16.0
 sqlparse==0.4.1
 toml==0.10.2
 typed-ast==1.4.2
