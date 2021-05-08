@@ -25,8 +25,9 @@ race_choices = (
     ('2', 'Asian'),
     ('3', 'Black, African American'),
     ('4', 'Hispanic or Latinx'),
-    ('5', 'White'),
-    ('6', 'Nondisclosed'),
+    ('5', 'Mixed Race'),
+    ('6', 'White'),
+    ('7', 'Nondisclosed'),
 )
 ethnicity_choices = (
     ('1', 'Hispanic or Latinx'),
