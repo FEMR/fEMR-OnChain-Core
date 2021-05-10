@@ -43,7 +43,7 @@ def patient_form_view(request):
                 DatabaseChangeLog.objects.create(action="Create", model="Patient", instance=str(t),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if t.id != '' and t.id != None:
-                    return render(request, "data/patient_submitted.html", {'patient_id': t.id})
+                    return render(request, "data/patient_submitted.html", {'patient': t})
                 else:
                     return render(request, "data/patient_not_submitted.html")
             else:

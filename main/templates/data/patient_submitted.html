@@ -1,7 +1,7 @@
 {% extends "data/base.html" %}
 {% block content %}
 <div>
-    <div>Record successfully submitted. <a href="{% url 'main:patient_encounter_form_view' patient_id %}">Click here</a>
+    <div>Record successfully submitted. <a href="{% url 'main:patient_encounter_form_view' patient.id %}">Click here</a>
         to enter vitals.
     </div>
 </div>

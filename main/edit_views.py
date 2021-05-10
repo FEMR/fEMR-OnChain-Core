@@ -41,7 +41,7 @@ def patient_edit_form_view(request, id=None):
                     update_patient(form.cleaned_data)
                 form = PatientForm()
                 error = "Form submitted successfully."
-                return render(request, "data/patient_submitted.html", {'patient_id': t.id})
+                return render(request, "data/patient_submitted.html", {'patient': t})
             else:
                 error = "Form is invalid."
         else:
