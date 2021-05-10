@@ -57,6 +57,9 @@
                     <a class="nav-link" href="{% url 'main:patient_list_view' %}">
                         Manager</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="">Pharmacy</a>
+                </li>
                 <div class="dropdown-divider"></div>
                 {% if request.user|has_group:"Admin" %}
                 <li class="nav-item dropdown">
