@@ -43,7 +43,7 @@ def patient_form_view(request):
                 DatabaseChangeLog.objects.create(action="Create", model="Patient", instance=str(t),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if t.id != '' and t.id != None:
-                    return render(request, "data/patient_submitted.html", {'patient': t})
+                    return render(request, "data/patient_submitted.html", {'patient': t, 'encounters': list()})
                 else:
                     return render(request, "data/patient_not_submitted.html")
             else:
@@ -93,7 +93,8 @@ def patient_encounter_form_view(request, id=None):
                 name=request.session['campaign']).units
             form = PatientEncounterForm(
                 request.POST, unit=units, prefix="form")
-            vitals_form = VitalsForm(request.POST, unit=units, prefix="vitals_form")
+            vitals_form = VitalsForm(
+                request.POST, unit=units, prefix="vitals_form")
             if form.is_valid() and vitals_form.is_valid():
                 print("Valid")
                 encounter = form.save(commit=False)
@@ -102,7 +103,8 @@ def patient_encounter_form_view(request, id=None):
                 encounter.save()
                 vitals.encounter = encounter
                 vitals.save()
-                treatment_form_set = EncounterFormSet(request.POST, instance=encounter)
+                treatment_form_set = EncounterFormSet(
+                    request.POST, instance=encounter)
                 if treatment_form_set.is_valid():
                     encounter.save()
                     treatment = treatment_form_set.save()

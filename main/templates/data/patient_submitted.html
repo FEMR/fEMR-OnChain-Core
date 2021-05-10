@@ -1,8 +1,252 @@
 {% extends "data/base.html" %}
+{% load patient_tags %}
 {% block content %}
 <div>
-    <div>Record successfully submitted. <a href="{% url 'main:patient_encounter_form_view' patient.id %}">Click here</a>
-        to enter vitals.
+    <div class="row">
+        <div class="col-lg-10">
+            <h2>Patient submitted.</h2>
+        </div>
+        <div class="col-lg-2">
+            <a href="{% url 'main:patient_encounter_form_view' patient.id %}" class="btn btn-primary">
+                View in Triage
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div>
+                <h3>General Info</h3>
+            </div>
+            <div>
+                <div class="col-10">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <div>
+                                <div>
+                                    <div id="div_id_first_name" class="form-group">
+                                        <label for="id_first_name" class=" requiredField">
+                                            First name
+                                        </label>
+                                        <div class="">
+                                            {{ patient.first_name }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_middle_name" class="form-group">
+                                        <label for="id_middle_name" class="">
+                                            Middle name
+                                        </label>
+                                        <div class="">
+                                            {{ patient.middle_name }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_last_name" class="form-group">
+                                        <label for="id_last_name" class=" requiredField">
+                                            Last name
+                                        </label>
+                                        <div class="">
+                                            {{ patient.last_name }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_suffix" class="form-group">
+                                        <label for="id_suffix" class="">
+                                            Suffix
+                                        </label>
+                                        <div class="">
+                                            {{ patient.suffix }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_social_security_number" class="form-group">
+                                        <label for="id_social_security_number" class="">
+                                            Social security number
+                                        </label>
+                                        <div class="">
+                                            {{ patient.social_security_number|mask_social }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_sex_assigned_at_birth" class="form-group">
+                                        <label for="id_sex_assigned_at_birth" class=" requiredField">
+                                            Sex assigned at birth
+                                        </label>
+                                        <div class="">
+                                            {{ patient.get_sex_assigned_at_birth_display }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="explain_box" style="display:none;visibility:hidden;">
+                                <div>
+                                    <div id="div_id_explain" class="form-group">
+                                        <label for="id_explain" class="">
+                                            Explain
+                                        </label>
+                                        <div class="">
+                                            {{ patient.explain }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_date_of_birth" class="form-group">
+                                        <label for="id_date_of_birth" class=" requiredField">
+                                            Date of birth
+                                        </label>
+                                        <div class="">
+                                            {{ patient.date_of_birth }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_race" class="form-group">
+                                        <label for="id_race" class=" requiredField">
+                                            Race
+                                        </label>
+                                        <div class="">
+                                            {{ patient.get_race_display }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_ethnicity" class="form-group">
+                                        <label for="id_ethnicity" class=" requiredField">
+                                            Ethnicity
+                                        </label>
+                                        <div class="">
+                                            {{ patient.get_ethnicity_display }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <div>
+                                <div>
+                                    <div id="div_id_address1" class="form-group">
+                                        <label for="id_address1" class="">
+                                            Address line 1
+                                        </label>
+                                        <div class="">
+                                            {{ patient.address_line_1}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_address2" class="form-group">
+                                        <label for="id_address2" class="">
+                                            Address line 2
+                                        </label>
+                                        <div class="">
+                                            {{ patient.address_line_2 }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_city" class="form-group">
+                                        <label for="id_city" class="">
+                                            City
+                                        </label>
+                                        <div class="">
+                                            {{ patient.city }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_zip_code" class="form-group">
+                                        <label for="id_zip_code" class="">
+                                            ZIP / Postal code
+                                        </label>
+                                        <div class="">
+                                            {{ zip_code }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_state" class="form-group">
+                                        <label for="id_state" class="">
+                                            State
+                                        </label>
+                                        <div class="">
+                                            {{ patient.state }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_phone_number" class="form-group">
+                                        <label for="id_phone_number" class="">
+                                            Phone number
+                                        </label>
+                                        <div class="">
+                                            {{ patient.phone_number }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div id="div_id_email_address" class="form-group">
+                                        <label for="id_email_address" class="">
+                                            Email address
+                                        </label>
+                                        <div class="">
+                                            {{ patient.email_address }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <h3>Previous Encounters</h3>
+            </div>
+            {% for e in encounters %}
+            <div class="row">
+                <div class="col-sm-6">
+                    {{ e.timestamp }}
+                </div>|
+                <div class="col-sm-6">
+                    {{ e|get_chief_complaint }}
+                </div>
+            </div><hr />
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}

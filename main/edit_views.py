@@ -41,7 +41,8 @@ def patient_edit_form_view(request, id=None):
                     update_patient(form.cleaned_data)
                 form = PatientForm()
                 error = "Form submitted successfully."
-                return render(request, "data/patient_submitted.html", {'patient': t})
+                return render(request, "data/patient_submitted.html", {'patient': t,
+                                                                       'encounters': encounters})
             else:
                 error = "Form is invalid."
         else:
@@ -130,7 +131,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
-                      {'form': form, 'vitals': v, 'treatments': t,'vitals_form': vitals_form, 'treatment_form': treatment_form_set,
+                      {'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'treatment_form': treatment_form_set,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
