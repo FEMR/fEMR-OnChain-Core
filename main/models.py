@@ -180,7 +180,7 @@ class Patient(models.Model):
 
 def cal_key(fk):
     present_keys = Patient.objects.filter(campaign=fk).order_by('-campaign_key').values_list('campaign_key', flat=True)
-    if present_keys and presnet_keys[0] is not None:
+    if present_keys and present_keys[0] is not None:
         return present_keys[0] + 1
     else:
         return 0
