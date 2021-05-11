@@ -106,7 +106,7 @@ class Patient(models.Model):
     This may, in clinical settings, be a standalone object,
     or may be connected directly to a user of the fEMR-OnChain platform.
     """
-    campaign_key = models.PositiveIntegerField()
+    campaign_key = models.PositiveIntegerField(null=True, blank=True)
 
     first_name = models.CharField(max_length=30)
     middle_name = models.CharField(max_length=30, null=True, blank=True)
@@ -168,11 +168,6 @@ class Patient(models.Model):
     # health_concerns = models.ManyToManyField(HealthConcern)
     # medications = models.ManyToManyField(Medication)
 
-    def save(self, *args, **kwargs):
-        key = cal_key(self.campaign)
-        self.campaign_key = key
-        super(Patient, self).save(*args, **kwargs)
-
     def __str__(self):
         """
         Streamlines casting the object to a string.
@@ -184,7 +179,7 @@ class Patient(models.Model):
 
 
 def cal_key(fk):
-    present_keys = Patient.objects.filter(campaign=fk).order_by('-key').values_list('key', flat=True)
+    present_keys = Patient.objects.filter(campaign=fk).order_by('-campaign_key').values_list('campaign_key', flat=True)
     if present_keys:
         return present_keys[0]+1
     else:

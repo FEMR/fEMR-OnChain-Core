@@ -9,7 +9,7 @@ import os
 from django.shortcuts import render, redirect
 
 from .forms import PatientForm, PatientEncounterForm, VitalsForm, EncounterFormSet
-from .models import Campaign, Patient, DatabaseChangeLog, PatientEncounter, Vitals
+from .models import Campaign, Patient, DatabaseChangeLog, PatientEncounter, Vitals, cal_key
 from .qldb_interface import create_new_patient, create_new_patient_encounter, update_patient_encounter
 
 
@@ -35,8 +35,9 @@ def patient_form_view(request):
             form = PatientForm(request.POST)
             if form.is_valid():
                 t = form.save()
-                t.campaign.add(Campaign.objects.get(
-                    name=request.session['campaign']))
+                c = Campaign.objects.get(name=request.session['campaign'])
+                t.campaign.add(c)
+                t.campaign_key = cal_key(c)
                 t.save()
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     create_new_patient(form.cleaned_data)
@@ -47,6 +48,7 @@ def patient_form_view(request):
                 else:
                     return render(request, "data/patient_not_submitted.html")
             else:
+                print(form.errors)
                 if 'social_security_number' in form.errors and 'Must be 4 or 9 digits' not in form.errors['social_security_number'][0]:
                     ssn_error = True
                     match = Patient.objects.get(
