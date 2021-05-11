@@ -340,7 +340,7 @@ class VitalsForm(ModelForm):
     def save(self, commit=True):
         m = super(VitalsForm, self).save(commit=False)
         if self.unit == 'i':
-            m.body_temperature = (m.body_temperature - 32) * (5/9)
+            m.body_temperature = round((m.body_temperature - 32) * (5/9), 2)
         if commit:
             m.save()
         return m
