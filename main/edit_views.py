@@ -139,6 +139,17 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         return redirect('/not_logged_in')
 
 
+def patient_medical(request, id=None):
+    if request.user.is_authenticated:
+        encounter = PatientEncounters.objects.filter(patient__pk=id).order_by(-timestamp)[0]
+        if encounter:
+            return redirect('main:encounter_edit_form_view', patient_id=id, encounter_id=encounter.pk)
+        else:
+            return redirect('main:patient_encounter_form_view', id=id)
+    else:
+        return redirect('/not_logged_in')
+
+
 def patient_export_view(request, id=None):
     if request.user.is_authenticated:
         if request.session['campaign'] == "RECOVERY MODE":

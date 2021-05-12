@@ -83,6 +83,7 @@
                      <td>{{ o|has_suffix }}</td>
                      <td>{{ o|last_timestamp }}</td>
                      <td><a href="{% url 'main:patient_edit_form_view' id=o.id %}"> Update</a></td>
+                     <td><a href="{% url 'main:patient_medical' id=o.id %}">Medical</a></td>
               </tr>
               {% endfor %}
        </tbody>
