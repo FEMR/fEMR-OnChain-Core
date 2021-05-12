@@ -1,6 +1,7 @@
 {% extends "data/base.html" %}
 {% block content %}
 {% load static %}
+{% load encounter_tags %}
 {% load crispy_forms_tags %}
 <form action="{% url 'main:encounter_edit_form_view' patient_id encounter_id %}" method="post"
     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
@@ -27,13 +28,13 @@
                             <div class="col-md-10">HR</div>
                             <div class="col-md-2">{{ v.heart_rate }}</div>
                         </div>
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-md-10">RR</div>
                             <div class="col-md-2">{{ v.respiratory_rate }}</div>
-                        </div>
+                        </div> -->
                         <div class="row">
                             <div class="col-md-10">T</div>
-                            <div class="col-md-2">{{ v.body_temperature }}</div>
+                            <div class="col-md-2">{{ v.body_temperature|temp_round }}</div>
                         </div>
                         <div class="row">
                             <div class="col-md-10">SpO2</div>

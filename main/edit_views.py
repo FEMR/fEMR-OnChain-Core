@@ -141,8 +141,9 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
 
 def patient_medical(request, id=None):
     if request.user.is_authenticated:
-        encounter = PatientEncounters.objects.filter(patient__pk=id).order_by(-timestamp)[0]
-        if encounter:
+        encounters = PatientEncounter.objects.filter(patient__pk=id).order_by('-timestamp')
+        if encounters:
+            encounter = encounters[0]
             return redirect('main:encounter_edit_form_view', patient_id=id, encounter_id=encounter.pk)
         else:
             return redirect('main:patient_encounter_form_view', id=id)
