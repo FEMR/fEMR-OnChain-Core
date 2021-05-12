@@ -7,14 +7,84 @@
     {% csrf_token %}
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-10">
+            <div class="col-4">
+                <div class="row">
+                    <h3>Vitals History</h3>
+                </div>
+                <div class="row">
+                    {% for v in vitals %}
+                    <div>
+                        <div class="row"><b>{{ v.timestamp }}</b></div>
+                        <div class="row">
+                            <div class="col-md-10">BP</div>
+                            <div class="col-md-2">{{ v.systolic_blood_pressure }}/{{ v.diastolic_blood_pressure }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">MAP</div>
+                            <div class="col-md-2">{{ v.mean_arterial_pressure }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">HR</div>
+                            <div class="col-md-2">{{ v.heart_rate }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">RR</div>
+                            <div class="col-md-2">{{ v.respiratory_rate }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">T</div>
+                            <div class="col-md-2">{{ v.body_temperature }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">SpO2</div>
+                            <div class="col-md-2">{{ v.oxygen_concentration }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Gluc</div>
+                            <div class="col-md-2">{{ v.glucose_level }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    <h3>Treatments History</h3>
+                </div>
+                <div class="row">
+                    {% for t in treatments %}
+                    <div>
+                        <div class="row"><b>{{ t.timestamp }}</b></div>
+                        <div class="row">
+                            <div class="col-md-10">Medication</div>
+                            <div class="col-md-2">{{ t.medication }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Administration Schedule</div>
+                            <div class="col-md-2">{{ t.administration_schedule }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Days</div>
+                            <div class="col-md-2">{{ t.days }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Diagnosis</div>
+                            <div class="col-md-2">{{ t.diagnosis }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">Prescriber</div>
+                            <div class="col-md-2">{{ t.prescriber }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-8">
                 <div class="row bg-light">
                     <div class="form-group col-md-4">
                         <div>
-                            <div>{{ form.systolic_blood_pressure|as_crispy_field }}</div>
+                            <div>{{ vitals_form.systolic_blood_pressure|as_crispy_field }}</div>
                         </div>
                         <div>
-                            <div>{{ form.diastolic_blood_pressure|as_crispy_field }}</div>
+                            <div>{{ vitals_form.diastolic_blood_pressure|as_crispy_field }}</div>
                         </div>
                         {% if birth_sex == "f" %}
                         <div>
@@ -24,18 +94,18 @@
                     </div>
                     <div class="form-group col-md-4">
                         <div>
-                            <div>{{ form.heart_rate|as_crispy_field }}</div>
+                            <div>{{ vitals_form.heart_rate|as_crispy_field }}</div>
                         </div>
                         <div>
-                            <div>{{ form.body_temperature|as_crispy_field }}</div>
+                            <div>{{ vitals_form.body_temperature|as_crispy_field }}</div>
                         </div>
                     </div>
                     <div class="form-group col-md-4">
                         <div>
-                            <div>{{ form.oxygen_concentration|as_crispy_field }}</div>
+                            <div>{{ vitals_form.oxygen_concentration|as_crispy_field }}</div>
                         </div>
                         <div>
-                            <div>{{ form.glucose_level|as_crispy_field }}</div>
+                            <div>{{ vitals_form.glucose_level|as_crispy_field }}</div>
                         </div>
                     </div>
                 </div>
@@ -79,7 +149,7 @@
                     </div>
                     <div class="form-group col-md-4">
                         <div>
-                            <div>{{ form.mean_arterial_pressure|as_crispy_field }}</div>
+                            <div>{{ vitals_form.mean_arterial_pressure|as_crispy_field }}</div>
                         </div>
                     </div>
                 </div>
@@ -94,13 +164,14 @@
                         {{ form.patient_history|as_crispy_field }}
                     </div>
                 </div>
-                <div class="row">
-                    <div class="form-group col-md-6">
-                        {{ form.diagnoses|as_crispy_field }}
+                <h4>Diagnosis and Treatment</h4>
+                <div id="form-container" class="row justify-content-center">
+                    {{ treatment_form.management_form }}
+                    <div class="form-group col-md-8 treatment-form card shadow bg-light">
+                        {% crispy treatment_form %}
                     </div>
-                    <div class="form-group col-md-6">
-                        {{ form.treatments|as_crispy_field}}
-                    </div>
+                    <div class="clearfix"></div>
+                    <button id="add-form" type="button" class="btn btn-primary col-md-4">Add</button>
                 </div>
                 {% endif %}
                 <div class="row">
@@ -114,28 +185,55 @@
                     <input class="btn btn-primary ml-auto" type="reset" value="Reset Fields" />
                 </div>
                 <div class="col-md-4">
-                    <input class="btn btn-primary ml-auto" type="submit" value="Submit Encounter" id="submit_encounter" name="submit_encounter" />
+                    <input class="btn btn-primary ml-auto" type="submit" value="Submit Encounter" id="submit_encounter"
+                        name="submit_encounter" />
                 </div>
                 <div class="col-md-4">
-                    <input class="btn btn-primary ml-auto" type="submit" value="Submit and Refer" id="submit_refer" name="submit_refer" />
+                    <input class="btn btn-primary ml-auto" type="submit" value="Submit and Refer" id="submit_refer"
+                        name="submit_refer" />
                 </div>
             </div>
         </div>
     </div>
 </form>
+
+<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+{{ form.media }}
+
+<script>
+    let treatmentForm = document.querySelectorAll(".treatment-form")
+    let container = document.querySelector("#form-container")
+    let addButton = document.querySelector("#add-form")
+    let totalForms = document.querySelector("#id_form-TOTAL_FORMS")
+
+    let formNum = treatmentForm.length-1
+    addButton.addEventListener('click', addForm)
+
+    function addForm(e){
+        e.preventDefault()
+
+        let newForm = treatmentForm[0].cloneNode(true)
+        let formRegex = RegExp(`form-(\\d){1}-`,'g')
+
+        formNum++
+        newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`)
+        container.insertBefore(newForm, addButton)
+        
+        totalForms.setAttribute('value', `${formNum+1}`)
+    }
+</script>
+
 <script>
     $(document).on("keydown", ":input:not(textarea)", function (event) {
         return event.key != "Enter";
     });
-
-
 </script>
 {% if units == 'i' %}
-<script src="{% static 'main/js/bmi_calc.js' %}"></script>
+<script src="{% static 'main/js/bmi_edit_calc.js' %}"></script>
 {% else %}
-<script src="{% static 'main/js/bmi_calc_metric.js' %}"></script>
+<script src="{% static 'main/js/bmi_edit_calc_metric.js' %}"></script>
 {% endif %}
-<script src="{% static 'main/js/map_calc.js' %}"></script>
+<script src="{% static 'main/js/map_edit_calc.js' %}"></script>
 <script src="{% static 'main/js/node_modules/inputmask/dist/jquery.inputmask.min.js' %}"></script>
 <script src="{% static 'main/js/inputmasks.js' %}"></script>
 <script src="{% static 'main/js/max_date_fix.js' %}"></script>

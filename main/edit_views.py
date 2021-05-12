@@ -8,8 +8,8 @@ import math
 import os
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import PatientForm, PatientEncounterForm
-from .models import Campaign, Patient, PatientEncounter, DatabaseChangeLog
+from .forms import PatientForm, PatientEncounterForm, VitalsForm, EncounterFormSet
+from .models import Campaign, Patient, PatientEncounter, DatabaseChangeLog, Vitals, Treatment
 from main.qldb_interface import update_patient, update_patient_encounter
 
 
@@ -41,7 +41,8 @@ def patient_edit_form_view(request, id=None):
                     update_patient(form.cleaned_data)
                 form = PatientForm()
                 error = "Form submitted successfully."
-                return render(request, "data/patient_submitted.html", {'patient_id': t.id})
+                return render(request, "data/patient_submitted.html", {'patient': t,
+                                                                       'encounters': encounters})
             else:
                 error = "Form is invalid."
         else:
@@ -66,20 +67,37 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         units = Campaign.objects.get(name=request.session['campaign']).units
-        telehealth = Campaign.objects.get(name=request.session['campaign']).telehealth
+        telehealth = Campaign.objects.get(
+            name=request.session['campaign']).telehealth
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
+        v = Vitals.objects.filter(encounter=m)
+        t = Treatment.objects.filter(encounter=m)
         if request.method == 'POST':
             form = PatientEncounterForm(request.POST or None,
                                         instance=m, unit=units)
-            if form.is_valid():
+            vitals_form = VitalsForm(request.POST, unit=units)
+            if form.is_valid() and vitals_form.is_valid():
                 encounter = form.save(commit=False)
+                vitals = vitals_form.save(commit=False)
                 encounter.patient = p
                 encounter.save()
+                vitals.encounter = encounter
+                vitals.save()
+                treatment_form_set = EncounterFormSet(
+                    request.POST, instance=encounter)
+                if treatment_form_set.is_valid():
+                    encounter.save()
+                    treatment = treatment_form_set.save()
+                    for t in treatment:
+                        t.prescriber = request.user
+                    treatment.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
-                    update_patient_encounter(form.cleaned_data)
+                    from .serializers import PatientEncounterSerializer
+                    encounter_data = PatientEncounterSerializer(encounter).data
+                    update_patient_encounter(encounter_data)
                 if 'submit_encounter' in request.POST:
                     return render(request, 'data/encounter_submitted.html')
                 elif 'submit_refer' in request.POST:
@@ -92,23 +110,17 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                                              ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
             form = PatientEncounterForm(
                 instance=m, unit=units)
+            vitals_form = VitalsForm(unit=units)
+            treatment_form_set = EncounterFormSet()
             if units == 'i':
                 form.initial = {
-                    'systolic_blood_pressure': m.systolic_blood_pressure,
-                    'diastolic_blood_pressure': m.diastolic_blood_pressure,
-                    'heart_rate': m.heart_rate,
-                    'oxygen_concentration': m.oxygen_concentration,
-                    'glucose_level': m.glucose_level,
                     'body_mass_index': m.body_mass_index,
-                    'mean_arterial_pressure': m.mean_arterial_pressure,
                     'smoking': m.smoking,
                     'history_of_diabetes': m.history_of_diabetes,
                     'history_of_hypertension': m.history_of_hypertension,
                     'history_of_high_cholesterol': m.history_of_high_cholesterol,
                     'alcohol': m.alcohol,
-                    'diagnoses': m.diagnoses,
-                    'treatments': m.treatments,
-                    'chief_complaint': m.chief_complaint,
+                    'chief_complaint': [c.pk for c in m.chief_complaint.all()],
                     'patient_history': m.patient_history,
                     'community_health_worker_notes': m.community_health_worker_notes,
                     'body_height_primary': math.floor(
@@ -116,12 +128,11 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     'body_height_secondary': round((
                         (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
                     'body_weight': round(m.body_weight * 2.2046, 2),
-                    'body_temperature': round((
-                        m.body_temperature * 9/5) + 32, 2)
                 }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
-                      {'form': form, 'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                      {'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'treatment_form': treatment_form_set,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
     else:
@@ -133,11 +144,16 @@ def patient_export_view(request, id=None):
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         m = get_object_or_404(Patient, pk=id)
-        encounters = PatientEncounter.objects.filter(patient=m).order_by('-timestamp')
+        encounters = PatientEncounter.objects.filter(
+            patient=m).order_by('-timestamp')
+        vitals_dictionary = dict()
+        for x in encounters:
+            vitals_dictionary[x] = list(Vitals.objects.filter(encounter=x))
         if request.method == 'GET':
             return render(request, 'export/patient_export.html', {
                 'patient': m,
                 'encounters': encounters,
+                'vitals': vitals_dictionary,
                 'telehealth': Campaign.objects.get(name=request.session['campaign']).telehealth,
                 'units': Campaign.objects.get(name=request.session['campaign']).units
             })

@@ -4,6 +4,7 @@ Application-wide functions for interfacing with AWS QLDB.
 from pyqldb.driver.qldb_driver import QldbDriver
 
 import os
+import json
 
 try:
     LEDGER_NAME = os.environ['qldb_name']
@@ -105,6 +106,7 @@ def create_new_patient_encounter(patient_encounter: dict):
 
 # noinspection PyTypeChecker
 def update_patient_encounter(patient_encounter: dict):
+    
     def insert_documents(transaction_executor, p: dict):
         transaction_executor.execute_statement(
             "INSERT INTO PatientEncounter ?", p)

@@ -25,13 +25,17 @@ race_choices = (
     ('2', 'Asian'),
     ('3', 'Black, African American'),
     ('4', 'Hispanic or Latinx'),
-    ('5', 'White'),
-    ('6', 'Nondisclosed'),
+    ('5', 'Mixed Race'),
+    ('6', 'White'),
+    ('7', 'Nondisclosed'),
 )
 ethnicity_choices = (
     ('1', 'Hispanic or Latinx'),
     ('2', 'Not Hispanic or Latinx'),
     ('3', 'Nondisclosed'),
+)
+administration_schedule_choices = (
+    ()
 )
 
 
@@ -69,6 +73,8 @@ class Campaign(models.Model):
     timezone = models.CharField(
         max_length=100, choices=COMMON_TIMEZONES_CHOICES)
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
+    inventory = models.ForeignKey(
+        "Inventory", on_delete=models.CASCADE, blank=True, null=True)
 
     def __unicode__(self):
         return self.name
@@ -100,6 +106,8 @@ class Patient(models.Model):
     This may, in clinical settings, be a standalone object,
     or may be connected directly to a user of the fEMR-OnChain platform.
     """
+    campaign_key = models.PositiveIntegerField(null=True, blank=True)
+
     first_name = models.CharField(max_length=30)
     middle_name = models.CharField(max_length=30, null=True, blank=True)
     last_name = models.CharField(max_length=30)
@@ -170,6 +178,14 @@ class Patient(models.Model):
         return str(self.first_name) + " " + str(self.last_name) + " " + suffix
 
 
+def cal_key(fk):
+    present_keys = Patient.objects.filter(campaign=fk).order_by('-campaign_key').values_list('campaign_key', flat=True)
+    if present_keys and present_keys[0] is not None:
+        return present_keys[0] + 1
+    else:
+        return 0
+
+
 @deconstructible
 class ModifiedMaxValueValidator(BaseValidator):
     message = _('Ensure this value is less than %(limit_value)s.')
@@ -179,6 +195,39 @@ class ModifiedMaxValueValidator(BaseValidator):
         return a > b
 
 
+class ChiefComplaint(models.Model):
+    text = models.CharField(
+        max_length=1024,
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return str(self.text)
+
+
+class Diagnosis(models.Model):
+    text = models.CharField(
+        max_length=1024,
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return str(self.text)
+
+
+class Medication(models.Model):
+    text = models.CharField(
+        max_length=1024,
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return str(self.text)
+
+
 class PatientEncounter(models.Model):
     """
     Individual data point in a patient's medical record.
@@ -186,32 +235,12 @@ class PatientEncounter(models.Model):
     patient = models.ForeignKey(
         Patient, on_delete=models.CASCADE, null=True, blank=True)
 
-    smoking = models.BooleanField(default=False)
-    history_of_diabetes = models.BooleanField(default=False)
-    history_of_hypertension = models.BooleanField(default=False)
-    history_of_high_cholesterol = models.BooleanField(default=False)
-    alcohol = models.BooleanField(default=False)
-
-    diastolic_blood_pressure = models.IntegerField(
-        validators=[MaxValueValidator(200), MinValueValidator(1)])
-    systolic_blood_pressure = models.IntegerField(
-        validators=[MaxValueValidator(200), MinValueValidator(1)])
-    mean_arterial_pressure = models.FloatField(
-        validators=[MinValueValidator(1)])
     body_height_primary = models.IntegerField(
         validators=[MaxValueValidator(8), MinValueValidator(0)])
     body_height_secondary = models.FloatField(
         validators=[ModifiedMaxValueValidator(100), MinValueValidator(0)])
     body_weight = models.FloatField(
         validators=[MaxValueValidator(500), MinValueValidator(0.25)])
-    heart_rate = models.IntegerField(
-        validators=[MaxValueValidator(170), MinValueValidator(40)])
-    respiratory_rate = models.IntegerField(
-        validators=[MaxValueValidator(500), MinValueValidator(1)], null=True, blank=True)
-    body_temperature = models.FloatField(
-        validators=[MaxValueValidator(200), MinValueValidator(1)])
-    oxygen_concentration = models.IntegerField(
-        validators=[MaxValueValidator(100), MinValueValidator(70)], null=True, blank=True)
     bmi_percentile = models.IntegerField(
         validators=[MaxValueValidator(100), MinValueValidator(1)], null=True, blank=True)
     weight_for_length_percentile = models.IntegerField(
@@ -220,20 +249,19 @@ class PatientEncounter(models.Model):
         validators=[MaxValueValidator(100), MinValueValidator(1)], null=True, blank=True)
     body_mass_index = models.FloatField(
         validators=[MaxValueValidator(500), MinValueValidator(0)], null=True, blank=True)
-    glucose_level = models.FloatField(
-        validators=[MaxValueValidator(500), MinValueValidator(1)], null=True, blank=True)
     weeks_pregnant = models.IntegerField(
         validators=[MaxValueValidator(45), MinValueValidator(1)], null=True, blank=True)
 
-    diagnoses = models.CharField(
-        max_length=500, null=True, blank=True)
-    treatments = models.CharField(
-        max_length=500, null=True, blank=True)
-    chief_complaint = models.CharField(
-        max_length=500, null=True, blank=True)
+    smoking = models.BooleanField(default=False)
+    history_of_diabetes = models.BooleanField(default=False)
+    history_of_hypertension = models.BooleanField(default=False)
+    history_of_high_cholesterol = models.BooleanField(default=False)
+    alcohol = models.BooleanField(default=False)
+
+    chief_complaint = models.ManyToManyField(ChiefComplaint, blank=True)
     patient_history = models.CharField(
         max_length=500, null=True, blank=True)
-    
+
     community_health_worker_notes = models.CharField(
         max_length=500, null=True, blank=True)
 
@@ -252,15 +280,40 @@ class PatientEncounter(models.Model):
     def unit_aware_weight(self, unit):
         return self.body_weight if unit == "m" else (self.body_weight * 2.2046)
 
-    @property
-    def unit_aware_temperature(self, unit):
-        return self.body_temperature if unit == "m" else (self.body_temperature * 1.8) + 32
-
     def __str__(self):
         """
         Displays patient encounters in a more readable way.
         """
         return str(self.patient)
+
+
+class Vitals(models.Model):
+    encounter = models.ForeignKey(
+        PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
+
+    diastolic_blood_pressure = models.IntegerField(
+        validators=[MaxValueValidator(200), MinValueValidator(1)])
+    systolic_blood_pressure = models.IntegerField(
+        validators=[MaxValueValidator(200), MinValueValidator(1)])
+    mean_arterial_pressure = models.FloatField(
+        validators=[MinValueValidator(1)])
+    heart_rate = models.IntegerField(
+        validators=[MaxValueValidator(170), MinValueValidator(40)])
+    respiratory_rate = models.IntegerField(
+        validators=[MaxValueValidator(500), MinValueValidator(1)], null=True, blank=True)
+    body_temperature = models.FloatField(
+        validators=[MaxValueValidator(200), MinValueValidator(1)])
+    oxygen_concentration = models.IntegerField(
+        validators=[MaxValueValidator(100), MinValueValidator(70)], null=True, blank=True)
+    glucose_level = models.FloatField(
+        validators=[MaxValueValidator(500), MinValueValidator(1)], null=True, blank=True)
+
+    timestamp = models.DateTimeField(
+        auto_now=True, editable=False, null=False, blank=False)
+
+    @property
+    def unit_aware_temperature(self, unit):
+        return self.body_temperature if unit == "m" else (self.body_temperature * 1.8) + 32
 
 
 class fEMRUser(AbstractUser):
@@ -278,6 +331,31 @@ class fEMRUser(AbstractUser):
         return '{} {} {}'.format(self.first_name, self.last_name, self.email)
 
 
+class Treatment(models.Model):
+    medication = models.ForeignKey(Medication, on_delete=models.CASCADE, null=True, blank=True)
+    administration_schedule = models.CharField(
+        max_length=8, choices=administration_schedule_choices, null=True, blank=True)
+    days = models.IntegerField(null=True, blank=True)
+    prescriber = models.ForeignKey(
+        fEMRUser, on_delete=models.CASCADE, null=True, blank=True)
+    diagnosis = models.ForeignKey(Diagnosis, on_delete=models.CASCADE, null=True, blank=True)
+    encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
+    timestamp = models.DateTimeField(
+        auto_now=True, editable=False, null=False, blank=False)
+
+    def __str__(self):
+        return str(self.medication)
+
+
+class InventoryEntry(models.Model):
+    medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
+    volume = models.IntegerField()
+
+
+class Inventory(models.Model):
+    entries = models.ManyToManyField(InventoryEntry)
+
+
 class UnitsSetting(SingletonModel):
     units = models.CharField(
         max_length=30, choices=unit_choices, default="i")
@@ -288,13 +366,14 @@ class AuditEntry(models.Model):
     ip = models.GenericIPAddressField(null=True)
     username = models.CharField(max_length=256, null=True)
     timestamp = models.DateTimeField(auto_now=True)
-    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, blank=True, null=True)
+    campaign = models.ForeignKey(
+        Campaign, on_delete=models.CASCADE, blank=True, null=True)
 
     def __unicode__(self):
-        return '{0} - {1} - {2} - {3}'.format(self.action, self.username, self.ip, self.timestamp, self.campaign)
+        return '{0} - {1} - {2} - {3} - {4}'.format(self.action, self.username, self.ip, self.timestamp, self.campaign)
 
     def __str__(self):
-        return '{0} - {1} - {2} - {3}'.format(self.action, self.username, self.ip, self.timestamp, self.campaign)
+        return '{0} - {1} - {2} - {3} - {4}'.format(self.action, self.username, self.ip, self.timestamp, self.campaign)
 
 
 class DatabaseChangeLog(models.Model):
@@ -326,7 +405,7 @@ def user_logged_in_callback(sender, request, user, **kwargs):
     else:
         campaign = None
     AuditEntry.objects.create(action='user_logged_in',
-                                  ip=ip, username=user.username, campaign=campaign)
+                              ip=ip, username=user.username, campaign=campaign)
 
 
 @receiver(user_logged_out)
@@ -341,7 +420,7 @@ def user_logged_out_callback(sender, request, user, **kwargs):
         else:
             campaign = None
         AuditEntry.objects.create(action='user_logged_out',
-                                    ip=ip, username=user.username, campaign=campaign)
+                                  ip=ip, username=user.username, campaign=campaign)
     except AttributeError:
         pass
 

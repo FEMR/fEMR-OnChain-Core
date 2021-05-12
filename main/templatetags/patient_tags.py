@@ -44,6 +44,11 @@ def mask_social(patient):
         return "***-**-{}".format(patient[7:11])
 
 
+@register.filter('get_chief_complaint')
+def get_chief_complaint(encounter):
+    return ",".join(list(encounter.chief_complaint.all()))
+
+
 @register.filter('imperial_primary_height')
 def imperial_primary_height(m):
     print(m.body_height_primary)

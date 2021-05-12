@@ -19,7 +19,10 @@ jobs:
       DEBUG: True
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout with Submodules
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
       - name: Set up Python 3.7
         uses: actions/setup-python@v1
         with:

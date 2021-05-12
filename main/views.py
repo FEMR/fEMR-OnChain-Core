@@ -19,7 +19,7 @@ def index(request):
     :return: A template rendered as an HTTPResponse.
     """
     print(request.user_agent.browser.family)
-    if request.user_agent.browser.family != "Chrome" and request.user_agent.browser.family != "Firefox":
+    if request.user_agent.browser.family not in ["Chrome", "Firefox", "Firefox Mobile"]:
         return render(request, 'data/stop.html')
     else:
         return redirect('main:login_view')
@@ -65,14 +65,16 @@ def healthcheck(request):
 def set_timezone(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='Admin').exists():
+            campaign = Campaign.objects.get(name=request.session['campaign'])
             if request.method == 'POST':
                 request.session['django_timezone'] = request.POST['timezone']
-                campaign = Campaign.objects.get(name=request.session['campaign'])
                 campaign.timezone = request.POST['timezone']
                 campaign.save()
                 return redirect('main:index')
             else:
-                return render(request, 'data/timezone.html', {'timezones': pytz.common_timezones})
+                selected_time_zone = campaign.timezone
+                return render(request, 'data/timezone.html', {'selected_time_zone': selected_time_zone,
+                                                              'timezones': pytz.common_timezones})
         else:
             return redirect('main:permission_denied')
     else:

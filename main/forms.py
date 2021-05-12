@@ -10,10 +10,90 @@ from django.forms import ModelForm, Form, CharField, PasswordInput, DateInput, V
 from django.forms.models import ModelMultipleChoiceField
 from django.forms.widgets import Textarea
 from django.utils import timezone
+from django.forms.models import inlineformset_factory, BaseInlineFormSet
+
+from dal import autocomplete
 
 from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Div, MultiField
 
-from .models import Patient, PatientEncounter, fEMRUser, Campaign, Instance, Contact
+from .models import Patient, PatientEncounter, fEMRUser, Campaign, Instance, Contact, Vitals,\
+    ChiefComplaint, Treatment, Diagnosis, Medication
+
+
+class ChiefComplaintForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = ChiefComplaint
+        fields = '__all__'
+        labels = {
+            'text': 'Chief Complaint',
+        }
+
+
+class DiagnosisForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = Diagnosis
+        fields = '__all__'
+        labels = {
+            'text': 'Diagnosis'
+        }
+
+
+class MedicationForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = Medication
+        fields = '__all__'
+        labels = {
+            'text': 'Medication'
+        }
+
+
+class TreatmentForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            MultiField(
+                Div('medication'),
+                Div('administration_schedule'),
+                Div('days'),
+            ),
+        )
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = Treatment
+        fields = '__all__'
+        widgets = {
+            'medication': autocomplete.ModelSelect2(url='main:medication-autocomplete'),
+        }
 
 
 class DateInputOverride(DateInput):
@@ -134,52 +214,35 @@ class PatientEncounterForm(ModelForm):
     def __init__(self, *args, **kwargs):
         self.unit = kwargs.pop('unit', None)
         super(PatientEncounterForm, self).__init__(*args, **kwargs)
-        self.fields['diastolic_blood_pressure'].widget.attrs['min'] = 0
-        self.fields['systolic_blood_pressure'].widget.attrs['min'] = 0
         self.fields['body_height_primary'].widget.attrs['min'] = 0
         self.fields['body_height_primary'].widget.attrs['max'] = 10
         self.fields['body_height_secondary'].widget.attrs['min'] = 0
-        self.fields['oxygen_concentration'].widget.attrs['min'] = 70
-        self.fields['oxygen_concentration'].widget.attrs['max'] = 100
         self.fields['body_height_secondary'].widget.attrs['step'] = .01
         self.fields['body_height_secondary'].widget.attrs['maxlength'] = 4
         self.fields['body_height_secondary'].widget.attrs[
             'pattern'] = "^[0-9]{0,2}[\.]{0,1}[0-9]{0,2}$"
         self.fields['body_height_secondary'].widget.attrs['value'] = 0.00
         self.fields['body_mass_index'].widget.attrs['step'] = .1
-        self.fields['heart_rate'].widget.attrs['min'] = 40
-        self.fields['heart_rate'].widget.attrs['max'] = 170
-        self.fields['respiratory_rate'].widget.attrs['min'] = 0
-        self.fields['body_temperature'].widget.attrs['step'] = 0.01
         self.fields['bmi_percentile'].widget.attrs['min'] = 0
         self.fields['body_mass_index'].widget.attrs['min'] = 0
         self.fields['body_mass_index'].widget.attrs['style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
-        self.fields['mean_arterial_pressure'].widget.attrs['style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
         self.fields['body_mass_index'].widget.attrs['readonly'] = ""
-        self.fields['mean_arterial_pressure'].widget.attrs['readonly'] = ""
-        self.fields['glucose_level'].widget.attrs['min'] = 0
         self.fields['weeks_pregnant'].widget.attrs['min'] = 0
         self.fields['weeks_pregnant'].widget.attrs['max'] = 45
         if self.unit == 'i':
-            self.fields['body_temperature'].label = 'Body temperature - Fahrenheit'
             self.fields['body_weight'].label = 'Body weight - Pounds'
             self.fields['body_height_primary'].label = 'Height - Feet'
             self.fields['body_height_primary'].widget.attrs['max'] = 9
             self.fields['body_height_secondary'].label = 'Height - Inches'
             self.fields['body_height_secondary'].widget.attrs['max'] = 11.9
             self.fields['body_weight'].widget.attrs['min'] = 5
-            self.fields['body_temperature'].widget.attrs['min'] = 93
-            self.fields['body_temperature'].widget.attrs['max'] = 113
         else:
-            self.fields['body_temperature'].label = 'Body temperature - Celsius'
             self.fields['body_weight'].label = 'Body weight - Kilos'
             self.fields['body_height_primary'].label = 'Height - Meters'
             self.fields['body_height_primary'].widget.attrs['max'] = 3
             self.fields['body_height_secondary'].label = 'Height - Centimeters'
             self.fields['body_height_secondary'].widget.attrs['max'] = 100
             self.fields['body_weight'].widget.attrs['min'] = 0.25
-            self.fields['body_temperature'].widget.attrs['min'] = 34
-            self.fields['body_temperature'].widget.attrs['max'] = 45
 
     def clean_body_mass_index(self):
         if self.cleaned_data['body_mass_index'] < 5:
@@ -193,7 +256,6 @@ class PatientEncounterForm(ModelForm):
         m = super(PatientEncounterForm, self).save(commit=False)
         if self.unit == 'i':
             tmp = m.body_height_primary
-            m.body_temperature = (m.body_temperature - 32) * (5/9)
             m.body_height_primary = math.floor(
                 (((m.body_height_primary * 12) + m.body_height_secondary) * 2.54) // 100)
             m.body_height_secondary = (
@@ -210,17 +272,89 @@ class PatientEncounterForm(ModelForm):
         model = PatientEncounter
         fields = '__all__'
         labels = {
-            'mean_arterial_pressure': 'Mean Arterial Pressure',
             'body_mass_index': 'Body Mass Index',
-            'smoking': 'Tobacco Use Disorder',
-            'alcohol': 'History of Substance/Alcohol Abuse',
         }
         widgets = {
-            'diagnoses': Textarea(attrs={'rows': 4, 'cols': 40}),
-            'treatments': Textarea(attrs={'rows': 4, 'cols': 40}),
-            'chief_complaint': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'diagnoses': autocomplete.ModelSelect2Multiple(url='main:diagnosis-autocomplete'),
+            'chief_complaint': autocomplete.ModelSelect2Multiple(url='main:chief-complaint-autocomplete'),
             'patient_history': Textarea(attrs={'rows': 4, 'cols': 40}),
             'community_health_worker_notes': Textarea(attrs={'rows': 4, 'cols': 40})
+        }
+
+
+EncounterFormSet = inlineformset_factory(
+    PatientEncounter,
+    Treatment,
+    fields=(
+        'diagnosis',
+        'medication',
+        'administration_schedule',
+        'days',
+    ),
+    widgets={
+        'diagnosis': autocomplete.ModelSelect2(url='main:diagnosis-autocomplete'),
+        'medication': autocomplete.ModelSelect2(url='main:medication-autocomplete'),
+    },
+    extra=1,
+    can_order=False,
+    can_delete=False
+)
+
+
+class VitalsForm(ModelForm):
+    """
+    Data entry form - Vitals
+    """
+
+    def __init__(self, *args, **kwargs):
+        self.unit = kwargs.pop('unit', None)
+        super(VitalsForm, self).__init__(*args, **kwargs)
+        self.fields['diastolic_blood_pressure'].widget.attrs['min'] = 0
+        self.fields['systolic_blood_pressure'].widget.attrs['min'] = 0
+        self.fields['oxygen_concentration'].widget.attrs['min'] = 70
+        self.fields['oxygen_concentration'].widget.attrs['max'] = 100
+        self.fields['heart_rate'].widget.attrs['min'] = 40
+        self.fields['heart_rate'].widget.attrs['max'] = 170
+        self.fields['respiratory_rate'].widget.attrs['min'] = 0
+        self.fields['body_temperature'].widget.attrs['step'] = 0.01
+        self.fields['mean_arterial_pressure'].widget.attrs['style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
+        self.fields['mean_arterial_pressure'].widget.attrs['readonly'] = ""
+        self.fields['glucose_level'].widget.attrs['min'] = 0
+        if self.unit == 'i':
+            self.fields['body_temperature'].label = 'Body temperature - Fahrenheit'
+            self.fields['body_temperature'].widget.attrs['min'] = 93
+            self.fields['body_temperature'].widget.attrs['max'] = 113
+        else:
+            self.fields['body_temperature'].label = 'Body temperature - Celsius'
+            self.fields['body_temperature'].widget.attrs['min'] = 34
+            self.fields['body_temperature'].widget.attrs['max'] = 45
+
+    def clean_body_mass_index(self):
+        if self.cleaned_data['body_mass_index'] < 5:
+            self.add_error('body_height_primary',
+                           "BMI shouldn't be less than 5%. Check these numbers.")
+            self.add_error(
+                'body_weight', "BMI shouldn't be less than 5%. Check these numbers.")
+        return self.cleaned_data['body_mass_index']
+
+    def save(self, commit=True):
+        m = super(VitalsForm, self).save(commit=False)
+        if self.unit == 'i':
+            m.body_temperature = round((m.body_temperature - 32) * (5/9), 2)
+        if commit:
+            m.save()
+        return m
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = Vitals
+        fields = '__all__'
+        labels = {
+            'mean_arterial_pressure': 'Mean Arterial Pressure',
+            'smoking': 'Tobacco Use Disorder',
+            'alcohol': 'History of Substance/Alcohol Abuse',
         }
 
 
@@ -288,7 +422,8 @@ class UserUpdateForm(UserChangeForm):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.fields['campaigns'].queryset = filter_campaigns_for_instances(user)
+        self.fields['campaigns'].queryset = filter_campaigns_for_instances(
+            user)
 
     class Meta:
         model = fEMRUser
@@ -365,6 +500,7 @@ class CampaignForm(ModelForm):
         """
         model = Campaign
         fields = '__all__'
+        exclude = ('inventory',)
 
 
 class ContactForm(ModelForm):

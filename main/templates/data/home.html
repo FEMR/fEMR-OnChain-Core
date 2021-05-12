@@ -2,7 +2,7 @@
 {% load campaign_tags %}
 {% block content %}
 <div>
-    Welcome to fEMR On-Chain v1.1.3.4202020, {{ user.first_name }} {{ user.last_name }}!
+    Welcome to fEMR On-Chain v1.2.0.5112020, {{ user.first_name }} {{ user.last_name }}!
 </div>
 <div>
     Please select a tab at the top, search below, or select a campaign below to get started!
@@ -26,7 +26,7 @@
 <form action="{% url 'main:search_patient_list_view' %}" class="form-inline my-2 my-lg-0" method="get">
     <div class="input-group mt-3">
         <input aria-label="Search" class="form-control" id="name_search" name="name_search"
-            placeholder="Patient Name, Phone Number, or Email" size="40" type="search" />
+            placeholder="Patient Name, ID, Phone Number, or Email" size="40" type="search" />
     </div>
     <div class="input-group-append">
         <button class="btn btn-primary mt-3" type="submit" id="button-addon2"><i class="fa fa-search"

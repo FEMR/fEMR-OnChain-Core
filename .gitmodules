@@ -1,0 +1,3 @@
+[submodule "appMR"]
+	path = appMR
+	url = git@github.com:Romulus10/AppMR.git

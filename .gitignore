@@ -22,4 +22,4 @@ Vagrantfile~
 .npm/
 *.log
 **/.DS_Store
-static/
+/static/

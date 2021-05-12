@@ -15,9 +15,11 @@ from .list_views import patient_csv_export_view, patient_list_view, search_patie
 from .views import forgot_username, index, home, healthcheck, help_messages_off
 from .femr_admin_views import edit_contact_view, lock_campaign_view, new_campaign_view, new_contact_view, new_instance_view, edit_campaign_view, edit_instance_view, \
     list_campaign_view, list_instance_view, femr_admin_home, change_campaign, unlock_campaign_view, view_contact_view
+from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, medication_form_view, treatment_form_view
 from main.views import set_timezone
 from main import hl7
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
+from .autocomplete_views import DiagnosisAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete
 
 app_name = 'main'
 
@@ -47,11 +49,12 @@ urlpatterns = [
          patient_encounter_form_view, name='patient_encounter_form_view'),
     path(r'encounter_edit_form_view/<int:patient_id>/<int:encounter_id>',
          encounter_edit_form_view, name='encounter_edit_form_view'),
-        
+
     path(r'referral_form/<int:id>', referral_form_view, name='referral_form_view'),
 
     url(r'^patient_list_view/$', patient_list_view, name='patient_list_view'),
-    url(r'^patient_csv_export_view/$', patient_csv_export_view, name='patient_csv_export_view'),
+    url(r'^patient_csv_export_view/$', patient_csv_export_view,
+        name='patient_csv_export_view'),
     url(r'^search_patient_list_view/$', search_patient_list_view,
         name='search_patient_list_view'),
     url(r'^filter_patient_list_view/$', filter_patient_list_view,
@@ -73,11 +76,15 @@ urlpatterns = [
     url(r'^filter_users_view/$', filter_users_view, name='filter_user_view'),
     url(r'^search_users_view/$', search_users_view, name='search_user_view'),
 
-    path(r'lock_instance_view/<int:id>', lock_instance_view, name='lock_instance_view'),
-    path(r'unlock_instance_view/<int:id>', unlock_instance_view, name='unlock_instance_view'),
+    path(r'lock_instance_view/<int:id>',
+         lock_instance_view, name='lock_instance_view'),
+    path(r'unlock_instance_view/<int:id>',
+         unlock_instance_view, name='unlock_instance_view'),
 
-    path(r'lock_campaign_view/<int:id>', lock_campaign_view, name='lock_campaign_view'),
-    path(r'unlock_campaign_view/<int:id>', unlock_campaign_view, name='unlock_campaign_view'),
+    path(r'lock_campaign_view/<int:id>',
+         lock_campaign_view, name='lock_campaign_view'),
+    path(r'unlock_campaign_view/<int:id>',
+         unlock_campaign_view, name='unlock_campaign_view'),
 
     # Audit Log Management
     url(r'^get_audit_logs_view/$', get_audit_logs_view, name='get_audit_logs_view'),
@@ -112,9 +119,19 @@ urlpatterns = [
     url(r'^new_contact/$', new_contact_view, name='new_contact'),
     path(r'patient_export/<int:id>', patient_export_view, name='patient_export'),
 
-    path(r'add_users_to_campaign', add_users_to_campaign, name='add_users_to_campaign'),
-    path(r'add_user_to_campaign/<int:user_id>', add_user_to_campaign, name='add_user_to_campaign'),
-    path(r'cut_user_from_campaign/<int:user_id>', cut_user_from_campaign, name='cut_user_from_campaign'),
+    path(r'chief_complaint_form_view', chief_complaint_form_view,
+         name='chief_complaint_form_view'),
+    path(r'diagnosis_form_view', diagnosis_form_view, name='diagnosis_form_view'),
+    path(r'medication_form_view', medication_form_view,
+         name='medication_form_view'),
+    path(r'treatment_form_view', treatment_form_view, name='treatment_form_view'),
+
+    path(r'add_users_to_campaign', add_users_to_campaign,
+         name='add_users_to_campaign'),
+    path(r'add_user_to_campaign/<int:user_id>',
+         add_user_to_campaign, name='add_user_to_campaign'),
+    path(r'cut_user_from_campaign/<int:user_id>',
+         cut_user_from_campaign, name='cut_user_from_campaign'),
 
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
@@ -124,4 +141,20 @@ urlpatterns = [
     url(r'^forgot_username', forgot_username, name='forgot_username'),
 
     url(r'^help_messages_off', help_messages_off, name='help_messages_off'),
+
+    url(
+         r'^diagnosis-autocomplete/$',
+         DiagnosisAutocomplete.as_view(create_field='text'),
+         name='diagnosis-autocomplete',
+    ),
+    url(
+         r'^medication-autocomplete/$',
+         MedicationAutocomplete.as_view(create_field='text'),
+         name='medication-autocomplete',
+    ),
+    url(
+         r'^chief-complaint-autocomplete/$',
+         ChiefComplaintAutocomplete.as_view(create_field='text'),
+         name='chief-complaint-autocomplete',
+    ),
 ]

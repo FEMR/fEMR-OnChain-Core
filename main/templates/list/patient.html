@@ -76,6 +76,7 @@
               {% for o in list_view %}
               <tr>
                      <th scope="row">{{ forloop.counter }}</th>
+                     <td>{{ o.campaign_key }}</td>
                      <td>{{ o.first_name }}</td>
                      <td>{{ o|has_middle_name }}</td>
                      <td>{{ o.last_name }}</td>
