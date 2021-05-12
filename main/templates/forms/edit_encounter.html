@@ -8,7 +8,7 @@
     {% csrf_token %}
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-4">
+            <div class="col-3">
                 <div class="row">
                     <h3>Vitals History</h3>
                 </div>
@@ -78,38 +78,7 @@
                     {% endfor %}
                 </div>
             </div>
-            <div class="col-8">
-                <div class="row bg-light">
-                    <div class="form-group col-md-4">
-                        <div>
-                            <div>{{ vitals_form.systolic_blood_pressure|as_crispy_field }}</div>
-                        </div>
-                        <div>
-                            <div>{{ vitals_form.diastolic_blood_pressure|as_crispy_field }}</div>
-                        </div>
-                        {% if birth_sex == "f" %}
-                        <div>
-                            <div>{{ form.weeks_pregnant|as_crispy_field }}</div>
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="form-group col-md-4">
-                        <div>
-                            <div>{{ vitals_form.heart_rate|as_crispy_field }}</div>
-                        </div>
-                        <div>
-                            <div>{{ vitals_form.body_temperature|as_crispy_field }}</div>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <div>
-                            <div>{{ vitals_form.oxygen_concentration|as_crispy_field }}</div>
-                        </div>
-                        <div>
-                            <div>{{ vitals_form.glucose_level|as_crispy_field }}</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-9">
                 <div class="row bg-light">
                     <div class="form-group col-md-4">
                         <div>
@@ -148,16 +117,11 @@
                             <div>{{ form.body_mass_index|as_crispy_field }}</div>
                         </div>
                     </div>
-                    <div class="form-group col-md-4">
-                        <div>
-                            <div>{{ vitals_form.mean_arterial_pressure|as_crispy_field }}</div>
-                        </div>
-                    </div>
                 </div>
                 {% if telehealth %}
                 <div class="row">
                     <div class="form-group col-md-12">
-                        {{ form.chief_complaint|as_crispy_field }}
+                        {{ form.chief_complaint }}
                     </div>
                 </div>
                 <div class="row">

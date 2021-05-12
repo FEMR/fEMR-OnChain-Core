@@ -332,7 +332,7 @@ class fEMRUser(AbstractUser):
 
 
 class Treatment(models.Model):
-    medication = models.ForeignKey(Medication, on_delete=models.CASCADE, null=True, blank=True)
+    medication = models.ManyToManyField(Medication, null=True, blank=True)
     administration_schedule = models.CharField(
         max_length=8, choices=administration_schedule_choices, null=True, blank=True)
     days = models.IntegerField(null=True, blank=True)
