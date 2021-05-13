@@ -19,7 +19,7 @@ from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, m
 from main.views import set_timezone
 from main import hl7
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
-from .autocomplete_views import DiagnosisAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete
+from .autocomplete_views import DiagnosisAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete
 
 app_name = 'main'
 
@@ -158,5 +158,10 @@ urlpatterns = [
          r'^chief-complaint-autocomplete/$',
          ChiefComplaintAutocomplete.as_view(create_field='text'),
          name='chief-complaint-autocomplete',
+    ),
+    url(
+         r'^administration-schedule-autocomplete/$',
+         AdministrationScheduleAutocomplete.as_view(create_field='text'),
+         name='administration-schedule-autocomplete',
     ),
 ]

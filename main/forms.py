@@ -294,6 +294,7 @@ EncounterFormSet = inlineformset_factory(
     widgets={
         'diagnosis': autocomplete.ModelSelect2(url='main:diagnosis-autocomplete'),
         'medication': autocomplete.ModelSelect2Multiple(url='main:medication-autocomplete'),
+        'administration_schedule': autocomplete.ModelSelect2Multiple(url='main:administration-schedule-autocomplete')
     },
     extra=1,
     can_order=False,

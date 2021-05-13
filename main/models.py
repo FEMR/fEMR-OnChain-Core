@@ -206,6 +206,17 @@ class ChiefComplaint(models.Model):
         return str(self.text)
 
 
+class AdministrationSchedule(models.Model):
+    text = models.CharField(
+        max_length=1024,
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return str(self.text)
+
+
 class Diagnosis(models.Model):
     text = models.CharField(
         max_length=1024,
@@ -333,8 +344,7 @@ class fEMRUser(AbstractUser):
 
 class Treatment(models.Model):
     medication = models.ManyToManyField(Medication, null=True, blank=True)
-    administration_schedule = models.CharField(
-        max_length=8, choices=administration_schedule_choices, null=True, blank=True)
+    administration_schedule = models.ManyToManyField(AdministrationSchedule, null=True, blank=True)
     days = models.IntegerField(null=True, blank=True)
     prescriber = models.ForeignKey(
         fEMRUser, on_delete=models.CASCADE, null=True, blank=True)
