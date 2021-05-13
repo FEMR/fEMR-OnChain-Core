@@ -30,7 +30,7 @@ idna==2.10
 ionhash==1.1.0
 isort==5.7.0
 jmespath==0.10.0
-lazy-object-proxy==1.4.3
+lazy-object-proxy==1.6.0
 mccabe==0.6.1
 packaging==20.9
 psycopg2==2.8.6
