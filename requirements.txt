@@ -28,7 +28,7 @@ docutils==0.15
 dparse==0.5.1
 idna==2.10
 ionhash==1.1.0
-isort==5.7.0
+isort==5.8.0
 jmespath==0.10.0
 lazy-object-proxy==1.6.0
 mccabe==0.6.1
