@@ -24,11 +24,11 @@ django-session-security==2.6.6
 django-timezone-utils==0.13
 django-user-agents==0.4.0
 djangorestframework==3.12.4
-docutils==0.15
+docutils==0.17.1
 dparse==0.5.1
 idna==2.10
 ionhash==1.1.0
-isort==5.7.0
+isort==5.8.0
 jmespath==0.10.0
 lazy-object-proxy==1.6.0
 mccabe==0.6.1
@@ -45,7 +45,7 @@ pytz==2021.1
 redis==3.5.3
 redis-py-cluster==2.1.2
 requests==2.25.1
-s3transfer==0.4.0
+s3transfer==0.4.2
 safety==1.10.3
 setuptools==56.2.0
 six==1.16.0
@@ -53,6 +53,6 @@ sqlparse==0.4.1
 toml==0.10.2
 typed-ast==1.4.3
 ua-parser==0.10.0
-urllib3==1.25.10
+urllib3==1.26.4
 user-agents==2.2.0
 wrapt==1.12.1
