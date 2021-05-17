@@ -9,7 +9,7 @@ from main.admin_views import add_user_to_campaign, add_users_to_campaign, admin_
     search_users_view, update_user_view, update_user_password_view
 from .api_views import UserViewSet, GroupViewSet, PatientViewSet, PatientEncounterViewSet, InstanceViewSet, CampaignViewSet
 from .auth_views import all_locked, not_logged_in, login_view, logout_view, permission_denied
-from .edit_views import patient_edit_form_view, encounter_edit_form_view, patient_export_view, patient_medical
+from .edit_views import patient_edit_form_view, encounter_edit_form_view, patient_export_view, patient_medical, new_vitals_view
 from .form_views import patient_form_view, referral_form_view, patient_encounter_form_view
 from .list_views import patient_csv_export_view, patient_list_view, search_patient_list_view, filter_patient_list_view
 from .views import forgot_username, index, home, healthcheck, help_messages_off
@@ -17,7 +17,6 @@ from .femr_admin_views import edit_contact_view, lock_campaign_view, new_campaig
     list_campaign_view, list_instance_view, femr_admin_home, change_campaign, unlock_campaign_view, view_contact_view
 from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, medication_form_view, treatment_form_view
 from main.views import set_timezone
-from main import hl7
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
 from .autocomplete_views import DiagnosisAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete
 
@@ -49,6 +48,8 @@ urlpatterns = [
          patient_encounter_form_view, name='patient_encounter_form_view'),
     path(r'encounter_edit_form_view/<int:patient_id>/<int:encounter_id>',
          encounter_edit_form_view, name='encounter_edit_form_view'),
+    path(r'new_vitals_view/<int:patient_id>/<int:encounter_id>',
+         new_vitals_view, name='new_vitals_view'),
 
     path(r'patient_medical/<int:id>', patient_medical, name='patient_medical'),
 

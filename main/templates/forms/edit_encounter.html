@@ -3,6 +3,25 @@
 {% load static %}
 {% load encounter_tags %}
 {% load crispy_forms_tags %}
+<div class="modal" id="modal_popup" role="dialog" tabindex="-1" style="display: none;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width: 150%">
+            <div class="modal-header">
+                <h5 class="modal-title">New Vitals Reading</h5>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'main:new_vitals_view' patient_id encounter_id %}">
+                    {% crispy vitals_form %}
+                    <input class="btn btn-primary ml-auto" type="submit" value="Submit and Refer" id="submit_vitals"
+                        name="submit_vitals" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <form action="{% url 'main:encounter_edit_form_view' patient_id encounter_id %}" method="post"
     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
     {% csrf_token %}
@@ -11,6 +30,7 @@
             <div class="col-3">
                 <div class="row">
                     <h3>Vitals History</h3>
+                    <button id="vitals_modal_button" type="button" class="btn btn-primary">New</button>
                 </div>
                 <div class="row">
                     {% for v in vitals %}
@@ -132,11 +152,11 @@
                 <h4>Diagnosis and Treatment</h4>
                 <div id="form-container" class="row justify-content-center">
                     {{ treatment_form.management_form }}
-                    <div class="form-group col-md-8 treatment-form card shadow bg-light">
-                        {% crispy treatment_form %}
+                    <div class="form-group col-md-10 treatment-form card shadow bg-light">
+                        {% crispy treatment_form helper %}
                     </div>
                     <div class="clearfix"></div>
-                    <button id="add-form" type="button" class="btn btn-primary col-md-4">Add</button>
+                    <button id="add-form" type="button" class="btn btn-primary col-md-2">Add</button>
                 </div>
                 {% endif %}
                 <div class="row">
@@ -171,20 +191,42 @@
     let addButton = document.querySelector("#add-form")
     let totalForms = document.querySelector("#id_form-TOTAL_FORMS")
 
-    let formNum = treatmentForm.length-1
+    let formNum = treatmentForm.length - 1
     addButton.addEventListener('click', addForm)
 
-    function addForm(e){
+    function addForm(e) {
         e.preventDefault()
 
         let newForm = treatmentForm[0].cloneNode(true)
-        let formRegex = RegExp(`form-(\\d){1}-`,'g')
+        let formRegex = RegExp(`form-(\\d){1}-`, 'g')
 
         formNum++
         newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`)
         container.insertBefore(newForm, addButton)
-        
-        totalForms.setAttribute('value', `${formNum+1}`)
+
+        totalForms.setAttribute('value', `${formNum + 1}`)
+    }
+</script>
+
+<script>
+    var modal = document.getElementById("modal_popup");
+
+    var btn = document.getElementById("vitals_modal_button");
+
+    var span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
     }
 </script>
 

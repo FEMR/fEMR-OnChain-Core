@@ -10,7 +10,7 @@ from django.forms import ModelForm, Form, CharField, PasswordInput, DateInput, V
 from django.forms.models import ModelMultipleChoiceField
 from django.forms.widgets import Textarea
 from django.utils import timezone
-from django.forms.models import inlineformset_factory, BaseInlineFormSet
+from django.forms.models import inlineformset_factory
 
 from dal import autocomplete
 
@@ -298,8 +298,23 @@ EncounterFormSet = inlineformset_factory(
     },
     extra=1,
     can_order=False,
-    can_delete=False
+    can_delete=False,
 )
+
+
+class MedicationFormHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_method = 'post'
+        self.layout = Layout(
+            Div(
+                'diagnosis',
+                'medication',
+                'administration_schedule',
+                'days',
+            ),
+        )
+        self.render_required_fields = True
 
 
 class VitalsForm(ModelForm):
@@ -310,6 +325,7 @@ class VitalsForm(ModelForm):
     def __init__(self, *args, **kwargs):
         self.unit = kwargs.pop('unit', None)
         super(VitalsForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
         self.fields['diastolic_blood_pressure'].widget.attrs['min'] = 0
         self.fields['systolic_blood_pressure'].widget.attrs['min'] = 0
         self.fields['oxygen_concentration'].widget.attrs['min'] = 70
@@ -329,6 +345,49 @@ class VitalsForm(ModelForm):
             self.fields['body_temperature'].label = 'Body temperature - Celsius'
             self.fields['body_temperature'].widget.attrs['min'] = 34
             self.fields['body_temperature'].widget.attrs['max'] = 45
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    'diastolic_blood_pressure',
+                    css_class="col-md-4",
+                ),
+                Div(
+                    'systolic_blood_pressure',
+                    css_class="col-md-4",
+                ),
+                Div(
+                    'mean_arterial_pressure',
+                    css_class="col-md-4",
+                ),
+                css_class="row",
+            ),
+            Div(
+                Div(
+                    'heart_rate',
+                    css_class="col-md-4",
+                ),
+                Div(
+                    'respiratory_rate',
+                    css_class="col-md-4",
+                ),
+                Div(
+                    'body_temperature',
+                    css_class="col-md-4",
+                ),
+                css_class="row",
+            ),
+            Div(
+                Div(
+                    'oxygen_concentration',
+                    css_class="col-md-6",
+                ),
+                Div(
+                    'glucose_level',
+                    css_class="col-md-6",
+                ),
+                css_class="row",
+            ),
+        )
 
     def clean_body_mass_index(self):
         if self.cleaned_data['body_mass_index'] < 5:
