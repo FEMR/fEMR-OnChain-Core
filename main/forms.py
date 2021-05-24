@@ -15,7 +15,7 @@ from django.forms.models import inlineformset_factory
 from dal import autocomplete
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, MultiField
+from crispy_forms.layout import Layout, Div, MultiField, ButtonHolder, Submit
 
 from .models import Patient, PatientEncounter, fEMRUser, Campaign, Instance, Contact, Vitals,\
     ChiefComplaint, Treatment, Diagnosis, Medication
@@ -387,6 +387,9 @@ class VitalsForm(ModelForm):
                 ),
                 css_class="row",
             ),
+            ButtonHolder(
+                Submit('submit', 'Submit', css_class='btn btn-primary ml-auto')
+            )
         )
 
     def clean_body_mass_index(self):

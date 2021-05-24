@@ -77,14 +77,10 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         if request.method == 'POST':
             form = PatientEncounterForm(request.POST or None,
                                         instance=m, unit=units)
-            vitals_form = VitalsForm(request.POST, unit=units)
-            if form.is_valid() and vitals_form.is_valid():
+            if form.is_valid():
                 encounter = form.save(commit=False)
-                vitals = vitals_form.save(commit=False)
                 encounter.patient = p
                 encounter.save()
-                vitals.encounter = encounter
-                vitals.save()
                 treatment_form_set = EncounterFormSet(
                     request.POST, instance=encounter)
                 if treatment_form_set.is_valid():
@@ -92,7 +88,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     treatment = treatment_form_set.save()
                     for t in treatment:
                         t.prescriber = request.user
-                    treatment.save()
+                        t.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
@@ -106,6 +102,8 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     return redirect('main:referral_form_view', **kwargs)
                 else:
                     return render(request, 'data/encounter_submitted.html')
+            else:
+                treatment_form_set = EncounterFormSet()
         else:
             DatabaseChangeLog.objects.create(action="View", model="Patient", instance=str(m),
                                              ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
@@ -149,6 +147,7 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
+        helper = MedicationFormHelper()
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         units = Campaign.objects.get(name=request.session['campaign']).units
@@ -194,7 +193,7 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
                       {'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'treatment_form': treatment_form_set,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'helper': helper,
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
     else:

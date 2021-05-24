@@ -15,8 +15,6 @@
             <div class="modal-body">
                 <form method="post" action="{% url 'main:new_vitals_view' patient_id encounter_id %}">
                     {% crispy vitals_form %}
-                    <input class="btn btn-primary ml-auto" type="submit" value="Submit and Refer" id="submit_vitals"
-                        name="submit_vitals" />
                 </form>
             </div>
         </div>
@@ -141,7 +139,7 @@
                 {% if telehealth %}
                 <div class="row">
                     <div class="form-group col-md-12">
-                        {{ form.chief_complaint }}
+                        {{ form.chief_complaint|as_crispy_field }}
                     </div>
                 </div>
                 <div class="row">
