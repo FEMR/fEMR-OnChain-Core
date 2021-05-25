@@ -348,11 +348,11 @@ class VitalsForm(ModelForm):
         self.helper.layout = Layout(
             Div(
                 Div(
-                    'diastolic_blood_pressure',
+                    'systolic_blood_pressure',
                     css_class="col-md-4",
                 ),
                 Div(
-                    'systolic_blood_pressure',
+                    'diastolic_blood_pressure',
                     css_class="col-md-4",
                 ),
                 Div(

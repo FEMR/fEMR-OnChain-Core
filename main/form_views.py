@@ -101,6 +101,7 @@ def patient_encounter_form_view(request, id=None):
             if form.is_valid() and vitals_form.is_valid():
                 print("Valid")
                 encounter = form.save(commit=False)
+                form.save_m2m()
                 vitals = vitals_form.save(commit=False)
                 encounter.patient = p
                 encounter.save()

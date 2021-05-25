@@ -79,6 +79,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                                         instance=m, unit=units)
             if form.is_valid():
                 encounter = form.save(commit=False)
+                form.save_m2m()
                 encounter.patient = p
                 encounter.save()
                 treatment_form_set = EncounterFormSet(
