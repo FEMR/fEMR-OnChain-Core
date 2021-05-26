@@ -180,9 +180,12 @@ class Patient(models.Model):
 
 def cal_key(fk):
     present_keys = Patient.objects.filter(campaign=fk).order_by('-campaign_key').values_list('campaign_key', flat=True)
+    print(present_keys)
     if present_keys and present_keys[0] is not None:
+        print("Adding.")
         return present_keys[0] + 1
     else:
+        print("No key.")
         return 0
 
 

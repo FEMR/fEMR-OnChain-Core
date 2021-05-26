@@ -101,7 +101,6 @@ def patient_encounter_form_view(request, id=None):
             if form.is_valid() and vitals_form.is_valid():
                 print("Valid")
                 encounter = form.save(commit=False)
-                form.save_m2m()
                 vitals = vitals_form.save(commit=False)
                 encounter.patient = p
                 encounter.save()
@@ -115,6 +114,8 @@ def patient_encounter_form_view(request, id=None):
                     for t in treatment:
                         t.prescriber = request.user
                         t.save()
+                    treatment_form_set.save_m2m()
+                form.save_m2m()
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(encounter).data
