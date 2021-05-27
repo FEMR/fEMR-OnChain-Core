@@ -179,11 +179,20 @@ class Patient(models.Model):
 
 
 def cal_key(fk):
+    # I know, this function is super obnoxious.
+    # I promise, dear reader, if I didn't have to do this I wouldn't.
+    # I should just be able to sort this list and spit out the first element, right?
+    # Not so!
+    # On our dev environment, None gets sorted AT THE TOP of the list,
+    # therefore making it so present_keys[0] is always None.
+    # I don't know what to tell you, it worked before on my machine.
+    # This is a couple of workarounds smashed together just in case sorting goes weird again.
     present_keys = Patient.objects.filter(campaign=fk).order_by('-campaign_key').values_list('campaign_key', flat=True)
+    present_keys = [i for i in present_keys if i]
     print(present_keys)
-    if present_keys and present_keys[0] is not None:
+    if present_keys:
         print("Adding.")
-        return present_keys[0] + 1
+        return max(present_keys) + 1
     else:
         print("No key.")
         return 0
