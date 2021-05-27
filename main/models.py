@@ -188,7 +188,7 @@ def cal_key(fk):
     # I don't know what to tell you, it worked before on my machine.
     # This is a couple of workarounds smashed together just in case sorting goes weird again.
     present_keys = Patient.objects.filter(campaign=fk).order_by('-campaign_key').values_list('campaign_key', flat=True)
-    present_keys = [i for i in present_keys if i]
+    present_keys = [i for i in present_keys if i is not None]
     print(present_keys)
     if present_keys:
         print("Adding.")
