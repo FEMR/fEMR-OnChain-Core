@@ -114,7 +114,6 @@ def patient_encounter_form_view(request, id=None):
                     for t in treatment:
                         t.prescriber = request.user
                         t.save()
-                    treatment_form_set.save_m2m()
                 form.save_m2m()
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
