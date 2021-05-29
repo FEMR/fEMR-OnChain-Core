@@ -90,7 +90,8 @@
                         </div>
                         <div class="row">
                             <div class=""><b>Prescriber |</b></div>
-                            <div class="">{{ t.prescriber }}</div>
+                            <div class="">{{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</div>
+                            <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
                         </div>
                     </div>
                     <hr />
