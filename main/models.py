@@ -187,7 +187,8 @@ def cal_key(fk):
     # therefore making it so present_keys[0] is always None.
     # I don't know what to tell you, it worked before on my machine.
     # This is a couple of workarounds smashed together just in case sorting goes weird again.
-    present_keys = Patient.objects.filter(campaign=fk).order_by('-campaign_key').values_list('campaign_key', flat=True)
+    present_keys = Patient.objects.filter(campaign=fk).order_by(
+        '-campaign_key').values_list('campaign_key', flat=True)
     present_keys = [i for i in present_keys if i is not None]
     print(present_keys)
     if present_keys:
@@ -355,13 +356,17 @@ class fEMRUser(AbstractUser):
 
 
 class Treatment(models.Model):
-    medication = models.ManyToManyField(Medication, null=True, blank=True)
-    administration_schedule = models.ManyToManyField(AdministrationSchedule, null=True, blank=True)
+    medication = models.ForeignKey(
+        Medication, on_delete=models.CASCADE, null=True, blank=True)
+    administration_schedule = models.ForeignKey(
+        AdministrationSchedule, on_delete=models.CASCADE, null=True, blank=True)
     days = models.IntegerField(null=True, blank=True)
     prescriber = models.ForeignKey(
         fEMRUser, on_delete=models.CASCADE, null=True, blank=True)
-    diagnosis = models.ForeignKey(Diagnosis, on_delete=models.CASCADE, null=True, blank=True)
-    encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
+    diagnosis = models.ForeignKey(
+        Diagnosis, on_delete=models.CASCADE, null=True, blank=True)
+    encounter = models.ForeignKey(
+        PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
     timestamp = models.DateTimeField(
         auto_now=True, editable=False, null=False, blank=False)
 
