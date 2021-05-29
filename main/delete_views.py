@@ -156,7 +156,7 @@ def test_delete_view(request):
         return redirect('main:not_logged_in')
 
 
-def patient_delete_view(request):
+def patient_delete_view(request, id=None):
     """
     Delete function.
 
@@ -164,15 +164,19 @@ def patient_delete_view(request):
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
-        data = Patient.objects.all()
-        try:
+        if request.method == "POST":
+            data = Patient.objects.all()
+            try:
+                p = get_object_or_404(Patient, pk=id)
+                Patient.objects.filter(id=p.id).delete()
+            except ObjectDoesNotExist:
+                pass
+            return render(request, 'list/patient.html',
+                          {'user': request.user,
+                           'list_view': data})
+        else:
             p = get_object_or_404(Patient, pk=id)
-            Patient.objects.filter(id=p.id).delete()
-        except ObjectDoesNotExist:
-            pass
-        return render(request, 'list/patient.html',
-                      {'user': request.user,
-                       'list_view': data})
+            return render(request, 'data/delete.html', {'patient': p})
     else:
         return redirect('main:not_logged_in')
 

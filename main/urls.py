@@ -1,3 +1,4 @@
+from main.delete_views import patient_delete_view
 from django.conf.urls import url, include
 from django.urls import path
 from rest_framework import routers
@@ -44,6 +45,8 @@ urlpatterns = [
 
     path(r'patient_edit_form_view/<int:id>',
          patient_edit_form_view, name='patient_edit_form_view'),
+     path(r'patient_delete_view/<int:id>',
+         patient_delete_view, name='patient_delete_view'),
     path(r'patient_encounter_form_view/<int:id>',
          patient_encounter_form_view, name='patient_encounter_form_view'),
     path(r'encounter_edit_form_view/<int:patient_id>/<int:encounter_id>',
