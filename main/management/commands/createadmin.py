@@ -23,6 +23,7 @@ class Command(BaseCommand):
         @return:
         """
         if not Instance.objects.filter(name="Test").exists():
+            print("Populating instance table.")
             c = Contact.objects.create(
                 first_name="Test",
                 last_name="Contact",
@@ -34,10 +35,12 @@ class Command(BaseCommand):
         else:
             instance = Instance.objects.get(name="Test")
         if not Campaign.objects.filter(name="Test").exists():
+            print("Populating campaign table.")
             campaign = Campaign.objects.create(name="Test", instance=instance)
         else:
             campaign = Campaign.objects.get(name="Test")
         if not fEMRUser.objects.filter(username="admin").exists():
+            print("Populating user table.")
             superuser = fEMRUser.objects.create_superuser("admin", "admin@admin.com", "OnChain-Admin")
             superuser.first_name = "Admin"
             superuser.last_name = "User"

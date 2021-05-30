@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'main.apps.MainConfig',
     'appMR',
+    'clinic_messages',
     'crispy_forms',
     'axes',
     'session_security',
@@ -71,6 +72,7 @@ MIDDLEWARE = [
     'session_security.middleware.SessionSecurityMiddleware',
     'main.middleware.TimezoneMiddleware',
     'main.middleware.CampaignActivityCheckMiddleware',
+    'main.middleware.ClinicMessageMiddleware',
     'django_user_agents.middleware.UserAgentMiddleware',
 ]
 

@@ -60,6 +60,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="">Pharmacy</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'clinic_messages:index' %}">Messages ({{ request.message_number }})</a>
+                </li>
                 <div class="dropdown-divider"></div>
                 {% if request.user|has_group:"Admin" %}
                 <li class="nav-item dropdown">

@@ -8,6 +8,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls', namespace='main')),
     path('appMR/', include('appMR.urls', namespace='appMR')),
+    path('messages/', include('clinic_messages.urls', namespace='clinic_messages')),
+
     url(r'session_security/', include('session_security.urls')),
 
     url(r'^password_reset/$', auth_views.PasswordResetView.as_view(template_name='auth/password_reset.html'),
