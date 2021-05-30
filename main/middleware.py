@@ -106,5 +106,5 @@ class ClinicMessageMiddleware:
 
     def __call__(self, request):
         if request.user.is_authenticated:
-            request.message_number = len(Message.objects.filter(recipient=request.user))
+            request.message_number = len(Message.objects.filter(recipient=request.user).filter(read=False))
         return self.get_response(request)

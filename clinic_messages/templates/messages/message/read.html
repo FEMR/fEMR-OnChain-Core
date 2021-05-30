@@ -14,9 +14,8 @@
     </div>
 </div>
 <div>
-    <form method="POST" action="">
+    <form method="POST" action="{% url 'clinic_messages:reply_message' message_id=message.id sender_id=sender.id %}">
         {% crispy form %}
-        <input class="btn btn-primary ml-auto" type="submit" value="Send" />
     </form>
 </div>
 {% endblock %}

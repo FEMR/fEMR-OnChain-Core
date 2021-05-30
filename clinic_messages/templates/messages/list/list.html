@@ -20,8 +20,8 @@
                      <td>{% if o.read %}{% else %}New{% endif %}</td>
                      <td>{{ o.sender }}</td>
                      <td>{{ o.subject }}</td>
-                     <td><a href="{% url 'messages:reply_view' message_id=o.id sender_id=o.sender.id %}">Read</a></td>
-                     <td><a href="{% url 'messages:delete_view' id=o.id %}">Delete</a></td>
+                     <td><a href="{% url 'clinic_messages:reply_message' message_id=o.id sender_id=o.sender.id %}">Read</a></td>
+                     <td><a href="{% url 'clinic_messages:delete_message' id=o.id %}">Delete</a></td>
               </tr>
               {% endfor %}
        </tbody>

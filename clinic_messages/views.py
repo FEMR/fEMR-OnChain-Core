@@ -23,7 +23,7 @@ def new_message(request):
                 message = form.save()
                 message.sender = request.user
                 message.save()
-            return redirect('messages:index')
+            return redirect('clinic_messages:index')
         else:
             form = MessageForm()
         return render(request, 'messages/message/new.html', {
@@ -41,15 +41,18 @@ def reply_message(request, message_id=None, sender_id=None):
                 message = form.save()
                 message.sender = request.user
                 message.save()
-            return redirect('messages:index')
+            return redirect('clinic_messages:index')
         else:
             message = Message.objects.get(pk=message_id)
+            message.read = True
+            message.save()
             sender = fEMRUser.objects.get(pk=sender_id)
             form = MessageForm()
             form.initial['recipient'] = sender.pk
             form.initial['replied_to'] = message
         return render(request, 'messages/message/read.html', {
             'message': message,
+            'sender': sender,
             'form': form
         })
     else:

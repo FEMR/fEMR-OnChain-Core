@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from clinic_messages.views import index, new_message, reply_message
+from clinic_messages.views import delete_message, index, new_message, reply_message
 from django.urls import path
 
 
@@ -11,4 +11,6 @@ urlpatterns = [
          new_message, name='new_message'),
     path(r'reply_message/<int:message_id>/<int:sender_id>',
          reply_message, name='reply_message'),
+    path(r'delete_message/<int:id>',
+         delete_message, name='delete_message'),
 ]

@@ -3,9 +3,8 @@
 {% load static %}
 {% load crispy_forms_tags %}
 <div>
-    <form method="POST" action="">
+    <form action="{% url 'clinic_messages:new_message' %}" method="POST">
         {% crispy form %}
-        <input class="btn btn-primary ml-auto" type="submit" value="Send" />
     </form>
 </div>
 {% endblock %}
