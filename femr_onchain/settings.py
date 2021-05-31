@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'axes',
     'session_security',
     'django_user_agents',
+    'background_task',
 ]
 
 AUTHENTICATION_BACKENDS = [
