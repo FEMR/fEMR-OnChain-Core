@@ -52,6 +52,12 @@
                         </style>
                         <table>
                             <tr>
+                                <td></td>
+                                {% for v in vitals %}
+                                <td>{{ v.timestamp }}</td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
                                 <td>BP</td>
                                 {% for v in vitals %}
                                 <td>{{ v.systolic_blood_pressure }}/{{ v.diastolic_blood_pressure }}</td>
