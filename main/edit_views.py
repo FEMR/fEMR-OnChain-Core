@@ -131,7 +131,8 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
-                      {'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'treatment_form': treatment_form_set,
+                      {'active': m.active,
+                       'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'treatment_form': treatment_form_set,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'helper': helper,
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
@@ -203,7 +204,8 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
 
 def patient_medical(request, id=None):
     if request.user.is_authenticated:
-        encounters = PatientEncounter.objects.filter(patient__pk=id).order_by('-timestamp')
+        encounters = PatientEncounter.objects.filter(
+            patient__pk=id).order_by('-timestamp')
         if encounters:
             encounter = encounters[0]
             return redirect('main:encounter_edit_form_view', patient_id=id, encounter_id=encounter.pk)
