@@ -21,4 +21,4 @@ def close_encounters():
                     e.active = False
 
 
-run_encounter_close = lambda x: close_encounters(repeat=86400)
+run_encounter_close = lambda: close_encounters(repeat=86400)
