@@ -15,7 +15,7 @@ def index(request):
         return redirect('main:not_logged_in')
 
 
-def new_message(request):
+def new_message(request, sender_id=None):
     if request.user.is_authenticated:
         if request.method == "POST":
             form = MessageForm(request.POST)
@@ -26,6 +26,8 @@ def new_message(request):
             return redirect('clinic_messages:index')
         else:
             form = MessageForm()
+            if sender_id is not None:
+                form.initial['recipient'] = fEMRUser.objects.get(pk=sender_id)
         return render(request, 'messages/message/new.html', {
             'form': form
         })

@@ -9,6 +9,8 @@ urlpatterns = [
     url(r'^$', index, name='index'),
     path(r'new_message/',
          new_message, name='new_message'),
+    path(r'new_message/<int:message_id>',
+         new_message, name='new_message'),
     path(r'reply_message/<int:message_id>/<int:sender_id>',
          reply_message, name='reply_message'),
     path(r'delete_message/<int:id>',
