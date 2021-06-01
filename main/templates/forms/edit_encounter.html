@@ -72,7 +72,11 @@
                             <tr>
                                 <td>T</td>
                                 {% for v in vitals %}
-                                <td>{{ v.body_temperature|temp_round }}</td>
+                                {% if units == 'i' %}
+                                <td>{{ vitals|imperial_temperature }}</td>
+                                {% else %}
+                                <td>{{ vitals.body_temperature|temp_round }}</td>
+                                {% endif %}
                                 {% endfor %}
                             </tr>
                             <tr>
