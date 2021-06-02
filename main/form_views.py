@@ -84,12 +84,16 @@ def patient_encounter_form_view(request, id=None):
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
+        p = Patient.objects.get(pk=id)
+        encounter_open = False
+        for e in PatientEncounter.object.all():
+            if e.patient is p and e.active:
+                encounter_open = True
         helper = MedicationFormHelper()
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         telehealth = Campaign.objects.get(
             name=request.session['campaign']).telehealth
-        p = Patient.objects.get(pk=id)
         if request.method == "POST":
             print("Post")
             units = Campaign.objects.get(
@@ -177,7 +181,7 @@ def patient_encounter_form_view(request, id=None):
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/encounter.html',
                       {'form': form, 'vitals_form': vitals_form, 'treatment_form': treatment_form_set, 'page_name': 'New Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
-                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': id, 'units': units, 'telehealth': telehealth, 'helper': helper,
+                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': id, 'units': units, 'telehealth': telehealth, 'helper': helper, 'encounter_open': encounter_open,
                        'page_tip': "Complete form with patient vitals as instructed. Any box with an asterix (*) is required. For max efficiency, use 'tab' to navigate through this page."})
     else:
         return redirect('/not_logged_in')

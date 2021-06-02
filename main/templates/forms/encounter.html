@@ -2,6 +2,32 @@
 {% block content %}
 {% load static %}
 {% load crispy_forms_tags %}
+{% if encounter_open %}
+<div class="modal" id="modal_popup" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Patient Already Exists</h5>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <p>This person already as an open encounter. Are you sure you want to start another one?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary ml-auto" href="{% url 'main:patient_list_view' %}">Back</a>
+                <button class="btn btn-primary ml-auto" data-dismiss="modal" type="button">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#modal_popup').modal('toggle')
+</script>
+{% endif %}
 <form action="{% url 'main:patient_encounter_form_view' patient_id %}" method="post"
     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
     {% csrf_token %}
