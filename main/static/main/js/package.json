@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
-    "inputmask": "^5.0.5"
+    "inputmask": "^5.0.6"
   },
   "license": "ISC"
 }
