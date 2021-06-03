@@ -113,9 +113,15 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
             vitals_form = VitalsForm(unit=units)
             if not m.active:
                 for field in form:
-                    field.widget.attrs['readonly'] = True
+                    try:
+                        field.widget.attrs['readonly'] = True
+                    except:
+                        pass
                 for field in vitals_form:
-                    field.widget.attrs['readonly'] = True
+                    try:
+                        field.widget.attrs['readonly'] = True
+                    except:
+                        pass
             treatment_form_set = EncounterFormSet()
             if units == 'i':
                 form.initial = {

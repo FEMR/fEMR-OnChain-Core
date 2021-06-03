@@ -219,7 +219,7 @@ def search_patient_list_view(request):
     if request.user.is_authenticated:
         try:
             data = Patient.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
-                Q(campaign_key__icontains=request.GET(['name_search'])) |
+                Q(campaign_key__icontains=request.GET['name_search']) |
                 Q(first_name__icontains=request.GET['name_search']) |
                 Q(last_name__icontains=request.GET['name_search']) |
                 Q(phone_number__icontains=request.GET['name_search']) |
