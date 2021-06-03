@@ -293,7 +293,7 @@ class PatientEncounter(models.Model):
     timestamp = models.DateTimeField(
         auto_now=True, editable=False, null=False, blank=False)
 
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
 
     @property
     def unit_aware_primary_height(self, unit):
