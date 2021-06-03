@@ -46,7 +46,7 @@ def mask_social(patient):
 
 @register.filter('get_chief_complaint')
 def get_chief_complaint(encounter):
-    return ",".join(list(encounter.chief_complaint.all()))
+    return ",".join([str(e) for e in encounter.chief_complaint.all()])
 
 
 @register.filter('imperial_primary_height')
