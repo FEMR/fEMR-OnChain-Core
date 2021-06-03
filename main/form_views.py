@@ -85,10 +85,7 @@ def patient_encounter_form_view(request, id=None):
     """
     if request.user.is_authenticated:
         p = Patient.objects.get(pk=id)
-        encounter_open = False
-        for e in PatientEncounter.objects.all():
-            if e.patient is p and e.active:
-                encounter_open = True
+        encounter_open = len(PatientEncounter.objects.filter(patient=p).filter(active=True)) > 0
         helper = MedicationFormHelper()
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
