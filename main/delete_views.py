@@ -41,9 +41,7 @@ def patient_delete_view(request, id=None):
                 Patient.objects.filter(id=p.id).delete()
             except ObjectDoesNotExist:
                 pass
-            return render(request, 'list/patient.html',
-                          {'user': request.user,
-                           'list_view': data})
+            return render(request, 'data/patient_deleted_success.html')
         else:
             p = get_object_or_404(Patient, pk=id)
             return render(request, 'data/delete.html', {'patient': p})

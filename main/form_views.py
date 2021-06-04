@@ -85,13 +85,13 @@ def patient_encounter_form_view(request, id=None):
     """
     if request.user.is_authenticated:
         p = Patient.objects.get(pk=id)
-        encounter_open = len(PatientEncounter.objects.filter(patient=p).filter(active=True)) > 0
         helper = MedicationFormHelper()
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         telehealth = Campaign.objects.get(
             name=request.session['campaign']).telehealth
         if request.method == "POST":
+            encounter_open = False
             print("Post")
             units = Campaign.objects.get(
                 name=request.session['campaign']).units
@@ -139,6 +139,7 @@ def patient_encounter_form_view(request, id=None):
                 print(vitals_form.errors)
         else:
             print("Get")
+            encounter_open = len(PatientEncounter.objects.filter(patient=p).filter(active=True)) > 0
             units = Campaign.objects.get(
                 name=request.session['campaign']).units
             form = PatientEncounterForm(unit=units, prefix="form")

@@ -105,6 +105,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     return render(request, 'data/encounter_submitted.html')
             else:
                 treatment_form_set = EncounterFormSet()
+            encounter_active = False
         else:
             DatabaseChangeLog.objects.create(action="View", model="Patient", instance=str(m),
                                              ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
@@ -140,9 +141,10 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                         (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
                     'body_weight': round(m.body_weight * 2.2046, 2),
                 }
+            encounter_active = m.active
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
-                      {'active': m.active,
+                      {'active': encounter_active,
                        'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'treatment_form': treatment_form_set,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'helper': helper,
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
