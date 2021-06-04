@@ -120,15 +120,6 @@
                         {{ form.patient_history|as_crispy_field }}
                     </div>
                 </div>
-                <h4>Diagnosis and Treatment</h4>
-                <div id="form-container" class="row justify-content-center">
-                    {{ treatment_form.management_form }}
-                    <div class="form-group col-md-10 treatment-form card shadow bg-light">
-                        {% crispy treatment_form helper %}
-                    </div>
-                    <div class="clearfix"></div>
-                    <button id="add-form" type="button" class="btn btn-primary col-md-2">Add</button>
-                </div>
                 {% endif %}
                 <div class="row">
                     <div class="form-group col-md-12">

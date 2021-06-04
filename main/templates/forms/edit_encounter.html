@@ -214,15 +214,6 @@
                         {{ form.patient_history|as_crispy_field }}
                     </div>
                 </div>
-                <h4>Diagnosis and Treatment</h4>
-                <div id="form-container" class="row justify-content-center">
-                    {{ treatment_form.management_form }}
-                    <div class="form-group col-md-10 treatment-form card shadow bg-light">
-                        {% crispy treatment_form helper %}
-                    </div>
-                    <div class="clearfix"></div>
-                    <button id="add-form" type="button" class="btn btn-primary col-md-2">Add</button>
-                </div>
                 {% endif %}
                 <div class="row">
                     <div class="form-group col-md-12">
@@ -250,6 +241,14 @@
     {% if active %}
 </form>
 {% endif %}
+<form>
+    <h2>Diagnosis</h2>
+    {% crispy diagnosis_form %}
+</form>
+<form>
+    <h2>Treatment</h2>
+    {% crispy treatment_form %}
+</form>
 
 <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
 {{ form.media }}

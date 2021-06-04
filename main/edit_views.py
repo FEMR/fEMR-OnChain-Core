@@ -8,7 +8,7 @@ import math
 import os
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import PatientForm, PatientEncounterForm, VitalsForm, EncounterFormSet, MedicationFormHelper
+from .forms import DiagnosisForm, PatientDiagnosisForm, PatientForm, PatientEncounterForm, TreatmentForm, VitalsForm, MedicationFormHelper
 from .models import Campaign, Patient, PatientEncounter, DatabaseChangeLog, Vitals, Treatment
 from main.qldb_interface import update_patient, update_patient_encounter
 
@@ -74,6 +74,8 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
+        treatment_form = TreatmentForm()
+        diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             form = PatientEncounterForm(request.POST or None,
                                         instance=m, unit=units)
@@ -82,14 +84,6 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 form.save_m2m()
                 encounter.patient = p
                 encounter.save()
-                treatment_form_set = EncounterFormSet(
-                    request.POST, instance=encounter)
-                if treatment_form_set.is_valid():
-                    encounter.save()
-                    treatment = treatment_form_set.save()
-                    for t in treatment:
-                        t.prescriber = request.user
-                        t.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
@@ -103,8 +97,6 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     return redirect('main:referral_form_view', **kwargs)
                 else:
                     return render(request, 'data/encounter_submitted.html')
-            else:
-                treatment_form_set = EncounterFormSet()
             encounter_active = False
         else:
             DatabaseChangeLog.objects.create(action="View", model="Patient", instance=str(m),
@@ -123,7 +115,6 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                         field.widget.attrs['readonly'] = True
                     except:
                         pass
-            treatment_form_set = EncounterFormSet()
             if units == 'i':
                 form.initial = {
                     'body_mass_index': m.body_mass_index,
@@ -145,7 +136,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
                       {'active': encounter_active,
-                       'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'treatment_form': treatment_form_set,
+                       'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'helper': helper,
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
@@ -172,6 +163,8 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
+        treatment_form = TreatmentForm()
+        diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             vitals_form = VitalsForm(request.POST, unit=units)
             if vitals_form.is_valid():
@@ -187,7 +180,6 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
         form = PatientEncounterForm(
             instance=m, unit=units)
         vitals_form = VitalsForm(unit=units)
-        treatment_form_set = EncounterFormSet()
         if units == 'i':
             form.initial = {
                 'body_mass_index': m.body_mass_index,
@@ -207,7 +199,7 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
-                      {'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'treatment_form': treatment_form_set,
+                      {'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'helper': helper,
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})

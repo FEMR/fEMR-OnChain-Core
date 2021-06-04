@@ -358,6 +358,11 @@ class fEMRUser(AbstractUser):
         return '{} {} {}'.format(self.first_name, self.last_name, self.email)
 
 
+class PatientDiagnosis(models.Model):
+    patient = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
+    diagnosis = models.ForeignKey(Diagnosis, on_delete=models.CASCADE)
+
+
 class Treatment(models.Model):
     medication = models.ForeignKey(
         Medication, on_delete=models.CASCADE, null=True, blank=True)
@@ -367,7 +372,7 @@ class Treatment(models.Model):
     prescriber = models.ForeignKey(
         fEMRUser, on_delete=models.CASCADE, null=True, blank=True)
     diagnosis = models.ForeignKey(
-        Diagnosis, on_delete=models.CASCADE, null=True, blank=True)
+        PatientDiagnosis, on_delete=models.CASCADE, null=True, blank=True)
     encounter = models.ForeignKey(
         PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
     timestamp = models.DateTimeField(

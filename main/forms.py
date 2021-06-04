@@ -10,14 +10,13 @@ from django.forms import ModelForm, Form, CharField, PasswordInput, DateInput, V
 from django.forms.models import ModelMultipleChoiceField
 from django.forms.widgets import Textarea
 from django.utils import timezone
-from django.forms.models import inlineformset_factory
 
 from dal import autocomplete
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, MultiField, ButtonHolder, Submit
 
-from .models import Patient, PatientEncounter, fEMRUser, Campaign, Instance, Contact, Vitals,\
+from .models import Patient, PatientDiagnosis, PatientEncounter, fEMRUser, Campaign, Instance, Contact, Vitals,\
     ChiefComplaint, Treatment, Diagnosis, Medication
 
 
@@ -55,6 +54,21 @@ class DiagnosisForm(ModelForm):
         }
 
 
+class PatientDiagnosisForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = PatientDiagnosis
+        fields = ('diagnosis',)
+        widgets = {
+            'diagnosis': autocomplete.ModelSelect2(url='main:diagnosis-autocomplete'),
+        }
+
 class MedicationForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -73,18 +87,6 @@ class MedicationForm(ModelForm):
 
 
 class TreatmentForm(ModelForm):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            MultiField(
-                Div('medication'),
-                Div('administration_schedule'),
-                Div('days'),
-            ),
-        )
-
     class Meta:
         """
         Metaclass controlling model references.
@@ -280,26 +282,6 @@ class PatientEncounterForm(ModelForm):
             'patient_history': Textarea(attrs={'rows': 4, 'cols': 40}),
             'community_health_worker_notes': Textarea(attrs={'rows': 4, 'cols': 40})
         }
-
-
-EncounterFormSet = inlineformset_factory(
-    PatientEncounter,
-    Treatment,
-    fields=(
-        'diagnosis',
-        'medication',
-        'administration_schedule',
-        'days',
-    ),
-    widgets={
-        'diagnosis': autocomplete.ModelSelect2(url='main:diagnosis-autocomplete'),
-        'medication': autocomplete.ModelSelect2(url='main:medication-autocomplete'),
-        'administration_schedule': autocomplete.ModelSelect2(url='main:administration-schedule-autocomplete')
-    },
-    extra=1,
-    can_order=False,
-    can_delete=False,
-)
 
 
 class MedicationFormHelper(FormHelper):
