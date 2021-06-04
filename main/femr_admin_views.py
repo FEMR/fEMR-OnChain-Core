@@ -1,7 +1,7 @@
 from django.http.response import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from main.forms import CampaignForm, ContactForm, InstanceForm
-from main.models import AuditEntry, Campaign, Contact, DatabaseChangeLog, Instance
+from main.forms import CampaignForm, ContactForm, InstanceForm, fEMRAdminUserForm
+from main.models import AuditEntry, Campaign, Contact, DatabaseChangeLog, Instance, fEMRUser
 from django.db.models import ObjectDoesNotExist
 
 
@@ -74,7 +74,7 @@ def new_instance_view(request):
         if request.user.groups.filter(name='fEMR Admin').exists():
             if request.method == 'POST':
                 form = InstanceForm(request.POST)
-                contact_form = ContactForm()
+                contact_form = fEMRAdminUserForm()
                 if form.is_valid():
                     t = form.save()
                     t.save()
@@ -83,7 +83,7 @@ def new_instance_view(request):
                     return render(request, "femr_admin/confirm/instance_submitted.html")
             else:
                 form = InstanceForm()
-                contact_form = ContactForm()
+                contact_form = fEMRAdminUserForm()
             return render(request, 'femr_admin/instance/new_instance.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Instance', 'show': False})
         else:
             return redirect('main:permission_denied')
@@ -95,15 +95,15 @@ def new_contact_view(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='fEMR Admin').exists():
             form = InstanceForm()
-            contact_form = ContactForm()
+            contact_form = fEMRAdminUserForm()
             if request.method == 'POST':
-                contact_form = ContactForm(request.POST)
+                contact_form = fEMRAdminUserForm(request.POST)
                 if contact_form.is_valid():
                     t = contact_form.save()
                     t.save()
                     DatabaseChangeLog.objects.create(action="Create", model="Contact", instance=str(t),
                                                      ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
-                    contact_form = ContactForm()
+                    contact_form = fEMRAdminUserForm()
             return render(request, 'femr_admin/instance/new_instance.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Instance', 'show': True})
         else:
             return redirect('main:permission_denied')
@@ -139,9 +139,9 @@ def edit_campaign_view(request, id=None):
 def edit_contact_view(request, id=None):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='fEMR Admin').exists():
-            instance = Contact.objects.get(pk=id)
+            instance = fEMRUser.objects.get(pk=id)
             if request.method == 'POST':
-                form = ContactForm(request.POST or None, instance=instance)
+                form = fEMRAdminUserForm(request.POST or None, instance=instance)
                 if form.is_valid():
                     t = form.save()
                     t.save()
@@ -149,7 +149,7 @@ def edit_contact_view(request, id=None):
                                                      ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                     return render(request, "femr_admin/confirm/contact_submitted.html")
             else:
-                form = ContactForm(instance=instance)
+                form = fEMRAdminUserForm(instance=instance)
                 return render(request, 'femr_admin/contact/edit_contact.html', {'form': form, 'page_name': 'Edit Contact', 'contact_id': id})
         else:
             return redirect('main:permission_denied')
@@ -160,7 +160,7 @@ def edit_contact_view(request, id=None):
 def view_contact_view(request, id=None):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='fEMR Admin').exists():
-            instance = Contact.objects.get(pk=id)
+            instance = fEMRUser.objects.get(pk=id)
             return render(request, 'femr_admin/contact/contact_info.html', {'instance': instance, 'page_name': 'Contact Info'})
         else:
             return redirect('main:permission_denied')
@@ -172,7 +172,7 @@ def edit_instance_view(request, id=None):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='fEMR Admin').exists():
             instance = Instance.objects.get(pk=id)
-            contact_form = ContactForm()
+            contact_form = fEMRAdminUserForm()
             if request.method == 'POST':
                 form = InstanceForm(request.POST or None, instance=instance)
                 if form.is_valid():

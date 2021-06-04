@@ -56,7 +56,7 @@ class Instance(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
     main_contact = models.ForeignKey(
-        Contact, on_delete=models.CASCADE, null=True, blank=True)
+        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
