@@ -22,7 +22,6 @@ def patient_delete_view(request, id=None):
     """
     if request.user.is_authenticated:
         if request.method == "POST":
-            data = Patient.objects.all()
             try:
                 p = get_object_or_404(Patient, pk=id)
                 this_campaign = Campaign.objects.get(
