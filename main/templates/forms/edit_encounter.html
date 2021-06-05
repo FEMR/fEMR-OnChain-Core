@@ -244,10 +244,16 @@
 <form>
     <h2>Diagnosis</h2>
     {% crispy diagnosis_form %}
+    <div class="col-md-4">
+        <input class="btn btn-primary ml-auto" type="submit" value="Submit" />
+    </div>
 </form>
 <form>
     <h2>Treatment</h2>
     {% crispy treatment_form %}
+    <div class="col-md-4">
+        <input class="btn btn-primary ml-auto" type="submit" value="Submit" />
+    </div>
 </form>
 
 <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>

@@ -359,7 +359,7 @@ class fEMRUser(AbstractUser):
 
 
 class PatientDiagnosis(models.Model):
-    patient = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
+    encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
     diagnosis = models.ForeignKey(Diagnosis, on_delete=models.CASCADE)
 
 
@@ -370,11 +370,11 @@ class Treatment(models.Model):
         AdministrationSchedule, on_delete=models.CASCADE, null=True, blank=True)
     days = models.IntegerField(null=True, blank=True)
     prescriber = models.ForeignKey(
-        fEMRUser, on_delete=models.CASCADE, null=True, blank=True)
+        fEMRUser, on_delete=models.CASCADE, null=True, blank=True, editable=False)
     diagnosis = models.ForeignKey(
         PatientDiagnosis, on_delete=models.CASCADE, null=True, blank=True)
     encounter = models.ForeignKey(
-        PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
+        PatientEncounter, on_delete=models.CASCADE, null=True, blank=True, editable=False)
     timestamp = models.DateTimeField(
         auto_now=True, editable=False, null=False, blank=False)
 

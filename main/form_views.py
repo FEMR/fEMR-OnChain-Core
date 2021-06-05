@@ -8,8 +8,8 @@ import math
 import os
 from django.shortcuts import render, redirect
 
-from .forms import DiagnosisForm, PatientForm, PatientEncounterForm, TreatmentForm, VitalsForm, MedicationFormHelper
-from .models import Campaign, Patient, DatabaseChangeLog, PatientEncounter, Vitals, cal_key
+from .forms import DiagnosisForm, PatientForm, PatientEncounterForm, TreatmentForm, VitalsForm
+from .models import Campaign, Patient, DatabaseChangeLog, PatientEncounter, cal_key
 from .qldb_interface import create_new_patient, create_new_patient_encounter, update_patient_encounter
 
 
@@ -85,7 +85,6 @@ def patient_encounter_form_view(request, id=None):
     """
     if request.user.is_authenticated:
         p = Patient.objects.get(pk=id)
-        helper = MedicationFormHelper()
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         telehealth = Campaign.objects.get(
@@ -172,7 +171,7 @@ def patient_encounter_form_view(request, id=None):
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/encounter.html',
                       {'form': form, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form, 'page_name': 'New Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
-                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': id, 'units': units, 'telehealth': telehealth, 'helper': helper, 'encounter_open': encounter_open,
+                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': id, 'units': units, 'telehealth': telehealth, 'encounter_open': encounter_open,
                        'page_tip': "Complete form with patient vitals as instructed. Any box with an asterix (*) is required. For max efficiency, use 'tab' to navigate through this page."})
     else:
         return redirect('/not_logged_in')

@@ -284,21 +284,6 @@ class PatientEncounterForm(ModelForm):
         }
 
 
-class MedicationFormHelper(FormHelper):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.form_method = 'post'
-        self.layout = Layout(
-            Div(
-                'diagnosis',
-                'medication',
-                'administration_schedule',
-                'days',
-            ),
-        )
-        self.render_required_fields = True
-
-
 class VitalsForm(ModelForm):
     """
     Data entry form - Vitals
