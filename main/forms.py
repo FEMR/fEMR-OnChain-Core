@@ -69,6 +69,7 @@ class PatientDiagnosisForm(ModelForm):
             'diagnosis': autocomplete.ModelSelect2(url='main:diagnosis-autocomplete'),
         }
 
+
 class MedicationForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -87,6 +88,23 @@ class MedicationForm(ModelForm):
 
 
 class TreatmentForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Div(
+            Div('diagnosis',
+                css_class='col-md-2'),
+            Div('medication',
+                css_class='col-md-5'),
+            Div('administration_schedule',
+                css_class='col-md-3'),
+            Div('days',
+                css_class='col-md-2'),
+                css_class='row',
+            )
+        )
+
     class Meta:
         """
         Metaclass controlling model references.
