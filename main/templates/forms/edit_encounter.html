@@ -241,17 +241,17 @@
     {% if active %}
 </form>
 {% endif %}
-<form>
+<form method="post" action="{% url 'main:new_diagnosis_view' patient_id encounter_id %}">
     <h2>Diagnosis</h2>
     {% crispy diagnosis_form %}
     <div class="col-md-4">
         <input class="btn btn-primary ml-auto" type="submit" value="Submit" />
     </div>
 </form>
-<form>
+<form method="post" action="{% url 'main:new_treatment_view' patient_id encounter_id %}">
     <h2>Treatment</h2>
     {% crispy treatment_form %}
-    <div class="col-md-4">
+    <div class="col-md-2">
         <input class="btn btn-primary ml-auto" type="submit" value="Submit" />
     </div>
 </form>
