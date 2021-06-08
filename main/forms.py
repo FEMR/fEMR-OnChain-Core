@@ -275,6 +275,7 @@ class PatientEncounterForm(ModelForm):
         fields = '__all__'
         labels = {
             'body_mass_index': 'Body Mass Index',
+            'community_health_worker_notes': 'Notes',
         }
         widgets = {
             'diagnoses': autocomplete.ModelSelect2Multiple(url='main:diagnosis-autocomplete'),
