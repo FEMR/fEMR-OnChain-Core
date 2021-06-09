@@ -162,7 +162,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
         treatment_form = TreatmentForm()
-        treatment_form.field['diagnosis'].queryset = PatientDiagnosis.objects.filter(encounter=m)
+        treatment_form.fields['diagnosis'].queryset = PatientDiagnosis.objects.filter(encounter=m)
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             diagnosis_form = PatientDiagnosisForm(request.POST, unit=units)
@@ -226,7 +226,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
         treatment_form = TreatmentForm()
-        treatment_form.field['diagnosis'].queryset = PatientDiagnosis.objects.filter(encounter=m)
+        treatment_form.fields['diagnosis'].queryset = PatientDiagnosis.objects.filter(encounter=m)
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             treatment_form = TreatmentForm(request.POST, unit=units)
@@ -290,7 +290,7 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
         treatment_form = TreatmentForm()
-        treatment_form.field['diagnosis'].queryset = PatientDiagnosis.objects.filter(encounter=m)
+        treatment_form.fields['diagnosis'].queryset = PatientDiagnosis.objects.filter(encounter=m)
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             vitals_form = VitalsForm(request.POST, unit=units)
