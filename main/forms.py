@@ -14,7 +14,7 @@ from django.utils import timezone
 from dal import autocomplete
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, MultiField, ButtonHolder, Submit
+from crispy_forms.layout import Layout, Div, ButtonHolder, Submit
 
 from .models import Patient, PatientDiagnosis, PatientEncounter, fEMRUser, Campaign, Instance, Contact, Vitals,\
     ChiefComplaint, Treatment, Diagnosis, Medication
@@ -58,6 +58,7 @@ class PatientDiagnosisForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', 'Submit', css_class='btn btn-primary'))
 
     class Meta:
         """
@@ -75,6 +76,7 @@ class MedicationForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', 'Submit', css_class='btn btn-primary'))
 
     class Meta:
         """
@@ -104,6 +106,7 @@ class TreatmentForm(ModelForm):
                 css_class='row',
             )
         )
+        self.helper.add_input(Submit('submit', 'Submit', css_class='btn btn-primary'))
 
     class Meta:
         """
@@ -293,6 +296,7 @@ class PatientEncounterForm(ModelForm):
         fields = '__all__'
         labels = {
             'body_mass_index': 'Body Mass Index',
+            'community_health_worker_notes': 'Notes',
         }
         widgets = {
             'diagnoses': autocomplete.ModelSelect2Multiple(url='main:diagnosis-autocomplete'),

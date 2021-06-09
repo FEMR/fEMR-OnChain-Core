@@ -5,7 +5,7 @@
 {% load patient_tags %}
 {% load crispy_forms_tags %}
 {% if not active %}
-<div class="modal" id="modal_popup" role="dialog" tabindex="-1">
+<div class="modal" id="patient_modal_popup" role="dialog" tabindex="-1">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -27,7 +27,7 @@
     </div>
 </div>
 <script>
-    $('#modal_popup').modal('toggle')
+    $('#patient_modal_popup').modal('toggle')
 </script>
 {% endif %}
 <div class="modal" id="modal_popup" role="dialog" tabindex="-1" style="display: none;">
@@ -203,12 +203,12 @@
                         </div>
                     </div>
                 </div>
-                {% if telehealth %}
                 <div class="row">
                     <div class="form-group col-md-12">
                         {{ form.chief_complaint|as_crispy_field }}
                     </div>
                 </div>
+                {% if telehealth %}
                 <div class="row">
                     <div class="form-group col-md-12">
                         {{ form.patient_history|as_crispy_field }}
@@ -245,17 +245,11 @@
     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
     <h2>Diagnosis</h2>
     {% crispy diagnosis_form %}
-    <div class="col-md-4">
-        <input class="btn btn-primary ml-auto" type="submit" value="Submit" />
-    </div>
 </form>
 <form method="post" action="{% url 'main:new_treatment_view' patient_id encounter_id %}"
     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
     <h2>Treatment</h2>
     {% crispy treatment_form %}
-    <div class="col-md-2">
-        <input class="btn btn-primary ml-auto" type="submit" value="Submit" />
-    </div>
 </form>
 
 <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>

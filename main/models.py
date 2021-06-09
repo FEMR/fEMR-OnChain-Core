@@ -355,7 +355,7 @@ class fEMRUser(AbstractUser):
         "self", on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return '{} {} {}'.format(self.first_name, self.last_name, self.email)
+        return '{} {}'.format(self.first_name, self.last_name)
 
 
 class PatientDiagnosis(models.Model):
