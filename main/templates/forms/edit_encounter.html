@@ -221,11 +221,11 @@
                     </div>
                 </div>
             </div>
+            {% if active %}
             <div class="row">
                 <div class="col-md-4">
                     <input class="btn btn-primary ml-auto" type="reset" value="Reset Fields" />
                 </div>
-                {% if active %}
                 <div class="col-md-4">
                     <input class="btn btn-primary ml-auto" type="submit" value="Submit Encounter" id="submit_encounter"
                         name="submit_encounter" />
@@ -234,21 +234,23 @@
                     <input class="btn btn-primary ml-auto" type="submit" value="Submit and Refer" id="submit_refer"
                         name="submit_refer" />
                 </div>
-                {% endif %}
             </div>
+            {% endif %}
         </div>
     </div>
     {% if active %}
 </form>
 {% endif %}
-<form method="post" action="{% url 'main:new_diagnosis_view' patient_id encounter_id %}">
+<form method="post" action="{% url 'main:new_diagnosis_view' patient_id encounter_id %}"
+    onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
     <h2>Diagnosis</h2>
     {% crispy diagnosis_form %}
     <div class="col-md-4">
         <input class="btn btn-primary ml-auto" type="submit" value="Submit" />
     </div>
 </form>
-<form method="post" action="{% url 'main:new_treatment_view' patient_id encounter_id %}">
+<form method="post" action="{% url 'main:new_treatment_view' patient_id encounter_id %}"
+    onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
     <h2>Treatment</h2>
     {% crispy treatment_form %}
     <div class="col-md-2">

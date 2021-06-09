@@ -15,6 +15,8 @@ class Message(models.Model):
         "Message", on_delete=models.CASCADE, blank=True, null=True, editable=False)
 
     read = models.BooleanField(default=False, editable=False)
+    deleted_by_sender = models.BooleanField(default=False, editable=False)
+    deleted_by_recipient = models.BooleanField(default=False, editable=False)
 
     def __unicode__(self):
         return self.subject

@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 <div>
     <div>
-        <a href="{% url 'clinic_messages:delete_message' id=message.id %}">Delete</a>
+        <a href="{% url 'clinic_messages:delete_sent_message' id=message.id %}">Delete</a>
     </div>
     <div>
         {{ message.subject }}

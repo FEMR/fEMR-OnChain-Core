@@ -549,6 +549,9 @@ class CampaignForm(ModelForm):
         model = Campaign
         fields = '__all__'
         exclude = ('inventory',)
+        labels = {
+            'encounter_close': 'Encounter close (Days)',
+        }
 
 
 class ContactForm(ModelForm):
