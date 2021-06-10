@@ -133,6 +133,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 }
             encounter_active = m.active
         suffix = p.get_suffix_display() if p.suffix is not None else ""
+        print(encounter_active)
         return render(request, 'forms/edit_encounter.html',
                       {'active': encounter_active,
                        'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
