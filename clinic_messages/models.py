@@ -20,7 +20,7 @@ class Message(models.Model):
     deleted_by_recipient = models.BooleanField(default=False, editable=False)
 
     timestamp = models.DateTimeField(
-        auto_now=True, editable=False, null=False, blank=False, default=timezone.now())
+        auto_now=True, editable=False, null=False, blank=False)
 
     def __unicode__(self):
         return self.subject
