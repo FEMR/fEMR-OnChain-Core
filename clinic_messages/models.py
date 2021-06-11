@@ -1,5 +1,6 @@
 from main.models import fEMRUser
 from django.db import models
+from django.utils import timezone
 
 
 class Message(models.Model):
@@ -17,6 +18,9 @@ class Message(models.Model):
     read = models.BooleanField(default=False, editable=False)
     deleted_by_sender = models.BooleanField(default=False, editable=False)
     deleted_by_recipient = models.BooleanField(default=False, editable=False)
+
+    timestamp = models.DateTimeField(
+        auto_now=True, editable=False, null=False, blank=False, default=timezone.now())
 
     def __unicode__(self):
         return self.subject

@@ -1,7 +1,8 @@
+import os
 from main.models import fEMRUser
 from clinic_messages.form import MessageForm
 from django.shortcuts import get_object_or_404, redirect, render
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail
 
 from clinic_messages.models import Message
 
@@ -9,7 +10,7 @@ from clinic_messages.models import Message
 def index(request):
     if request.user.is_authenticated:
         return render(request, 'messages/list/list.html', {
-            'list_view': Message.objects.filter(recipient=request.user).filter(deleted_by_recipient=False)
+            'list_view': Message.objects.filter(recipient=request.user).filter(deleted_by_recipient=False).order_by('-timestamp')
         })
     else:
         return redirect('main:not_logged_in')
@@ -18,7 +19,7 @@ def index(request):
 def sent_box(request):
     if request.user.is_authenticated:
         return render(request, 'messages/list/sent_list.html', {
-            'list_view': Message.objects.filter(sender=request.user).filter(deleted_by_sender=False)
+            'list_view': Message.objects.filter(sender=request.user).filter(deleted_by_sender=False).order_by('-timestamp')
         })
     else:
         return redirect('main:not_logged_in')
@@ -32,6 +33,11 @@ def new_message(request, sender_id=None):
                 message = form.save()
                 message.sender = request.user
                 message.save()
+                send_mail(
+                    "Message from {0}".format(message.sender),
+                    "{0}".format(message.content),
+                    os.environ.get('DEFAULT_FROM_EMAIL'),
+                    [message.recipient.email])
             return redirect('clinic_messages:index')
         else:
             form = MessageForm()
@@ -52,6 +58,11 @@ def reply_message(request, message_id=None, sender_id=None):
                 message = form.save()
                 message.sender = request.user
                 message.save()
+                send_mail(
+                    "Message from {0}".format(message.sender),
+                    "{0}".format(message.content),
+                    os.environ.get('DEFAULT_FROM_EMAIL'),
+                    [message.recipient.email])
             return redirect('clinic_messages:index')
         else:
             message = Message.objects.get(pk=message_id)
