@@ -105,6 +105,7 @@ def patient_encounter_form_view(request, id=None):
                 encounter = form.save(commit=False)
                 vitals = vitals_form.save(commit=False)
                 encounter.patient = p
+                encounter.active = True
                 encounter.save()
                 vitals.encounter = encounter
                 vitals.save()
