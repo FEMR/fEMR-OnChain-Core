@@ -166,7 +166,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
         treatment_form.fields['diagnosis'].queryset = PatientDiagnosis.objects.filter(encounter=m)
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
-            diagnosis_form = PatientDiagnosisForm(request.POST, unit=units)
+            diagnosis_form = PatientDiagnosisForm(request.POST)
             if diagnosis_form.is_valid():
                 diagnosis = diagnosis_form.save(commit=False)
                 diagnosis.encounter = m
