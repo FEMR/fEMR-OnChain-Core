@@ -44,5 +44,5 @@ class Command(BaseCommand):
         @return:
         """
         for option in OPTIONS:
-            if not AdministrationSchedule.objects.filter(name=option).exists():
-                AdministrationSchedule.objects.create(name=option)
+            if not AdministrationSchedule.objects.filter(text=option).exists():
+                AdministrationSchedule.objects.create(text=option)
