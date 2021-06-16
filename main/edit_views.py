@@ -230,7 +230,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
         treatment_form.fields['diagnosis'].queryset = PatientDiagnosis.objects.filter(encounter=m)
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
-            treatment_form = TreatmentForm(request.POST, unit=units)
+            treatment_form = TreatmentForm(request.POST)
             if treatment_form.is_valid():
                 treatment = treatment_form.save(commit=False)
                 treatment.encounter = m
