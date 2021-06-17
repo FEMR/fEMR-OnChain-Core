@@ -64,6 +64,7 @@
        <thead>
               <tr>
                      <th scope="col">Patient ID</th>
+                     <th scope="col">Open Encounter</th>
                      <th scope="col">First Name</th>
                      <th scope="col">Middle Name</th>
                      <th scope="col">Last Name</th>
@@ -76,6 +77,7 @@
               {% for o in list_view %}
               <tr>
                      <td>{{ o.campaign_key }}</td>
+                     <td>{{ o|open_encounters }}</td>
                      <td>{{ o.first_name }}</td>
                      <td>{{ o|has_middle_name }}</td>
                      <td>{{ o.last_name }}</td>

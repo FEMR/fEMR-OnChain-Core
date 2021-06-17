@@ -7,6 +7,7 @@ import math
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import Group
 from django.forms import ModelForm, Form, CharField, PasswordInput, DateInput, ValidationError, BooleanField
+from django.forms import widgets
 from django.forms.models import ModelMultipleChoiceField
 from django.forms.widgets import Textarea
 from django.utils import timezone
@@ -67,7 +68,7 @@ class PatientDiagnosisForm(ModelForm):
         model = PatientDiagnosis
         fields = ('diagnosis',)
         widgets = {
-            'diagnosis': autocomplete.ModelSelect2(url='main:diagnosis-autocomplete'),
+            'diagnosis': autocomplete.ModelSelect2Multiple(url='main:diagnosis-autocomplete'),
         }
 
 
@@ -294,6 +295,10 @@ class PatientEncounterForm(ModelForm):
         """
         model = PatientEncounter
         fields = '__all__'
+        exclude = (
+            'procedure',
+            'pharmacy_notes',
+        )
         labels = {
             'body_mass_index': 'Body Mass Index',
             'community_health_worker_notes': 'Notes',
@@ -303,6 +308,28 @@ class PatientEncounterForm(ModelForm):
             'chief_complaint': autocomplete.ModelSelect2Multiple(url='main:chief-complaint-autocomplete'),
             'patient_history': Textarea(attrs={'rows': 4, 'cols': 40}),
             'community_health_worker_notes': Textarea(attrs={'rows': 4, 'cols': 40})
+        }
+
+
+class AuxiliaryPatientEncounterForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', 'Submit', css_class='btn btn-primary'))
+        
+    class Meta:
+        model = PatientEncounter
+        fields = (
+            'procedure',
+            'pharmacy_notes',
+        )
+        labels = {
+            'procedure': 'Procedure/Counseling',
+        }
+        widgets = {
+            'procedure': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'pharmacy_notes': Textarea(attrs={'rows': 4, 'cols': 40}),
         }
 
 

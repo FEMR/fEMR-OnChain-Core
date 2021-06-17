@@ -21,7 +21,7 @@ class ChiefComplaintAutocomplete(autocomplete.Select2QuerySetView):
         if not self.request.user.is_authenticated:
             return ChiefComplaint.objects.none()
 
-        qs = ChiefComplaint.objects.all()
+        qs = ChiefComplaint.objects.filter(active=True)
 
         if self.q:
             qs = qs.filter(text__istartswith=self.q)

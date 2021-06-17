@@ -15,7 +15,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from pytz import timezone as pytz_timezone
 
-from .models import PatientEncounter, Patient, Campaign, Vitals
+from .models import ChiefComplaint, PatientEncounter, Patient, Campaign, Vitals
 
 
 def get_latest_timestamp(patient):
@@ -61,22 +61,24 @@ def patient_csv_export_view(request):
     """
     if request.user.is_authenticated:
         units = Campaign.objects.get(name=request.session['campaign']).units
-        telehealth = Campaign.objects.get(name=request.session['campaign']).telehealth
+        telehealth = Campaign.objects.get(
+            name=request.session['campaign']).telehealth
         resp = HttpResponse(content_type='text/csv')
         resp['Content-Disposition'] = 'attachment; filename="patient_export.csv"'
         writer = csv.writer(resp)
         if units == 'i':
             title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure', 'Heart Rate',
-                            'Body Temperature (F)', 'Height', 'Weight (lbs)', 'BMI', 'Oxygen Concentration', 'Glucose Level', 'History of Tobacco Use',
-                            'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
-                            'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes']
+                         'Body Temperature (F)', 'Height', 'Weight (lbs)', 'BMI', 'Oxygen Concentration', 'Glucose Level', 'History of Tobacco Use',
+                         'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
+                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes']
         else:
             title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure',
-                            'Heart Rate', 'Body Temperature (C)', 'Height', 'Weight (kg)', 'BMI', 'Oxygen Concentration', 'Glucose Level',
-                            'History of Tobacco Use', 'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
-                            'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes']
+                         'Heart Rate', 'Body Temperature (C)', 'Height', 'Weight (kg)', 'BMI', 'Oxygen Concentration', 'Glucose Level',
+                         'History of Tobacco Use', 'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
+                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes']
         if telehealth:
-            title_row.extend(['Diagnoses', 'Treatments', 'Chief Complaint', 'Patient History'])
+            title_row.extend(['Diagnoses', 'Treatments',
+                             'Chief Complaint', 'Patient History'])
         writer.writerow(title_row)
         try:
             data = Patient.objects.filter(
@@ -84,39 +86,44 @@ def patient_csv_export_view(request):
         except ObjectDoesNotExist:
             data = list()
         id = 1
-        time_zone = Campaign.objects.get(name=request.session['campaign']).timezone
+        time_zone = Campaign.objects.get(
+            name=request.session['campaign']).timezone
         campaign_time_zone = pytz_timezone(time_zone)
-        campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
+        campaign_time_zone_b = datetime.now(
+            tz=campaign_time_zone).strftime("%Z%z")
         for patient in data:
             for encounter in PatientEncounter.objects.filter(patient=patient):
                 vital = Vitals.objects.filter(encounter=encounter)[0]
                 if units == 'i':
                     row = [id,
-                            "{} {}".format(encounter.timestamp.astimezone(campaign_time_zone), campaign_time_zone_b),
-                            vital.systolic_blood_pressure, vital.diastolic_blood_pressure,
-                            vital.mean_arterial_pressure, vital.heart_rate,
-                            round(
-                            (vital.body_temperature * 9/5) + 32, 2),
-                            "{0}' {1}\"".format(
-                            math.floor(
-                            round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) // 12),
-                            round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) % 12),
-                            round(encounter.body_weight * 2.2046, 2),
-                            encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, vital.smoking,
-                            encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
-                            encounter.alcohol, encounter.community_health_worker_notes]
+                           "{} {}".format(encounter.timestamp.astimezone(
+                               campaign_time_zone), campaign_time_zone_b),
+                           vital.systolic_blood_pressure, vital.diastolic_blood_pressure,
+                           vital.mean_arterial_pressure, vital.heart_rate,
+                           round(
+                                (vital.body_temperature * 9/5) + 32, 2),
+                           "{0}' {1}\"".format(
+                               math.floor(
+                                   round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) // 12),
+                               round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) % 12),
+                           round(encounter.body_weight * 2.2046, 2),
+                           encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, vital.smoking,
+                           encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
+                           encounter.alcohol, encounter.community_health_worker_notes]
                 else:
                     row = [id,
-                            "{} {}".format(encounter.timestamp.astimezone(campaign_time_zone), campaign_time_zone_b),
-                            vital.systolic_blood_pressure, vital.diastolic_blood_pressure,
-                            vital.mean_arterial_pressure, vital.heart_rate, vital.body_temperature,
-                            "{0} m {1} cm".format(
-                            encounter.body_height_primary, encounter.body_height_secondary), encounter.body_weight,
-                            encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, encounter.smoking,
-                            encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
-                            encounter.alcohol, encounter.community_health_worker_notes]
+                           "{} {}".format(encounter.timestamp.astimezone(
+                               campaign_time_zone), campaign_time_zone_b),
+                           vital.systolic_blood_pressure, vital.diastolic_blood_pressure,
+                           vital.mean_arterial_pressure, vital.heart_rate, vital.body_temperature,
+                           "{0} m {1} cm".format(
+                               encounter.body_height_primary, encounter.body_height_secondary), encounter.body_weight,
+                           encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, encounter.smoking,
+                           encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
+                           encounter.alcohol, encounter.community_health_worker_notes]
                 if telehealth:
-                    row.extend([encounter.diagnoses, encounter.treatments, encounter.chief_complaint, encounter.patient_history])
+                    row.extend([encounter.diagnoses, encounter.treatments,
+                               encounter.chief_complaint, encounter.patient_history])
                 writer.writerow(row)
             id += 1
         return resp
@@ -246,3 +253,10 @@ def __parse_phone_number(input_string):
         return input_string
     else:
         return "({0}){1}-{2}".format(input_string[0:3], input_string[3:6], input_string[6:10])
+
+
+def chief_complaint_list_view(request):
+    if request.user.is_authenticated:
+        return render(request, 'list/chief_complaint.html', {'list_view': ChiefComplaint.objects.filter(active=True)})
+    else:
+        return redirect('main:not_logged_in')

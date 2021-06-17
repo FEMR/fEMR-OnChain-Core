@@ -170,6 +170,7 @@ def patient_encounter_form_view(request, id=None):
             except IndexError:
                 print("IndexError")
         suffix = p.get_suffix_display() if p.suffix is not None else ""
+        print(encounter_open)
         return render(request, 'forms/encounter.html',
                       {'form': form, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form, 'page_name': 'New Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': id, 'units': units, 'telehealth': telehealth, 'encounter_open': encounter_open,

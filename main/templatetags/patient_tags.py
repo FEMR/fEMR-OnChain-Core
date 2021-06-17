@@ -21,6 +21,11 @@ def has_suffix(patient):
     return patient.get_suffix_display() if patient.suffix is not None else ""
 
 
+@register.filter('open_encounters')
+def open_encounters(patient):
+    return "Yes" if len(PatientEncounter.objects.filter(patient=patient).filter(active=True)) > 0 else ""
+
+
 @register.filter('has_middle_name')
 def has_middle_name(patient):
     return patient.middle_name if patient.middle_name is not None else ""

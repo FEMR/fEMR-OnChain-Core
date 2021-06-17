@@ -215,6 +215,7 @@ class ChiefComplaint(models.Model):
         null=True,
         blank=True
     )
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return str(self.text)
@@ -290,6 +291,9 @@ class PatientEncounter(models.Model):
     community_health_worker_notes = models.CharField(
         max_length=500, null=True, blank=True)
 
+    procedure = models.CharField(max_length=500, null=True, blank=True)
+    pharmacy_notes = models.CharField(max_length=500, null=True, blank=True)
+
     timestamp = models.DateTimeField(
         auto_now=True, editable=False, null=False, blank=False)
 
@@ -360,7 +364,7 @@ class fEMRUser(AbstractUser):
 
 class PatientDiagnosis(models.Model):
     encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
-    diagnosis = models.ManyToManyField(Diagnosis, on_delete=models.CASCADE)
+    diagnosis = models.ManyToManyField(Diagnosis)
 
     def __str__(self) -> str:
         return str(self.diagnosis)

@@ -21,13 +21,34 @@
             </div>
             <div class="modal-footer">
                 <a class="btn btn-primary ml-auto" href="{% url 'main:patient_edit_form_view' patient_id %}">Back</a>
-                <button class="btn btn-primary ml-auto" data-dismiss="modal" type="button">Close</button>
+                <button class="btn btn-primary ml-auto" id="modal_close_button" data-dismiss="modal" type="button">Close</button>
             </div>
         </div>
     </div>
 </div>
+
 <script>
-    $('#patient_modal_popup').modal('toggle')
+    var modal = document.getElementById("patient_modal_popup");
+
+    var span = document.getElementsByClassName("close")[0];
+
+    var close_button = document.getElementById("modal_close_button");
+
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    close_button.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    modal.style.display = "block";
 </script>
 {% endif %}
 <div class="modal" id="modal_popup" role="dialog" tabindex="-1" style="display: none;">
@@ -47,14 +68,6 @@
         </div>
     </div>
 </div>
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="{% url 'main:new_vitals_view' patient_id encounter_id %}">Medical</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">Treatment</a>
-    </li>
-</ul>
 <div class="container">
     {% if active %}
     <form action="{% url 'main:encounter_edit_form_view' patient_id encounter_id %}" method="post"
@@ -172,6 +185,16 @@
                 </div>
             </div>
             <div class="col-9">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page"
+                            href="{% url 'main:encounter_edit_form_view' patient_id encounter_id %}">Medical</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                            href="{% url 'main:new_diagnosis_view' patient_id encounter_id %}">Treatment</a>
+                    </li>
+                </ul>
                 <div class="row bg-light">
                     <div class="form-group col-md-4">
                         <div>
@@ -214,6 +237,7 @@
                 <div class="row">
                     <div class="form-group col-md-12">
                         {{ form.chief_complaint|as_crispy_field }}
+                        <a href="{% url 'main:chief_complaint_list_view' %}" class="btn btn-primary">Manage</a>
                     </div>
                 </div>
                 {% if telehealth %}

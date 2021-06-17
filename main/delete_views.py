@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
-from .models import Campaign, DatabaseChangeLog, Patient
+from .models import Campaign, ChiefComplaint, DatabaseChangeLog, Patient
 
 
 def patient_delete_view(request, id=None):
@@ -37,12 +37,22 @@ def patient_delete_view(request, id=None):
                     subject="WARNING! PATIENT DELETED",
                     content=message_content
                 )
-                Patient.objects.filter(id=p.id).delete()
+                p.delete()
             except ObjectDoesNotExist:
                 pass
             return render(request, 'data/patient_deleted_success.html')
         else:
             p = get_object_or_404(Patient, pk=id)
             return render(request, 'data/delete.html', {'patient': p})
+    else:
+        return redirect('main:not_logged_in')
+
+
+def delete_chief_complaint(request, id=None):
+    if request.user.is_authenticated:
+        p = get_object_or_404(ChiefComplaint, pk=id)
+        p.active = False
+        p.save()
+        return redirect('main:chief_complaint_list_view')
     else:
         return redirect('main:not_logged_in')
