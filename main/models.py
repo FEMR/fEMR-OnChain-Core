@@ -360,7 +360,7 @@ class fEMRUser(AbstractUser):
 
 class PatientDiagnosis(models.Model):
     encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
-    diagnosis = models.ForeignKey(Diagnosis, on_delete=models.CASCADE)
+    diagnosis = models.ManyToManyField(Diagnosis, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return str(self.diagnosis)

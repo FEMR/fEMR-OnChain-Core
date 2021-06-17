@@ -6,6 +6,7 @@ If one is not found, they will direct to the appropriate error page.
 from main.femr_admin_views import get_client_ip
 import math
 import os
+import itertools
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import PatientDiagnosisForm, PatientForm, PatientEncounterForm, TreatmentForm, VitalsForm
@@ -163,7 +164,8 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
         treatment_form = TreatmentForm()
-        treatment_form.fields['diagnosis'].queryset = PatientDiagnosis.objects.filter(encounter=m)
+        treatment_form.fields['diagnosis'].queryset = PatientDiagnosis.objects.filter(
+            encounter=m)
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             diagnosis_form = PatientDiagnosisForm(request.POST)
@@ -199,13 +201,12 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
-                      {'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
+                      {'active': m.active, 'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
     else:
         return redirect('/not_logged_in')
-
 
 
 def new_treatment_view(request, patient_id=None, encounter_id=None):
@@ -227,7 +228,8 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
         treatment_form = TreatmentForm()
-        treatment_form.fields['diagnosis'].queryset = PatientDiagnosis.objects.filter(encounter=m)
+        treatment_form.fields['diagnosis'].queryset = list(itertools.chain(
+            *[list(x.diagnosis.all()) for x in PatientDiagnosis.objects.filter(encounter=m)]))
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             treatment_form = TreatmentForm(request.POST)
@@ -291,7 +293,8 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
         treatment_form = TreatmentForm()
-        treatment_form.fields['diagnosis'].queryset = PatientDiagnosis.objects.filter(encounter=m)
+        treatment_form.fields['diagnosis'].queryset = PatientDiagnosis.objects.filter(
+            encounter=m)
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             vitals_form = VitalsForm(request.POST, unit=units)
