@@ -21,25 +21,26 @@
             </div>
             <div class="modal-footer">
                 <a class="btn btn-primary ml-auto" href="{% url 'main:patient_edit_form_view' patient_id %}">Back</a>
-                <button class="btn btn-primary ml-auto" id="modal_close_button" data-dismiss="modal" type="button">Close</button>
+                <button class="btn btn-primary ml-auto" id="modal_close_button" data-dismiss="modal"
+                    type="button">Close</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    var modal = document.getElementById("patient_modal_popup");
+    var patient_modal = document.getElementById("patient_modal_popup");
 
-    var span = document.getElementsByClassName("close")[0];
+    var patient_span = document.getElementsByClassName("close")[0];
 
-    var close_button = document.getElementById("modal_close_button");
+    var patient_close_button = document.getElementById("modal_close_button");
 
-    span.onclick = function () {
-        modal.style.display = "none";
+    patient_span.onclick = function () {
+        patient_modal.style.display = "none";
     }
 
-    close_button.onclick = function () {
-        modal.style.display = "none";
+    patient_close_button.onclick = function () {
+        patient_modal.style.display = "none";
     }
 
     window.onclick = function (event) {
