@@ -68,8 +68,9 @@ urlpatterns = [
     path(r'referral_form/<int:id>', referral_form_view, name='referral_form_view'),
 
     url(r'^patient_list_view/$', patient_list_view, name='patient_list_view'),
-    url(r'^chief_complaint_list_view', chief_complaint_list_view,
-        name='chief_complaint_list_view'),
+    path(r'chief_complaint_list_view/<int:patient_id>/<int:encounter_id>',
+         chief_complaint_list_view,
+         name='chief_complaint_list_view'),
     url(r'^patient_csv_export_view/$', patient_csv_export_view,
         name='patient_csv_export_view'),
     url(r'^search_patient_list_view/$', search_patient_list_view,

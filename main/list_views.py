@@ -255,8 +255,12 @@ def __parse_phone_number(input_string):
         return "({0}){1}-{2}".format(input_string[0:3], input_string[3:6], input_string[6:10])
 
 
-def chief_complaint_list_view(request):
+def chief_complaint_list_view(request, patient_id=None, encounter_id=None):
     if request.user.is_authenticated:
-        return render(request, 'list/chief_complaint.html', {'list_view': ChiefComplaint.objects.filter(active=True)})
+        return render(request, 'list/chief_complaint.html', {
+            'list_view': ChiefComplaint.objects.filter(active=True),
+            'patient_id': patient_id,
+            'encounter_id': encounter_id,
+        })
     else:
         return redirect('main:not_logged_in')

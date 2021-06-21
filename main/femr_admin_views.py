@@ -100,6 +100,7 @@ def new_contact_view(request):
                 contact_form = fEMRAdminUserForm(request.POST)
                 if contact_form.is_valid():
                     t = contact_form.save()
+                    t.campaigns.add(Campaign.objects.get(name='Test'))
                     t.save()
                     DatabaseChangeLog.objects.create(action="Create", model="Contact", instance=str(t),
                                                      ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))

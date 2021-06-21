@@ -2,6 +2,7 @@
 {% block content %}
 {% load static %}
 <h2>Manage Chief Complaints</h2>
+<a href="{% url 'main:encounter_edit_form_view' patient_id encounter_id %}">Back</a>
 <table class="table">
        <thead>
               <tr>
