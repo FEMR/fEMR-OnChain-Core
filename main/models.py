@@ -366,9 +366,6 @@ class PatientDiagnosis(models.Model):
     encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
     diagnosis = models.ManyToManyField(Diagnosis)
 
-    def __str__(self) -> str:
-        return str(self.diagnosis)
-
 
 class Treatment(models.Model):
     medication = models.ForeignKey(

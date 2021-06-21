@@ -177,6 +177,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
             diagnosis_form = PatientDiagnosisForm(request.POST)
             if diagnosis_form.is_valid():
                 diagnosis = diagnosis_form.save(commit=False)
+                diagnosis_form.save_m2m()
                 diagnosis.encounter = m
                 diagnosis.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
