@@ -171,15 +171,15 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
             q = querysets.pop()
             for x in querysets:
                 q.union(x)
-            treatment_form.fields['diagnosis'].queryset = q
+            treatment_form.fields['diagnosis'].queryset = q.diagnosis
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             diagnosis_form = PatientDiagnosisForm(request.POST)
             if diagnosis_form.is_valid():
                 diagnosis = diagnosis_form.save(commit=False)
-                diagnosis_form.save_m2m()
                 diagnosis.encounter = m
                 diagnosis.save()
+                diagnosis_form.save_m2m()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
@@ -241,7 +241,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
             q = querysets.pop()
             for x in querysets:
                 q.union(x)
-            treatment_form.fields['diagnosis'].queryset = q
+            treatment_form.fields['diagnosis'].queryset = q.diagnosis
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             treatment_form = TreatmentForm(request.POST)
@@ -277,7 +277,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
                 'body_weight': round(m.body_weight * 2.2046, 2),
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
-        return render(request, 'forms/treatments_tab.html',
+        return render(request, 'forms/treatment_tab.html',
                       {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
@@ -311,7 +311,7 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
             q = querysets.pop()
             for x in querysets:
                 q.union(x)
-            treatment_form.fields['diagnosis'].queryset = q
+            treatment_form.fields['diagnosis'].queryset = q.diagnosis
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             aux_form = AuxiliaryPatientEncounterForm(request.POST)
@@ -378,7 +378,7 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
             q = querysets.pop()
             for x in querysets:
                 q.union(x)
-            treatment_form.fields['diagnosis'].queryset = q
+            treatment_form.fields['diagnosis'].queryset = q.diagnosis
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             vitals_form = VitalsForm(request.POST, unit=units)
