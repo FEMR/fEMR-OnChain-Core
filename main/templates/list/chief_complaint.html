@@ -14,7 +14,7 @@
               {% for o in list_view %}
               <tr>
                      <td>{{ o.text }}</td>
-                     <td><a href="{% url 'main:delete_chief_complaint' id=o.id %}">Delete</a></td>
+                     <td><a href="{% url 'main:delete_chief_complaint' id=o.id patient_id=patient_id encounter_id=encounter_id%}">Delete</a></td>
               </tr>
               {% endfor %}
        </tbody>
