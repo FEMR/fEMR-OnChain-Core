@@ -168,9 +168,9 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
         aux_form = AuxiliaryPatientEncounterForm(instance=m)
         querysets = list(PatientDiagnosis.objects.filter(encounter=m))
         if len(querysets) > 0:
-            q = querysets.pop().diagnosis
+            q = querysets.pop().diagnosis.all()
             for x in querysets:
-                q.union(x.diagnosis)
+                q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
@@ -238,9 +238,9 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
         aux_form = AuxiliaryPatientEncounterForm(instance=m)
         querysets = list(PatientDiagnosis.objects.filter(encounter=m))
         if len(querysets) > 0:
-            q = querysets.pop().diagnosis
+            q = querysets.pop().diagnosis.all()
             for x in querysets:
-                q.union(x.diagnosis)
+                q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
@@ -308,9 +308,9 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
         aux_form = AuxiliaryPatientEncounterForm(instance=m)
         querysets = list(PatientDiagnosis.objects.filter(encounter=m))
         if len(querysets) > 0:
-            q = querysets.pop().diagnosis
+            q = querysets.pop().diagnosis.all()
             for x in querysets:
-                q.union(x.diagnosis)
+                q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
@@ -375,9 +375,9 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
         treatment_form = TreatmentForm()
         querysets = list(PatientDiagnosis.objects.filter(encounter=m))
         if len(querysets) > 0:
-            q = querysets.pop().diagnosis
+            q = querysets.pop().diagnosis.all()
             for x in querysets:
-                q.union(x.diagnosis)
+                q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
