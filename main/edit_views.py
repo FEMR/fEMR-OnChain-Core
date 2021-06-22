@@ -168,10 +168,10 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
         aux_form = AuxiliaryPatientEncounterForm(instance=m)
         querysets = list(PatientDiagnosis.objects.filter(encounter=m))
         if len(querysets) > 0:
-            q = querysets.pop()
+            q = querysets.pop().diagnosis
             for x in querysets:
-                q.union(x)
-            treatment_form.fields['diagnosis'].queryset = q.diagnosis
+                q.union(x.diagnosis)
+            treatment_form.fields['diagnosis'].queryset = q
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             diagnosis_form = PatientDiagnosisForm(request.POST)
@@ -238,10 +238,10 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
         aux_form = AuxiliaryPatientEncounterForm(instance=m)
         querysets = list(PatientDiagnosis.objects.filter(encounter=m))
         if len(querysets) > 0:
-            q = querysets.pop()
+            q = querysets.pop().diagnosis
             for x in querysets:
-                q.union(x)
-            treatment_form.fields['diagnosis'].queryset = q.diagnosis
+                q.union(x.diagnosis)
+            treatment_form.fields['diagnosis'].queryset = q
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             treatment_form = TreatmentForm(request.POST)
@@ -308,10 +308,10 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
         aux_form = AuxiliaryPatientEncounterForm(instance=m)
         querysets = list(PatientDiagnosis.objects.filter(encounter=m))
         if len(querysets) > 0:
-            q = querysets.pop()
+            q = querysets.pop().diagnosis
             for x in querysets:
-                q.union(x)
-            treatment_form.fields['diagnosis'].queryset = q.diagnosis
+                q.union(x.diagnosis)
+            treatment_form.fields['diagnosis'].queryset = q
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             aux_form = AuxiliaryPatientEncounterForm(request.POST)
@@ -375,10 +375,10 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
         treatment_form = TreatmentForm()
         querysets = list(PatientDiagnosis.objects.filter(encounter=m))
         if len(querysets) > 0:
-            q = querysets.pop()
+            q = querysets.pop().diagnosis
             for x in querysets:
-                q.union(x)
-            treatment_form.fields['diagnosis'].queryset = q.diagnosis
+                q.union(x.diagnosis)
+            treatment_form.fields['diagnosis'].queryset = q
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             vitals_form = VitalsForm(request.POST, unit=units)
