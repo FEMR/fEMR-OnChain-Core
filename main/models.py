@@ -376,7 +376,7 @@ class Treatment(models.Model):
     prescriber = models.ForeignKey(
         fEMRUser, on_delete=models.CASCADE, null=True, blank=True, editable=False)
     diagnosis = models.ForeignKey(
-        PatientDiagnosis, on_delete=models.CASCADE, null=True, blank=True)
+        Diagnosis, on_delete=models.CASCADE, null=True, blank=True)
     encounter = models.ForeignKey(
         PatientEncounter, on_delete=models.CASCADE, null=True, blank=True, editable=False)
     timestamp = models.DateTimeField(
