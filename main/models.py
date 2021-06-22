@@ -323,17 +323,17 @@ class Vitals(models.Model):
         PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
 
     diastolic_blood_pressure = models.IntegerField(
-        validators=[MaxValueValidator(200), MinValueValidator(1)])
+        validators=[MaxValueValidator(200), MinValueValidator(1)], null=True, blank=True)
     systolic_blood_pressure = models.IntegerField(
-        validators=[MaxValueValidator(200), MinValueValidator(1)])
+        validators=[MaxValueValidator(200), MinValueValidator(1)], null=True, blank=True)
     mean_arterial_pressure = models.FloatField(
-        validators=[MinValueValidator(1)])
+        validators=[MinValueValidator(1)], null=True, blank=True)
     heart_rate = models.IntegerField(
-        validators=[MaxValueValidator(170), MinValueValidator(40)])
+        validators=[MaxValueValidator(170), MinValueValidator(40)], null=True, blank=True)
     respiratory_rate = models.IntegerField(
         validators=[MaxValueValidator(500), MinValueValidator(1)], null=True, blank=True)
     body_temperature = models.FloatField(
-        validators=[MaxValueValidator(200), MinValueValidator(1)])
+        validators=[MaxValueValidator(200), MinValueValidator(1)], null=True, blank=True)
     oxygen_concentration = models.IntegerField(
         validators=[MaxValueValidator(100), MinValueValidator(70)], null=True, blank=True)
     glucose_level = models.FloatField(
