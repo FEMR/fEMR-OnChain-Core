@@ -250,6 +250,12 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
                 treatment.encounter = m
                 treatment.prescriber = request.user
                 treatment.save()
+                treatment_form = TreatmentForm()
+                if len(querysets) > 0:
+                    q = querysets.pop().diagnosis.all()
+                    for x in querysets:
+                        q.union(x.diagnosis.all())
+                    treatment_form.fields['diagnosis'].queryset = q
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":

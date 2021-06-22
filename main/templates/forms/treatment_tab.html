@@ -148,8 +148,7 @@
                     </div>
                     <div class="row">
                         <div class=""><b>Prescriber |</b></div>
-                        <div class=""><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">{{
-                                t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
+                        <div class=""><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">{{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
                         <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
                     </div>
                 </div>
