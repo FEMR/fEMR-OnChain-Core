@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^sent/$', sent_box, name='sent_box'),
     path(r'new_message/',
          new_message, name='new_message'),
-    path(r'new_message/<int:message_id>',
+    path(r'new_message/<int:sender_id>',
          new_message, name='new_message'),
     path(r'reply_message/<int:message_id>/<int:sender_id>',
          reply_message, name='reply_message'),
