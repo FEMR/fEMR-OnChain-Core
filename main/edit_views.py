@@ -320,10 +320,12 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
             treatment_form.fields['diagnosis'].queryset = q
         diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
+            print(request.POST)
             aux_form = AuxiliaryPatientEncounterForm(request.POST)
             if aux_form.is_valid():
-                treatment = aux_form.save(commit=False)
-                treatment.save()
+                m.procedure = request.POST['procedure']
+                m.pharmacy_notes = request.POST['pharmacy_notes']
+                m.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
@@ -351,7 +353,7 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
                 'body_weight': round(m.body_weight * 2.2046, 2),
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
-        return render(request, 'forms/treatments_tab.html',
+        return render(request, 'forms/treatment_tab.html',
                       {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,

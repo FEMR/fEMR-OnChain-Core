@@ -107,7 +107,7 @@ def patient_csv_export_view(request):
                                    round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) // 12),
                                round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) % 12),
                            round(encounter.body_weight * 2.2046, 2),
-                           encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, vital.smoking,
+                           encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, encounter.smoking,
                            encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
                            encounter.alcohol, encounter.community_health_worker_notes]
                 else:
@@ -121,9 +121,6 @@ def patient_csv_export_view(request):
                            encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, encounter.smoking,
                            encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
                            encounter.alcohol, encounter.community_health_worker_notes]
-                if telehealth:
-                    row.extend([encounter.diagnoses, encounter.treatments,
-                               encounter.chief_complaint, encounter.patient_history])
                 writer.writerow(row)
             id += 1
         return resp
