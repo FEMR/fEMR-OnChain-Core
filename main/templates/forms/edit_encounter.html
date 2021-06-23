@@ -69,7 +69,7 @@
         </div>
     </div>
 </div>
-<div class="container">
+<div class="container {% if active %} bg-secondary {% endif %}">
     {% if active %}
     <form action="{% url 'main:encounter_edit_form_view' patient_id encounter_id %}" method="post"
         onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
