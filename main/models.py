@@ -296,7 +296,8 @@ class PatientEncounter(models.Model):
 
     medical_history = models.CharField(max_length=500, null=True, blank=True)
     social_history = models.CharField(max_length=500, null=True, blank=True)
-    current_medications = models.CharField(max_length=500, null=True, blank=True)
+    current_medications = models.CharField(
+        max_length=500, null=True, blank=True)
     family_history = models.CharField(max_length=500, null=True, blank=True)
 
     timestamp = models.DateTimeField(
@@ -368,13 +369,14 @@ class fEMRUser(AbstractUser):
 
 
 class PatientDiagnosis(models.Model):
-    encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
+    encounter = models.ForeignKey(
+        PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
     diagnosis = models.ManyToManyField(Diagnosis)
 
 
 class Treatment(models.Model):
     medication = models.ForeignKey(
-        Medication, on_delete=models.CASCADE)
+        Medication, on_delete=models.CASCADE, null=True, blank=True)
     administration_schedule = models.ForeignKey(
         AdministrationSchedule, on_delete=models.CASCADE, null=True, blank=True)
     days = models.IntegerField()
