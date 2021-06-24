@@ -31,8 +31,8 @@ def patient_delete_view(request, id=None):
                 contact = this_campaign.instance.main_contact
                 DatabaseChangeLog.objects.create(action="Delete", model="Patient", instance=str(p),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=this_campaign)
-                message_content = "{0} has deleted the record for {1} from fEMR On-Chain on {2}".format(
-                    request.user, p, timezone.now())
+                message_content = "{0} has deleted a patient record for {1} from fEMR On-Chain on {1}".format(
+                    request.user, timezone.now())
                 Message.objects.create(
                     sender=request.user,
                     recipient=contact,
