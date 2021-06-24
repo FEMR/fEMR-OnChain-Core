@@ -377,7 +377,7 @@ class Treatment(models.Model):
         Medication, on_delete=models.CASCADE)
     administration_schedule = models.ForeignKey(
         AdministrationSchedule, on_delete=models.CASCADE)
-    days = models.IntegerField(min_value=0)
+    days = models.IntegerField()
     prescriber = models.ForeignKey(
         fEMRUser, on_delete=models.CASCADE, null=True, blank=True, editable=False)
     diagnosis = models.ForeignKey(
