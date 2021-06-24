@@ -148,7 +148,8 @@
                     </div>
                     <div class="row">
                         <div class=""><b>Prescriber |</b></div>
-                        <div class=""><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">{{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
+                        <div class=""><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">{{
+                                t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
                         <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
                     </div>
                 </div>
@@ -172,21 +173,11 @@
                 </li>
             </ul>
             <div class="row bg-light">
-                <form method="post" action="{% url 'main:new_diagnosis_view' patient_id encounter_id %}"
+                <form method="post" action="{% url 'main:history_view' patient_id encounter_id %}"
                     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
-                    <h2>Diagnoses</h2>
-                    {% crispy diagnosis_form %}
-                </form>
-                <form method="post" action="{% url 'main:new_treatment_view' patient_id encounter_id %}"
-                    onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
-                    <h2>Treatments</h2>
-                    {% crispy treatment_form %}
+                    {% crispy aux_form %}
                 </form>
             </div>
-            <form method="post" action="{% url 'main:notes_view' patient_id encounter_id %}"
-                onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
-                {% crispy aux_form %}
-            </form>
         </div>
     </div>
 

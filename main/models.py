@@ -294,6 +294,11 @@ class PatientEncounter(models.Model):
     procedure = models.CharField(max_length=500, null=True, blank=True)
     pharmacy_notes = models.CharField(max_length=500, null=True, blank=True)
 
+    medical_history = models.CharField(max_length=500, null=True, blank=True)
+    social_history = models.CharField(max_length=500, null=True, blank=True)
+    current_medications = models.CharField(max_length=500, null=True, blank=True)
+    family_history = models.CharField(max_length=500, null=True, blank=True)
+
     timestamp = models.DateTimeField(
         auto_now=True, editable=False, null=False, blank=False)
 
@@ -369,10 +374,10 @@ class PatientDiagnosis(models.Model):
 
 class Treatment(models.Model):
     medication = models.ForeignKey(
-        Medication, on_delete=models.CASCADE, null=True, blank=True)
+        Medication, on_delete=models.CASCADE)
     administration_schedule = models.ForeignKey(
-        AdministrationSchedule, on_delete=models.CASCADE, null=True, blank=True)
-    days = models.IntegerField(null=True, blank=True)
+        AdministrationSchedule, on_delete=models.CASCADE)
+    days = models.IntegerField(min_value=0)
     prescriber = models.ForeignKey(
         fEMRUser, on_delete=models.CASCADE, null=True, blank=True, editable=False)
     diagnosis = models.ForeignKey(
@@ -380,7 +385,7 @@ class Treatment(models.Model):
     encounter = models.ForeignKey(
         PatientEncounter, on_delete=models.CASCADE, null=True, blank=True, editable=False)
     timestamp = models.DateTimeField(
-        auto_now=True, editable=False, null=False, blank=False)
+        auto_now=True, editable=False)
 
     def __str__(self):
         return str(self.medication)

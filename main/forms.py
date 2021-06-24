@@ -59,7 +59,8 @@ class PatientDiagnosisForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Submit', css_class='btn btn-primary'))
+        self.helper.add_input(
+            Submit('submit', 'Submit', css_class='btn btn-primary'))
 
     class Meta:
         """
@@ -77,7 +78,8 @@ class MedicationForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Submit', css_class='btn btn-primary'))
+        self.helper.add_input(
+            Submit('submit', 'Submit', css_class='btn btn-primary'))
 
     class Meta:
         """
@@ -96,18 +98,19 @@ class TreatmentForm(ModelForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Div(
-            Div('diagnosis',
-                css_class='col-md-2'),
-            Div('medication',
-                css_class='col-md-5'),
-            Div('administration_schedule',
-                css_class='col-md-3'),
-            Div('days',
-                css_class='col-md-2'),
+                Div('diagnosis',
+                    css_class='col-md-2'),
+                Div('medication',
+                    css_class='col-md-5'),
+                Div('administration_schedule',
+                    css_class='col-md-3'),
+                Div('days',
+                    css_class='col-md-2'),
                 css_class='row',
             )
         )
-        self.helper.add_input(Submit('submit', 'Submit', css_class='btn btn-primary'))
+        self.helper.add_input(
+            Submit('submit', 'Submit', css_class='btn btn-primary'))
 
     class Meta:
         """
@@ -298,6 +301,10 @@ class PatientEncounterForm(ModelForm):
         exclude = (
             'procedure',
             'pharmacy_notes',
+            'medical_history',
+            'social_history',
+            'current_medications',
+            'family_history',
         )
         labels = {
             'body_mass_index': 'Body Mass Index',
@@ -316,8 +323,9 @@ class AuxiliaryPatientEncounterForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Submit', css_class='btn btn-primary'))
-        
+        self.helper.add_input(
+            Submit('submit', 'Submit', css_class='btn btn-primary'))
+
     class Meta:
         model = PatientEncounter
         fields = (
@@ -330,6 +338,33 @@ class AuxiliaryPatientEncounterForm(ModelForm):
         widgets = {
             'procedure': Textarea(attrs={'rows': 4, 'cols': 40}),
             'pharmacy_notes': Textarea(attrs={'rows': 4, 'cols': 40}),
+        }
+
+
+class HistoryPatientEncounterForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Submit', css_class='btn btn-primary'))
+
+    class Meta:
+        model = PatientEncounter
+        fields = (
+            'medical_history',
+            'social_history',
+            'current_medications',
+            'family_history',
+        )
+        labels = {
+            'medical_history': 'Medical/Surgical history',
+        }
+        widgets = {
+            'medical_history': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'social_history': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'current_medications': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'family_history': Textarea(attrs={'rows': 4, 'cols': 40}),
         }
 
 

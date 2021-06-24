@@ -10,7 +10,7 @@ from main.admin_views import add_user_to_campaign, add_users_to_campaign, admin_
     search_users_view, update_user_view, update_user_password_view
 from .api_views import UserViewSet, GroupViewSet, PatientViewSet, PatientEncounterViewSet, InstanceViewSet, CampaignViewSet
 from .auth_views import all_locked, not_logged_in, login_view, logout_view, permission_denied
-from .edit_views import aux_form_view, new_diagnosis_view, new_treatment_view, patient_edit_form_view, encounter_edit_form_view, patient_export_view, patient_medical, new_vitals_view
+from .edit_views import aux_form_view, history_view, new_diagnosis_view, new_treatment_view, patient_edit_form_view, encounter_edit_form_view, patient_export_view, patient_medical, new_vitals_view
 from .form_views import patient_form_view, referral_form_view, patient_encounter_form_view
 from .list_views import chief_complaint_list_view, patient_csv_export_view, patient_list_view, search_patient_list_view, filter_patient_list_view
 from .views import forgot_username, index, home, healthcheck, help_messages_off
@@ -60,6 +60,8 @@ urlpatterns = [
          new_diagnosis_view, name='new_diagnosis_view'),
     path(r'notes_view/<int:patient_id>/<int:encounter_id>',
          aux_form_view, name='notes_view'),
+    path(r'history_view/<int:patient_id>/<int:encounter_id>',
+         history_view, name='history_view'),
     path(r'new_treatment_view/<int:patient_id>/<int:encounter_id>',
          new_treatment_view, name='new_treatment_view'),
 
@@ -69,6 +71,9 @@ urlpatterns = [
 
     url(r'^patient_list_view/$', patient_list_view, name='patient_list_view'),
     path(r'chief_complaint_list_view/<int:patient_id>/<int:encounter_id>',
+         chief_complaint_list_view,
+         name='chief_complaint_list_view'),
+    path(r'chief_complaint_list_view/<int:patient_id>',
          chief_complaint_list_view,
          name='chief_complaint_list_view'),
     url(r'^patient_csv_export_view/$', patient_csv_export_view,

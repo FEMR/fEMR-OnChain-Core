@@ -15,7 +15,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from pytz import timezone as pytz_timezone
 
-from .models import ChiefComplaint, PatientEncounter, Patient, Campaign, Vitals
+from .models import ChiefComplaint, PatientEncounter, Patient, Campaign, Treatment, Vitals
 
 
 def get_latest_timestamp(patient):
@@ -70,15 +70,14 @@ def patient_csv_export_view(request):
             title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure', 'Heart Rate',
                          'Body Temperature (F)', 'Height', 'Weight (lbs)', 'BMI', 'Oxygen Concentration', 'Glucose Level', 'History of Tobacco Use',
                          'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
-                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes']
+                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes', 'Procedure/Counseling', 'Pharmacy Notes',
+                         'Diagnoses and Treatments']
         else:
             title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure',
                          'Heart Rate', 'Body Temperature (C)', 'Height', 'Weight (kg)', 'BMI', 'Oxygen Concentration', 'Glucose Level',
                          'History of Tobacco Use', 'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
-                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes']
-        if telehealth:
-            title_row.extend(['Diagnoses', 'Treatments',
-                             'Chief Complaint', 'Patient History'])
+                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes', 'Procedure/Counseling', 'Pharmacy Notes']
+        title_row.extend(['Diagnosis', 'Medication', 'Administration Schedule', 'Days', 'Prescriber'])
         writer.writerow(title_row)
         try:
             data = Patient.objects.filter(
@@ -109,7 +108,7 @@ def patient_csv_export_view(request):
                            round(encounter.body_weight * 2.2046, 2),
                            encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, encounter.smoking,
                            encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
-                           encounter.alcohol, encounter.community_health_worker_notes]
+                           encounter.alcohol, encounter.community_health_worker_notes, encounter.procedure, encounter.pharmacy_notes]
                 else:
                     row = [id,
                            "{} {}".format(encounter.timestamp.astimezone(
@@ -120,7 +119,10 @@ def patient_csv_export_view(request):
                                encounter.body_height_primary, encounter.body_height_secondary), encounter.body_weight,
                            encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, encounter.smoking,
                            encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
-                           encounter.alcohol, encounter.community_health_worker_notes]
+                           encounter.alcohol, encounter.community_health_worker_notes, encounter.procedure, encounter.pharmacy_notes]
+                treatments = Treatment.objects.filter(encounter=encounter)
+                for x in treatments:
+                    row.extend([x.diagnosis, x.medication, x.administration_schedule, x.days, x.prescriber])
                 writer.writerow(row)
             id += 1
         return resp
@@ -258,6 +260,7 @@ def chief_complaint_list_view(request, patient_id=None, encounter_id=None):
             'list_view': ChiefComplaint.objects.filter(active=True),
             'patient_id': patient_id,
             'encounter_id': encounter_id,
+            'new': (encounter_id is None)
         })
     else:
         return redirect('main:not_logged_in')

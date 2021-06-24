@@ -118,7 +118,7 @@ def patient_encounter_form_view(request, id=None):
                 DatabaseChangeLog.objects.create(action="Create", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username,
                                                  campaign=Campaign.objects.get(name=request.session['campaign']))
-                DatabaseChangeLog.objects.create(action="Create", model="Vitals", instance=str(vitals),
+                DatabaseChangeLog.objects.create(action="Create", model="Vitals", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username,
                                                  campaign=Campaign.objects.get(name=request.session['campaign']))
                 if 'submit_encounter' in request.POST:

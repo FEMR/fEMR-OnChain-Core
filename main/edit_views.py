@@ -9,7 +9,7 @@ import os
 import itertools
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import AuxiliaryPatientEncounterForm, PatientDiagnosisForm, PatientForm, PatientEncounterForm, TreatmentForm, VitalsForm
+from .forms import AuxiliaryPatientEncounterForm, HistoryPatientEncounterForm, PatientDiagnosisForm, PatientForm, PatientEncounterForm, TreatmentForm, VitalsForm
 from .models import Campaign, Diagnosis, Patient, PatientDiagnosis, PatientEncounter, DatabaseChangeLog, Vitals, Treatment
 from main.qldb_interface import update_patient, update_patient_encounter
 
@@ -257,6 +257,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
                 treatment.prescriber = request.user
                 treatment.save()
                 treatment_form = TreatmentForm()
+                querysets = list(PatientDiagnosis.objects.filter(encounter=m))
                 if len(querysets) > 0:
                     q = querysets.pop().diagnosis.all()
                     for x in querysets:
@@ -332,6 +333,90 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
                 m.procedure = request.POST['procedure']
                 m.pharmacy_notes = request.POST['pharmacy_notes']
                 m.save()
+                querysets = list(PatientDiagnosis.objects.filter(encounter=m))
+                if len(querysets) > 0:
+                    q = querysets.pop().diagnosis.all()
+                    for x in querysets:
+                        q.union(x.diagnosis.all())
+                    treatment_form.fields['diagnosis'].queryset = q
+                DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
+                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                if os.environ.get('QLDB_ENABLED') == "TRUE":
+                    from .serializers import PatientEncounterSerializer
+                    encounter_data = PatientEncounterSerializer(m).data
+                    update_patient_encounter(encounter_data)
+        form = PatientEncounterForm(
+            instance=m, unit=units)
+        vitals_form = VitalsForm(unit=units)
+        if units == 'i':
+            form.initial = {
+                'body_mass_index': m.body_mass_index,
+                'smoking': m.smoking,
+                'history_of_diabetes': m.history_of_diabetes,
+                'history_of_hypertension': m.history_of_hypertension,
+                'history_of_high_cholesterol': m.history_of_high_cholesterol,
+                'alcohol': m.alcohol,
+                'chief_complaint': [c.pk for c in m.chief_complaint.all()],
+                'patient_history': m.patient_history,
+                'community_health_worker_notes': m.community_health_worker_notes,
+                'body_height_primary': math.floor(
+                    ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12),
+                'body_height_secondary': round((
+                    (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
+                'body_weight': round(m.body_weight * 2.2046, 2),
+            }
+        suffix = p.get_suffix_display() if p.suffix is not None else ""
+        return render(request, 'forms/treatment_tab.html',
+                      {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
+    else:
+        return redirect('/not_logged_in')
+
+
+def history_view(request, patient_id=None, encounter_id=None):
+    """
+    Used to edit Encounter objects.
+
+    :param request: Django Request object.
+    :param id: The ID of the object to edit.
+    :return: HTTPResponse.
+    """
+    if request.user.is_authenticated:
+        if request.session['campaign'] == "RECOVERY MODE":
+            return redirect('main:home')
+        units = Campaign.objects.get(name=request.session['campaign']).units
+        telehealth = Campaign.objects.get(
+            name=request.session['campaign']).telehealth
+        m = get_object_or_404(PatientEncounter, pk=encounter_id)
+        p = get_object_or_404(Patient, pk=patient_id)
+        v = Vitals.objects.filter(encounter=m)
+        t = Treatment.objects.filter(encounter=m)
+        treatment_form = TreatmentForm()
+        aux_form = HistoryPatientEncounterForm(instance=m)
+        querysets = list(PatientDiagnosis.objects.filter(encounter=m))
+        if len(querysets) > 0:
+            q = querysets.pop().diagnosis.all()
+            for x in querysets:
+                q.union(x.diagnosis.all())
+            treatment_form.fields['diagnosis'].queryset = q
+        diagnosis_form = PatientDiagnosisForm()
+        if request.method == 'POST':
+            print(request.POST)
+            aux_form = HistoryPatientEncounterForm(request.POST)
+            if aux_form.is_valid():
+                m.medical_history = request.POST['medical_history']
+                m.social_history = request.POST['social_history']
+                m.current_medications = request.POST['current_medications']
+                m.family_history = request.POST['family_history']
+                m.save()
+                querysets = list(PatientDiagnosis.objects.filter(encounter=m))
+                if len(querysets) > 0:
+                    q = querysets.pop().diagnosis.all()
+                    for x in querysets:
+                        q.union(x.diagnosis.all())
+                    treatment_form.fields['diagnosis'].queryset = q
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
@@ -400,7 +485,7 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
                 vitals = vitals_form.save(commit=False)
                 vitals.encounter = m
                 vitals.save()
-                DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
+                DatabaseChangeLog.objects.create(action="New", model="Vitals", instance=str(m),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
