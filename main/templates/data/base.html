@@ -24,14 +24,6 @@
             visibility: hidden;
             display: none;
         }
-
-        .center-screen {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
     </style>
     {% endif %}
 </head>
@@ -119,7 +111,7 @@
     <main>
         <div class="page-content">
             <div class="container" id="page">
-                <div class="row center-screen">
+                <div class="row">
                     <h1>{{ page_name }}</h1>
                     {% if page_tip %}
                     <a id="page_popover" href="#" data-toggle="popover" data-trigger="hover"
