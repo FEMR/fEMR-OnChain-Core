@@ -423,7 +423,7 @@ def filter_database_logs_view(request):
             except ObjectDoesNotExist:
                 data = list()
             data = sorted(data, key=operator.attrgetter(
-                '-timestamp'), reverse=True)
+                'timestamp'), reverse=True)
             return render(request, 'admin/database_log_list.html',
                           {'user': request.user, 'selected': selected,
                            'list_view': data, 'page_name': 'Patient Change Log',
