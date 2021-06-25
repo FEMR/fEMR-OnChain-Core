@@ -1,11 +1,9 @@
 from datetime import timedelta
-from background_task import background
 from pytz import timezone
 
 from main.models import Campaign, Patient, PatientEncounter
 
 
-@background(queue='close-encounters')
 def close_encounters():
     campaigns = Campaign.objects.all()
     now = timezone.now()
@@ -19,6 +17,3 @@ def close_encounters():
             for e in encounters:
                 if e.timestamp >= d:
                     e.active = False
-
-
-run_encounter_close = lambda: close_encounters(repeat=86400)
