@@ -4,7 +4,7 @@ from pytz import timezone
 from main.models import Campaign, Patient, PatientEncounter
 
 
-def close_encounters():
+def run_encounter_close():
     campaigns = Campaign.objects.all()
     now = timezone.now()
 
