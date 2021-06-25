@@ -69,6 +69,9 @@
         </div>
     </div>
 </div>
+<div>
+    Age: {{ patient.age }} Sex Assigned at Birth: {{ patient.sex_assigned_at_birth }} City: {{ patient.city }} BMI: {{ encounter.body_mass_index }} Weeks Pregnant: {{ encounter.body_mass_index }} Complaint: {{ encounter.chief_complaint }}
+</div>
 <div class="container">
     {% if active %}
     <form action="{% url 'main:encounter_edit_form_view' patient_id encounter_id %}" method="post"
@@ -153,34 +156,68 @@
                 <div class="row">
                     <h3>Treatments</h3>
                 </div>
-                <div class="row">
-                    {% for t in treatments %}
-                    <div>
-                        <div class="row"><b>{{ t.timestamp }}</b></div>
-                        <div class="row">
-                            <div class=""><b>Medication |</b></div>
-                            <div class="">{{ t.medication }}</div>
-                        </div>
-                        <div class="row">
-                            <div class=""><b>Administration Schedule |</b></div>
-                            <div class="">{{ t.administration_schedule }}</div>
-                        </div>
-                        <div class="row">
-                            <div class=""><b>Days |</b></div>
-                            <div class="">{{ t.days }}</div>
-                        </div>
-                        <div class="row">
-                            <div class=""><b>Diagnosis |</b></div>
-                            <div class="">{{ t.diagnosis }}</div>
-                        </div>
-                        <div class="row">
-                            <div class=""><b>Prescriber |</b></div>
-                            <div class=""><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">{{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
-                            <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
-                        </div>
-                    </div>
-                    <hr />
-                    {% endfor %}
+                <div class="row" style="overflow-x:auto;">
+                    <style>
+                        table {
+                            font-family: arial, sans-serif;
+                            border-collapse: collapse;
+                            width: 100%;
+                        }
+
+                        td,
+                        th {
+                            border: 1px solid #dddddd;
+                            text-align: left;
+                            padding: 8px;
+                        }
+
+                        tr:nth-child(even) {
+                            background-color: #dddddd;
+                        }
+                    </style>
+                    <table>
+                        <tr>
+                            <td>Timestamp</td>
+                            {% for t in treatments %}
+                            <td>
+                                <b>{{ t.timestamp }}</b>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Medication</b></td>
+                            {% for t in treatments %}
+                            <td>{{ t.medication }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Administration Schedule</b></td>
+                            {% for t in treatments %}
+                            <td>{{ t.administration_schedule }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Days</b></td>
+                            {% for t in treatments %}
+                            <td>{{ t.days }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Diagnosis</b></td>
+                            {% for t in treatments %}
+                            <td>{{ t.diagnosis }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td><b>Prescriber</b></td>
+                            {% for t in treatments %}
+                            <td><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">{{
+                                    t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></td>
+                            <td><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    </table>
                 </div>
             </div>
             <div class="col-9">
@@ -194,7 +231,7 @@
                             href="{% url 'main:new_diagnosis_view' patient_id encounter_id %}">Treatment</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page"
+                        <a class="nav-link" aria-current="page"
                             href="{% url 'main:history_view' patient_id encounter_id %}">PMH</a>
                     </li>
                 </ul>
@@ -240,7 +277,8 @@
                 <div class="row">
                     <div class="form-group col-md-12">
                         {{ form.chief_complaint|as_crispy_field }}
-                        <a href="{% url 'main:chief_complaint_list_view' patient_id encounter_id %}" class="btn btn-primary">Manage</a>
+                        <a href="{% url 'main:chief_complaint_list_view' patient_id encounter_id %}"
+                            class="btn btn-primary">Manage</a>
                     </div>
                 </div>
                 {% if telehealth %}

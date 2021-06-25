@@ -47,6 +47,8 @@ urlpatterns = [
          patient_edit_form_view, name='patient_edit_form_view'),
     path(r'patient_delete_view/<int:id>',
          patient_delete_view, name='patient_delete_view'),
+    path(r'delete_chief_complaint/<int:id>/<int:patient_id>',
+         delete_chief_complaint, name='delete_chief_complaint'),
     path(r'delete_chief_complaint/<int:id>/<int:patient_id>/<int:encounter_id>',
          delete_chief_complaint, name='delete_chief_complaint'),
     path(r'patient_encounter_form_view/<int:id>',

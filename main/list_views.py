@@ -70,8 +70,7 @@ def patient_csv_export_view(request):
             title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure', 'Heart Rate',
                          'Body Temperature (F)', 'Height', 'Weight (lbs)', 'BMI', 'Oxygen Concentration', 'Glucose Level', 'History of Tobacco Use',
                          'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
-                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes', 'Procedure/Counseling', 'Pharmacy Notes',
-                         'Diagnoses and Treatments']
+                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes', 'Procedure/Counseling', 'Pharmacy Notes']
         else:
             title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure',
                          'Heart Rate', 'Body Temperature (C)', 'Height', 'Weight (kg)', 'BMI', 'Oxygen Concentration', 'Glucose Level',

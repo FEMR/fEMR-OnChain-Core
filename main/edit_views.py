@@ -40,8 +40,6 @@ def patient_edit_form_view(request, id=None):
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     update_patient(form.cleaned_data)
-                form = PatientForm()
-                error = "Form submitted successfully."
                 return render(request, "data/patient_submitted.html", {'patient': t,
                                                                        'encounters': encounters})
             else:
@@ -74,8 +72,10 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
+        d = PatientDiagnosis.objects.get(encounter=m)
         treatment_form = TreatmentForm()
-        diagnosis_form = PatientDiagnosisForm()
+        d = PatientDiagnosis.objects.get(encounter=m)
+        diagnosis_form = PatientDiagnosisForm(instance=d)
         aux_form = AuxiliaryPatientEncounterForm()
         if request.method == 'POST':
             form = PatientEncounterForm(request.POST or None,
@@ -98,7 +98,6 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     return redirect('main:referral_form_view', **kwargs)
                 else:
                     return render(request, 'data/encounter_submitted.html')
-            encounter_active = False
         else:
             DatabaseChangeLog.objects.create(action="View", model="Patient", instance=str(m),
                                              ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
@@ -139,9 +138,9 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         return render(request, 'forms/edit_encounter.html',
                       {'active': encounter_active, 'aux_form': aux_form,
                        'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth, 'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -172,9 +171,10 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        diagnosis_form = PatientDiagnosisForm()
+        d = PatientDiagnosis.objects.get(encounter=m)
+        diagnosis_form = PatientDiagnosisForm(instance=d)
         if request.method == 'POST':
-            diagnosis_form = PatientDiagnosisForm(request.POST)
+            diagnosis_form = PatientDiagnosisForm(request.POST, instance=d)
             if diagnosis_form.is_valid():
                 diagnosis = diagnosis_form.save(commit=False)
                 diagnosis.encounter = m
@@ -215,9 +215,9 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/treatment_tab.html',
                       {'active': m.active, 'aux_form': aux_form, 'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth, 'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -248,7 +248,8 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        diagnosis_form = PatientDiagnosisForm()
+        d = PatientDiagnosis.objects.get(encounter=m)
+        diagnosis_form = PatientDiagnosisForm(instance=d)
         if request.method == 'POST':
             treatment_form = TreatmentForm(request.POST)
             if treatment_form.is_valid():
@@ -292,9 +293,9 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/treatment_tab.html',
                       {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth, 'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -325,7 +326,8 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        diagnosis_form = PatientDiagnosisForm()
+        d = PatientDiagnosis.objects.get(encounter=m)
+        diagnosis_form = PatientDiagnosisForm(instance=d)
         if request.method == 'POST':
             print(request.POST)
             aux_form = AuxiliaryPatientEncounterForm(request.POST)
@@ -345,6 +347,7 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(m).data
                     update_patient_encounter(encounter_data)
+                return render(request, 'data/encounter_submitted.html')
         form = PatientEncounterForm(
             instance=m, unit=units)
         vitals_form = VitalsForm(unit=units)
@@ -368,9 +371,9 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/treatment_tab.html',
                       {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth, 'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -401,7 +404,8 @@ def history_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        diagnosis_form = PatientDiagnosisForm()
+        d = PatientDiagnosis.objects.get(encounter=m)
+        diagnosis_form = PatientDiagnosisForm(instance=d)
         if request.method == 'POST':
             print(request.POST)
             aux_form = HistoryPatientEncounterForm(request.POST)
@@ -423,6 +427,7 @@ def history_view(request, patient_id=None, encounter_id=None):
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(m).data
                     update_patient_encounter(encounter_data)
+                    return render(request, 'data/encounter_submitted.html')
         form = PatientEncounterForm(
             instance=m, unit=units)
         vitals_form = VitalsForm(unit=units)
@@ -446,9 +451,9 @@ def history_view(request, patient_id=None, encounter_id=None):
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/treatment_tab.html',
                       {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth, 'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -478,7 +483,8 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        diagnosis_form = PatientDiagnosisForm()
+        d = PatientDiagnosis.objects.get(encounter=m)
+        diagnosis_form = PatientDiagnosisForm(instance=d)
         if request.method == 'POST':
             vitals_form = VitalsForm(request.POST, unit=units)
             if vitals_form.is_valid():
@@ -514,8 +520,8 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
                       {'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
-                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id, 'patient': p,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
     else:
         return redirect('/not_logged_in')
@@ -541,6 +547,11 @@ def patient_export_view(request, id=None):
         m = get_object_or_404(Patient, pk=id)
         encounters = PatientEncounter.objects.filter(
             patient=m).order_by('-timestamp')
+        prescriptions = dict()
+        diagnoses = dict()
+        for x in encounters:
+            diagnoses[x] = list(PatientDiagnosis.objects.get(encounter=x).diagnosis.all())
+            prescriptions[x] = list(Treatment.objects.filter(encounter=x))
         vitals_dictionary = dict()
         for x in encounters:
             vitals_dictionary[x] = list(Vitals.objects.filter(encounter=x))
@@ -548,6 +559,8 @@ def patient_export_view(request, id=None):
             return render(request, 'export/patient_export.html', {
                 'patient': m,
                 'encounters': encounters,
+                'prescriptions': prescriptions,
+                'diagnoses': diagnoses,
                 'vitals': vitals_dictionary,
                 'telehealth': Campaign.objects.get(name=request.session['campaign']).telehealth,
                 'units': Campaign.objects.get(name=request.session['campaign']).units
