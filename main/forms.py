@@ -68,6 +68,9 @@ class PatientDiagnosisForm(ModelForm):
         """
         model = PatientDiagnosis
         fields = ('diagnosis',)
+        labels = {
+            'diagnosis': 'RECORD ALL DIAGNOSES HERE',
+        }
         widgets = {
             'diagnosis': autocomplete.ModelSelect2Multiple(url='main:diagnosis-autocomplete'),
         }

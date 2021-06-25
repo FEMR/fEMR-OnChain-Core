@@ -131,6 +131,10 @@
                 <div>
                     <div class="row"><b>{{ t.timestamp }}</b></div>
                     <div class="row">
+                        <div class=""><b>Diagnosis |</b></div>
+                        <div class="">{{ t.diagnosis }}</div>
+                    </div>
+                    <div class="row">
                         <div class=""><b>Medication |</b></div>
                         <div class="">{{ t.medication }}</div>
                     </div>
@@ -141,10 +145,6 @@
                     <div class="row">
                         <div class=""><b>Days |</b></div>
                         <div class="">{{ t.days }}</div>
-                    </div>
-                    <div class="row">
-                        <div class=""><b>Diagnosis |</b></div>
-                        <div class="">{{ t.diagnosis }}</div>
                     </div>
                     <div class="row">
                         <div class=""><b>Prescriber |</b></div>
@@ -179,7 +179,7 @@
                 </form>
                 <form method="post" action="{% url 'main:new_treatment_view' patient_id encounter_id %}"
                     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
-                    <h2>Treatments</h2>
+                    <h2>Prescriptions</h2>
                     {% crispy treatment_form %}
                 </form>
             </div>

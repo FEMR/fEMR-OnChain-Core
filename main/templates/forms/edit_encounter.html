@@ -57,7 +57,7 @@
         <div class="modal-content" style="width: 150%">
             <div class="modal-header">
                 <h5 class="modal-title">New Vitals Reading</h5>
-                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                <button aria-label="Close" class="close" id="vitals_close" data-dismiss="modal" type="button">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -151,7 +151,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <h3>Treatments History</h3>
+                    <h3>Treatments</h3>
                 </div>
                 <div class="row">
                     {% for t in treatments %}
@@ -308,7 +308,7 @@
 
     var btn = document.getElementById("vitals_modal_button");
 
-    var span = document.getElementsByClassName("close")[0];
+    var span = document.getElementById("vitals_close");
 
     btn.onclick = function () {
         modal.style.display = "block";
