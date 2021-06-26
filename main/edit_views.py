@@ -72,9 +72,8 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
-        d = PatientDiagnosis.objects.get(encounter=m)
         treatment_form = TreatmentForm()
-        d = PatientDiagnosis.objects.get(encounter=m)
+        d = PatientDiagnosis.objects.filter(encounter=m)[0]
         diagnosis_form = PatientDiagnosisForm(instance=d)
         aux_form = AuxiliaryPatientEncounterForm()
         if request.method == 'POST':
@@ -171,7 +170,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        d = PatientDiagnosis.objects.get(encounter=m)
+        d = PatientDiagnosis.objects.filter(encounter=m)[0]
         diagnosis_form = PatientDiagnosisForm(instance=d)
         if request.method == 'POST':
             diagnosis_form = PatientDiagnosisForm(request.POST, instance=d)
@@ -248,7 +247,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        d = PatientDiagnosis.objects.get(encounter=m)
+        d = PatientDiagnosis.objects.filter(encounter=m)[0]
         diagnosis_form = PatientDiagnosisForm(instance=d)
         if request.method == 'POST':
             treatment_form = TreatmentForm(request.POST)
@@ -326,7 +325,7 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        d = PatientDiagnosis.objects.get(encounter=m)
+        d = PatientDiagnosis.objects.filter(encounter=m)[0]
         diagnosis_form = PatientDiagnosisForm(instance=d)
         if request.method == 'POST':
             print(request.POST)
@@ -404,7 +403,7 @@ def history_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        d = PatientDiagnosis.objects.get(encounter=m)
+        d = PatientDiagnosis.objects.filter(encounter=m)[0]
         diagnosis_form = PatientDiagnosisForm(instance=d)
         if request.method == 'POST':
             print(request.POST)
@@ -483,7 +482,7 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        d = PatientDiagnosis.objects.get(encounter=m)
+        d = PatientDiagnosis.objects.filter(encounter=m)[0]
         diagnosis_form = PatientDiagnosisForm(instance=d)
         if request.method == 'POST':
             vitals_form = VitalsForm(request.POST, unit=units)
