@@ -73,8 +73,11 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
         treatment_form = TreatmentForm()
-        d = PatientDiagnosis.objects.filter(encounter=m)[0]
-        diagnosis_form = PatientDiagnosisForm(instance=d)
+        d = PatientDiagnosis.objects.filter(encounter=m)
+        if len(d) > 0:
+            diagnosis_form = PatientDiagnosisForm(instance=d[0])
+        else:
+            diagnosis_form = PatientDiagnosisForm()
         aux_form = AuxiliaryPatientEncounterForm()
         if request.method == 'POST':
             form = PatientEncounterForm(request.POST or None,
@@ -170,8 +173,11 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        d = PatientDiagnosis.objects.filter(encounter=m)[0]
-        diagnosis_form = PatientDiagnosisForm(instance=d)
+        d = PatientDiagnosis.objects.filter(encounter=m)
+        if len(d) > 0:
+            diagnosis_form = PatientDiagnosisForm(instance=d[0])
+        else:
+            diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             diagnosis_form = PatientDiagnosisForm(request.POST, instance=d)
             if diagnosis_form.is_valid():
@@ -247,8 +253,11 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        d = PatientDiagnosis.objects.filter(encounter=m)[0]
-        diagnosis_form = PatientDiagnosisForm(instance=d)
+        d = PatientDiagnosis.objects.filter(encounter=m)
+        if len(d) > 0:
+            diagnosis_form = PatientDiagnosisForm(instance=d[0])
+        else:
+            diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             treatment_form = TreatmentForm(request.POST)
             if treatment_form.is_valid():
@@ -325,8 +334,11 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        d = PatientDiagnosis.objects.filter(encounter=m)[0]
-        diagnosis_form = PatientDiagnosisForm(instance=d)
+        d = PatientDiagnosis.objects.filter(encounter=m)
+        if len(d) > 0:
+            diagnosis_form = PatientDiagnosisForm(instance=d[0])
+        else:
+            diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             print(request.POST)
             aux_form = AuxiliaryPatientEncounterForm(request.POST)
@@ -403,8 +415,11 @@ def history_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        d = PatientDiagnosis.objects.filter(encounter=m)[0]
-        diagnosis_form = PatientDiagnosisForm(instance=d)
+        d = PatientDiagnosis.objects.filter(encounter=m)
+        if len(d) > 0:
+            diagnosis_form = PatientDiagnosisForm(instance=d[0])
+        else:
+            diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             print(request.POST)
             aux_form = HistoryPatientEncounterForm(request.POST)
@@ -482,8 +497,11 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
-        d = PatientDiagnosis.objects.filter(encounter=m)[0]
-        diagnosis_form = PatientDiagnosisForm(instance=d)
+        d = PatientDiagnosis.objects.filter(encounter=m)
+        if len(d) > 0:
+            diagnosis_form = PatientDiagnosisForm(instance=d[0])
+        else:
+            diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             vitals_form = VitalsForm(request.POST, unit=units)
             if vitals_form.is_valid():
