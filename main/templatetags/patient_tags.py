@@ -80,5 +80,5 @@ def imperial_temperature(m):
 def complaint_as_string(m):
     result = ""
     for x in list(m.all()):
-        result += str(x)
+        result += str(x) + ", "
     return result
