@@ -70,7 +70,7 @@
     </div>
 </div>
 <div>
-    Age: {{ patient.age }} Sex Assigned at Birth: {{ patient.sex_assigned_at_birth }} City: {{ patient.city }} BMI: {{ encounter.body_mass_index }} Weeks Pregnant: {{ encounter.body_mass_index }} Complaint: {{ encounter.chief_complaint }}
+    Age: {{ patient.age }} Sex Assigned at Birth: {{ patient.sex_assigned_at_birth }} City: {{ patient.city }} BMI: {{ encounter.body_mass_index }} Weeks Pregnant: {{ encounter.body_mass_index }} Complaint: {{ encounter.chief_complaint.all }}
 </div>
 <div class="container">
     {% if active %}
