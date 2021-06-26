@@ -78,4 +78,7 @@ def imperial_temperature(m):
 
 @register.filter('complaint_as_string')
 def complaint_as_string(m):
-    return [str(x) + ", " for x in list(m.all())]
+    result = ""
+    for x in list(m.all()):
+        result += str(x)
+    return result
