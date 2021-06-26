@@ -74,3 +74,8 @@ def imperial_weight(m):
 @register.filter('imperial_temperature')
 def imperial_temperature(m):
     return round((m.body_temperature * 9/5) + 32, 2)
+
+
+@register.filter('complaint_as_string')
+def complaint_as_string(m):
+    return ", ".join(list(m))
