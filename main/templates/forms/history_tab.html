@@ -184,8 +184,8 @@
                     <tr>
                         <td><b>Prescriber</b></td>
                         {% for t in treatments %}
-                        <td><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">{{
-                                t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></td>
+                        <td><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">
+                            {{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></td>
                         <td><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a>
                         </td>
                         {% endfor %}

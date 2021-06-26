@@ -34,6 +34,7 @@ def home(request):
     :param request: Django Request object.
     :return: An HttpResponse, rendering the home page.
     """
+    run_encounter_close()
     if request.user.is_authenticated:
         return render(request, 'data/home.html', {'user': request.user,
                                                   'page_name': 'Home',

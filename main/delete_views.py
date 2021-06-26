@@ -61,6 +61,9 @@ def delete_chief_complaint(request, id=None, patient_id=None, encounter_id=None)
         p = get_object_or_404(ChiefComplaint, pk=id)
         p.active = False
         p.save()
-        return redirect('main:chief_complaint_list_view', patient_id, encounter_id)
+        if encounter_id is not None:
+            return redirect('main:chief_complaint_list_view', patient_id, encounter_id)
+        else:
+            return redirect('main:chief_complaint_list_view', patient_id)
     else:
         return redirect('main:not_logged_in')
