@@ -179,7 +179,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
         else:
             diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
-            diagnosis_form = PatientDiagnosisForm(request.POST, instance=d)
+            diagnosis_form = PatientDiagnosisForm(request.POST, instance=d[0])
             if diagnosis_form.is_valid():
                 diagnosis = diagnosis_form.save(commit=False)
                 diagnosis.encounter = m

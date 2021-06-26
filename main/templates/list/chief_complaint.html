@@ -3,8 +3,9 @@
 {% load static %}
 <h2>Manage Chief Complaints</h2>
 {% if new %}
+<a href="{% url 'main:patient_encounter_form_view' patient_id %}">Back</a>
 {% else %}
-<a href="{% url 'main:patient_encounter_form_view' patient_id encounter_id %}">Back</a>
+<a href="{% url 'main:encounter_edit_form_view' patient_id encounter_id %}">Back</a>
 {% endif %}
 <table class="table">
        <thead>
