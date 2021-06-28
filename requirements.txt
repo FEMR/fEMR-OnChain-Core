@@ -1,7 +1,7 @@
 Django==3.2.4
 PyYAML==5.4.1
 amazon.ion==0.5.0
-asgiref==3.3.4
+asgiref==3.4.0
 astroid==2.6.0
 autopep8==1.5.7
 boto3==1.17.100
@@ -53,6 +53,6 @@ sqlparse==0.4.1
 toml==0.10.2
 typed-ast==1.4.3
 ua-parser==0.10.0
-urllib3==1.26.5
+urllib3==1.26.6
 user-agents==2.2.0
 wrapt==1.12.1
