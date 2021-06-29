@@ -2,6 +2,8 @@
 Enumerates all contents of all database models.
 Migrations run will generate a table for each of these containing the listed fields.
 """
+from datetime import datetime
+from django.db.models.functions import Now
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.signals import user_logged_in, user_logged_out
@@ -300,8 +302,7 @@ class PatientEncounter(models.Model):
         max_length=500, null=True, blank=True)
     family_history = models.CharField(max_length=500, null=True, blank=True)
 
-    timestamp = models.DateTimeField(
-        auto_now=True, editable=False, null=False, blank=False)
+    timestamp = models.DateTimeField(editable=False, null=False, blank=False)
 
     active = models.BooleanField(default=True)
 
@@ -316,6 +317,13 @@ class PatientEncounter(models.Model):
     @property
     def unit_aware_weight(self, unit):
         return self.body_weight if unit == "m" else (self.body_weight * 2.2046)
+    
+    def save(self, *args, **kwargs):
+        self.timestamp = Now()
+        super(PatientEncounter, self).save(*args, **kwargs)
+    
+    def save_no_timestamp(self, *args, **kwargs):
+        super(PatientEncounter, self).save(*args, **kwargs)
 
     def __str__(self):
         """

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export DEBUG=True
-export SECRET_KEY=$(tr </dev/urandom -dc 'A-Za-z0-9!"#$%&'\''()*+,-./:;<=>?@[\]^_`{|}~' | head -c 50)
+export SECRET_KEY="2HY>fXi!dQ&(9Vf.XghCa;L6G=Ul4r-Bwqh>ae0RG3vIh1ZJ%T"
 export QLDB_ENABLED="TRUE"  # Toggles QLDB on or off.
 export qldb_name="fEMR-OnChain-Test"
 export ADMIN_NAME=""
