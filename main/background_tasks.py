@@ -19,4 +19,4 @@ def run_encounter_close():
                 if e.timestamp < d:
                     print("Set {0} inactive.".format(e))
                     e.active = False
-                    e.save()
+                    e.save_no_timestamp()
