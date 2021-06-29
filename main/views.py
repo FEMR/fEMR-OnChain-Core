@@ -21,7 +21,7 @@ def index(request):
     """
     print(request.user_agent.browser.family)
     run_encounter_close()
-    if request.user_agent.browser.family not in ["Chrome", "Firefox", "Firefox Mobile"]:
+    if request.user_agent.browser.family not in ["Chrome", "Firefox", "Firefox Mobile", "Chrome Mobile iOS"]:
         return render(request, 'data/stop.html')
     else:
         return redirect('main:login_view')
