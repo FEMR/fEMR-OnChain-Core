@@ -6,6 +6,7 @@ import math
 
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import Group
+from django.db.models.base import Model
 from django.forms import ModelForm, Form, CharField, PasswordInput, DateInput, ValidationError, BooleanField
 from django.forms import widgets
 from django.forms.models import ModelMultipleChoiceField
@@ -17,7 +18,7 @@ from dal import autocomplete
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, ButtonHolder, Submit
 
-from .models import Patient, PatientDiagnosis, PatientEncounter, fEMRUser, Campaign, Instance, Contact, Vitals,\
+from .models import Patient, PatientDiagnosis, PatientEncounter, Photo, fEMRUser, Campaign, Instance, Contact, Vitals,\
     ChiefComplaint, Treatment, Diagnosis, Medication
 
 
@@ -639,3 +640,9 @@ class ContactForm(ModelForm):
 
 class ForgotUsernameForm(Form):
     email = CharField(label="Email address", max_length=256)
+
+
+class PhotoForm(ModelForm):
+    class Meta:
+        model = Photo
+        fields = '__all__'

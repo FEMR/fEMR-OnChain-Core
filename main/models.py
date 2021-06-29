@@ -3,6 +3,7 @@ Enumerates all contents of all database models.
 Migrations run will generate a table for each of these containing the listed fields.
 """
 from datetime import datetime
+from django.db.models.base import Model
 from django.db.models.functions import Now
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -256,6 +257,14 @@ class Medication(models.Model):
         return str(self.text)
 
 
+class Photo(models.Model):
+    description = models.CharField(max_length=100)
+    photo = models.FileField(upload_to='photos/', blank=True, null=True)
+
+    def __str__(self) -> str:
+        return str(self.description)
+
+
 class PatientEncounter(models.Model):
     """
     Individual data point in a patient's medical record.
@@ -301,6 +310,8 @@ class PatientEncounter(models.Model):
     current_medications = models.CharField(
         max_length=500, null=True, blank=True)
     family_history = models.CharField(max_length=500, null=True, blank=True)
+
+    photos = models.ManyToManyField(Photo, blank=True)
 
     timestamp = models.DateTimeField(editable=False, null=False, blank=False)
 

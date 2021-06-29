@@ -1,6 +1,6 @@
 from django.http.response import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from main.forms import CampaignForm, ContactForm, InstanceForm, fEMRAdminUserForm
+from main.forms import CampaignForm, ContactForm, InstanceForm, fEMRAdminUserForm, fEMRAdminUserUpdateForm
 from main.models import AuditEntry, Campaign, Contact, DatabaseChangeLog, Instance, fEMRUser
 from django.db.models import ObjectDoesNotExist
 
@@ -22,9 +22,9 @@ def change_campaign(request):
             if campaign is not None:
                 request.session['campaign'] = campaign
                 AuditEntry.objects.create(action='user_changed_campaigns',
-                                            ip=get_client_ip(request),
-                                            username=request.user.username,
-                                            campaign=Campaign.objects.get(name=request.session['campaign']))
+                                          ip=get_client_ip(request),
+                                          username=request.user.username,
+                                          campaign=Campaign.objects.get(name=request.session['campaign']))
             else:
                 campaign = "RECOVERY MODE"
             return redirect('main:home')
@@ -56,7 +56,7 @@ def new_campaign_view(request):
                         t = form.save()
                         t.save()
                         DatabaseChangeLog.objects.create(action="Create", model="Campaign", instance=str(t),
-                                                        ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                         ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                         return render(request, "femr_admin/confirm/campaign_submitted.html")
                     else:
                         return render(request, 'femr_admin/campaign/new_campaign.html', {'form': form, 'page_name': 'New Campaign'})
@@ -121,12 +121,13 @@ def edit_campaign_view(request, id=None):
             else:
                 instance = Campaign.objects.get(pk=id)
                 if request.method == 'POST':
-                    form = CampaignForm(request.POST or None, instance=instance)
+                    form = CampaignForm(
+                        request.POST or None, instance=instance)
                     if form.is_valid():
                         t = form.save()
                         t.save()
                         DatabaseChangeLog.objects.create(action="Edit", model="Campaign", instance=str(t),
-                                                        ip=get_client_ip(request), username=request.user.username, campaign=instance)
+                                                         ip=get_client_ip(request), username=request.user.username, campaign=instance)
                         return render(request, "femr_admin/confirm/campaign_submitted.html")
                 else:
                     form = CampaignForm(instance=instance)
@@ -142,7 +143,8 @@ def edit_contact_view(request, id=None):
         if request.user.groups.filter(name='fEMR Admin').exists():
             instance = fEMRUser.objects.get(pk=id)
             if request.method == 'POST':
-                form = fEMRAdminUserForm(request.POST or None, instance=instance)
+                form = fEMRAdminUserForm(
+                    request.POST or None, instance=instance)
                 if form.is_valid():
                     t = form.save()
                     t.save()
@@ -173,7 +175,9 @@ def edit_instance_view(request, id=None):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='fEMR Admin').exists():
             instance = Instance.objects.get(pk=id)
+            contact = instance.main_contact
             contact_form = fEMRAdminUserForm()
+            edit_contact_form = fEMRAdminUserUpdateForm(instance=contact)
             if request.method == 'POST':
                 form = InstanceForm(request.POST or None, instance=instance)
                 if form.is_valid():
@@ -184,7 +188,7 @@ def edit_instance_view(request, id=None):
                     return render(request, "femr_admin/confirm/instance_submitted.html")
             else:
                 form = InstanceForm(instance=instance)
-                return render(request, 'femr_admin/instance/edit_instance.html', {'form': form, 'contact_form': contact_form, 'page_name': 'Edit Instance', 'instance_id': id})
+                return render(request, 'femr_admin/instance/edit_instance.html', {'form': form, 'contact_form': contact_form, 'edit_contact_form': edit_contact_form, 'page_name': 'Edit Instance', 'contact_id': contact.id, 'instance_id': id})
         else:
             return redirect('main:permission_denied')
     else:
@@ -194,8 +198,10 @@ def edit_instance_view(request, id=None):
 def list_campaign_view(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='fEMR Admin').exists():
-            active_campaigns = Campaign.objects.filter(active=True).order_by('instance__name', 'name')
-            inactive_campaigns = Campaign.objects.filter(active=False).order_by('instance__name', 'name')
+            active_campaigns = Campaign.objects.filter(
+                active=True).order_by('instance__name', 'name')
+            inactive_campaigns = Campaign.objects.filter(
+                active=False).order_by('instance__name', 'name')
             return render(request, 'femr_admin/campaign/list_campaign.html', {'active_campaigns': active_campaigns,
                                                                               'inactive_campaigns': inactive_campaigns,
                                                                               'page_name': 'Campaigns'})
@@ -208,8 +214,10 @@ def list_campaign_view(request):
 def list_instance_view(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='fEMR Admin').exists():
-            active_instances = Instance.objects.filter(active=True).order_by('name')
-            inactive_instances = Instance.objects.filter(active=False).order_by('name')
+            active_instances = Instance.objects.filter(
+                active=True).order_by('name')
+            inactive_instances = Instance.objects.filter(
+                active=False).order_by('name')
             return render(request, 'femr_admin/instance/list_instance.html', {'active_instances': active_instances,
                                                                               'inactive_instances': inactive_instances,
                                                                               'page_name': 'Instances'})

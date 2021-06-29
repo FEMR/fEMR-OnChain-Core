@@ -76,8 +76,6 @@ def patient_csv_export_view(request):
                          'Heart Rate', 'Body Temperature (C)', 'Height', 'Weight (kg)', 'BMI', 'Oxygen Concentration', 'Glucose Level',
                          'History of Tobacco Use', 'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
                          'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes', 'Procedure/Counseling', 'Pharmacy Notes']
-        title_row.extend(['Diagnosis', 'Medication', 'Administration Schedule', 'Days', 'Prescriber'])
-        writer.writerow(title_row)
         try:
             data = Patient.objects.filter(
                 campaign=Campaign.objects.get(name=request.session['campaign']))
@@ -89,6 +87,8 @@ def patient_csv_export_view(request):
         campaign_time_zone = pytz_timezone(time_zone)
         campaign_time_zone_b = datetime.now(
             tz=campaign_time_zone).strftime("%Z%z")
+        patient_rows = list()
+        max_treatments = 0
         for patient in data:
             for encounter in PatientEncounter.objects.filter(patient=patient):
                 vital = Vitals.objects.filter(encounter=encounter)[0]
@@ -120,10 +120,16 @@ def patient_csv_export_view(request):
                            encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
                            encounter.alcohol, encounter.community_health_worker_notes, encounter.procedure, encounter.pharmacy_notes]
                 treatments = Treatment.objects.filter(encounter=encounter)
+                max_treatments = len(treatments) if len(treatments) > max_treatments else max_treatments
                 for x in treatments:
                     row.extend([x.diagnosis, x.medication, x.administration_schedule, x.days, x.prescriber])
-                writer.writerow(row)
+                patient_rows.append(row)
             id += 1
+        for x in range(max_treatments):
+            title_row.extend(['Diagnosis', 'Medication', 'Administration Schedule', 'Days', 'Prescriber'])
+        writer.writerow(title_row)
+        for row in patient_rows:
+            writer.writerow(row)
         return resp
     else:
         return redirect('main:not_logged_in')

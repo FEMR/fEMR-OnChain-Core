@@ -230,3 +230,13 @@ SESSION_SECURITY_EXPIRE_AFTER=900
 SESSION_SECURITY_WARN_AFTER=840
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
+
+if 'aws_access_key_id' in os.environ:
+    AWS_ACCESS_KEY_ID = os.environ.get('aws_access_key_id')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('aws_secret_access_key')
+    AWS_STORAGE_BUCKET_NAME = os.environ.get('aws_storage_bucket_name')
+    AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com'
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    DEFAULT_FILE_STORAGE = 'femr_onchain.storage_backends.MediaStorage'
