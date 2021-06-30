@@ -24,13 +24,7 @@ class Command(BaseCommand):
         """
         if not Instance.objects.filter(name="Test").exists():
             print("Populating instance table.")
-            c = Contact.objects.create(
-                first_name="Test",
-                last_name="Contact",
-                email_address="test@test.com",
-                phone_number="5551234567"
-            )
-            instance = Instance.objects.create(name="Test", main_contact=c)
+            instance = Instance.objects.create(name="Test")
             create_tables()
         else:
             instance = Instance.objects.get(name="Test")
@@ -48,3 +42,5 @@ class Command(BaseCommand):
             superuser.save()
             Group.objects.get(name='Admin').user_set.add(superuser)
             Group.objects.get(name='fEMR Admin').user_set.add(superuser)
+            instance.main_contact = superuser
+            instance.save()
