@@ -1,17 +1,17 @@
-Django==3.2.4
+Django==3.2.5
 PyYAML==5.4.1
 amazon.ion==0.5.0
 asgiref==3.4.0
-astroid==2.6.0
+astroid==2.6.2
 autopep8==1.5.7
-boto3==1.17.102
-botocore==1.20.102
+boto3==1.17.103
+botocore==1.20.103
 certifi==2021.5.30
 chardet==4.0.0
 click==8.0.1
 colorama==0.4.4
 django-autocomplete-light==3.8.2
-django-axes==5.19.0
+django-axes==5.20.0
 django-background-tasks==1.2.5
 django-compat==1.0.15
 django-crispy-forms==1.12.0
@@ -39,7 +39,7 @@ packaging==20.9
 # psycopg2==2.9.1
 pycodestyle==2.7.0
 # pylibmc==1.6.1
-pylint==2.8.2
+pylint==2.9.3
 pyparsing==2.4.7
 pyqldb==3.0.0
 python-dateutil==2.8.1
