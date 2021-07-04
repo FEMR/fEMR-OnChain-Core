@@ -174,6 +174,8 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
+        else:
+            treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none
         d = PatientDiagnosis.objects.filter(encounter=m)
         if len(d) > 0:
             diagnosis_form = PatientDiagnosisForm(instance=d[0])
@@ -195,6 +197,8 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
                     for x in querysets:
                         q.union(x.diagnosis.all())
                     treatment_form.fields['diagnosis'].queryset = q
+                else:
+                    treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
@@ -257,6 +261,8 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
+        else:
+            treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none
         d = PatientDiagnosis.objects.filter(encounter=m)
         if len(d) > 0:
             diagnosis_form = PatientDiagnosisForm(instance=d[0])
@@ -276,6 +282,8 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
                     for x in querysets:
                         q.union(x.diagnosis.all())
                     treatment_form.fields['diagnosis'].queryset = q
+                else:
+                    treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
@@ -338,6 +346,8 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
+        else:
+            treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none
         d = PatientDiagnosis.objects.filter(encounter=m)
         if len(d) > 0:
             diagnosis_form = PatientDiagnosisForm(instance=d[0])
@@ -356,6 +366,8 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
                     for x in querysets:
                         q.union(x.diagnosis.all())
                     treatment_form.fields['diagnosis'].queryset = q
+                else:
+                    treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
@@ -419,6 +431,8 @@ def history_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
+        else:
+            treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none
         d = PatientDiagnosis.objects.filter(encounter=m)
         if len(d) > 0:
             diagnosis_form = PatientDiagnosisForm(instance=d[0])
@@ -439,6 +453,8 @@ def history_view(request, patient_id=None, encounter_id=None):
                     for x in querysets:
                         q.union(x.diagnosis.all())
                     treatment_form.fields['diagnosis'].queryset = q
+                else:
+                    treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
@@ -501,6 +517,8 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
             for x in querysets:
                 q.union(x.diagnosis.all())
             treatment_form.fields['diagnosis'].queryset = q
+        else:
+            treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none
         d = PatientDiagnosis.objects.filter(encounter=m)
         if len(d) > 0:
             diagnosis_form = PatientDiagnosisForm(instance=d[0])
