@@ -643,6 +643,12 @@ class ForgotUsernameForm(Form):
 
 
 class PhotoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Submit', css_class='btn btn-primary'))
+
     class Meta:
         model = Photo
         fields = '__all__'

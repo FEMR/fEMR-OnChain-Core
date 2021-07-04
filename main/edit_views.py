@@ -86,6 +86,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 encounter = form.save(commit=False)
                 form.save_m2m()
                 encounter.patient = p
+                encounter.active = True
                 encounter.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
@@ -601,7 +602,7 @@ def upload_photo_view(request, patient_id=None, encounter_id=None):
                 'body_weight': round(m.body_weight * 2.2046, 2),
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
-        return render(request, 'forms/history_tab.html',
+        return render(request, 'forms/photos_tab.html',
                       {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,

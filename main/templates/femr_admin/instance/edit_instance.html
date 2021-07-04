@@ -36,7 +36,7 @@
     </div>
   </div>
 </form>
-<div id="contact_form_div" style="visibility: collapse;">
+<div id="contact_form_div" style="visibility: hidden; display: none;">
   <form action="{% url 'main:new_contact' %}" method="post"
     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
     {% csrf_token %}
@@ -57,7 +57,7 @@
     </div>
   </form>
 </div>
-<div id="contact_form_div" style="visibility: collapse;">
+<div id="contact_edit_form_div" style="visibility: hidden; display: none;">
   <form action="{% url 'main:edit_contact' contact_id %}" method="post"
     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
     {% csrf_token %}
@@ -86,13 +86,26 @@
   $('#contact_form_activate').off('click');
   $('#contact_form_activate').on('click', function (event) {
     console.log('Event fired.');
-    $('#contact_form_div').css("visibility", "visible");
+    if ($('#contact_form_div').css("visibility") == "hidden") {
+      console.log("Working.");
+      $('#contact_form_div').css("visibility", "visible");
+      $('#contact_form_div').css("display", "block");
+    } else {
+      $('#contact_form_div').css("visibility", "hidden");
+      $('#contact_form_div').css("display", "none");
+    }
   });
   $('#contact_edit_form_activate').off('click');
   $('#contact_edit_form_activate').on('click', function (event) {
     console.log('Event fired.');
-    $('#contact_edit_form_div').css("visibility", "visible");
+    if ($('#contact_edit_form_div').css("visibility") == "hidden") {
+      console.log("Working.");
+      $('#contact_edit_form_div').css("visibility", "visible");
+      $('#contact_edit_form_div').css("display", "block");
+    } else {
+      $('#contact_edit_form_div').css("visibility", "hidden");
+      $('#contact_edit_form_div').css("display", "none");
+    }
   });
-  $("#id_phone_number").inputmask({ mask: "(999)999-9999" });
 </script>
 {% endblock %}

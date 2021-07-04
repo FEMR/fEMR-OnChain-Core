@@ -330,7 +330,7 @@ class PatientEncounter(models.Model):
         return self.body_weight if unit == "m" else (self.body_weight * 2.2046)
     
     def save(self, *args, **kwargs):
-        self.timestamp = Now()
+        self.timestamp = timezone.now()
         super(PatientEncounter, self).save(*args, **kwargs)
     
     def save_no_timestamp(self, *args, **kwargs):
