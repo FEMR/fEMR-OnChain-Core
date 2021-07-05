@@ -6,7 +6,6 @@ If one is not found, they will direct to the appropriate error page.
 from main.femr_admin_views import get_client_ip
 import math
 import os
-import itertools
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import AuxiliaryPatientEncounterForm, HistoryPatientEncounterForm, PatientDiagnosisForm, PatientForm, PatientEncounterForm, PhotoForm, TreatmentForm, VitalsForm
@@ -66,18 +65,10 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         units = Campaign.objects.get(name=request.session['campaign']).units
-        telehealth = Campaign.objects.get(
-            name=request.session['campaign']).telehealth
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
-        treatment_form = TreatmentForm()
-        d = PatientDiagnosis.objects.filter(encounter=m)
-        if len(d) > 0:
-            diagnosis_form = PatientDiagnosisForm(instance=d[0])
-        else:
-            diagnosis_form = PatientDiagnosisForm()
         aux_form = AuxiliaryPatientEncounterForm()
         if request.method == 'POST':
             form = PatientEncounterForm(request.POST or None,
@@ -137,13 +128,12 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 }
             encounter_active = m.active
         suffix = p.get_suffix_display() if p.suffix is not None else ""
-        print(encounter_active)
         return render(request, 'forms/edit_encounter.html',
                       {'active': encounter_active, 'aux_form': aux_form,
-                       'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
+                       'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
-                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth, 'patient': p})
+                       'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -160,8 +150,6 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         units = Campaign.objects.get(name=request.session['campaign']).units
-        telehealth = Campaign.objects.get(
-            name=request.session['campaign']).telehealth
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
@@ -229,8 +217,8 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
         return render(request, 'forms/treatment_tab.html',
                       {'active': m.active, 'aux_form': aux_form, 'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
-                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth, 'patient': p})
+                       'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -247,8 +235,6 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         units = Campaign.objects.get(name=request.session['campaign']).units
-        telehealth = Campaign.objects.get(
-            name=request.session['campaign']).telehealth
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
@@ -314,8 +300,8 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
         return render(request, 'forms/treatment_tab.html',
                       {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
-                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth, 'patient': p})
+                       'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -332,8 +318,6 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         units = Campaign.objects.get(name=request.session['campaign']).units
-        telehealth = Campaign.objects.get(
-            name=request.session['campaign']).telehealth
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
@@ -399,8 +383,8 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
         return render(request, 'forms/treatment_tab.html',
                       {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
-                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth, 'patient': p})
+                       'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -417,27 +401,11 @@ def history_view(request, patient_id=None, encounter_id=None):
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         units = Campaign.objects.get(name=request.session['campaign']).units
-        telehealth = Campaign.objects.get(
-            name=request.session['campaign']).telehealth
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
-        treatment_form = TreatmentForm()
         aux_form = HistoryPatientEncounterForm(instance=m)
-        querysets = list(PatientDiagnosis.objects.filter(encounter=m))
-        if len(querysets) > 0:
-            q = querysets.pop().diagnosis.all()
-            for x in querysets:
-                q.union(x.diagnosis.all())
-            treatment_form.fields['diagnosis'].queryset = q
-        else:
-            treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none()
-        d = PatientDiagnosis.objects.filter(encounter=m)
-        if len(d) > 0:
-            diagnosis_form = PatientDiagnosisForm(instance=d[0])
-        else:
-            diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             print(request.POST)
             aux_form = HistoryPatientEncounterForm(request.POST)
@@ -447,14 +415,6 @@ def history_view(request, patient_id=None, encounter_id=None):
                 m.current_medications = request.POST['current_medications']
                 m.family_history = request.POST['family_history']
                 m.save()
-                querysets = list(PatientDiagnosis.objects.filter(encounter=m))
-                if len(querysets) > 0:
-                    q = querysets.pop().diagnosis.all()
-                    for x in querysets:
-                        q.union(x.diagnosis.all())
-                    treatment_form.fields['diagnosis'].queryset = q
-                else:
-                    treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
@@ -484,10 +444,10 @@ def history_view(request, patient_id=None, encounter_id=None):
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/history_tab.html',
-                      {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
+                      {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
-                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth, 'patient': p})
+                       'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -504,26 +464,10 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         units = Campaign.objects.get(name=request.session['campaign']).units
-        telehealth = Campaign.objects.get(
-            name=request.session['campaign']).telehealth
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
-        treatment_form = TreatmentForm()
-        querysets = list(PatientDiagnosis.objects.filter(encounter=m))
-        if len(querysets) > 0:
-            q = querysets.pop().diagnosis.all()
-            for x in querysets:
-                q.union(x.diagnosis.all())
-            treatment_form.fields['diagnosis'].queryset = q
-        else:
-            treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none()
-        d = PatientDiagnosis.objects.filter(encounter=m)
-        if len(d) > 0:
-            diagnosis_form = PatientDiagnosisForm(instance=d[0])
-        else:
-            diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
             vitals_form = VitalsForm(request.POST, unit=units)
             if vitals_form.is_valid():
@@ -558,10 +502,10 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
-                      {'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
+                      {'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
-                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id, 'patient': p,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth})
+                       'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id, 'patient': p,
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units})
     else:
         return redirect('/not_logged_in')
 
@@ -578,8 +522,6 @@ def upload_photo_view(request, patient_id=None, encounter_id=None):
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         units = Campaign.objects.get(name=request.session['campaign']).units
-        telehealth = Campaign.objects.get(
-            name=request.session['campaign']).telehealth
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
@@ -623,8 +565,8 @@ def upload_photo_view(request, patient_id=None, encounter_id=None):
         return render(request, 'forms/photos_tab.html',
                       {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
-                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': patient_id, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'telehealth': telehealth, 'patient': p})
+                       'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
     else:
         return redirect('/not_logged_in')
 
