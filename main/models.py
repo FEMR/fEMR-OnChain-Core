@@ -287,7 +287,7 @@ class PatientEncounter(models.Model):
     body_mass_index = models.FloatField(
         validators=[MaxValueValidator(500), MinValueValidator(0)], null=True, blank=True)
     weeks_pregnant = models.IntegerField(
-        validators=[MaxValueValidator(45), MinValueValidator(1)], null=True, blank=True)
+        validators=[MaxValueValidator(45), MinValueValidator(0)], null=True, blank=True)
 
     smoking = models.BooleanField(default=False)
     history_of_diabetes = models.BooleanField(default=False)
