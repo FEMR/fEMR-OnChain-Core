@@ -143,7 +143,7 @@ def edit_contact_view(request, id=None):
         if request.user.groups.filter(name='fEMR Admin').exists():
             instance = fEMRUser.objects.get(pk=id)
             if request.method == 'POST':
-                form = fEMRAdminUserForm(
+                form = fEMRAdminUserUpdateForm(
                     request.POST or None, instance=instance)
                 if form.is_valid():
                     t = form.save()
@@ -152,7 +152,7 @@ def edit_contact_view(request, id=None):
                                                      ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                     return render(request, "femr_admin/confirm/contact_submitted.html")
             else:
-                form = fEMRAdminUserForm(instance=instance)
+                form = fEMRAdminUserUpdateForm(instance=instance)
             return render(request, 'femr_admin/contact/edit_contact.html', {'form': form, 'page_name': 'Edit Contact', 'contact_id': id})
         else:
             return redirect('main:permission_denied')
@@ -286,7 +286,6 @@ def unlock_campaign_view(request, id=None):
 
 def problem_delete_view(request):
     if request.user.is_authenticated:
-        data = Instance.objects.all()
         try:
             p = get_object_or_404(Instance, pk=id)
             Instance.objects.filter(id=p.id).delete()
