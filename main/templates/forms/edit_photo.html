@@ -1,0 +1,10 @@
+{% extends "data/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<form action="{% url 'main:edit_photo_view' patient_id encounter_id photo_id %}" method="post">
+    {% csrf_token %}
+    <div class="container">
+        {% crispy aux_form %}
+    </div>
+</form>
+{% endblock %}

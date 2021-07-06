@@ -48,12 +48,12 @@
     </div>
 </div>
 <div>
-    Age: {{ patient.age }} Sex Assigned at Birth: {{ patient.get_sex_assigned_at_birth_display }} City: {{ patient.city }} BMI: 
-    {{ encounter.body_mass_index }} 
+    Age: {{ patient.age }} Sex Assigned at Birth: {{ patient.get_sex_assigned_at_birth_display }} City: {{ patient.city }} BMI:
+    {{ encounter.body_mass_index }}
     {% if patient.sex_assigned_at_birth == 'f' %}
     Weeks Pregnant: {{ encounter.weeks_pregnant }}
     {% endif %}
-    Complaint: 
+    Complaint:
     {{ encounter.chief_complaint|complaint_as_string }}
 </div>
 <div class="container">
@@ -157,7 +157,8 @@
                     </div>
                     <div class="row">
                         <div class=""><b>Prescriber |</b></div>
-                        <div class=""><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">{{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
+                        <div class=""><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">
+                            {{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
                         <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
                     </div>
                 </div>
@@ -185,10 +186,30 @@
                 </li>
             </ul>
             <div class="col-9">
-                <form method="post" action="{% url 'main:upload_photo_view' patient.id encounter_id %}" enctype="multipart/form-data"
+                <form method="post" action="{% url 'main:upload_photo_view' patient.id encounter_id %}"
+                    enctype="multipart/form-data"
                     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
                     {% crispy aux_form %}
                 </form>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        {% for p in encounter.photos.all %}
+                        <div class="row">
+                            <div class="col-md-5">
+                                <img src="{{ p.photo }}" />
+                            </div>
+                            <div class="col-md-5">
+                                {{ p.description }}
+                            </div>
+                            <div class="col-md-2">
+                                <a href="{% url 'main:edit_photo_view' patient.id encounter_id p.id %}"
+                                    class="btn btn-primary ml-auto">Edit</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

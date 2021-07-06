@@ -37,9 +37,6 @@ ethnicity_choices = (
     ('2', 'Not Hispanic or Latinx'),
     ('3', 'Nondisclosed'),
 )
-administration_schedule_choices = (
-    ()
-)
 
 
 class Contact(models.Model):

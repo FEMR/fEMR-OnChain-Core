@@ -5,7 +5,7 @@ from django.contrib import admin
 
 from .models import Patient, Contact, PatientDiagnosis, fEMRUser, PatientEncounter,\
      AuditEntry, UnitsSetting, DatabaseChangeLog, Campaign, Instance, Vitals,\
-         Treatment, Medication, ChiefComplaint, Diagnosis
+         Treatment, Medication, ChiefComplaint, Diagnosis, Photo
 
 
 from .forms import PatientEncounterForm, TreatmentForm
@@ -34,3 +34,4 @@ admin.site.register(Medication)
 admin.site.register(ChiefComplaint)
 admin.site.register(Diagnosis)
 admin.site.register(PatientDiagnosis)
+admin.site.register(Photo)
