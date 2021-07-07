@@ -6,9 +6,7 @@ import math
 
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import Group
-from django.db.models.base import Model
 from django.forms import ModelForm, Form, CharField, PasswordInput, DateInput, ValidationError, BooleanField
-from django.forms import widgets
 from django.forms.models import ModelMultipleChoiceField
 from django.forms.widgets import Textarea
 from django.utils import timezone
