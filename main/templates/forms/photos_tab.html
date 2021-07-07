@@ -197,7 +197,7 @@
                         {% for p in encounter.photos.all %}
                         <div class="row">
                             <div class="col-md-5">
-                                <img src="{{ p.photo.url }}" />
+                                <img src="{{ p.photo.url }}" style="max-width: 150px; max-height: 150px;" />
                             </div>
                             <div class="col-md-5">
                                 {{ p.description }}
