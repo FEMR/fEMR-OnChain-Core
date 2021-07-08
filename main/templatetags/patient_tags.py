@@ -73,7 +73,10 @@ def imperial_weight(m):
 
 @register.filter('imperial_temperature')
 def imperial_temperature(m):
-    return round((m.body_temperature * 9/5) + 32, 2)
+    if m.body_temperature is not None:
+        return round((m.body_temperature * 9/5) + 32, 2)
+    else:
+        return None
 
 
 @register.filter('complaint_as_string')

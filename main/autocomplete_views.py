@@ -11,7 +11,7 @@ class DiagnosisAutocomplete(autocomplete.Select2QuerySetView):
         qs = Diagnosis.objects.all()
 
         if self.q:
-            qs = qs.filter(text__istartswith=self.q)
+            qs = qs.filter(text__icontains=self.q)
         
         return qs
 
@@ -24,7 +24,7 @@ class ChiefComplaintAutocomplete(autocomplete.Select2QuerySetView):
         qs = ChiefComplaint.objects.filter(active=True)
 
         if self.q:
-            qs = qs.filter(text__istartswith=self.q)
+            qs = qs.filter(text__icontains=self.q)
         
         return qs
 
@@ -37,7 +37,7 @@ class MedicationAutocomplete(autocomplete.Select2QuerySetView):
         qs = Medication.objects.all()
 
         if self.q:
-            qs = qs.filter(text__istartswith=self.q)
+            qs = qs.filter(text__icontains=self.q)
         
         return qs
 
@@ -50,6 +50,6 @@ class AdministrationScheduleAutocomplete(autocomplete.Select2QuerySetView):
         qs = AdministrationSchedule.objects.all()
 
         if self.q:
-            qs = qs.filter(text__istartswith=self.q)
+            qs = qs.filter(text__icontains=self.q)
         
         return qs

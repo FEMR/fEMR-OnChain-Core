@@ -599,7 +599,11 @@ def edit_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
             aux_form = PhotoForm(request.POST, request.FILES, instance=photo)
             if aux_form.is_valid():
                 ph = aux_form.save()
-                ph.save()
+                try:
+                    print(str(ph.photo.url))
+                    ph.save()
+                except ValueError:
+                    ph.delete()
                 DatabaseChangeLog.objects.create(action="Edit", model="Photo", instance=str(ph),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
