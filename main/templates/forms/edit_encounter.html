@@ -1,115 +1,217 @@
 {% extends "data/base.html" %}
 {% block content %}
 {% load static %}
+{% load encounter_tags %}
+{% load patient_tags %}
 {% load crispy_forms_tags %}
-<form action="{% url 'main:encounter_edit_form_view' patient_id encounter_id %}" method="post"
-    onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
-    {% csrf_token %}
-    <div class="container">
+{% if not active %}
+<div class="modal" id="patient_modal_popup" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Encounter Closed</h5>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <p>This encounter has been closed. Are you sure you want to edit it?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary ml-auto" href="{% url 'main:patient_edit_form_view' patient.id %}">Back</a>
+                <button class="btn btn-primary ml-auto" id="modal_close_button" data-dismiss="modal"
+                    type="button">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var patient_modal = document.getElementById("patient_modal_popup");
+
+    var patient_span = document.getElementsByClassName("close")[0];
+
+    var patient_close_button = document.getElementById("modal_close_button");
+
+    patient_span.onclick = function () {
+        patient_modal.style.display = "none";
+    }
+
+    patient_close_button.onclick = function () {
+        patient_modal.style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            patient_modal.style.display = "none";
+        }
+    }
+
+    patient_modal.style.display = "block";
+</script>
+{% endif %}
+<div class="modal" id="modal_popup" role="dialog" tabindex="-1" style="display: none;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width: 150%">
+            <div class="modal-header">
+                <h5 class="modal-title">New Vitals Reading</h5>
+                <button aria-label="Close" class="close" id="vitals_close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'main:new_vitals_view' patient.id encounter_id %}">
+                    {% crispy vitals_form %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    Age: {{ patient.age }} Sex Assigned at Birth: {{ patient.get_sex_assigned_at_birth_display }} City: {{ patient.city }} BMI: 
+    {{ encounter.body_mass_index }} 
+    {% if patient.sex_assigned_at_birth == 'f' %}
+    Weeks Pregnant: {{ encounter.weeks_pregnant }}
+    {% endif %}
+    Complaint: 
+    {{ encounter.chief_complaint|complaint_as_string }}
+</div>
+<div class="container">
+    {% if active %}
+    <form action="{% url 'main:encounter_edit_form_view' patient.id encounter_id %}" method="post"
+        onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+        {% csrf_token %}
+        {% endif %}
         <div class="row justify-content-center">
             <div class="col-4">
                 <div class="row">
-                    <h3>Vitals History</h3>
+                    <button id="vitals_modal_button" type="button" class="btn btn-primary">New</button>
                 </div>
                 <div class="row">
-                    {% for v in vitals %}
-                    <div>
-                        <div class="row"><b>{{ v.timestamp }}</b></div>
-                        <div class="row">
-                            <div class="col-md-10">BP</div>
-                            <div class="col-md-2">{{ v.systolic_blood_pressure }}/{{ v.diastolic_blood_pressure }}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-10">MAP</div>
-                            <div class="col-md-2">{{ v.mean_arterial_pressure }}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-10">HR</div>
-                            <div class="col-md-2">{{ v.heart_rate }}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-10">RR</div>
-                            <div class="col-md-2">{{ v.respiratory_rate }}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-10">T</div>
-                            <div class="col-md-2">{{ v.body_temperature }}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-10">SpO2</div>
-                            <div class="col-md-2">{{ v.oxygen_concentration }}</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-10">Gluc</div>
-                            <div class="col-md-2">{{ v.glucose_level }}</div>
-                        </div>
+                    <div style="overflow-x:auto;">
+                        <style>
+                            table {
+                                font-family: arial, sans-serif;
+                                border-collapse: collapse;
+                                width: 100%;
+                            }
+
+                            td,
+                            th {
+                                border: 1px solid #dddddd;
+                                text-align: left;
+                                padding: 8px;
+                            }
+
+                            tr:nth-child(even) {
+                                background-color: #dddddd;
+                            }
+                        </style>
+                        <table>
+                            <tr>
+                                <td></td>
+                                {% for v in vitals %}
+                                <td>{{ v.timestamp }}</td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>BP</td>
+                                {% for v in vitals %}
+                                <td>{{ v.systolic_blood_pressure }}/{{ v.diastolic_blood_pressure }}</td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>MAP</td>
+                                {% for v in vitals %}
+                                <td>{{ v.mean_arterial_pressure }}</td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>HR</td>
+                                {% for v in vitals %}
+                                <td>{{ v.heart_rate }}</td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>T</td>
+                                {% for v in vitals %}
+                                {% if units == 'i' %}
+                                <td>{{ v|imperial_temperature }}</td>
+                                {% else %}
+                                <td>{{ v.body_temperature|temp_round }}</td>
+                                {% endif %}
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>SpO2</td>
+                                {% for v in vitals %}
+                                <td>{{ v.oxygen_concentration }}</td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td>Gluc</td>
+                                {% for v in vitals %}
+                                <td>{{ v.glucose_level }}</td>
+                                {% endfor %}
+                            </tr>
+                        </table>
                     </div>
-                    {% endfor %}
                 </div>
                 <div class="row">
-                    <h3>Treatments History</h3>
+                    <h3>Treatments</h3>
                 </div>
-                <div class="row">
+                <div class="col-md-12" style="overflow-y: auto;">
                     {% for t in treatments %}
                     <div>
                         <div class="row"><b>{{ t.timestamp }}</b></div>
                         <div class="row">
-                            <div class="col-md-10">Medication</div>
-                            <div class="col-md-2">{{ t.medication }}</div>
+                            <div class=""><b>Diagnosis |</b></div>
+                            <div class="">{{ t.diagnosis }}</div>
                         </div>
                         <div class="row">
-                            <div class="col-md-10">Administration Schedule</div>
-                            <div class="col-md-2">{{ t.administration_schedule }}</div>
+                            <div class=""><b>Medication |</b></div>
+                            <div class="">{{ t.medication }}</div>
                         </div>
                         <div class="row">
-                            <div class="col-md-10">Days</div>
-                            <div class="col-md-2">{{ t.days }}</div>
+                            <div class=""><b>Administration Schedule |</b></div>
+                            <div class="">{{ t.administration_schedule }}</div>
                         </div>
                         <div class="row">
-                            <div class="col-md-10">Diagnosis</div>
-                            <div class="col-md-2">{{ t.diagnosis }}</div>
+                            <div class=""><b>Days |</b></div>
+                            <div class="">{{ t.days }}</div>
                         </div>
                         <div class="row">
-                            <div class="col-md-10">Prescriber</div>
-                            <div class="col-md-2">{{ t.prescriber }}</div>
+                            <div class=""><b>Prescriber |</b></div>
+                            <div class=""><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">{{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
+                            <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
                         </div>
                     </div>
+                    <hr />
                     {% endfor %}
                 </div>
             </div>
             <div class="col-8">
-                <div class="row bg-light">
-                    <div class="form-group col-md-4">
-                        <div>
-                            <div>{{ vitals_form.systolic_blood_pressure|as_crispy_field }}</div>
-                        </div>
-                        <div>
-                            <div>{{ vitals_form.diastolic_blood_pressure|as_crispy_field }}</div>
-                        </div>
-                        {% if birth_sex == "f" %}
-                        <div>
-                            <div>{{ form.weeks_pregnant|as_crispy_field }}</div>
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="form-group col-md-4">
-                        <div>
-                            <div>{{ vitals_form.heart_rate|as_crispy_field }}</div>
-                        </div>
-                        <div>
-                            <div>{{ vitals_form.body_temperature|as_crispy_field }}</div>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <div>
-                            <div>{{ vitals_form.oxygen_concentration|as_crispy_field }}</div>
-                        </div>
-                        <div>
-                            <div>{{ vitals_form.glucose_level|as_crispy_field }}</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row bg-light">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page"
+                            href="{% url 'main:encounter_edit_form_view' patient.id encounter_id %}">Medical</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                            href="{% url 'main:new_diagnosis_view' patient.id encounter_id %}">Treatment</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page"
+                            href="{% url 'main:history_view' patient.id encounter_id %}">PMH</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page"
+                            href="{% url 'main:upload_photo_view' patient.id encounter_id %}">Photos</a>
+                    </li>
+                </ul>
+                <div class="row {% if active %} bg-light {% else %} bg-secondary {% endif %}">
                     <div class="form-group col-md-4">
                         <div>
                             <div>{{ form.body_height_primary|as_crispy_field }}</div>
@@ -147,16 +249,12 @@
                             <div>{{ form.body_mass_index|as_crispy_field }}</div>
                         </div>
                     </div>
-                    <div class="form-group col-md-4">
-                        <div>
-                            <div>{{ vitals_form.mean_arterial_pressure|as_crispy_field }}</div>
-                        </div>
-                    </div>
                 </div>
-                {% if telehealth %}
                 <div class="row">
                     <div class="form-group col-md-12">
                         {{ form.chief_complaint|as_crispy_field }}
+                        <a href="{% url 'main:chief_complaint_list_view' patient.id encounter_id %}"
+                            class="btn btn-primary">Manage</a>
                     </div>
                 </div>
                 <div class="row">
@@ -164,22 +262,13 @@
                         {{ form.patient_history|as_crispy_field }}
                     </div>
                 </div>
-                <h4>Diagnosis and Treatment</h4>
-                <div id="form-container" class="row justify-content-center">
-                    {{ treatment_form.management_form }}
-                    <div class="form-group col-md-8 treatment-form card shadow bg-light">
-                        {% crispy treatment_form %}
-                    </div>
-                    <div class="clearfix"></div>
-                    <button id="add-form" type="button" class="btn btn-primary col-md-4">Add</button>
-                </div>
-                {% endif %}
                 <div class="row">
                     <div class="form-group col-md-12">
                         {{ form.community_health_worker_notes|as_crispy_field }}
                     </div>
                 </div>
             </div>
+            {% if active %}
             <div class="row">
                 <div class="col-md-4">
                     <input class="btn btn-primary ml-auto" type="reset" value="Reset Fields" />
@@ -193,9 +282,12 @@
                         name="submit_refer" />
                 </div>
             </div>
+            {% endif %}
         </div>
-    </div>
-</form>
+        {% if active %}
+    </form>
+    {% endif %}
+</div>
 
 <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
 {{ form.media }}
@@ -206,20 +298,42 @@
     let addButton = document.querySelector("#add-form")
     let totalForms = document.querySelector("#id_form-TOTAL_FORMS")
 
-    let formNum = treatmentForm.length-1
+    let formNum = treatmentForm.length - 1
     addButton.addEventListener('click', addForm)
 
-    function addForm(e){
+    function addForm(e) {
         e.preventDefault()
 
         let newForm = treatmentForm[0].cloneNode(true)
-        let formRegex = RegExp(`form-(\\d){1}-`,'g')
+        let formRegex = RegExp(`form-(\\d){1}-`, 'g')
 
         formNum++
         newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`)
         container.insertBefore(newForm, addButton)
-        
-        totalForms.setAttribute('value', `${formNum+1}`)
+
+        totalForms.setAttribute('value', `${formNum + 1}`)
+    }
+</script>
+
+<script>
+    var modal = document.getElementById("modal_popup");
+
+    var btn = document.getElementById("vitals_modal_button");
+
+    var span = document.getElementById("vitals_close");
+
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
     }
 </script>
 

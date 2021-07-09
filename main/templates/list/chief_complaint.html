@@ -1,0 +1,30 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+<h2>Manage Chief Complaints</h2>
+{% if new %}
+<a href="{% url 'main:patient_encounter_form_view' patient_id %}">Back</a>
+{% else %}
+<a href="{% url 'main:encounter_edit_form_view' patient_id encounter_id %}">Back</a>
+{% endif %}
+<table class="table">
+       <thead>
+              <tr>
+                     <th scope="col">Complaint</th>
+                     <th scope="col"></th>
+              </tr>
+       </thead>
+       <tbody>
+              {% for o in list_view %}
+              <tr>
+                     <td>{{ o.text }}</td>
+                     {% if new %}
+                     <td><a href="{% url 'main:delete_chief_complaint' id=o.id patient_id=patient_id %}">Delete</a></td>
+                     {% else %}
+                     <td><a href="{% url 'main:delete_chief_complaint' id=o.id patient_id=patient_id encounter_id=encounter_id %}">Delete</a></td>
+                     {% endif %}
+              </tr>
+              {% endfor %}
+       </tbody>
+</table>
+{% endblock %}

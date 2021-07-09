@@ -21,6 +21,11 @@ def has_suffix(patient):
     return patient.get_suffix_display() if patient.suffix is not None else ""
 
 
+@register.filter('open_encounters')
+def open_encounters(patient):
+    return "Yes" if len(PatientEncounter.objects.filter(patient=patient).filter(active=True)) > 0 else ""
+
+
 @register.filter('has_middle_name')
 def has_middle_name(patient):
     return patient.middle_name if patient.middle_name is not None else ""
@@ -46,7 +51,7 @@ def mask_social(patient):
 
 @register.filter('get_chief_complaint')
 def get_chief_complaint(encounter):
-    return ",".join(list(encounter.chief_complaint.all()))
+    return ",".join([str(e) for e in encounter.chief_complaint.all()])
 
 
 @register.filter('imperial_primary_height')
@@ -68,4 +73,15 @@ def imperial_weight(m):
 
 @register.filter('imperial_temperature')
 def imperial_temperature(m):
-    return round((m.body_temperature * 9/5) + 32, 2)
+    if m.body_temperature is not None:
+        return round((m.body_temperature * 9/5) + 32, 2)
+    else:
+        return None
+
+
+@register.filter('complaint_as_string')
+def complaint_as_string(m):
+    result = ""
+    for x in list(m.all()):
+        result += str(x) + ", "
+    return result

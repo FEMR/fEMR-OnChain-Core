@@ -1,3 +1,4 @@
+from main.delete_views import delete_chief_complaint, patient_delete_view
 from django.conf.urls import url, include
 from django.urls import path
 from rest_framework import routers
@@ -9,17 +10,16 @@ from main.admin_views import add_user_to_campaign, add_users_to_campaign, admin_
     search_users_view, update_user_view, update_user_password_view
 from .api_views import UserViewSet, GroupViewSet, PatientViewSet, PatientEncounterViewSet, InstanceViewSet, CampaignViewSet
 from .auth_views import all_locked, not_logged_in, login_view, logout_view, permission_denied
-from .edit_views import patient_edit_form_view, encounter_edit_form_view, patient_export_view
+from .edit_views import aux_form_view, edit_photo_view, history_view, new_diagnosis_view, new_treatment_view, patient_edit_form_view, encounter_edit_form_view, patient_export_view, patient_medical, new_vitals_view, upload_photo_view
 from .form_views import patient_form_view, referral_form_view, patient_encounter_form_view
-from .list_views import patient_csv_export_view, patient_list_view, search_patient_list_view, filter_patient_list_view
+from .list_views import chief_complaint_list_view, patient_csv_export_view, patient_list_view, search_patient_list_view, filter_patient_list_view
 from .views import forgot_username, index, home, healthcheck, help_messages_off
 from .femr_admin_views import edit_contact_view, lock_campaign_view, new_campaign_view, new_contact_view, new_instance_view, edit_campaign_view, edit_instance_view, \
     list_campaign_view, list_instance_view, femr_admin_home, change_campaign, unlock_campaign_view, view_contact_view
 from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, medication_form_view, treatment_form_view
 from main.views import set_timezone
-from main import hl7
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
-from .autocomplete_views import DiagnosisAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete
+from .autocomplete_views import DiagnosisAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete
 
 app_name = 'main'
 
@@ -45,14 +45,47 @@ urlpatterns = [
 
     path(r'patient_edit_form_view/<int:id>',
          patient_edit_form_view, name='patient_edit_form_view'),
+    path(r'patient_delete_view/<int:id>',
+         patient_delete_view, name='patient_delete_view'),
+                  
+    path(r'delete_chief_complaint/<int:id>/<int:patient_id>',
+         delete_chief_complaint, name='delete_chief_complaint'),
+    path(r'delete_chief_complaint/<int:id>/<int:patient_id>/<int:encounter_id>',
+         delete_chief_complaint, name='delete_chief_complaint'),
+
     path(r'patient_encounter_form_view/<int:id>',
          patient_encounter_form_view, name='patient_encounter_form_view'),
     path(r'encounter_edit_form_view/<int:patient_id>/<int:encounter_id>',
          encounter_edit_form_view, name='encounter_edit_form_view'),
 
+    path(r'new_vitals_view/<int:patient_id>/<int:encounter_id>',
+         new_vitals_view, name='new_vitals_view'),
+    path(r'new_diagnosis_view/<int:patient_id>/<int:encounter_id>',
+         new_diagnosis_view, name='new_diagnosis_view'),
+    path(r'notes_view/<int:patient_id>/<int:encounter_id>',
+         aux_form_view, name='notes_view'),
+    path(r'history_view/<int:patient_id>/<int:encounter_id>',
+         history_view, name='history_view'),
+    path(r'new_treatment_view/<int:patient_id>/<int:encounter_id>',
+         new_treatment_view, name='new_treatment_view'),
+
+    path(r'upload_photo_view/<int:patient_id>/<int:encounter_id>',
+         upload_photo_view, name='upload_photo_view'),
+         
+    path(r'edit_photo_view/<int:patient_id>/<int:encounter_id>/<int:photo_id>',
+         edit_photo_view, name='edit_photo_view'),
+
+    path(r'patient_medical/<int:id>', patient_medical, name='patient_medical'),
+
     path(r'referral_form/<int:id>', referral_form_view, name='referral_form_view'),
 
     url(r'^patient_list_view/$', patient_list_view, name='patient_list_view'),
+    path(r'chief_complaint_list_view/<int:patient_id>/<int:encounter_id>',
+         chief_complaint_list_view,
+         name='chief_complaint_list_view'),
+    path(r'chief_complaint_list_view/<int:patient_id>',
+         chief_complaint_list_view,
+         name='chief_complaint_list_view'),
     url(r'^patient_csv_export_view/$', patient_csv_export_view,
         name='patient_csv_export_view'),
     url(r'^search_patient_list_view/$', search_patient_list_view,
@@ -143,18 +176,23 @@ urlpatterns = [
     url(r'^help_messages_off', help_messages_off, name='help_messages_off'),
 
     url(
-         r'^diagnosis-autocomplete/$',
-         DiagnosisAutocomplete.as_view(create_field='text'),
-         name='diagnosis-autocomplete',
+        r'^diagnosis-autocomplete/$',
+        DiagnosisAutocomplete.as_view(create_field='text'),
+        name='diagnosis-autocomplete',
     ),
     url(
-         r'^medication-autocomplete/$',
-         MedicationAutocomplete.as_view(create_field='text'),
-         name='medication-autocomplete',
+        r'^medication-autocomplete/$',
+        MedicationAutocomplete.as_view(create_field='text'),
+        name='medication-autocomplete',
     ),
     url(
-         r'^chief-complaint-autocomplete/$',
-         ChiefComplaintAutocomplete.as_view(create_field='text'),
-         name='chief-complaint-autocomplete',
+        r'^chief-complaint-autocomplete/$',
+        ChiefComplaintAutocomplete.as_view(create_field='text'),
+        name='chief-complaint-autocomplete',
+    ),
+    url(
+        r'^administration-schedule-autocomplete/$',
+        AdministrationScheduleAutocomplete.as_view(create_field='text'),
+        name='administration-schedule-autocomplete',
     ),
 ]

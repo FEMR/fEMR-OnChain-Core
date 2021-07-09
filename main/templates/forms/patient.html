@@ -73,10 +73,13 @@
                     <a href="{% url 'main:referral_form_view' patient_id %}">Refer to another campaign</a>
                 </div>
                 <div class="row bg-light">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <a href="{% url 'main:patient_encounter_form_view' patient_id %}">Start New Encounter</a>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                        <a href="{% url 'main:patient_delete_view' patient_id %}">Delete Patient</a>
+                    </div>
+                    <div class="col-md-4">
                         <a target="_blank" href="{% url 'main:patient_export' patient_id %}">Export Patient</a>
                         <a href="#" data-toggle="popover" data-trigger="hover"
                             data-content="This button opens a new tab with the patient's entire record on it."><i

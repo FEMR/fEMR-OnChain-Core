@@ -1,5 +1,7 @@
+from clinic_messages.models import Message
 from django.contrib.auth import logout
 from django.contrib.auth.models import AnonymousUser
+from django.http import request
 from main.forms import LoginForm
 from django.shortcuts import render
 from main.models import Campaign
@@ -47,16 +49,17 @@ class CampaignActivityCheckMiddleware:
             if campaign_name is None:
                 print("Campaign is NONE for {}".format(request.user.username))
                 try:
-                    request.session['campaign'] = request.user.campaigns.filter(active=True)[0].name
+                    request.session['campaign'] = request.user.campaigns.filter(active=True)[
+                        0].name
                     return self.get_response(request)
                 except:
                     logout(request)
                     form = LoginForm()
                     return render(request, 'auth/login.html',
-                                {
-                                    'form': form,
-                                    'error_message': 'You have no active campaigns. Please contact your administrator to proceed.'
-                                })
+                                  {
+                                      'form': form,
+                                      'error_message': 'You have no active campaigns. Please contact your administrator to proceed.'
+                                  })
             campaign = Campaign.objects.get(name=campaign_name)
             if not campaign.active:
                 print("Campaign is inactive for {}".format(request.user.username))
@@ -96,3 +99,12 @@ class CampaignActivityCheckMiddleware:
         else:
             return self.get_response(request)
 
+
+class ClinicMessageMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.user.is_authenticated:
+            request.message_number = len(Message.objects.filter(recipient=request.user).filter(read=False))
+        return self.get_response(request)

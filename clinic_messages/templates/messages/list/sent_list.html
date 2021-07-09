@@ -1,0 +1,28 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+<a href="{% url 'clinic_messages:new_message' %}" class="btn btn-primary">Compose</a>
+<a href="{% url 'clinic_messages:index' %}" class="btn btn-primary">Sent</a>
+<table class="table">
+       <thead>
+              <tr>
+                     <th scope="col"></th>
+                     <th scope="col"></th>
+                     <th scope="col">From</th>
+                     <th scope="col">Subject</th>
+              </tr>
+       </thead>
+       <tbody>
+              {% for o in list_view %}
+              <tr>
+                     <th scope="row">{{ forloop.counter }}</th>
+                     <td>{% if o.read %}Read{% else %}{% endif %}</td>
+                     <td><a href="{% url 'clinic_messages:view_message' message_id=o.id sender_id=o.sender.id %}">{{ o.sender }}</a></td>
+                     <td><a href="{% url 'clinic_messages:view_message' message_id=o.id sender_id=o.sender.id %}">{{ o.subject }}</a></td>
+              </tr>
+              {% endfor %}
+       </tbody>
+</table>
+<script src="{% static 'main/js/filters.js' %}"></script>
+<script src="{% static 'main/js/date_filter_check.js' %}"></script>
+{% endblock %}

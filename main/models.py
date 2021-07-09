@@ -2,6 +2,9 @@
 Enumerates all contents of all database models.
 Migrations run will generate a table for each of these containing the listed fields.
 """
+from datetime import datetime
+from django.db.models.base import Model
+from django.db.models.functions import Now
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.signals import user_logged_in, user_logged_out
@@ -34,9 +37,6 @@ ethnicity_choices = (
     ('2', 'Not Hispanic or Latinx'),
     ('3', 'Nondisclosed'),
 )
-administration_schedule_choices = (
-    ()
-)
 
 
 class Contact(models.Model):
@@ -56,7 +56,7 @@ class Instance(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
     main_contact = models.ForeignKey(
-        Contact, on_delete=models.CASCADE, null=True, blank=True)
+        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -70,6 +70,7 @@ class Campaign(models.Model):
     active = models.BooleanField(default=True)
     units = models.CharField(max_length=30, choices=unit_choices, default="m")
     telehealth = models.BooleanField(default=False)
+    encounter_close = models.PositiveIntegerField()
     timezone = models.CharField(
         max_length=100, choices=COMMON_TIMEZONES_CHOICES)
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
@@ -179,10 +180,23 @@ class Patient(models.Model):
 
 
 def cal_key(fk):
-    present_keys = Patient.objects.filter(campaign=fk).order_by('-campaign_key').values_list('campaign_key', flat=True)
-    if present_keys and present_keys[0] is not None:
-        return present_keys[0] + 1
+    # I know, this function is super obnoxious.
+    # I promise, dear reader, if I didn't have to do this I wouldn't.
+    # I should just be able to sort this list and spit out the first element, right?
+    # Not so!
+    # On our dev environment, None gets sorted AT THE TOP of the list,
+    # therefore making it so present_keys[0] is always None.
+    # I don't know what to tell you, it worked before on my machine.
+    # This is a couple of workarounds smashed together just in case sorting goes weird again.
+    present_keys = Patient.objects.filter(campaign=fk).order_by(
+        '-campaign_key').values_list('campaign_key', flat=True)
+    present_keys = [i for i in present_keys if i is not None]
+    print(present_keys)
+    if present_keys:
+        print("Adding.")
+        return max(present_keys) + 1
     else:
+        print("No key.")
         return 0
 
 
@@ -196,6 +210,18 @@ class ModifiedMaxValueValidator(BaseValidator):
 
 
 class ChiefComplaint(models.Model):
+    text = models.CharField(
+        max_length=1024,
+        null=True,
+        blank=True
+    )
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return str(self.text)
+
+
+class AdministrationSchedule(models.Model):
     text = models.CharField(
         max_length=1024,
         null=True,
@@ -228,6 +254,14 @@ class Medication(models.Model):
         return str(self.text)
 
 
+class Photo(models.Model):
+    description = models.CharField(max_length=100)
+    photo = models.FileField(upload_to='photos/', blank=True, null=True)
+
+    def __str__(self) -> str:
+        return str(self.description)
+
+
 class PatientEncounter(models.Model):
     """
     Individual data point in a patient's medical record.
@@ -250,7 +284,7 @@ class PatientEncounter(models.Model):
     body_mass_index = models.FloatField(
         validators=[MaxValueValidator(500), MinValueValidator(0)], null=True, blank=True)
     weeks_pregnant = models.IntegerField(
-        validators=[MaxValueValidator(45), MinValueValidator(1)], null=True, blank=True)
+        validators=[MaxValueValidator(45), MinValueValidator(0)], null=True, blank=True)
 
     smoking = models.BooleanField(default=False)
     history_of_diabetes = models.BooleanField(default=False)
@@ -265,8 +299,20 @@ class PatientEncounter(models.Model):
     community_health_worker_notes = models.CharField(
         max_length=500, null=True, blank=True)
 
-    timestamp = models.DateTimeField(
-        auto_now=True, editable=False, null=False, blank=False)
+    procedure = models.CharField(max_length=500, null=True, blank=True)
+    pharmacy_notes = models.CharField(max_length=500, null=True, blank=True)
+
+    medical_history = models.CharField(max_length=500, null=True, blank=True)
+    social_history = models.CharField(max_length=500, null=True, blank=True)
+    current_medications = models.CharField(
+        max_length=500, null=True, blank=True)
+    family_history = models.CharField(max_length=500, null=True, blank=True)
+
+    photos = models.ManyToManyField(Photo, blank=True)
+
+    timestamp = models.DateTimeField(editable=False, null=False, blank=False)
+
+    active = models.BooleanField(default=True)
 
     @property
     def unit_aware_primary_height(self, unit):
@@ -279,6 +325,13 @@ class PatientEncounter(models.Model):
     @property
     def unit_aware_weight(self, unit):
         return self.body_weight if unit == "m" else (self.body_weight * 2.2046)
+    
+    def save(self, *args, **kwargs):
+        self.timestamp = timezone.now()
+        super(PatientEncounter, self).save(*args, **kwargs)
+    
+    def save_no_timestamp(self, *args, **kwargs):
+        super(PatientEncounter, self).save(*args, **kwargs)
 
     def __str__(self):
         """
@@ -292,17 +345,17 @@ class Vitals(models.Model):
         PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
 
     diastolic_blood_pressure = models.IntegerField(
-        validators=[MaxValueValidator(200), MinValueValidator(1)])
+        validators=[MaxValueValidator(200), MinValueValidator(1)], null=True, blank=True)
     systolic_blood_pressure = models.IntegerField(
-        validators=[MaxValueValidator(200), MinValueValidator(1)])
+        validators=[MaxValueValidator(200), MinValueValidator(1)], null=True, blank=True)
     mean_arterial_pressure = models.FloatField(
-        validators=[MinValueValidator(1)])
+        validators=[MinValueValidator(1)], null=True, blank=True)
     heart_rate = models.IntegerField(
-        validators=[MaxValueValidator(170), MinValueValidator(40)])
+        validators=[MaxValueValidator(170), MinValueValidator(40)], null=True, blank=True)
     respiratory_rate = models.IntegerField(
         validators=[MaxValueValidator(500), MinValueValidator(1)], null=True, blank=True)
     body_temperature = models.FloatField(
-        validators=[MaxValueValidator(200), MinValueValidator(1)])
+        validators=[MaxValueValidator(200), MinValueValidator(1)], null=True, blank=True)
     oxygen_concentration = models.IntegerField(
         validators=[MaxValueValidator(100), MinValueValidator(70)], null=True, blank=True)
     glucose_level = models.FloatField(
@@ -322,26 +375,35 @@ class fEMRUser(AbstractUser):
     """
     email = models.EmailField(unique=True)
     change_password = models.BooleanField(default=True, editable=False)
-    campaigns = models.ManyToManyField(Campaign)
+    campaigns = models.ManyToManyField(Campaign, blank=True)
     password_reset_last = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(
         "self", on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return '{} {} {}'.format(self.first_name, self.last_name, self.email)
+        return '{} {}'.format(self.first_name, self.last_name)
+
+
+class PatientDiagnosis(models.Model):
+    encounter = models.ForeignKey(
+        PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
+    diagnosis = models.ManyToManyField(Diagnosis)
 
 
 class Treatment(models.Model):
-    medication = models.ForeignKey(Medication, on_delete=models.CASCADE, null=True, blank=True)
-    administration_schedule = models.CharField(
-        max_length=8, choices=administration_schedule_choices, null=True, blank=True)
-    days = models.IntegerField(null=True, blank=True)
+    medication = models.ForeignKey(
+        Medication, on_delete=models.CASCADE, null=True, blank=True)
+    administration_schedule = models.ForeignKey(
+        AdministrationSchedule, on_delete=models.CASCADE, null=True, blank=True)
+    days = models.IntegerField()
     prescriber = models.ForeignKey(
-        fEMRUser, on_delete=models.CASCADE, null=True, blank=True)
-    diagnosis = models.ForeignKey(Diagnosis, on_delete=models.CASCADE, null=True, blank=True)
-    encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, null=True, blank=True)
+        fEMRUser, on_delete=models.CASCADE, null=True, blank=True, editable=False)
+    diagnosis = models.ForeignKey(
+        Diagnosis, on_delete=models.CASCADE, null=True, blank=True)
+    encounter = models.ForeignKey(
+        PatientEncounter, on_delete=models.CASCADE, null=True, blank=True, editable=False)
     timestamp = models.DateTimeField(
-        auto_now=True, editable=False, null=False, blank=False)
+        auto_now=True, editable=False)
 
     def __str__(self):
         return str(self.medication)

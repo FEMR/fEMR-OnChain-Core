@@ -1,0 +1,24 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+{% load crispy_forms_tags %}
+<div>
+    <div>
+        <a href="{% url 'clinic_messages:delete_message' id=message.id %}">Delete</a>
+    </div>
+    <div>
+        {{ message.subject }}
+    </div>
+    <div>
+        From: {{ message.sender }}
+    </div>
+    <div>
+        {{ message.content }}
+    </div>
+</div>
+<div>
+    <form method="POST" action="{% url 'clinic_messages:reply_message' message_id=message.id sender_id=sender.id %}">
+        {% crispy form %}
+    </form>
+</div>
+{% endblock %}

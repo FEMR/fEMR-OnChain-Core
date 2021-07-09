@@ -3,9 +3,9 @@ Registers main fEMR-OnChain data model types to the backend administrative syste
 """
 from django.contrib import admin
 
-from .models import Patient, Contact, fEMRUser, PatientEncounter,\
+from .models import Patient, Contact, PatientDiagnosis, fEMRUser, PatientEncounter,\
      AuditEntry, UnitsSetting, DatabaseChangeLog, Campaign, Instance, Vitals,\
-         Treatment, Medication, ChiefComplaint, Diagnosis
+         Treatment, Medication, ChiefComplaint, Diagnosis, Photo
 
 
 from .forms import PatientEncounterForm, TreatmentForm
@@ -33,3 +33,5 @@ admin.site.register(Treatment, TreatmentAdmin)
 admin.site.register(Medication)
 admin.site.register(ChiefComplaint)
 admin.site.register(Diagnosis)
+admin.site.register(PatientDiagnosis)
+admin.site.register(Photo)

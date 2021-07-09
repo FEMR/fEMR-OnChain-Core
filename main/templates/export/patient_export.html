@@ -537,22 +537,6 @@
                                     {{ encounter.patient_history }}
                                 </div>
                             </div>
-                            <div class="row">
-                                <label for="id_diagnoses" class="form-check-label">
-                                    Diagnoses:
-                                </label>
-                                <div class="form-group col-md-12">
-                                    {{ encounter.diagnoses }}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="id_treatments" class="form-check-label">
-                                    Treatments:
-                                </label>
-                                <div class="form-group col-md-12">
-                                    {{ encounter.treatments}}
-                                </div>
-                            </div>
                             {% endif %}
                             <div class="row">
                                 <label for="id_community_health_worker_notes" class="form-check-label">
@@ -562,7 +546,94 @@
                                     {{ encounter.community_health_worker_notes }}
                                 </div>
                             </div>
+                            <div class="row">
+                                <label for="id_procedure" class="form-check-label">
+                                    Procedure/Counseling:
+                                </label>
+                                <div class="form-group col-md-12">
+                                    {{ encounter.procedure }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="id_pharmacy_notes" class="form-check-label">
+                                    Pharmacy notes:
+                                </label>
+                                <div class="form-group col-md-12">
+                                    {{ encounter.pharmacy_notes }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="id_medical_history" class="form-check-label">
+                                    Medical/Surgical History:
+                                </label>
+                                <div class="form-group col-md-12">
+                                    {{ encounter.medical_history }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="id_social_history" class="form-check-label">
+                                    Social history:
+                                </label>
+                                <div class="form-group col-md-12">
+                                    {{ encounter.social_history }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="id_current_medications" class="form-check-label">
+                                    Current medications:
+                                </label>
+                                <div class="form-group col-md-12">
+                                    {{ encounter.current_medications }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="id_family_history" class="form-check-label">
+                                    Family history:
+                                </label>
+                                <div class="form-group col-md-12">
+                                    {{ encounter.family_history }}
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+                <div>
+                    <div><h3>Diagnoses and Treatment</h3></div>
+                    <div>
+                        <h4>All Diagnoses</h4>
+                        {% for d in diagnoses.encounter %}
+                        {{ d }}, 
+                        {% endfor %}
+                    </div>
+                    <div>
+                        <h4>Prescriptions</h4>
+                        {% for t in prescriptions %}
+                        <div>
+                            <div class="row"><b>{{ t.timestamp }}</b></div>
+                            <div class="row">
+                                <div class=""><b>Medication |</b></div>
+                                <div class="">{{ t.medication }}</div>
+                            </div>
+                            <div class="row">
+                                <div class=""><b>Administration Schedule |</b></div>
+                                <div class="">{{ t.administration_schedule }}</div>
+                            </div>
+                            <div class="row">
+                                <div class=""><b>Days |</b></div>
+                                <div class="">{{ t.days }}</div>
+                            </div>
+                            <div class="row">
+                                <div class=""><b>Diagnosis |</b></div>
+                                <div class="">{{ t.diagnosis }}</div>
+                            </div>
+                            <div class="row">
+                                <div class=""><b>Prescriber |</b></div>
+                                <div class="">{{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</div>
+                                <div class="">{{ t.prescriber.email }}</div>
+                            </div>
+                        </div>
+                        <hr />
+                        {% endfor %}
                     </div>
                 </div>
             </div>

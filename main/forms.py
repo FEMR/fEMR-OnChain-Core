@@ -10,14 +10,13 @@ from django.forms import ModelForm, Form, CharField, PasswordInput, DateInput, V
 from django.forms.models import ModelMultipleChoiceField
 from django.forms.widgets import Textarea
 from django.utils import timezone
-from django.forms.models import inlineformset_factory, BaseInlineFormSet
 
 from dal import autocomplete
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, MultiField
+from crispy_forms.layout import Layout, Div, ButtonHolder, Submit
 
-from .models import Patient, PatientEncounter, fEMRUser, Campaign, Instance, Contact, Vitals,\
+from .models import Patient, PatientDiagnosis, PatientEncounter, Photo, fEMRUser, Campaign, Instance, Contact, Vitals,\
     ChiefComplaint, Treatment, Diagnosis, Medication
 
 
@@ -55,11 +54,34 @@ class DiagnosisForm(ModelForm):
         }
 
 
+class PatientDiagnosisForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Submit', css_class='btn btn-primary'))
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = PatientDiagnosis
+        fields = ('diagnosis',)
+        labels = {
+            'diagnosis': 'RECORD ALL DIAGNOSES HERE',
+        }
+        widgets = {
+            'diagnosis': autocomplete.ModelSelect2Multiple(url='main:diagnosis-autocomplete'),
+        }
+
+
 class MedicationForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Submit', css_class='btn btn-primary'))
 
     class Meta:
         """
@@ -73,17 +95,25 @@ class MedicationForm(ModelForm):
 
 
 class TreatmentForm(ModelForm):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            MultiField(
-                Div('medication'),
-                Div('administration_schedule'),
-                Div('days'),
-            ),
+            Div(
+                Div('diagnosis',
+                    css_class='col-md-2'),
+                Div('medication',
+                    css_class='col-md-5'),
+                Div('administration_schedule',
+                    css_class='col-md-3'),
+                Div('days',
+                    css_class='col-md-2'),
+                css_class='row',
+            )
         )
+        self.helper.add_input(
+            Submit('submit', 'Submit', css_class='btn btn-primary'))
+        self.fields['medication'].required = True
 
     class Meta:
         """
@@ -271,8 +301,17 @@ class PatientEncounterForm(ModelForm):
         """
         model = PatientEncounter
         fields = '__all__'
+        exclude = (
+            'procedure',
+            'pharmacy_notes',
+            'medical_history',
+            'social_history',
+            'current_medications',
+            'family_history',
+        )
         labels = {
             'body_mass_index': 'Body Mass Index',
+            'community_health_worker_notes': 'Notes',
         }
         widgets = {
             'diagnoses': autocomplete.ModelSelect2Multiple(url='main:diagnosis-autocomplete'),
@@ -282,23 +321,54 @@ class PatientEncounterForm(ModelForm):
         }
 
 
-EncounterFormSet = inlineformset_factory(
-    PatientEncounter,
-    Treatment,
-    fields=(
-        'diagnosis',
-        'medication',
-        'administration_schedule',
-        'days',
-    ),
-    widgets={
-        'diagnosis': autocomplete.ModelSelect2(url='main:diagnosis-autocomplete'),
-        'medication': autocomplete.ModelSelect2(url='main:medication-autocomplete'),
-    },
-    extra=1,
-    can_order=False,
-    can_delete=False
-)
+class AuxiliaryPatientEncounterForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Submit', css_class='btn btn-primary'))
+
+    class Meta:
+        model = PatientEncounter
+        fields = (
+            'procedure',
+            'pharmacy_notes',
+        )
+        labels = {
+            'procedure': 'Procedure/Counseling',
+        }
+        widgets = {
+            'procedure': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'pharmacy_notes': Textarea(attrs={'rows': 4, 'cols': 40}),
+        }
+
+
+class HistoryPatientEncounterForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Submit', css_class='btn btn-primary'))
+
+    class Meta:
+        model = PatientEncounter
+        fields = (
+            'medical_history',
+            'social_history',
+            'current_medications',
+            'family_history',
+        )
+        labels = {
+            'medical_history': 'Medical/Surgical history',
+        }
+        widgets = {
+            'medical_history': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'social_history': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'current_medications': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'family_history': Textarea(attrs={'rows': 4, 'cols': 40}),
+        }
 
 
 class VitalsForm(ModelForm):
@@ -309,6 +379,7 @@ class VitalsForm(ModelForm):
     def __init__(self, *args, **kwargs):
         self.unit = kwargs.pop('unit', None)
         super(VitalsForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
         self.fields['diastolic_blood_pressure'].widget.attrs['min'] = 0
         self.fields['systolic_blood_pressure'].widget.attrs['min'] = 0
         self.fields['oxygen_concentration'].widget.attrs['min'] = 70
@@ -328,6 +399,52 @@ class VitalsForm(ModelForm):
             self.fields['body_temperature'].label = 'Body temperature - Celsius'
             self.fields['body_temperature'].widget.attrs['min'] = 34
             self.fields['body_temperature'].widget.attrs['max'] = 45
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    'systolic_blood_pressure',
+                    css_class="col-md-4",
+                ),
+                Div(
+                    'diastolic_blood_pressure',
+                    css_class="col-md-4",
+                ),
+                Div(
+                    'mean_arterial_pressure',
+                    css_class="col-md-4",
+                ),
+                css_class="row",
+            ),
+            Div(
+                Div(
+                    'heart_rate',
+                    css_class="col-md-4",
+                ),
+                Div(
+                    'respiratory_rate',
+                    css_class="col-md-4",
+                ),
+                Div(
+                    'body_temperature',
+                    css_class="col-md-4",
+                ),
+                css_class="row",
+            ),
+            Div(
+                Div(
+                    'oxygen_concentration',
+                    css_class="col-md-6",
+                ),
+                Div(
+                    'glucose_level',
+                    css_class="col-md-6",
+                ),
+                css_class="row",
+            ),
+            ButtonHolder(
+                Submit('submit', 'Submit', css_class='btn btn-primary ml-auto')
+            )
+        )
 
     def clean_body_mass_index(self):
         if self.cleaned_data['body_mass_index'] < 5:
@@ -339,7 +456,7 @@ class VitalsForm(ModelForm):
 
     def save(self, commit=True):
         m = super(VitalsForm, self).save(commit=False)
-        if self.unit == 'i':
+        if self.unit == 'i' and m.body_temperature is not None:
             m.body_temperature = round((m.body_temperature - 32) * (5/9), 2)
         if commit:
             m.save()
@@ -501,6 +618,9 @@ class CampaignForm(ModelForm):
         model = Campaign
         fields = '__all__'
         exclude = ('inventory',)
+        labels = {
+            'encounter_close': 'Encounter close (Days)',
+        }
 
 
 class ContactForm(ModelForm):
@@ -518,3 +638,15 @@ class ContactForm(ModelForm):
 
 class ForgotUsernameForm(Form):
     email = CharField(label="Email address", max_length=256)
+
+
+class PhotoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Submit', css_class='btn btn-primary'))
+
+    class Meta:
+        model = Photo
+        fields = '__all__'

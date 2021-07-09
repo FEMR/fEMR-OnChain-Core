@@ -8,8 +8,8 @@ import math
 import os
 from django.shortcuts import render, redirect
 
-from .forms import PatientForm, PatientEncounterForm, VitalsForm, EncounterFormSet
-from .models import Campaign, Patient, DatabaseChangeLog, PatientEncounter, Vitals, cal_key
+from .forms import DiagnosisForm, PatientForm, PatientEncounterForm, TreatmentForm, VitalsForm
+from .models import Campaign, Patient, DatabaseChangeLog, PatientEncounter, cal_key
 from .qldb_interface import create_new_patient, create_new_patient_encounter, update_patient_encounter
 
 
@@ -84,12 +84,15 @@ def patient_encounter_form_view(request, id=None):
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
+        p = Patient.objects.get(pk=id)
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         telehealth = Campaign.objects.get(
             name=request.session['campaign']).telehealth
-        p = Patient.objects.get(pk=id)
+        treatment_form = TreatmentForm()
+        diagnosis_form = DiagnosisForm()
         if request.method == "POST":
+            encounter_open = False
             print("Post")
             units = Campaign.objects.get(
                 name=request.session['campaign']).units
@@ -102,17 +105,11 @@ def patient_encounter_form_view(request, id=None):
                 encounter = form.save(commit=False)
                 vitals = vitals_form.save(commit=False)
                 encounter.patient = p
+                encounter.active = True
                 encounter.save()
                 vitals.encounter = encounter
                 vitals.save()
-                treatment_form_set = EncounterFormSet(
-                    request.POST, instance=encounter)
-                if treatment_form_set.is_valid():
-                    encounter.save()
-                    treatment = treatment_form_set.save()
-                    for t in treatment:
-                        t.prescriber = request.user
-                        t.save()
+                form.save_m2m()
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(encounter).data
@@ -121,7 +118,7 @@ def patient_encounter_form_view(request, id=None):
                 DatabaseChangeLog.objects.create(action="Create", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username,
                                                  campaign=Campaign.objects.get(name=request.session['campaign']))
-                DatabaseChangeLog.objects.create(action="Create", model="Vitals", instance=str(vitals),
+                DatabaseChangeLog.objects.create(action="Create", model="Vitals", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username,
                                                  campaign=Campaign.objects.get(name=request.session['campaign']))
                 if 'submit_encounter' in request.POST:
@@ -136,11 +133,11 @@ def patient_encounter_form_view(request, id=None):
                 print(vitals_form.errors)
         else:
             print("Get")
+            encounter_open = len(PatientEncounter.objects.filter(patient=p).filter(active=True)) > 0
             units = Campaign.objects.get(
                 name=request.session['campaign']).units
             form = PatientEncounterForm(unit=units, prefix="form")
             vitals_form = VitalsForm(unit=units, prefix="vitals_form")
-            treatment_form_set = EncounterFormSet()
             try:
                 encounter = PatientEncounter.objects.filter(
                     patient=p).order_by('timestamp')[0]
@@ -173,9 +170,10 @@ def patient_encounter_form_view(request, id=None):
             except IndexError:
                 print("IndexError")
         suffix = p.get_suffix_display() if p.suffix is not None else ""
+        print(encounter_open)
         return render(request, 'forms/encounter.html',
-                      {'form': form, 'vitals_form': vitals_form, 'treatment_form': treatment_form_set, 'page_name': 'New Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
-                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': id, 'units': units, 'telehealth': telehealth,
+                      {'form': form, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form, 'page_name': 'New Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': id, 'units': units, 'telehealth': telehealth, 'encounter_open': encounter_open,
                        'page_tip': "Complete form with patient vitals as instructed. Any box with an asterix (*) is required. For max efficiency, use 'tab' to navigate through this page."})
     else:
         return redirect('/not_logged_in')

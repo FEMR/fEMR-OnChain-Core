@@ -45,10 +45,12 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'main.apps.MainConfig',
     'appMR',
+    'clinic_messages',
     'crispy_forms',
     'axes',
     'session_security',
     'django_user_agents',
+    'background_task',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -71,6 +73,7 @@ MIDDLEWARE = [
     'session_security.middleware.SessionSecurityMiddleware',
     'main.middleware.TimezoneMiddleware',
     'main.middleware.CampaignActivityCheckMiddleware',
+    'main.middleware.ClinicMessageMiddleware',
     'django_user_agents.middleware.UserAgentMiddleware',
 ]
 
@@ -227,3 +230,13 @@ SESSION_SECURITY_EXPIRE_AFTER=900
 SESSION_SECURITY_WARN_AFTER=840
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
+
+if 'aws_access_key_id' in os.environ:
+    AWS_ACCESS_KEY_ID = os.environ.get('aws_access_key_id')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('aws_secret_access_key')
+    AWS_STORAGE_BUCKET_NAME = os.environ.get('aws_storage_bucket_name')
+    AWS_S3_CUSTOM_DOMAIN = os.environ.get('aws_storage_bucket_name') + '.s3.amazonaws.com'
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    DEFAULT_FILE_STORAGE = 'femr_onchain.storage_backends.MediaStorage'

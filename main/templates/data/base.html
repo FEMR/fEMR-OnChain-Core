@@ -60,6 +60,15 @@
                 <li class="nav-item">
                     <a class="nav-link" href="">Pharmacy</a>
                 </li>
+                {% if request.message_number > 0 %}
+                <li class="nav-item" style="background-color: red;">
+                    <a class="nav-link" href="{% url 'clinic_messages:index' %}" style="color: black;">Messages ({{ request.message_number }})</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'clinic_messages:index' %}">Messages ({{ request.message_number }})</a>
+                </li>
+                {% endif %}
                 <div class="dropdown-divider"></div>
                 {% if request.user|has_group:"Admin" %}
                 <li class="nav-item dropdown">
@@ -122,7 +131,7 @@
                     Find a bug or problem? <a href="{% url 'appMR:index' %}">Let us know.</a>
                 </div>
                 <div class="col-sm-12 col-md-4 text-center">
-                    v1.2.0.5112020
+                    v1.3.1.7082020
                 </div>
                 <div class="col-sm-12 col-md-4">
                     <a target="_blank" href="https://github.com/FEMR/fEMR-OnChain-Core/wiki">fEMR On-Chain Wiki</a>

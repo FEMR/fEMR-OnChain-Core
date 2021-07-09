@@ -6,6 +6,7 @@ If one is not found, they will direct to the appropriate error page.
 from main.forms import ForgotUsernameForm
 from django.core.exceptions import ObjectDoesNotExist
 from main.models import Campaign, fEMRUser
+from .background_tasks import run_encounter_close
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 import pytz
@@ -19,7 +20,8 @@ def index(request):
     :return: A template rendered as an HTTPResponse.
     """
     print(request.user_agent.browser.family)
-    if request.user_agent.browser.family not in ["Chrome", "Firefox", "Firefox Mobile"]:
+    run_encounter_close()
+    if request.user_agent.browser.family not in ["Chrome", "Firefox", "Firefox Mobile", "Chrome Mobile iOS"]:
         return render(request, 'data/stop.html')
     else:
         return redirect('main:login_view')
@@ -32,6 +34,7 @@ def home(request):
     :param request: Django Request object.
     :return: An HttpResponse, rendering the home page.
     """
+    run_encounter_close()
     if request.user.is_authenticated:
         return render(request, 'data/home.html', {'user': request.user,
                                                   'page_name': 'Home',

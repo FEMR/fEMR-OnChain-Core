@@ -1,0 +1,268 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+{% load encounter_tags %}
+{% load patient_tags %}
+{% load crispy_forms_tags %}
+{% if not active %}
+<div class="modal" id="patient_modal_popup" role="dialog" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Patient Already Exists</h5>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <p>This encounter has been closed. Are you sure you want to edit it?</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary ml-auto" href="{% url 'main:patient_edit_form_view' patient.id %}">Back</a>
+                <button class="btn btn-primary ml-auto" data-dismiss="modal" type="button">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#patient_modal_popup').modal('toggle')
+</script>
+{% endif %}
+<div class="modal" id="modal_popup" role="dialog" tabindex="-1" style="display: none;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width: 150%">
+            <div class="modal-header">
+                <h5 class="modal-title">New Vitals Reading</h5>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'main:new_vitals_view' patient.id encounter_id %}">
+                    {% crispy vitals_form %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    Age: {{ patient.age }} Sex Assigned at Birth: {{ patient.get_sex_assigned_at_birth_display }} City: {{ patient.city }} BMI: 
+    {{ encounter.body_mass_index }} 
+    {% if patient.sex_assigned_at_birth == 'f' %}
+    Weeks Pregnant: {{ encounter.weeks_pregnant }}
+    {% endif %}
+    Complaint: 
+    {{ encounter.chief_complaint|complaint_as_string }}
+</div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <div class="row">
+                <button id="vitals_modal_button" type="button" class="btn btn-primary">New</button>
+            </div>
+            <div class="row">
+                <div style="overflow-x:auto;">
+                    <style>
+                        table {
+                            font-family: arial, sans-serif;
+                            border-collapse: collapse;
+                            width: 100%;
+                        }
+
+                        td,
+                        th {
+                            border: 1px solid #dddddd;
+                            text-align: left;
+                            padding: 8px;
+                        }
+
+                        tr:nth-child(even) {
+                            background-color: #dddddd;
+                        }
+                    </style>
+                    <table>
+                        <tr>
+                            <td></td>
+                            {% for v in vitals %}
+                            <td>{{ v.timestamp }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>BP</td>
+                            {% for v in vitals %}
+                            <td>{{ v.systolic_blood_pressure }}/{{ v.diastolic_blood_pressure }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>MAP</td>
+                            {% for v in vitals %}
+                            <td>{{ v.mean_arterial_pressure }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>HR</td>
+                            {% for v in vitals %}
+                            <td>{{ v.heart_rate }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>T</td>
+                            {% for v in vitals %}
+                            {% if units == 'i' %}
+                            <td>{{ v|imperial_temperature }}</td>
+                            {% else %}
+                            <td>{{ v.body_temperature|temp_round }}</td>
+                            {% endif %}
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>SpO2</td>
+                            {% for v in vitals %}
+                            <td>{{ v.oxygen_concentration }}</td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>Gluc</td>
+                            {% for v in vitals %}
+                            <td>{{ v.glucose_level }}</td>
+                            {% endfor %}
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <h3>Treatments</h3>
+            </div>
+            <div class="col-md-12" style="overflow-y: auto;">
+                {% for t in treatments %}
+                <div>
+                    <div class="row"><b>{{ t.timestamp }}</b></div>
+                    <div class="row">
+                        <div class=""><b>Diagnosis |</b></div>
+                        <div class="">{{ t.diagnosis }}</div>
+                    </div>
+                    <div class="row">
+                        <div class=""><b>Medication |</b></div>
+                        <div class="">{{ t.medication }}</div>
+                    </div>
+                    <div class="row">
+                        <div class=""><b>Administration Schedule |</b></div>
+                        <div class="">{{ t.administration_schedule }}</div>
+                    </div>
+                    <div class="row">
+                        <div class=""><b>Days |</b></div>
+                        <div class="">{{ t.days }}</div>
+                    </div>
+                    <div class="row">
+                        <div class=""><b>Prescriber |</b></div>
+                        <div class=""><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">{{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
+                        <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
+                    </div>
+                </div>
+                <hr />
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-8">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link"
+                        href="{% url 'main:encounter_edit_form_view' patient.id encounter_id %}">Medical</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page"
+                        href="{% url 'main:new_diagnosis_view' patient.id encounter_id %}">Treatment</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page"
+                        href="{% url 'main:history_view' patient.id encounter_id %}">PMH</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page"
+                        href="{% url 'main:upload_photo_view' patient.id encounter_id %}">Photos</a>
+                </li>
+            </ul>
+            <div class="row bg-light">
+                <form method="post" action="{% url 'main:new_diagnosis_view' patient.id encounter_id %}"
+                    onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+                    <h2>Diagnoses</h2>
+                    {% crispy diagnosis_form %}
+                </form>
+                <form method="post" action="{% url 'main:new_treatment_view' patient.id encounter_id %}"
+                    onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+                    <h2>Prescriptions</h2>
+                    {% crispy treatment_form %}
+                </form>
+            </div>
+            <form method="post" action="{% url 'main:notes_view' patient.id encounter_id %}"
+                onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+                {% crispy aux_form %}
+            </form>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+    {{ form.media }}
+
+    <script>
+        let treatmentForm = document.querySelectorAll(".treatment-form")
+        let container = document.querySelector("#form-container")
+        let addButton = document.querySelector("#add-form")
+        let totalForms = document.querySelector("#id_form-TOTAL_FORMS")
+
+        let formNum = treatmentForm.length - 1
+        addButton.addEventListener('click', addForm)
+
+        function addForm(e) {
+            e.preventDefault()
+
+            let newForm = treatmentForm[0].cloneNode(true)
+            let formRegex = RegExp(`form-(\\d){1}-`, 'g')
+
+            formNum++
+            newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`)
+            container.insertBefore(newForm, addButton)
+
+            totalForms.setAttribute('value', `${formNum + 1}`)
+        }
+    </script>
+
+    <script>
+        var modal = document.getElementById("modal_popup");
+
+        var btn = document.getElementById("vitals_modal_button");
+
+        var span = document.getElementsByClassName("close")[0];
+
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+    <script>
+        $(document).on("keydown", ":input:not(textarea)", function (event) {
+            return event.key != "Enter";
+        });
+    </script>
+    {% if units == 'i' %}
+    <script src="{% static 'main/js/bmi_edit_calc.js' %}"></script>
+    {% else %}
+    <script src="{% static 'main/js/bmi_edit_calc_metric.js' %}"></script>
+    {% endif %}
+    <script src="{% static 'main/js/map_edit_calc.js' %}"></script>
+    <script src="{% static 'main/js/node_modules/inputmask/dist/jquery.inputmask.min.js' %}"></script>
+    <script src="{% static 'main/js/inputmasks.js' %}"></script>
+    <script src="{% static 'main/js/max_date_fix.js' %}"></script>
+    {% endblock %}
