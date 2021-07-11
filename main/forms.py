@@ -364,10 +364,10 @@ class HistoryPatientEncounterForm(ModelForm):
             'medical_history': 'Medical/Surgical history',
         }
         widgets = {
-            'medical_history': Textarea(attrs={'rows': 4, 'cols': 40}),
-            'social_history': Textarea(attrs={'rows': 4, 'cols': 40}),
-            'current_medications': Textarea(attrs={'rows': 4, 'cols': 40}),
-            'family_history': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'medical_history': Textarea(attrs={'rows': 4, 'cols': 80}),
+            'social_history': Textarea(attrs={'rows': 4, 'cols': 80}),
+            'current_medications': Textarea(attrs={'rows': 4, 'cols': 80}),
+            'family_history': Textarea(attrs={'rows': 4, 'cols': 80}),
         }
 
 

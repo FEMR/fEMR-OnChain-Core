@@ -182,7 +182,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page"
-                        href="{% url 'main:upload_photo_view' patient.id encounter_id %}">Photos</a>
+                        href="{% url 'main:upload_photo_view' patient.id encounter_id %}">Photo/Imaging</a>
                 </li>
             </ul>
             <div class="col-9">
@@ -205,6 +205,10 @@
                             <div class="col-md-2">
                                 <a href="{% url 'main:edit_photo_view' patient.id encounter_id p.id %}"
                                     class="btn btn-primary ml-auto">Edit</a>
+                            </div>
+                            <div>
+                                <a href="{% url 'main:delete_photo_view' patient.id encounter_id p.id %}">
+                                    <i class="fa fa-remove red-color"></i></a>
                             </div>
                         </div>
                         {% endfor %}

@@ -8,6 +8,7 @@
               <tr>
                      <th scope="col"></th>
                      <th scope="col"></th>
+                     <th scope="col"></th>
                      <th scope="col">From</th>
                      <th scope="col">Subject</th>
               </tr>
@@ -17,6 +18,7 @@
               <tr>
                      <th scope="row">{{ forloop.counter }}</th>
                      <td>{% if o.read %}{% else %}New{% endif %}</td>
+                     <td>{{ o.timestamp }}</td>
                      <td><a href="{% url 'clinic_messages:reply_message' message_id=o.id sender_id=o.sender.id %}">{{ o.sender }}</a></td>
                      <td><a href="{% url 'clinic_messages:reply_message' message_id=o.id sender_id=o.sender.id %}">{{ o.subject }}</a></td>
               </tr>

@@ -85,3 +85,11 @@ def complaint_as_string(m):
     for x in list(m.all()):
         result += str(x) + ", "
     return result
+
+
+@register.filter('get_campaign_info')
+def get_campaign_info(m):
+    result = ""
+    for x in list(m.campaign.all()):
+        result += str(x) + ", "
+    return result

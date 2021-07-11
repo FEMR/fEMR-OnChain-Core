@@ -630,6 +630,36 @@ def edit_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
         return redirect('/not_logged_in')
 
 
+def delete_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
+    """
+    Used to edit Encounter objects.
+
+    :param request: Django Request object.
+    :param id: The ID of the object to edit.
+    :return: HTTPResponse.
+    """
+    if request.user.is_authenticated:
+        if request.session['campaign'] == "RECOVERY MODE":
+            return redirect('main:home')
+        units = Campaign.objects.get(name=request.session['campaign']).units
+        m = get_object_or_404(PatientEncounter, pk=encounter_id)
+        p = get_object_or_404(Patient, pk=patient_id)
+        v = Vitals.objects.filter(encounter=m)
+        t = Treatment.objects.filter(encounter=m)
+        photo = Photo.objects.get(pk=photo_id)
+        photo.delete()
+        aux_form = PhotoForm()
+        vitals_form = VitalsForm(unit=units)
+        suffix = p.get_suffix_display() if p.suffix is not None else ""
+        return render(request, 'forms/photos_tab.html',
+                        {'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
+                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
+                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
+    else:
+        return redirect('/not_logged_in')
+
+
 def patient_medical(request, id=None):
     if request.user.is_authenticated:
         encounters = PatientEncounter.objects.filter(

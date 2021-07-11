@@ -269,7 +269,7 @@ class PatientEncounter(models.Model):
     patient = models.ForeignKey(
         Patient, on_delete=models.CASCADE, null=True, blank=True)
 
-    body_height_primary = models.IntegerField(
+    body_height_primary = models.IntegerField(default=0,
         validators=[MaxValueValidator(8), MinValueValidator(0)])
     body_height_secondary = models.FloatField(
         validators=[ModifiedMaxValueValidator(100), MinValueValidator(0)])
