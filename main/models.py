@@ -257,6 +257,7 @@ class Medication(models.Model):
 class Photo(models.Model):
     description = models.CharField(max_length=100)
     photo = models.FileField(upload_to='photos/', blank=True, null=True)
+    imaging_link = models.CharField(max_length=255)
 
     def __str__(self) -> str:
         return str(self.description)
@@ -338,6 +339,21 @@ class PatientEncounter(models.Model):
         Displays patient encounters in a more readable way.
         """
         return str(self.patient)
+
+
+class HistoryOfPresentIllness(models.Model):
+    chief_complaint = models.ForeignKey(ChiefComplaint, on_delete=models.CASCADE, editable=False)
+    encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, editable=False)
+
+    onset = models.CharField(max_length=50)
+    quality = models.CharField(max_length=50)
+    radiation = models.CharField(max_length=50)
+    severity = models.CharField(max_length=50)
+    provokes = models.CharField(max_length=50)
+    palliates = models.CharField(max_length=50)
+    time_of_day = models.CharField(max_length=50)
+    narrative = models.CharField(max_length=50)
+    physical_examination = models.CharField(max_length=255)
 
 
 class Vitals(models.Model):

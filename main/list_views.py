@@ -70,12 +70,14 @@ def patient_csv_export_view(request):
             title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure', 'Heart Rate',
                          'Body Temperature (F)', 'Height', 'Weight (lbs)', 'BMI', 'Oxygen Concentration', 'Glucose Level', 'History of Tobacco Use',
                          'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
-                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes', 'Procedure/Counseling', 'Pharmacy Notes']
+                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes', 'Procedure/Counseling', 'Pharmacy Notes',
+                         'Medical/Surgical History', 'Social History', 'Current Medications', 'Family History']
         else:
             title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure',
                          'Heart Rate', 'Body Temperature (C)', 'Height', 'Weight (kg)', 'BMI', 'Oxygen Concentration', 'Glucose Level',
                          'History of Tobacco Use', 'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
-                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes', 'Procedure/Counseling', 'Pharmacy Notes']
+                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes', 'Procedure/Counseling', 'Pharmacy Notes',
+                         'Medical/Surgical History', 'Socil History', 'Current Medications', 'Family History']
         try:
             data = Patient.objects.filter(
                 campaign=Campaign.objects.get(name=request.session['campaign']))
@@ -107,7 +109,8 @@ def patient_csv_export_view(request):
                            round(encounter.body_weight * 2.2046, 2),
                            encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, encounter.smoking,
                            encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
-                           encounter.alcohol, encounter.community_health_worker_notes, encounter.procedure, encounter.pharmacy_notes]
+                           encounter.alcohol, encounter.community_health_worker_notes, encounter.procedure, encounter.pharmacy_notes,
+                           encounter.medical_history, encounter.social_history, encounter.current_medications, encounter.family_history]
                 else:
                     row = [id,
                            "{} {}".format(encounter.timestamp.astimezone(
@@ -118,7 +121,8 @@ def patient_csv_export_view(request):
                                encounter.body_height_primary, encounter.body_height_secondary), encounter.body_weight,
                            encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, encounter.smoking,
                            encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
-                           encounter.alcohol, encounter.community_health_worker_notes, encounter.procedure, encounter.pharmacy_notes]
+                           encounter.alcohol, encounter.community_health_worker_notes, encounter.procedure, encounter.pharmacy_notes,
+                           encounter.medical_history, encounter.social_history, encounter.current_medications, encounter.family_history]
                 treatments = Treatment.objects.filter(encounter=encounter)
                 max_treatments = len(treatments) if len(treatments) > max_treatments else max_treatments
                 for x in treatments:

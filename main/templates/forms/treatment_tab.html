@@ -55,6 +55,23 @@
     {% endif %}
     Complaint: 
     {{ encounter.chief_complaint|complaint_as_string }}
+    <p>
+        {% if encounter.smoking %}
+        History of Tobacco Use, 
+        {% endif %}
+        {% if encounter.history_of_diabetes %}
+        History of Diabetes, 
+        {% endif %}
+        {% if encounter.history_of_hypertension %}
+        History of Hypertension, 
+        {% endif %}
+        {% if encounter.history_of_high_cholesterol %}
+        History of High Cholesterol, 
+        {% endif %}
+        {% if encounter.alcohol %}
+        History of Alcohol Use
+        {% endif %}
+    </p>
 </div>
 <div class="container">
     <div class="row justify-content-center">
@@ -167,6 +184,10 @@
         </div>
         <div class="col-8">
             <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link"
+                        href="{% url 'main:hpi_view' patient.id encounter_id %}">HPI</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link"
                         href="{% url 'main:encounter_edit_form_view' patient.id encounter_id %}">Medical</a>

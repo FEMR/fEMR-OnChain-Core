@@ -8,8 +8,8 @@ import math
 import os
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import AuxiliaryPatientEncounterForm, HistoryPatientEncounterForm, PatientDiagnosisForm, PatientForm, PatientEncounterForm, PhotoForm, TreatmentForm, VitalsForm
-from .models import Campaign, Diagnosis, Patient, PatientDiagnosis, PatientEncounter, DatabaseChangeLog, Photo, Vitals, Treatment
+from .forms import AuxiliaryPatientEncounterForm, HistoryOfPresentIllnessForm, HistoryPatientEncounterForm, PatientDiagnosisForm, PatientForm, PatientEncounterForm, PhotoForm, TreatmentForm, VitalsForm
+from .models import Campaign, Diagnosis, HistoryOfPresentIllness, Patient, PatientDiagnosis, PatientEncounter, DatabaseChangeLog, Photo, Vitals, Treatment
 from main.qldb_interface import update_patient, update_patient_encounter
 
 
@@ -548,29 +548,10 @@ def upload_photo_view(request, patient_id=None, encounter_id=None):
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(m).data
                     update_patient_encounter(encounter_data)
-        form = PatientEncounterForm(
-            instance=m, unit=units)
         vitals_form = VitalsForm(unit=units)
-        if units == 'i':
-            form.initial = {
-                'body_mass_index': m.body_mass_index,
-                'smoking': m.smoking,
-                'history_of_diabetes': m.history_of_diabetes,
-                'history_of_hypertension': m.history_of_hypertension,
-                'history_of_high_cholesterol': m.history_of_high_cholesterol,
-                'alcohol': m.alcohol,
-                'chief_complaint': [c.pk for c in m.chief_complaint.all()],
-                'patient_history': m.patient_history,
-                'community_health_worker_notes': m.community_health_worker_notes,
-                'body_height_primary': math.floor(
-                    ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12),
-                'body_height_secondary': round((
-                    (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
-                'body_weight': round(m.body_weight * 2.2046, 2),
-            }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/photos_tab.html',
-                      {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
+                      {'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
@@ -656,6 +637,74 @@ def delete_photo_view(request, patient_id=None, encounter_id=None, photo_id=None
                         'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
                         'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
                         'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
+    else:
+        return redirect('/not_logged_in')
+
+
+def hpi_view(request, patient_id=None, encounter_id=None):
+    """
+    Used to edit Encounter objects.
+
+    :param request: Django Request object.
+    :param id: The ID of the object to edit.
+    :return: HTTPResponse.
+    """
+    if request.user.is_authenticated:
+        if request.session['campaign'] == "RECOVERY MODE":
+            return redirect('main:home')
+        units = Campaign.objects.get(name=request.session['campaign']).units
+        m = get_object_or_404(PatientEncounter, pk=encounter_id)
+        p = get_object_or_404(Patient, pk=patient_id)
+        v = Vitals.objects.filter(encounter=m)
+        t = Treatment.objects.filter(encounter=m)
+        hpis = []
+        for x in m.chief_complaint.all():
+            hpi_object = HistoryOfPresentIllness.objects.get_or_create(encounter=m, chief_complaint=x)
+            hpis.append({
+                'id': hpi_object.id,
+                'form': HistoryOfPresentIllnessForm(instance=hpi_object)
+            })
+        vitals_form = VitalsForm(unit=units)
+        suffix = p.get_suffix_display() if p.suffix is not None else ""
+        return render(request, 'forms/photos_tab.html',
+                      {'hpis': hpis, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                       'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
+    else:
+        return redirect('/not_logged_in')
+
+
+def submit_hpi_view(request, patient_id=None, encounter_id=None, hpi_id=None):
+    """
+    Used to edit Encounter objects.
+
+    :param request: Django Request object.
+    :param id: The ID of the object to edit.
+    :return: HTTPResponse.
+    """
+    if request.user.is_authenticated:
+        if request.session['campaign'] == "RECOVERY MODE":
+            return redirect('main:home')
+        units = Campaign.objects.get(name=request.session['campaign']).units
+        m = get_object_or_404(PatientEncounter, pk=encounter_id)
+        p = get_object_or_404(Patient, pk=patient_id)
+        v = Vitals.objects.filter(encounter=m)
+        t = Treatment.objects.filter(encounter=m)
+        h = HistoryOfPresentIllness.objects.get(pk=hpi_id)
+        aux_form = HistoryOfPresentIllnessForm(instance=h)
+        if request.method == 'POST':
+            aux_form = HistoryOfPresentIllnessForm(request.POST, instance=h)
+            if aux_form.is_valid():
+                ph = aux_form.save()
+                ph.save()
+                DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
+                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                if os.environ.get('QLDB_ENABLED') == "TRUE":
+                    from .serializers import PatientEncounterSerializer
+                    encounter_data = PatientEncounterSerializer(m).data
+                    update_patient_encounter(encounter_data)
+        return redirect('main:hpi_view', patient_id=patient_id, encounter_id=encounter_id)
     else:
         return redirect('/not_logged_in')
 
