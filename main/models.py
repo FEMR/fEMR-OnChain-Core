@@ -257,7 +257,7 @@ class Medication(models.Model):
 class Photo(models.Model):
     description = models.CharField(max_length=100)
     photo = models.FileField(upload_to='photos/', blank=True, null=True)
-    imaging_link = models.CharField(max_length=255)
+    imaging_link = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self) -> str:
         return str(self.description)
