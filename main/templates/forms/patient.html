@@ -91,6 +91,7 @@
                             <tr>
                                 <th scope="row">{{ en.id }}</th>
                                 <td>{{ en.timestamp }}</td>
+                                <td>{{ en.campaign }}</td>
                                 <td><a href="{% url 'main:encounter_edit_form_view' patient_id en.id %}">View/Edit</a>
                                 </td>
                             </tr>

@@ -106,6 +106,7 @@ def patient_encounter_form_view(request, id=None):
                 vitals = vitals_form.save(commit=False)
                 encounter.patient = p
                 encounter.active = True
+                encounter.campaign = Campaign.objects.get(name=request.session['campaign'])
                 encounter.save()
                 vitals.encounter = encounter
                 vitals.save()

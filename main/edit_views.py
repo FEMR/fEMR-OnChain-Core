@@ -659,7 +659,7 @@ def hpi_view(request, patient_id=None, encounter_id=None):
         t = Treatment.objects.filter(encounter=m)
         hpis = []
         for x in m.chief_complaint.all():
-            hpi_object = HistoryOfPresentIllness.objects.get_or_create(encounter=m, chief_complaint=x)
+            hpi_object = HistoryOfPresentIllness.objects.get_or_create(encounter=m, chief_complaint=x)[0]
             hpis.append({
                 'id': hpi_object.id,
                 'form': HistoryOfPresentIllnessForm(instance=hpi_object)
