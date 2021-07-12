@@ -315,7 +315,7 @@ class PatientEncounter(models.Model):
 
     active = models.BooleanField(default=True)
 
-    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, null=False, blank=False, editable=False)
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, null=False, blank=False, editable=False, default=1)
 
     @property
     def unit_aware_primary_height(self, unit):
