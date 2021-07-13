@@ -48,8 +48,8 @@
     </div>
 </div>
 <div>
-    Age: {{ patient.age }} Sex Assigned at Birth: {{ patient.get_sex_assigned_at_birth_display }} City: {{ patient.city
-    }} BMI:
+    Age: {{ patient.age }} Sex Assigned at Birth: {{ patient.get_sex_assigned_at_birth_display }}
+    City: {{ patient.city }} BMI:
     {{ encounter.body_mass_index }}
     {% if patient.sex_assigned_at_birth == 'f' %}
     Weeks Pregnant: {{ encounter.weeks_pregnant }}
