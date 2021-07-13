@@ -666,7 +666,7 @@ def hpi_view(request, patient_id=None, encounter_id=None):
             })
         vitals_form = VitalsForm(unit=units)
         suffix = p.get_suffix_display() if p.suffix is not None else ""
-        return render(request, 'forms/photos_tab.html',
+        return render(request, 'forms/hpi_tab.html',
                       {'hpis': hpis, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
