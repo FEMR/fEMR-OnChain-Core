@@ -293,7 +293,7 @@ def filter_audit_logs_view(request):
             except ObjectDoesNotExist:
                 data = list()
             data = sorted(data, key=operator.attrgetter(
-                '-timestamp'), reverse=True)
+                'timestamp'), reverse=True)
             return render(request, 'admin/audit_log_list.html',
                           {'user': request.user, 'selected': selected,
                            'log': data, 'page_name': 'Login Log',

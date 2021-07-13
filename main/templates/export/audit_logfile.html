@@ -1,3 +1,5 @@
+{% get_current_timezone as TIME_ZONE %}
+
 <html>
 
 <head>
@@ -39,7 +41,7 @@
             <td>{{ line.action }}</td>
             <td>{{ line.ip }}</td>
             <td>{{ line.username }}</td>
-            <td>{{ line.timestamp }} GMT</td>
+            <td>{{ line.timestamp }} {{ TIME_ZONE }}</td>
         </tr>
         {% endfor %}
     </tbody>
