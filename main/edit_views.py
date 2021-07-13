@@ -732,8 +732,11 @@ def patient_export_view(request, id=None):
         prescriptions = dict()
         diagnoses = dict()
         for x in encounters:
-            diagnoses[x] = list(PatientDiagnosis.objects.get(
-                encounter=x).diagnosis.all())
+            try:
+                diagnoses[x] = list(PatientDiagnosis.objects.get(
+                    encounter=x).diagnosis.all())
+            except PatientDiagnosis.DoesNotExist:
+                diagnoses[x] = list()
             prescriptions[x] = list(Treatment.objects.filter(encounter=x))
         vitals_dictionary = dict()
         for x in encounters:

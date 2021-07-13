@@ -14,7 +14,7 @@ def index(request):
         })
     else:
         return redirect('main:not_logged_in')
-    
+
 
 def sent_box(request):
     if request.user.is_authenticated:
@@ -35,7 +35,7 @@ def new_message(request, sender_id=None):
                 message.save()
                 send_mail(
                     "Message from {0}".format(message.sender),
-                    "{0}".format(message.content),
+                    "{0}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(message.content),
                     os.environ.get('DEFAULT_FROM_EMAIL'),
                     [message.recipient.email])
             return redirect('clinic_messages:index')
@@ -43,6 +43,8 @@ def new_message(request, sender_id=None):
             form = MessageForm()
             if sender_id is not None:
                 form.initial['recipient'] = fEMRUser.objects.get(pk=sender_id)
+            form.fields['recipient'].queryset = fEMRUser.objects.filter(
+                active=True)
         return render(request, 'messages/message/new.html', {
             'form': form
         })
@@ -60,7 +62,8 @@ def reply_message(request, message_id=None, sender_id=None):
                 message.save()
                 send_mail(
                     "Message from {0}".format(message.sender),
-                    "{0}".format(message.content),
+                    "{0}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(
+                        message.content),
                     os.environ.get('DEFAULT_FROM_EMAIL'),
                     [message.recipient.email])
             return redirect('clinic_messages:index')

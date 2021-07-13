@@ -75,7 +75,7 @@ urlpatterns = [
     path(r'hpi_view/<int:patient_id>/<int:encounter_id>',
          hpi_view, name='hpi_view'),
     path(r'submit_hpi_view/<int:patient_id>/<int:encounter_id>/<int:hpi_id>',
-         submit_hpi_view, name='subit_hpi_view'),
+         submit_hpi_view, name='submit_hpi_view'),
          
     path(r'edit_photo_view/<int:patient_id>/<int:encounter_id>/<int:photo_id>',
          edit_photo_view, name='edit_photo_view'),

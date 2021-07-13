@@ -91,7 +91,7 @@ def forgot_username(request):
             from django.core.mail import send_mail
             send_mail(
                 'Username Recovery',
-                'Someone recently requested a username reminder from fEMR On-Chain. If this was you, your username is {}. If it wasn\'t you, you can safely ignore this email.'.format(
+                'Someone recently requested a username reminder from fEMR On-Chain. If this was you, your username is {}. If it wasn\'t you, you can safely ignore this email.\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.'.format(
                     user.username),
                 'noreply@teamfemr.org',
                 [user.email]

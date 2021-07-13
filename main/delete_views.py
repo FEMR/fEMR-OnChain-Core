@@ -42,7 +42,8 @@ To view audit logs, visit the Admin tab in fEMR On-Chain.""".format(
                 )
                 send_mail(
                     "WARNING! PATIENT DELETED",
-                    "{0}".format(message_content),
+                    "{0}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(
+                        message_content),
                     os.environ.get('DEFAULT_FROM_EMAIL'),
                     [contact.email])
                 p.delete()
