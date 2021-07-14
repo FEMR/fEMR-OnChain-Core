@@ -1,3 +1,4 @@
+{% load tz %}
 {% get_current_timezone as TIME_ZONE %}
 
 <html>
@@ -16,7 +17,6 @@
 
 <body>
     <h1>Access Audit Log - {{ today_time }}</h1>
-</body>
 
 <table>
     <thead>
@@ -46,5 +46,6 @@
         {% endfor %}
     </tbody>
 </table>
+</body>
 
 </html>

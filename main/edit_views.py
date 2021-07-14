@@ -509,7 +509,7 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
-                      {'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
+                      {'active': m.active, 'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id, 'patient': p,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units})

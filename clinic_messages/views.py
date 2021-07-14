@@ -44,7 +44,7 @@ def new_message(request, sender_id=None):
             if sender_id is not None:
                 form.initial['recipient'] = fEMRUser.objects.get(pk=sender_id)
             form.fields['recipient'].queryset = fEMRUser.objects.filter(
-                active=True)
+                is_active=True)
         return render(request, 'messages/message/new.html', {
             'form': form
         })
@@ -75,6 +75,8 @@ def reply_message(request, message_id=None, sender_id=None):
             form = MessageForm()
             form.initial['recipient'] = sender.pk
             form.initial['replied_to'] = message
+            form.fields['recipient'].queryset = fEMRUser.objects.filter(
+                is_active=True)
         return render(request, 'messages/message/read.html', {
             'message': message,
             'sender': sender,

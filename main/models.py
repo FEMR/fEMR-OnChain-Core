@@ -347,15 +347,15 @@ class HistoryOfPresentIllness(models.Model):
     chief_complaint = models.ForeignKey(ChiefComplaint, on_delete=models.CASCADE, editable=False)
     encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, editable=False)
 
-    onset = models.CharField(max_length=50)
-    quality = models.CharField(max_length=50)
-    radiation = models.CharField(max_length=50)
-    severity = models.CharField(max_length=50)
-    provokes = models.CharField(max_length=50)
-    palliates = models.CharField(max_length=50)
-    time_of_day = models.CharField(max_length=50)
-    narrative = models.CharField(max_length=50)
-    physical_examination = models.CharField(max_length=255)
+    onset = models.CharField(max_length=50, null=True, blank=True)
+    quality = models.CharField(max_length=50, null=True, blank=True)
+    radiation = models.CharField(max_length=50, null=True, blank=True)
+    severity = models.CharField(max_length=50, null=True, blank=True)
+    provokes = models.CharField(max_length=50, null=True, blank=True)
+    palliates = models.CharField(max_length=50, null=True, blank=True)
+    time_of_day = models.CharField(max_length=50, null=True, blank=True)
+    narrative = models.CharField(max_length=50, null=True, blank=True)
+    physical_examination = models.CharField(max_length=255, null=True, blank=True)
 
 
 class Vitals(models.Model):

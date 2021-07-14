@@ -186,11 +186,11 @@
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a class="nav-link"
-                        href="{% url 'main:hpi_view' patient.id encounter_id %}">HPI</a>
+                        href="{% url 'main:encounter_edit_form_view' patient.id encounter_id %}">Medical</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link"
-                        href="{% url 'main:encounter_edit_form_view' patient.id encounter_id %}">Medical</a>
+                        href="{% url 'main:hpi_view' patient.id encounter_id %}">HPI</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page"
