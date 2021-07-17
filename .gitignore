@@ -23,3 +23,4 @@ Vagrantfile~
 *.log
 **/.DS_Store
 /static/
+/photos/
