@@ -62,7 +62,7 @@ def healthcheck(request):
     """
     Returns a success message.
     """
-    return HttpResponse()
+    return HttpResponse("Working.")
 
 
 def set_timezone(request):
