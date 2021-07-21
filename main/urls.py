@@ -35,10 +35,6 @@ router.register(r'Campaign', CampaignViewSet)
 router.register(r'Instance', InstanceViewSet)
 
 urlpatterns = [
-     path(
-        "favicon.ico",
-        RedirectView.as_view(url=staticfiles_storage.url("static/main/assets/favicon.ico")),
-    ),
     url(r'^$', index, name='index'),
     url(r'^index/$', index, name='index'),
     url(r'^home/$', home, name='home'),
