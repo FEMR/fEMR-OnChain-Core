@@ -9,7 +9,7 @@ from main.auth_views import change_password, required_change_password
 urlpatterns = [
      path(
         "favicon.ico",
-        RedirectView.as_view(url=staticfiles_storage.url("static/main/assets/favicon.ico")),
+        RedirectView.as_view(url=staticfiles_storage.url("main/assets/favicon.ico")),
     ),
     path('admin/', admin.site.urls),
     path('', include('main.urls', namespace='main')),
