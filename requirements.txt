@@ -39,7 +39,7 @@ packaging==21.0
 # psycopg2==2.9.1
 pycodestyle==2.7.0
 # pylibmc==1.6.1
-pylint==2.9.3
+pylint==2.9.5
 pyparsing==2.4.7
 pyqldb==3.0.0
 python-dateutil==2.8.2
