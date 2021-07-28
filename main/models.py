@@ -107,7 +107,7 @@ class Patient(models.Model):
     This may, in clinical settings, be a standalone object,
     or may be connected directly to a user of the fEMR-OnChain platform.
     """
-    campaign_key = models.PositiveIntegerField(null=True, blank=True)
+    campaign_key = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(1)])
 
     first_name = models.CharField(max_length=30)
     middle_name = models.CharField(max_length=30, null=True, blank=True)

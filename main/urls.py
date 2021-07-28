@@ -9,7 +9,7 @@ from rest_framework.authtoken import views as rest_framework_views
 
 from main.admin_views import add_user_to_campaign, add_users_to_campaign, admin_home, create_user_view, cut_user_from_campaign, export_audit_logs_view, export_database_logs_view, \
     filter_audit_logs_view, filter_database_logs_view, filter_users_view, get_audit_logs_view, get_database_logs_view, \
-    list_users_view, lock_user_view, unlock_user_view, search_audit_logs_view, search_database_logs_view, \
+    list_users_view, lock_user_view, message_of_the_day_view, unlock_user_view, search_audit_logs_view, search_database_logs_view, \
     search_users_view, update_user_view, update_user_password_view
 from .api_views import UserViewSet, GroupViewSet, PatientViewSet, PatientEncounterViewSet, InstanceViewSet, CampaignViewSet
 from .auth_views import all_locked, not_logged_in, login_view, logout_view, permission_denied
@@ -106,6 +106,7 @@ urlpatterns = [
 
     url(r'^superuser_home/$', admin_home, name="superuser_home"),
     url(r'^set_timezone/$', set_timezone, name="set_timezone"),
+    url(r'^message_of_the_day_view/$', message_of_the_day_view, name="message_of_the_day_view"),
 
     # User Management
     url(r'^list_users_view/$', list_users_view, name='list_users_view'),

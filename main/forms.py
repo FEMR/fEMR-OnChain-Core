@@ -16,7 +16,7 @@ from dal import autocomplete
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, ButtonHolder, Submit
 
-from .models import HistoryOfPresentIllness, Patient, PatientDiagnosis, PatientEncounter, Photo, fEMRUser, Campaign, Instance, Contact, Vitals,\
+from .models import HistoryOfPresentIllness, MessageOfTheDay, Patient, PatientDiagnosis, PatientEncounter, Photo, fEMRUser, Campaign, Instance, Contact, Vitals,\
     ChiefComplaint, Treatment, Diagnosis, Medication
 
 
@@ -653,4 +653,14 @@ class HistoryOfPresentIllnessForm(ModelForm):
 
     class Meta:
         model = HistoryOfPresentIllness
+        fields = '__all__'
+
+
+class MOTDForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper
+    
+    class Meta:
+        model = MessageOfTheDay
         fields = '__all__'

@@ -1,16 +1,19 @@
 """
 View functions for administrative actions.
 """
+import os
+from clinic_messages.models import Message
 from datetime import datetime, timedelta
 import itertools
 import operator
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 
-from .forms import UserForm, UserUpdateForm, AdminPasswordForm, fEMRAdminUserForm, fEMRAdminUserUpdateForm
-from .models import Instance, fEMRUser, AuditEntry, DatabaseChangeLog, Campaign
+from .forms import MOTDForm, UserForm, UserUpdateForm, AdminPasswordForm, fEMRAdminUserForm, fEMRAdminUserUpdateForm
+from .models import Instance, MessageOfTheDay, fEMRUser, AuditEntry, DatabaseChangeLog, Campaign
 
 
 def admin_home(request):
@@ -510,3 +513,30 @@ def __retrieve_needed_users(request):
     users = set(list(itertools.chain(
         users_created_by_me, users_in_my_campaigns)))
     return users
+
+
+def message_of_the_day_view(request):
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name='Admin').exists():
+            form = MOTDForm(instance=MessageOfTheDay.load())
+            if request.method == "POST":
+                x = form.save()
+                x.save()
+                for u in fEMRUser.objects.all():
+                    Message.objects.create(
+                        sender=request.user,
+                        recipient=u,
+                        subject="fEMR On-Chain",
+                        content=x.text
+                    )
+                    send_mail(
+                        "fEMR On-Chain",
+                        "{0}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(
+                            x.text),
+                        os.environ.get('DEFAULT_FROM_EMAIL'),
+                        [u.email])
+            return render(request, 'admin/motd.html', {'form': form})
+        else:
+            return redirect('main:permission_denied')
+    else:
+        return redirect('main:not_logged_in')

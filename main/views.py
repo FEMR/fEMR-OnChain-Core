@@ -3,9 +3,10 @@ View functions for top-level locations.
 All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
+from django.utils import timezone
 from main.forms import ForgotUsernameForm
 from django.core.exceptions import ObjectDoesNotExist
-from main.models import Campaign, fEMRUser
+from main.models import Campaign, MessageOfTheDay, fEMRUser
 from .background_tasks import run_encounter_close
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -36,9 +37,15 @@ def home(request):
     """
     run_encounter_close()
     if request.user.is_authenticated:
+        motd = MessageOfTheDay.load()
+        if timezone.now() > motd.start_date and timezone.now() < motd.end_date:
+            motd_final = motd.text
+        else:
+            motd_final = ""
         return render(request, 'data/home.html', {'user': request.user,
                                                   'page_name': 'Home',
                                                   'campaigns': request.user.campaigns.filter(active=True),
+                                                  'motd': motd_final,
                                                   'selected_campaign': request.session['campaign']})
     else:
         return redirect('main:not_logged_in')
