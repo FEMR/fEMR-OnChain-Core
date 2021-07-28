@@ -29,6 +29,8 @@ def new_message(request, sender_id=None):
     if request.user.is_authenticated:
         if request.method == "POST":
             form = MessageForm(request.POST)
+            form.fields['recipient'].queryset = fEMRUser.objects.filter(
+                is_active=True)
             if form.is_valid():
                 message = form.save()
                 message.sender = request.user
@@ -56,6 +58,8 @@ def reply_message(request, message_id=None, sender_id=None):
     if request.user.is_authenticated:
         if request.method == "POST":
             form = MessageForm(request.POST)
+            form.fields['recipient'].queryset = fEMRUser.objects.filter(
+                is_active=True)
             if form.is_valid():
                 message = form.save()
                 message.sender = request.user
@@ -90,6 +94,8 @@ def view_message(request, message_id=None, sender_id=None):
     if request.user.is_authenticated:
         if request.method == "POST":
             form = MessageForm(request.POST)
+            form.fields['recipient'].queryset = fEMRUser.objects.filter(
+                is_active=True)
             if form.is_valid():
                 message = form.save()
                 message.sender = request.user
@@ -100,6 +106,8 @@ def view_message(request, message_id=None, sender_id=None):
             form = MessageForm()
             form.initial['recipient'] = message.recipient
             form.initial['replied_to'] = message
+            form.fields['recipient'].queryset = fEMRUser.objects.filter(
+                is_active=True)
         return render(request, 'messages/message/sent.html', {
             'message': message,
             'sender': request.user,

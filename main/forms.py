@@ -446,14 +446,6 @@ class VitalsForm(ModelForm):
             )
         )
 
-    def clean_body_mass_index(self):
-        if self.cleaned_data['body_mass_index'] < 5:
-            self.add_error('body_height_primary',
-                           "BMI shouldn't be less than 5%. Check these numbers.")
-            self.add_error(
-                'body_weight', "BMI shouldn't be less than 5%. Check these numbers.")
-        return self.cleaned_data['body_mass_index']
-
     def save(self, commit=True):
         m = super(VitalsForm, self).save(commit=False)
         if self.unit == 'i' and m.body_temperature is not None:

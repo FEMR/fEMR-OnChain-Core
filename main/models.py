@@ -348,11 +348,11 @@ class HistoryOfPresentIllness(models.Model):
     encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, editable=False)
 
     onset = models.CharField(max_length=50, null=True, blank=True)
+    provokes = models.CharField(max_length=50, null=True, blank=True)
+    palliates = models.CharField(max_length=50, null=True, blank=True)
     quality = models.CharField(max_length=50, null=True, blank=True)
     radiation = models.CharField(max_length=50, null=True, blank=True)
     severity = models.CharField(max_length=50, null=True, blank=True)
-    provokes = models.CharField(max_length=50, null=True, blank=True)
-    palliates = models.CharField(max_length=50, null=True, blank=True)
     time_of_day = models.CharField(max_length=50, null=True, blank=True)
     narrative = models.CharField(max_length=50, null=True, blank=True)
     physical_examination = models.CharField(max_length=255, null=True, blank=True)
@@ -439,6 +439,12 @@ class Inventory(models.Model):
 class UnitsSetting(SingletonModel):
     units = models.CharField(
         max_length=30, choices=unit_choices, default="i")
+
+
+class MessageOfTheDay(SingletonModel):
+    text = models.CharField(max_length=255)
+    start_date = models.DateField()
+    end_date = models.DateField()
 
 
 class AuditEntry(models.Model):

@@ -191,7 +191,10 @@
                         href="{% url 'main:encounter_edit_form_view' patient.id encounter_id %}">Medical</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'main:hpi_view' patient.id encounter_id %}">HPI</a>
+                    <a class="nav-link active" href="{% url 'main:hpi_view' patient.id encounter_id %}">HPI &
+                        Assessment</a>
+                    <a href="#" data-toggle="popover" data-trigger="hover" data-content="History of Present Illness"><i
+                            class="fa fa-question-circle"></i></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page"
@@ -200,6 +203,8 @@
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page"
                         href="{% url 'main:history_view' patient.id encounter_id %}">PMH</a>
+                    <a href="#" data-toggle="popover" data-trigger="hover" data-content="Past Medical History"><i
+                            class="fa fa-question-circle"></i></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page"
@@ -210,6 +215,7 @@
                 <div>
                     {% for f in hpis %}
                     <div>
+                        <h3>{{ f.complaint }}</h3>
                         <form method="post" action="{% url 'main:submit_hpi_view' patient.id encounter_id f.id %}"
                             onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
                             {% crispy f.form %}
