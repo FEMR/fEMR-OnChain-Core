@@ -664,21 +664,21 @@ class MOTDForm(ModelForm):
             Div(
                 Div(
                     'text',
-                    css_class="col-md-4",
+                    css_class="col-md-12",
                 ),
                 css_class="row",
             ),
             Div(
                 Div(
                     'start_date',
-                    css_class="col-md-4",
+                    css_class="col-md-12",
                 ),
                 css_class="row",
             ),
             Div(
                 Div(
                     'end_date',
-                    css_class="col-md-6",
+                    css_class="col-md-12",
                 ),
                 css_class="row",
             ),
