@@ -660,7 +660,43 @@ class MOTDForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    'text',
+                    css_class="col-md-4",
+                ),
+                css_class="row",
+            ),
+            Div(
+                Div(
+                    'start_date',
+                    css_class="col-md-4",
+                ),
+                css_class="row",
+            ),
+            Div(
+                Div(
+                    'end_date',
+                    css_class="col-md-6",
+                ),
+                css_class="row",
+            ),
+            ButtonHolder(
+                Submit('submit', 'Save', css_class='btn btn-primary ml-auto')
+            )
+        )
     
     class Meta:
         model = MessageOfTheDay
         fields = '__all__'
+        widgets = {
+            'start_date': DateInputOverride(attrs={
+                'pattern': "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$",
+                'placeholder': "dd/mm/yyyy"
+            }),
+            'end_date': DateInputOverride(attrs={
+                'pattern': "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$",
+                'placeholder': "dd/mm/yyyy"
+            })
+        }
