@@ -4,5 +4,13 @@
     <div>Logged in as {{ user.first_name }} {{ user.last_name }}.</div>
     <div><a href="{% url 'main:list_campaign' %}">Campaign Management</a></div>
     <div><a href="{% url 'main:list_instance' %}">Instance Management</a></div>
+
+    <h3>General Management</h3>
+    <div>
+        <a href="{% url 'main:message_of_the_day_view' %}">Message of the Day</a>
+        <a href="#" data-toggle="popover" data-trigger="hover"
+            data-content="Click here to export all patient encounter data in a CSV file format"><i
+                class="fa fa-question-circle"></i></a>
+    </div>
 </div>
 {% endblock %}
