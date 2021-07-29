@@ -1,9 +1,11 @@
 {% extends "data/base.html" %}
 {% load campaign_tags %}
 {% block content %}
+{% if motd %}
 <div>
     Message from fEMR OnChain Admin: {{ motd }}
 </div>
+{% endif %}
 <div>
     Welcome to fEMR On-Chain v1.3.2.7292021, {{ user.first_name }} {{ user.last_name }}!
 </div>
