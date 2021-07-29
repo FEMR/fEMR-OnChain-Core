@@ -6,10 +6,8 @@
     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
     {% csrf_token %}
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="row">
-               {% crispy form %}
-            </div>
+        <div class="row">
+            {% crispy form %}
         </div>
     </div>
 </form>

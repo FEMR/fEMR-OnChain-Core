@@ -535,7 +535,7 @@ def message_of_the_day_view(request):
                             x.text),
                         os.environ.get('DEFAULT_FROM_EMAIL'),
                         [u.email])
-            return render(request, 'admin/motd.html', {'form': form})
+            return render(request, 'admin/motd.html', {'form': form, 'page_name': "MotD"})
         else:
             return redirect('main:permission_denied')
     else:
