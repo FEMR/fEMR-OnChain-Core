@@ -71,6 +71,7 @@ class Campaign(models.Model):
     units = models.CharField(max_length=30, choices=unit_choices, default="m")
     telehealth = models.BooleanField(default=False)
     encounter_close = models.PositiveIntegerField()
+    country = models.CharField(max_length=30)
     timezone = models.CharField(
         max_length=100, choices=COMMON_TIMEZONES_CHOICES)
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
@@ -254,6 +255,17 @@ class Medication(models.Model):
         return str(self.text)
 
 
+class Test(models.Model):
+    text = models.CharField(
+        max_length=1024,
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return str(self.text)
+
+
 class Photo(models.Model):
     description = models.CharField(max_length=100)
     photo = models.FileField(upload_to='photos/', blank=True, null=True)
@@ -356,6 +368,8 @@ class HistoryOfPresentIllness(models.Model):
     time_of_day = models.CharField(max_length=50, null=True, blank=True)
     narrative = models.CharField(max_length=50, null=True, blank=True)
     physical_examination = models.CharField(max_length=255, null=True, blank=True)
+
+    tests_ordered = models.ManyToManyField(Test, blank=True)
 
 
 class Vitals(models.Model):

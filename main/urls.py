@@ -22,7 +22,7 @@ from .femr_admin_views import edit_contact_view, lock_campaign_view, new_campaig
 from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, medication_form_view, treatment_form_view
 from main.views import set_timezone
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
-from .autocomplete_views import DiagnosisAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete
+from .autocomplete_views import DiagnosisAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete, TestAutocomplete
 
 app_name = 'main'
 
@@ -196,6 +196,11 @@ urlpatterns = [
         r'^medication-autocomplete/$',
         MedicationAutocomplete.as_view(create_field='text'),
         name='medication-autocomplete',
+    ),
+    url(
+        r'^test-autocomplete/$',
+        TestAutocomplete.as_view(create_field='text'),
+        name='test-autocomplete',
     ),
     url(
         r'^chief-complaint-autocomplete/$',

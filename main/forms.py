@@ -657,6 +657,9 @@ class HistoryOfPresentIllnessForm(ModelForm):
     class Meta:
         model = HistoryOfPresentIllness
         fields = '__all__'
+        widgets = {
+            'tests_ordered': autocomplete.ModelSelect2Multiple(url='main:test-autocomplete'),
+        }
 
 
 class MOTDForm(ModelForm):

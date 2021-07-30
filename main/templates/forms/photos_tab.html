@@ -222,9 +222,15 @@
                     <div class="col-md-12">
                         {% for p in encounter.photos.all %}
                         <div class="row">
+                            {% if p.imaging_link %}
+                            <div class="col-md-5">
+                                <a href="{{ p.photo.url }}">Image Link</a>
+                            </div>
+                            {% else %}
                             <div class="col-md-5">
                                 <img src="{{ p.photo.url }}" style="max-width: 150px; max-height: 150px;" />
                             </div>
+                            {% endif %}
                             <div class="col-md-5">
                                 {{ p.description }}
                             </div>
