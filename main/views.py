@@ -39,12 +39,13 @@ def home(request):
     if request.user.is_authenticated:
         motd = MessageOfTheDay.load()
         if motd.start_date is not None or motd.end_date is not None:
-            if timezone.now() > motd.start_date and timezone.now() < motd.end_date:
+            if timezone.now().date() > motd.start_date and timezone.now().date() < motd.end_date:
                 motd_final = motd.text
             else:
                 motd_final = ""
         else:
             motd_final = ""
+        print(motd_final)
         return render(request, 'data/home.html', {'user': request.user,
                                                   'page_name': 'Home',
                                                   'campaigns': request.user.campaigns.filter(active=True),

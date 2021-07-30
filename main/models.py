@@ -197,7 +197,7 @@ def cal_key(fk):
         return max(present_keys) + 1
     else:
         print("No key.")
-        return 0
+        return 1 
 
 
 @deconstructible

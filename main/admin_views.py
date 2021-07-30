@@ -518,23 +518,33 @@ def __retrieve_needed_users(request):
 def message_of_the_day_view(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='Admin').exists():
-            form = MOTDForm(instance=MessageOfTheDay.load())
+            print("Loading form.")
+            m = MessageOfTheDay.load()
+            form = MOTDForm(request.POST, instance=m)
             if request.method == "POST":
-                x = form.save()
-                x.save()
-                for u in fEMRUser.objects.all():
-                    Message.objects.create(
-                        sender=request.user,
-                        recipient=u,
-                        subject="fEMR On-Chain",
-                        content=x.text
-                    )
-                    send_mail(
-                        "fEMR On-Chain",
-                        "{0}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(
-                            x.text),
-                        os.environ.get('DEFAULT_FROM_EMAIL'),
-                        [u.email])
+                print("Post fires.")
+                if form.is_valid():
+                    print("Form is valid.")
+                    m.text = request.POST['text']
+                    m.start_date = request.POST['start_date']
+                    m.end_date = request.POST['end_date']
+                    m.save()
+                    for u in fEMRUser.objects.all():
+                        Message.objects.create(
+                            sender=request.user,
+                            recipient=u,
+                            subject="fEMR On-Chain",
+                            content=m.text
+                        )
+                        send_mail(
+                            "fEMR On-Chain",
+                            "{0}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(
+                                m.text),
+                            os.environ.get('DEFAULT_FROM_EMAIL'),
+                            [u.email])
+                else:
+                    print(form.is_valid())
+                    print(form.errors)
             return render(request, 'admin/motd.html', {'form': form, 'page_name': "MotD"})
         else:
             return redirect('main:permission_denied')

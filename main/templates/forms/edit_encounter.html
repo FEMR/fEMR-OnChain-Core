@@ -70,8 +70,8 @@
     </div>
 </div>
 <div>
-    Age: {{ patient.age }} Sex Assigned at Birth: {{ patient.get_sex_assigned_at_birth_display }} City: {{ patient.city
-    }} BMI:
+    Age: {{ patient.age }} Sex Assigned at Birth: {{ patient.get_sex_assigned_at_birth_display }} City:
+    {{ patient.city }} BMI:
     {{ encounter.body_mass_index }}
     {% if patient.sex_assigned_at_birth == 'f' %}
     Weeks Pregnant: {{ encounter.weeks_pregnant }}
@@ -202,8 +202,9 @@
                         </div>
                         <div class="row">
                             <div class=""><b>Prescriber |</b></div>
-                            <div class=""><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">{{
-                                    t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
+                            <div class="">
+                                <a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">
+                                    {{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
                             <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
                         </div>
                     </div>
@@ -219,9 +220,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:hpi_view' patient.id encounter_id %}">HPI &
-                            Assessment</a>
-                        <a href="#" data-toggle="popover" data-trigger="hover"
-                            data-content="History of Present Illness"><i class="fa fa-question-circle"></i></a>
+                            Assessment
+                            <button data-toggle="popover" data-trigger="hover" class="btn btn-link"
+                                data-content="History of Present Illness"><i class="fa fa-question-circle"></i></button></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link"
@@ -229,9 +230,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page"
-                            href="{% url 'main:history_view' patient.id encounter_id %}">PMH</a>
-                        <a href="#" data-toggle="popover" data-trigger="hover" data-content="Past Medical History"><i
-                                class="fa fa-question-circle"></i></a>
+                            href="{% url 'main:history_view' patient.id encounter_id %}">PMH
+                            <button data-toggle="popover" data-trigger="hover" class="btn btn-link"
+                                data-content="Past Medical History"><i class="fa fa-question-circle"></i></button></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page"

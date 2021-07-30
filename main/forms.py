@@ -121,6 +121,9 @@ class TreatmentForm(ModelForm):
         """
         model = Treatment
         fields = '__all__'
+        labels = {
+            'administration_schedule': 'Admin. Schedule',
+        }
         widgets = {
             'medication': autocomplete.ModelSelect2(url='main:medication-autocomplete'),
         }
