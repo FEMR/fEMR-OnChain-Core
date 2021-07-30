@@ -317,6 +317,7 @@ class PatientEncounterForm(ModelForm):
             'community_health_worker_notes': 'Notes',
         }
         widgets = {
+            'timestamp': DateInputOverride(),
             'diagnoses': autocomplete.ModelSelect2Multiple(url='main:diagnosis-autocomplete'),
             'chief_complaint': autocomplete.ModelSelect2Multiple(url='main:chief-complaint-autocomplete'),
             'patient_history': Textarea(attrs={'rows': 4, 'cols': 40}),

@@ -80,7 +80,14 @@ def patient_csv_export_view(request):
                          'Medical/Surgical History', 'Socil History', 'Current Medications', 'Family History']
         try:
             data = Patient.objects.filter(
-                campaign=Campaign.objects.get(name=request.session['campaign']))
+                campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
+                    ~Q(first_name__icontains="test") |
+                    ~Q(last_name__icontains="test") |
+                    ~Q(city__icontains="test") |
+                    ~Q(first_name__icontains="Test") |
+                    ~Q(last_name__icontains="Test") |
+                    ~Q(city__icontains="Test")
+            )
         except ObjectDoesNotExist:
             data = list()
         id = 1
@@ -124,13 +131,16 @@ def patient_csv_export_view(request):
                            encounter.alcohol, encounter.community_health_worker_notes, encounter.procedure, encounter.pharmacy_notes,
                            encounter.medical_history, encounter.social_history, encounter.current_medications, encounter.family_history]
                 treatments = Treatment.objects.filter(encounter=encounter)
-                max_treatments = len(treatments) if len(treatments) > max_treatments else max_treatments
+                max_treatments = len(treatments) if len(
+                    treatments) > max_treatments else max_treatments
                 for x in treatments:
-                    row.extend([x.diagnosis, x.medication, x.administration_schedule, x.days, x.prescriber])
+                    row.extend(
+                        [x.diagnosis, x.medication, x.administration_schedule, x.days, x.prescriber])
                 patient_rows.append(row)
             id += 1
         for x in range(max_treatments):
-            title_row.extend(['Diagnosis', 'Medication', 'Administration Schedule', 'Days', 'Prescriber'])
+            title_row.extend(['Diagnosis', 'Medication',
+                              'Administration Schedule', 'Days', 'Prescriber'])
         writer.writerow(title_row)
         for row in patient_rows:
             writer.writerow(row)

@@ -1,4 +1,4 @@
-$("#id_phone_number").inputmask({ mask: "(999)999-9999" });
+$("#id_phone_number").inputmask({ regex: "^\+(?:[0-9] ?){6,14}[0-9]$" });
 
 let social = $("#id_social_security_number");
 

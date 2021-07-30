@@ -323,7 +323,7 @@ class PatientEncounter(models.Model):
 
     photos = models.ManyToManyField(Photo, blank=True)
 
-    timestamp = models.DateTimeField(editable=False, null=False, blank=False)
+    timestamp = models.DateTimeField(null=False, blank=False)
 
     active = models.BooleanField(default=True)
 
