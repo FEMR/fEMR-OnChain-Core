@@ -125,7 +125,7 @@ class TreatmentForm(ModelForm):
             'administration_schedule': 'Admin. Schedule',
         }
         widgets = {
-            'medication': autocomplete.ModelSelect2(url='main:medication-autocomplete'),
+            'medication': autocomplete.ModelSelect2Multiple(url='main:medication-autocomplete'),
         }
 
 

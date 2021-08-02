@@ -108,7 +108,7 @@ def patient_csv_export_view(request):
                            vital.systolic_blood_pressure, vital.diastolic_blood_pressure,
                            vital.mean_arterial_pressure, vital.heart_rate,
                            round(
-                                (vital.body_temperature * 9/5) + 32, 2),
+                                ((vital.body_temperature if vital.body_temperature is not None else 0) * 9/5) + 32, 2),
                            "{0}' {1}\"".format(
                                math.floor(
                                    round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) // 12),

@@ -265,6 +265,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
                 treatment.encounter = m
                 treatment.prescriber = request.user
                 treatment.save()
+                treatment_form.save_m2m()
                 treatment_form = TreatmentForm()
                 querysets = list(PatientDiagnosis.objects.filter(encounter=m))
                 if len(querysets) > 0:

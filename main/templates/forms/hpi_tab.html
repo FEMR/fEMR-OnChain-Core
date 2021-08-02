@@ -163,7 +163,7 @@
                     </div>
                     <div class="row">
                         <div class=""><b>Medication |</b></div>
-                        <div class="">{{ t.medication }}</div>
+                        <div class="">{{ t|get_medications }}</div>
                     </div>
                     <div class="row">
                         <div class=""><b>Administration Schedule |</b></div>
@@ -203,8 +203,8 @@
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page"
                         href="{% url 'main:history_view' patient.id encounter_id %}">PMH
-                        <button data-toggle="popover" data-trigger="hover" class="btn btn-link" data-content="Past Medical History"><i
-                                class="fa fa-question-circle"></i></button></a>
+                        <button data-toggle="popover" data-trigger="hover" class="btn btn-link"
+                            data-content="Past Medical History"><i class="fa fa-question-circle"></i></button></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page"
@@ -221,14 +221,13 @@
                             {% crispy f.form %}
                         </form>
                     </div>
+                    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+                    {{ f.form.media }}
                     {% endfor %}
                 </div>
             </div>
         </div>
     </div>
-
-    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
-    {{ form.media }}
 
     <script>
         var modal = document.getElementById("modal_popup");

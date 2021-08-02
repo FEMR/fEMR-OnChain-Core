@@ -145,7 +145,7 @@ def patient_encounter_form_view(request, id=None):
                     patient=p).order_by('timestamp')[0]
                 if units == 'i':
                     form.initial = {
-                        'timestamp': datetime.date.today,
+                        'timestamp': datetime.now().date(),
                         'body_mass_index': encounter.body_mass_index,
                         'smoking': encounter.smoking,
                         'history_of_diabetes': encounter.history_of_diabetes,

@@ -423,8 +423,8 @@ class PatientDiagnosis(models.Model):
 
 
 class Treatment(models.Model):
-    medication = models.ForeignKey(
-        Medication, on_delete=models.CASCADE, null=True, blank=True)
+    medication = models.ManyToManyField(
+        Medication, blank=True)
     administration_schedule = models.ForeignKey(
         AdministrationSchedule, on_delete=models.CASCADE, null=True, blank=True)
     days = models.IntegerField()
