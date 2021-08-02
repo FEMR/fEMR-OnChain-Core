@@ -97,4 +97,7 @@ def get_campaign_info(m):
 
 @register.filter('get_medications')
 def get_medications(t):
-    return "".join(t.medication__set.all())
+    result = ""
+    for x in list(t.medication.all()):
+        result += str(x)
+    return result
