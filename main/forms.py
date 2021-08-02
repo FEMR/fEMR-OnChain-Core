@@ -201,12 +201,13 @@ class PatientForm(ModelForm):
     def clean_phone_number(self):
         if self.cleaned_data['phone_number'] is None:
             pass
-        elif 'shared_phone_number' not in self.data.keys():
-            p = Patient.objects.filter(
-                phone_number=self.cleaned_data['phone_number'])
-            if p.exists() and len(p) != 1 and self.instance not in p:
-                raise ValidationError(
-                    'This phone number has already been used.')
+        else:
+            if 'shared_phone_number' not in self.data.keys():
+                p = Patient.objects.filter(
+                    phone_number=self.cleaned_data['phone_number'])
+                if p.exists() and len(p) != 1 and self.instance not in p:
+                    raise ValidationError(
+                        'This phone number has already been used.')
         return self.cleaned_data['phone_number']
 
     def clean_email_address(self):

@@ -173,6 +173,9 @@ def patient_encounter_form_view(request, id=None):
                     }
             except IndexError:
                 print("IndexError")
+                form.initial = {
+                        'timestamp': datetime.now().date(),
+                }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         print(encounter_open)
         return render(request, 'forms/encounter.html',

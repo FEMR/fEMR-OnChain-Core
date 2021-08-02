@@ -699,7 +699,6 @@ def submit_hpi_view(request, patient_id=None, encounter_id=None, hpi_id=None):
             aux_form = HistoryOfPresentIllnessForm(request.POST, instance=h)
             if aux_form.is_valid():
                 ph = aux_form.save()
-                aux_form.save_m2m()
                 ph.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
