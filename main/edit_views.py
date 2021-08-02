@@ -70,6 +70,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
         aux_form = AuxiliaryPatientEncounterForm()
+        vitals_form = VitalsForm(unit=units)
         if request.method == 'POST':
             form = PatientEncounterForm(request.POST or None,
                                         instance=m, unit=units)
@@ -97,7 +98,6 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                                              ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
             form = PatientEncounterForm(
                 instance=m, unit=units)
-            vitals_form = VitalsForm(unit=units)
             if not m.active:
                 for field in form:
                     try:
