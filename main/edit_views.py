@@ -72,9 +72,11 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         aux_form = AuxiliaryPatientEncounterForm()
         vitals_form = VitalsForm(unit=units)
         if request.method == 'POST':
+            print("POST received.")
             form = PatientEncounterForm(request.POST or None,
                                         instance=m, unit=units)
             if form.is_valid():
+                print("Form is valid.")
                 encounter = form.save(commit=False)
                 form.save_m2m()
                 encounter.patient = p
@@ -89,10 +91,13 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 if 'submit_encounter' in request.POST:
                     return render(request, 'data/encounter_submitted.html')
                 elif 'submit_refer' in request.POST:
+                    print("Submit Refer")
                     kwargs = {"id": patient_id}
                     return redirect('main:referral_form_view', **kwargs)
                 else:
                     return render(request, 'data/encounter_submitted.html')
+            else:
+                print(form.errors)
         else:
             DatabaseChangeLog.objects.create(action="View", model="Patient", instance=str(m),
                                              ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))

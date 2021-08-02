@@ -435,7 +435,7 @@ class Treatment(models.Model):
     encounter = models.ForeignKey(
         PatientEncounter, on_delete=models.CASCADE, null=True, blank=True, editable=False)
     timestamp = models.DateTimeField(
-        auto_now=True, editable=False)
+        auto_now=True, editable=False, null=True, blank=True)
 
     def __str__(self):
         return str(self.medication)
