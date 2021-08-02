@@ -1,16 +1,19 @@
 from main.delete_views import delete_chief_complaint, patient_delete_view
 from django.conf.urls import url, include
+from django.views.generic.base import RedirectView
 from django.urls import path
+from django.contrib.staticfiles.storage import staticfiles_storage
+
 from rest_framework import routers
 from rest_framework.authtoken import views as rest_framework_views
 
 from main.admin_views import add_user_to_campaign, add_users_to_campaign, admin_home, create_user_view, cut_user_from_campaign, export_audit_logs_view, export_database_logs_view, \
     filter_audit_logs_view, filter_database_logs_view, filter_users_view, get_audit_logs_view, get_database_logs_view, \
-    list_users_view, lock_user_view, unlock_user_view, search_audit_logs_view, search_database_logs_view, \
+    list_users_view, lock_user_view, message_of_the_day_view, unlock_user_view, search_audit_logs_view, search_database_logs_view, \
     search_users_view, update_user_view, update_user_password_view
 from .api_views import UserViewSet, GroupViewSet, PatientViewSet, PatientEncounterViewSet, InstanceViewSet, CampaignViewSet
 from .auth_views import all_locked, not_logged_in, login_view, logout_view, permission_denied
-from .edit_views import aux_form_view, edit_photo_view, history_view, new_diagnosis_view, new_treatment_view, patient_edit_form_view, encounter_edit_form_view, patient_export_view, patient_medical, new_vitals_view, upload_photo_view
+from .edit_views import aux_form_view, delete_photo_view, edit_photo_view, history_view, hpi_view, new_diagnosis_view, new_treatment_view, patient_edit_form_view, encounter_edit_form_view, patient_export_view, patient_medical, new_vitals_view, submit_hpi_view, upload_photo_view
 from .form_views import patient_form_view, referral_form_view, patient_encounter_form_view
 from .list_views import chief_complaint_list_view, patient_csv_export_view, patient_list_view, search_patient_list_view, filter_patient_list_view
 from .views import forgot_username, index, home, healthcheck, help_messages_off
@@ -19,7 +22,7 @@ from .femr_admin_views import edit_contact_view, lock_campaign_view, new_campaig
 from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, medication_form_view, treatment_form_view
 from main.views import set_timezone
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
-from .autocomplete_views import DiagnosisAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete
+from .autocomplete_views import DiagnosisAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete, TestAutocomplete
 
 app_name = 'main'
 
@@ -71,9 +74,17 @@ urlpatterns = [
 
     path(r'upload_photo_view/<int:patient_id>/<int:encounter_id>',
          upload_photo_view, name='upload_photo_view'),
+
+    path(r'hpi_view/<int:patient_id>/<int:encounter_id>',
+         hpi_view, name='hpi_view'),
+    path(r'submit_hpi_view/<int:patient_id>/<int:encounter_id>/<int:hpi_id>',
+         submit_hpi_view, name='submit_hpi_view'),
          
     path(r'edit_photo_view/<int:patient_id>/<int:encounter_id>/<int:photo_id>',
          edit_photo_view, name='edit_photo_view'),
+         
+    path(r'delete_photo_view/<int:patient_id>/<int:encounter_id>/<int:photo_id>',
+         delete_photo_view, name='delete_photo_view'),
 
     path(r'patient_medical/<int:id>', patient_medical, name='patient_medical'),
 
@@ -95,6 +106,7 @@ urlpatterns = [
 
     url(r'^superuser_home/$', admin_home, name="superuser_home"),
     url(r'^set_timezone/$', set_timezone, name="set_timezone"),
+    url(r'^message_of_the_day_view/$', message_of_the_day_view, name="message_of_the_day_view"),
 
     # User Management
     url(r'^list_users_view/$', list_users_view, name='list_users_view'),
@@ -184,6 +196,11 @@ urlpatterns = [
         r'^medication-autocomplete/$',
         MedicationAutocomplete.as_view(create_field='text'),
         name='medication-autocomplete',
+    ),
+    url(
+        r'^test-autocomplete/$',
+        TestAutocomplete.as_view(create_field='text'),
+        name='test-autocomplete',
     ),
     url(
         r'^chief-complaint-autocomplete/$',

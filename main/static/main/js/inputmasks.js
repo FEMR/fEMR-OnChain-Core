@@ -1,5 +1,3 @@
-$("#id_phone_number").inputmask({ mask: "(999)999-9999" });
-
 let social = $("#id_social_security_number");
 
 social.inputmask({ mask: "[999-99-]9999" });

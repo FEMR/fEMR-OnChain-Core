@@ -1,3 +1,6 @@
+{% load tz %}
+{% get_current_timezone as TIME_ZONE %}
+
 <html>
 
 <head>
@@ -14,7 +17,6 @@
 
 <body>
     <h1>Access Audit Log - {{ today_time }}</h1>
-</body>
 
 <table>
     <thead>
@@ -39,10 +41,11 @@
             <td>{{ line.action }}</td>
             <td>{{ line.ip }}</td>
             <td>{{ line.username }}</td>
-            <td>{{ line.timestamp }} GMT</td>
+            <td>{{ line.timestamp }} {{ TIME_ZONE }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+</body>
 
 </html>

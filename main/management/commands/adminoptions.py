@@ -26,7 +26,8 @@ OPTIONS = [
     'qPM',
     'qWeek',
     'TID',
-    'TIW'
+    'TIW',
+    'prn'
 ]
 
 

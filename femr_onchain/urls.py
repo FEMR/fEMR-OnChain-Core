@@ -1,10 +1,16 @@
 from django.contrib import admin
 from django.conf.urls import url
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from django.views.generic.base import RedirectView
 from main.auth_views import change_password, required_change_password
 
 urlpatterns = [
+     path(
+        "favicon.ico",
+        RedirectView.as_view(url=staticfiles_storage.url("main/assets/favicon.ico")),
+    ),
     path('admin/', admin.site.urls),
     path('', include('main.urls', namespace='main')),
     path('appMR/', include('appMR.urls', namespace='appMR')),

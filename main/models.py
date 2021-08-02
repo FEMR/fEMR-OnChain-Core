@@ -71,6 +71,7 @@ class Campaign(models.Model):
     units = models.CharField(max_length=30, choices=unit_choices, default="m")
     telehealth = models.BooleanField(default=False)
     encounter_close = models.PositiveIntegerField()
+    country = models.CharField(max_length=30)
     timezone = models.CharField(
         max_length=100, choices=COMMON_TIMEZONES_CHOICES)
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
@@ -107,7 +108,7 @@ class Patient(models.Model):
     This may, in clinical settings, be a standalone object,
     or may be connected directly to a user of the fEMR-OnChain platform.
     """
-    campaign_key = models.PositiveIntegerField(null=True, blank=True)
+    campaign_key = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(1)])
 
     first_name = models.CharField(max_length=30)
     middle_name = models.CharField(max_length=30, null=True, blank=True)
@@ -197,7 +198,7 @@ def cal_key(fk):
         return max(present_keys) + 1
     else:
         print("No key.")
-        return 0
+        return 1 
 
 
 @deconstructible
@@ -254,9 +255,21 @@ class Medication(models.Model):
         return str(self.text)
 
 
+class Test(models.Model):
+    text = models.CharField(
+        max_length=1024,
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return str(self.text)
+
+
 class Photo(models.Model):
     description = models.CharField(max_length=100)
     photo = models.FileField(upload_to='photos/', blank=True, null=True)
+    imaging_link = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self) -> str:
         return str(self.description)
@@ -269,7 +282,7 @@ class PatientEncounter(models.Model):
     patient = models.ForeignKey(
         Patient, on_delete=models.CASCADE, null=True, blank=True)
 
-    body_height_primary = models.IntegerField(
+    body_height_primary = models.IntegerField(default=0,
         validators=[MaxValueValidator(8), MinValueValidator(0)])
     body_height_secondary = models.FloatField(
         validators=[ModifiedMaxValueValidator(100), MinValueValidator(0)])
@@ -310,9 +323,11 @@ class PatientEncounter(models.Model):
 
     photos = models.ManyToManyField(Photo, blank=True)
 
-    timestamp = models.DateTimeField(editable=False, null=False, blank=False)
+    timestamp = models.DateTimeField(null=False, blank=False)
 
     active = models.BooleanField(default=True)
+
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, null=False, blank=False, editable=False, default=1)
 
     @property
     def unit_aware_primary_height(self, unit):
@@ -338,6 +353,23 @@ class PatientEncounter(models.Model):
         Displays patient encounters in a more readable way.
         """
         return str(self.patient)
+
+
+class HistoryOfPresentIllness(models.Model):
+    chief_complaint = models.ForeignKey(ChiefComplaint, on_delete=models.CASCADE, editable=False)
+    encounter = models.ForeignKey(PatientEncounter, on_delete=models.CASCADE, editable=False)
+
+    onset = models.CharField(max_length=50, null=True, blank=True)
+    provokes = models.CharField(max_length=50, null=True, blank=True)
+    palliates = models.CharField(max_length=50, null=True, blank=True)
+    quality = models.CharField(max_length=50, null=True, blank=True)
+    radiation = models.CharField(max_length=50, null=True, blank=True)
+    severity = models.CharField(max_length=50, null=True, blank=True)
+    time_of_day = models.CharField(max_length=50, null=True, blank=True)
+    narrative = models.CharField(max_length=50, null=True, blank=True)
+    physical_examination = models.CharField(max_length=255, null=True, blank=True)
+
+    tests_ordered = models.ManyToManyField(Test, blank=True)
 
 
 class Vitals(models.Model):
@@ -391,8 +423,8 @@ class PatientDiagnosis(models.Model):
 
 
 class Treatment(models.Model):
-    medication = models.ForeignKey(
-        Medication, on_delete=models.CASCADE, null=True, blank=True)
+    medication = models.ManyToManyField(
+        Medication, blank=True)
     administration_schedule = models.ForeignKey(
         AdministrationSchedule, on_delete=models.CASCADE, null=True, blank=True)
     days = models.IntegerField()
@@ -403,7 +435,7 @@ class Treatment(models.Model):
     encounter = models.ForeignKey(
         PatientEncounter, on_delete=models.CASCADE, null=True, blank=True, editable=False)
     timestamp = models.DateTimeField(
-        auto_now=True, editable=False)
+        auto_now=True, editable=False, null=True, blank=True)
 
     def __str__(self):
         return str(self.medication)
@@ -421,6 +453,12 @@ class Inventory(models.Model):
 class UnitsSetting(SingletonModel):
     units = models.CharField(
         max_length=30, choices=unit_choices, default="i")
+
+
+class MessageOfTheDay(SingletonModel):
+    text = models.CharField(max_length=255)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
 
 
 class AuditEntry(models.Model):

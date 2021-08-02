@@ -48,13 +48,31 @@
     </div>
 </div>
 <div>
-    Age: {{ patient.age }} Sex Assigned at Birth: {{ patient.get_sex_assigned_at_birth_display }} City: {{ patient.city }} BMI: 
-    {{ encounter.body_mass_index }} 
+    Age: {{ patient.age }} Sex Assigned at Birth: {{ patient.get_sex_assigned_at_birth_display }} 
+    City: {{ patient.city }} BMI:
+    {{ encounter.body_mass_index }}
     {% if patient.sex_assigned_at_birth == 'f' %}
     Weeks Pregnant: {{ encounter.weeks_pregnant }}
     {% endif %}
-    Complaint: 
+    Complaint:
     {{ encounter.chief_complaint|complaint_as_string }}
+    <p>
+        {% if encounter.smoking %}
+        History of Tobacco Use,
+        {% endif %}
+        {% if encounter.history_of_diabetes %}
+        History of Diabetes,
+        {% endif %}
+        {% if encounter.history_of_hypertension %}
+        History of Hypertension,
+        {% endif %}
+        {% if encounter.history_of_high_cholesterol %}
+        History of High Cholesterol,
+        {% endif %}
+        {% if encounter.alcohol %}
+        History of Alcohol Use
+        {% endif %}
+    </p>
 </div>
 <div class="container">
     <div class="row justify-content-center">
@@ -145,7 +163,7 @@
                     </div>
                     <div class="row">
                         <div class=""><b>Medication |</b></div>
-                        <div class="">{{ t.medication }}</div>
+                        <div class="">{{ t|get_medications }}</div>
                     </div>
                     <div class="row">
                         <div class=""><b>Administration Schedule |</b></div>
@@ -157,7 +175,9 @@
                     </div>
                     <div class="row">
                         <div class=""><b>Prescriber |</b></div>
-                        <div class=""><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">{{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
+                        <div class="">
+                            <a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">
+                                {{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
                         <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
                     </div>
                 </div>
@@ -172,16 +192,24 @@
                         href="{% url 'main:encounter_edit_form_view' patient.id encounter_id %}">Medical</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{% url 'main:hpi_view' patient.id encounter_id %}">HPI & Assessment
+                        <button data-toggle="popover" data-trigger="hover" class="btn btn-link"
+                            data-content="History of Present Illness"><i class="fa fa-question-circle"></i></button></a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link active" aria-current="page"
                         href="{% url 'main:new_diagnosis_view' patient.id encounter_id %}">Treatment</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page"
-                        href="{% url 'main:history_view' patient.id encounter_id %}">PMH</a>
+                        href="{% url 'main:history_view' patient.id encounter_id %}">PMH
+                        <button data-toggle="popover" data-trigger="hover" class="btn btn-link"
+                            data-content="Past Medical History"><i
+                                class="fa fa-question-circle"></i></button></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page"
-                        href="{% url 'main:upload_photo_view' patient.id encounter_id %}">Photos</a>
+                        href="{% url 'main:upload_photo_view' patient.id encounter_id %}">Photo/Imaging</a>
                 </li>
             </ul>
             <div class="row bg-light">

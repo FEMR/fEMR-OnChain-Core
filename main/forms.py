@@ -16,7 +16,7 @@ from dal import autocomplete
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, ButtonHolder, Submit
 
-from .models import Patient, PatientDiagnosis, PatientEncounter, Photo, fEMRUser, Campaign, Instance, Contact, Vitals,\
+from .models import HistoryOfPresentIllness, MessageOfTheDay, Patient, PatientDiagnosis, PatientEncounter, Photo, fEMRUser, Campaign, Instance, Contact, Vitals,\
     ChiefComplaint, Treatment, Diagnosis, Medication
 
 
@@ -59,7 +59,7 @@ class PatientDiagnosisForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(
-            Submit('submit', 'Submit', css_class='btn btn-primary'))
+            Submit('submit', 'Save', css_class='btn btn-primary'))
 
     class Meta:
         """
@@ -81,7 +81,7 @@ class MedicationForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(
-            Submit('submit', 'Submit', css_class='btn btn-primary'))
+            Submit('submit', 'Save', css_class='btn btn-primary'))
 
     class Meta:
         """
@@ -112,7 +112,7 @@ class TreatmentForm(ModelForm):
             )
         )
         self.helper.add_input(
-            Submit('submit', 'Submit', css_class='btn btn-primary'))
+            Submit('submit', 'Save', css_class='btn btn-primary'))
         self.fields['medication'].required = True
 
     class Meta:
@@ -121,8 +121,11 @@ class TreatmentForm(ModelForm):
         """
         model = Treatment
         fields = '__all__'
+        labels = {
+            'administration_schedule': 'Admin. Schedule',
+        }
         widgets = {
-            'medication': autocomplete.ModelSelect2(url='main:medication-autocomplete'),
+            'medication': autocomplete.ModelSelect2Multiple(url='main:medication-autocomplete'),
         }
 
 
@@ -198,12 +201,13 @@ class PatientForm(ModelForm):
     def clean_phone_number(self):
         if self.cleaned_data['phone_number'] is None:
             pass
-        elif 'shared_phone_number' not in self.data.keys():
-            p = Patient.objects.filter(
-                phone_number=self.cleaned_data['phone_number'])
-            if p.exists() and len(p) != 1 and self.instance not in p:
-                raise ValidationError(
-                    'This phone number has already been used.')
+        else:
+            if 'shared_phone_number' not in self.data.keys():
+                p = Patient.objects.filter(
+                    phone_number=self.cleaned_data['phone_number'])
+                if p.exists() and len(p) != 1 and self.instance not in p:
+                    raise ValidationError(
+                        'This phone number has already been used.')
         return self.cleaned_data['phone_number']
 
     def clean_email_address(self):
@@ -314,6 +318,7 @@ class PatientEncounterForm(ModelForm):
             'community_health_worker_notes': 'Notes',
         }
         widgets = {
+            'timestamp': DateInputOverride(),
             'diagnoses': autocomplete.ModelSelect2Multiple(url='main:diagnosis-autocomplete'),
             'chief_complaint': autocomplete.ModelSelect2Multiple(url='main:chief-complaint-autocomplete'),
             'patient_history': Textarea(attrs={'rows': 4, 'cols': 40}),
@@ -327,7 +332,7 @@ class AuxiliaryPatientEncounterForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(
-            Submit('submit', 'Submit', css_class='btn btn-primary'))
+            Submit('submit', 'Save', css_class='btn btn-primary'))
 
     class Meta:
         model = PatientEncounter
@@ -350,7 +355,7 @@ class HistoryPatientEncounterForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(
-            Submit('submit', 'Submit', css_class='btn btn-primary'))
+            Submit('submit', 'Save', css_class='btn btn-primary'))
 
     class Meta:
         model = PatientEncounter
@@ -364,10 +369,10 @@ class HistoryPatientEncounterForm(ModelForm):
             'medical_history': 'Medical/Surgical history',
         }
         widgets = {
-            'medical_history': Textarea(attrs={'rows': 4, 'cols': 40}),
-            'social_history': Textarea(attrs={'rows': 4, 'cols': 40}),
-            'current_medications': Textarea(attrs={'rows': 4, 'cols': 40}),
-            'family_history': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'medical_history': Textarea(attrs={'rows': 4, 'cols': 80}),
+            'social_history': Textarea(attrs={'rows': 4, 'cols': 80}),
+            'current_medications': Textarea(attrs={'rows': 4, 'cols': 80}),
+            'family_history': Textarea(attrs={'rows': 4, 'cols': 80}),
         }
 
 
@@ -442,17 +447,9 @@ class VitalsForm(ModelForm):
                 css_class="row",
             ),
             ButtonHolder(
-                Submit('submit', 'Submit', css_class='btn btn-primary ml-auto')
+                Submit('submit', 'Save', css_class='btn btn-primary ml-auto')
             )
         )
-
-    def clean_body_mass_index(self):
-        if self.cleaned_data['body_mass_index'] < 5:
-            self.add_error('body_height_primary',
-                           "BMI shouldn't be less than 5%. Check these numbers.")
-            self.add_error(
-                'body_weight', "BMI shouldn't be less than 5%. Check these numbers.")
-        return self.cleaned_data['body_mass_index']
 
     def save(self, commit=True):
         m = super(VitalsForm, self).save(commit=False)
@@ -645,8 +642,69 @@ class PhotoForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(
-            Submit('submit', 'Submit', css_class='btn btn-primary'))
+            Submit('submit', 'Save', css_class='btn btn-primary'))
 
     class Meta:
         model = Photo
         fields = '__all__'
+
+
+class HistoryOfPresentIllnessForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Save', css_class='btn btn-primary'))
+
+    class Meta:
+        model = HistoryOfPresentIllness
+        fields = '__all__'
+        widgets = {
+            'tests_ordered': autocomplete.ModelSelect2Multiple(url='main:test-autocomplete'),
+        }
+
+
+class MOTDForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Div(
+                Div(
+                    'text',
+                    css_class="col-md-12",
+                ),
+                css_class="row",
+            ),
+            Div(
+                Div(
+                    'start_date',
+                    css_class="col-md-12",
+                ),
+                css_class="row",
+            ),
+            Div(
+                Div(
+                    'end_date',
+                    css_class="col-md-12",
+                ),
+                css_class="row",
+            ),
+            ButtonHolder(
+                Submit('submit', 'Save', css_class='btn btn-primary ml-auto')
+            )
+        )
+    
+    class Meta:
+        model = MessageOfTheDay
+        fields = '__all__'
+        widgets = {
+            'start_date': DateInputOverride(attrs={
+                'pattern': "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$",
+                'placeholder': "dd/mm/yyyy"
+            }),
+            'end_date': DateInputOverride(attrs={
+                'pattern': "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$",
+                'placeholder': "dd/mm/yyyy"
+            })
+        }

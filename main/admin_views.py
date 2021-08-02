@@ -1,16 +1,19 @@
 """
 View functions for administrative actions.
 """
+import os
+from clinic_messages.models import Message
 from datetime import datetime, timedelta
 import itertools
 import operator
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 
-from .forms import UserForm, UserUpdateForm, AdminPasswordForm, fEMRAdminUserForm, fEMRAdminUserUpdateForm
-from .models import Instance, fEMRUser, AuditEntry, DatabaseChangeLog, Campaign
+from .forms import MOTDForm, UserForm, UserUpdateForm, AdminPasswordForm, fEMRAdminUserForm, fEMRAdminUserUpdateForm
+from .models import Instance, MessageOfTheDay, fEMRUser, AuditEntry, DatabaseChangeLog, Campaign
 
 
 def admin_home(request):
@@ -293,7 +296,7 @@ def filter_audit_logs_view(request):
             except ObjectDoesNotExist:
                 data = list()
             data = sorted(data, key=operator.attrgetter(
-                '-timestamp'), reverse=True)
+                'timestamp'), reverse=True)
             return render(request, 'admin/audit_log_list.html',
                           {'user': request.user, 'selected': selected,
                            'log': data, 'page_name': 'Login Log',
@@ -510,3 +513,40 @@ def __retrieve_needed_users(request):
     users = set(list(itertools.chain(
         users_created_by_me, users_in_my_campaigns)))
     return users
+
+
+def message_of_the_day_view(request):
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name='Admin').exists():
+            print("Loading form.")
+            m = MessageOfTheDay.load()
+            form = MOTDForm(request.POST, instance=m)
+            if request.method == "POST":
+                print("Post fires.")
+                if form.is_valid():
+                    print("Form is valid.")
+                    m.text = request.POST['text']
+                    m.start_date = request.POST['start_date']
+                    m.end_date = request.POST['end_date']
+                    m.save()
+                    for u in fEMRUser.objects.all():
+                        Message.objects.create(
+                            sender=request.user,
+                            recipient=u,
+                            subject="fEMR On-Chain",
+                            content=m.text
+                        )
+                        send_mail(
+                            "fEMR On-Chain",
+                            "{0}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(
+                                m.text),
+                            os.environ.get('DEFAULT_FROM_EMAIL'),
+                            [u.email])
+                else:
+                    print(form.is_valid())
+                    print(form.errors)
+            return render(request, 'admin/motd.html', {'form': form, 'page_name': "MotD"})
+        else:
+            return redirect('main:permission_denied')
+    else:
+        return redirect('main:not_logged_in')

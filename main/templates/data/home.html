@@ -1,8 +1,15 @@
 {% extends "data/base.html" %}
 {% load campaign_tags %}
 {% block content %}
+{% if motd %}
+<div class="container justify-content-center">
+    <div>
+        <u>Message from fEMR OnChain Admin: {{ motd }}</u>
+    </div>
+</div>
+{% endif %}
 <div>
-    Welcome to fEMR On-Chain   v1.3.1.7082020, {{ user.first_name }} {{ user.last_name }}!
+    Welcome to fEMR On-Chain v1.3.2.8022021, {{ user.first_name }} {{ user.last_name }}!
 </div>
 <div>
     Please select a tab at the top, search below, or select a campaign below to get started!

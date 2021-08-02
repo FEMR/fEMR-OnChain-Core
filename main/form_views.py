@@ -3,6 +3,7 @@ Handles template rendering and logic for web forms.
 All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
+from datetime import datetime
 from main.femr_admin_views import get_client_ip
 import math
 import os
@@ -106,6 +107,7 @@ def patient_encounter_form_view(request, id=None):
                 vitals = vitals_form.save(commit=False)
                 encounter.patient = p
                 encounter.active = True
+                encounter.campaign = Campaign.objects.get(name=request.session['campaign'])
                 encounter.save()
                 vitals.encounter = encounter
                 vitals.save()
@@ -143,6 +145,7 @@ def patient_encounter_form_view(request, id=None):
                     patient=p).order_by('timestamp')[0]
                 if units == 'i':
                     form.initial = {
+                        'timestamp': datetime.now().date(),
                         'body_mass_index': encounter.body_mass_index,
                         'smoking': encounter.smoking,
                         'history_of_diabetes': encounter.history_of_diabetes,
@@ -157,6 +160,7 @@ def patient_encounter_form_view(request, id=None):
                     }
                 else:
                     form.initial = {
+                        'timestamp': datetime.now().date(),
                         'body_mass_index': encounter.body_mass_index,
                         'smoking': encounter.smoking,
                         'history_of_diabetes': encounter.history_of_diabetes,
@@ -169,6 +173,9 @@ def patient_encounter_form_view(request, id=None):
                     }
             except IndexError:
                 print("IndexError")
+                form.initial = {
+                        'timestamp': datetime.now().date(),
+                }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         print(encounter_open)
         return render(request, 'forms/encounter.html',
