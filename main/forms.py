@@ -230,7 +230,8 @@ class PatientForm(ModelForm):
         exclude = ('campaign',)
         labels = {
             'phone_number': 'Phone number',
-            'email_address': 'Email address'
+            'email_address': 'Email address',
+            'social_security_number': 'National I.D. Number',
         }
         widgets = {
             'date_of_birth': DateInputOverride(attrs={
@@ -279,22 +280,25 @@ class PatientEncounterForm(ModelForm):
             self.fields['body_weight'].widget.attrs['min'] = 0.25
 
     def clean_body_mass_index(self):
-        if self.cleaned_data['body_mass_index'] < 5:
-            self.add_error('body_height_primary',
-                           "BMI shouldn't be less than 5%. Check these numbers.")
-            self.add_error(
-                'body_weight', "BMI shouldn't be less than 5%. Check these numbers.")
+        if self.cleaned_data['body_mass_index'] is not None:
+            if self.cleaned_data['body_mass_index'] < 5:
+                self.add_error('body_height_primary',
+                            "BMI shouldn't be less than 5%. Check these numbers.")
+                self.add_error(
+                    'body_weight', "BMI shouldn't be less than 5%. Check these numbers.")
         return self.cleaned_data['body_mass_index']
 
     def save(self, commit=True):
         m = super(PatientEncounterForm, self).save(commit=False)
         if self.unit == 'i':
-            tmp = m.body_height_primary
-            m.body_height_primary = math.floor(
-                (((m.body_height_primary * 12) + m.body_height_secondary) * 2.54) // 100)
-            m.body_height_secondary = (
-                ((tmp * 12) + m.body_height_secondary) * 2.54) % 100
-            m.body_weight = m.body_weight / 2.2046
+            if m.body_height_primary is not None and m.body_height_secondary is not None:
+                tmp = m.body_height_primary
+                m.body_height_primary = math.floor(
+                    (((m.body_height_primary * 12) + m.body_height_secondary) * 2.54) // 100)
+                m.body_height_secondary = (
+                    ((tmp * 12) + m.body_height_secondary) * 2.54) % 100
+            if m.body_weight is not None:
+                m.body_weight = m.body_weight / 2.2046
         if commit:
             m.save()
         return m

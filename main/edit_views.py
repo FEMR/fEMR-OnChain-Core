@@ -131,6 +131,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                         (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
                     'body_weight': round(m.body_weight * 2.2046, 2),
                 }
+        form.initial['timestamp'] = m.timestamp
         encounter_active = m.active
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',

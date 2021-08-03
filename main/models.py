@@ -282,11 +282,11 @@ class PatientEncounter(models.Model):
     patient = models.ForeignKey(
         Patient, on_delete=models.CASCADE, null=True, blank=True)
 
-    body_height_primary = models.IntegerField(default=0,
+    body_height_primary = models.IntegerField(default=0, null=True, blank=True,
         validators=[MaxValueValidator(8), MinValueValidator(0)])
-    body_height_secondary = models.FloatField(
+    body_height_secondary = models.FloatField(null=True, blank=True,
         validators=[ModifiedMaxValueValidator(100), MinValueValidator(0)])
-    body_weight = models.FloatField(
+    body_weight = models.FloatField(null=True, blank=True,
         validators=[MaxValueValidator(500), MinValueValidator(0.25)])
     bmi_percentile = models.IntegerField(
         validators=[MaxValueValidator(100), MinValueValidator(1)], null=True, blank=True)
