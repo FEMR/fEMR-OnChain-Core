@@ -80,13 +80,11 @@ def patient_csv_export_view(request):
                          'Medical/Surgical History', 'Socil History', 'Current Medications', 'Family History']
         try:
             data = Patient.objects.filter(
-                campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
-                    ~Q(first_name__icontains="test") |
-                    ~Q(last_name__icontains="test") |
-                    ~Q(city__icontains="test") |
-                    ~Q(first_name__icontains="Test") |
-                    ~Q(last_name__icontains="Test") |
-                    ~Q(city__icontains="Test")
+                campaign=Campaign.objects.get(name=request.session['campaign'])).exclude(
+                    Q(first_name__icontains="test") |
+                    Q(last_name__icontains="test") |
+                    Q(middle_name__icontains="test") |
+                    Q(city__icontains="test")
             )
         except ObjectDoesNotExist:
             data = list()

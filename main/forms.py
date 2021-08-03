@@ -320,6 +320,7 @@ class PatientEncounterForm(ModelForm):
         labels = {
             'body_mass_index': 'Body Mass Index',
             'community_health_worker_notes': 'Notes',
+            'timestamp': "Encounter date",
         }
         widgets = {
             'timestamp': DateInputOverride(),

@@ -545,6 +545,10 @@ def message_of_the_day_view(request):
                 else:
                     print(form.is_valid())
                     print(form.errors)
+            else:
+                form.initial['text'] = m.text
+                form.initial['start_date'] = m.start_date
+                form.initial['end_date'] = m.end_date
             return render(request, 'admin/motd.html', {'form': form, 'page_name': "MotD"})
         else:
             return redirect('main:permission_denied')
