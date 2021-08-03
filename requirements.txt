@@ -4,8 +4,8 @@ amazon.ion==0.5.0
 asgiref==3.4.1
 astroid==2.6.5
 autopep8==1.5.7
-boto3==1.18.9
-botocore==1.21.9
+boto3==1.18.10
+botocore==1.21.11
 certifi==2021.5.30
 chardet==4.0.0
 click==8.0.1
@@ -17,7 +17,7 @@ django-compat==1.0.15
 django-crispy-forms==1.12.0
 #django-elasticache==1.0.3
 #django-elastipymemcache==2.0.4
-django-ipware==3.0.2
+django-ipware==3.0.7
 django-localflavor==3.1
 #django-redis-sessions==0.6.2
 django-searchable-select==1.5.0
@@ -29,9 +29,9 @@ django-user-agents==0.4.0
 djangorestframework==3.12.4
 docutils==0.17.1
 dparse==0.5.1
-idna==2.10
+idna==3.2
 ionhash==1.1.0
-isort==5.9.2
+isort==5.9.3
 jmespath==0.10.0
 lazy-object-proxy==1.6.0
 mccabe==0.6.1
