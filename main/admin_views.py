@@ -550,6 +550,7 @@ def message_of_the_day_view(request):
                 else:
                     print(form.is_valid())
                     print(form.errors)
+            print(form.initial)
             return render(request, 'admin/motd.html', {'form': form, 'page_name': "MotD"})
         else:
             return redirect('main:permission_denied')
