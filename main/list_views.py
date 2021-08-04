@@ -109,9 +109,20 @@ def patient_csv_export_view(request):
                                 ((vital.body_temperature if vital.body_temperature is not None else 0) * 9/5) + 32, 2),
                            "{0}' {1}\"".format(
                                math.floor(
-                                   round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) // 12),
-                               round((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) % 12),
-                           round(encounter.body_weight * 2.2046, 2),
+                                   round(
+                                       (
+                                           (encounter.body_height_primary if encounter.body_height_primary is not None else 0)
+                                           * 100 + 
+                                           (encounter.body_height_secondary if encounter.body_height_secondary is not None else 0)
+                                       ) / 2.54) // 12),
+                               round(
+                                   (
+                                       (encounter.body_height_primary)
+                                       * 100 + 
+                                       (encounter.body_height_secondary)
+                                   ) / 2.54) % 12),
+                           round(
+                               (encounter.body_weight if encounter.body_weight is not None else 0) * 2.2046, 2),
                            encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, encounter.smoking,
                            encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
                            encounter.alcohol, encounter.community_health_worker_notes, encounter.procedure, encounter.pharmacy_notes,

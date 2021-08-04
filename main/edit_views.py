@@ -126,10 +126,14 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     'patient_history': m.patient_history,
                     'community_health_worker_notes': m.community_health_worker_notes,
                     'body_height_primary': math.floor(
-                        ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12),
+                        (((m.body_height_primary if m.body_height_primary is not None else 0) *
+                          100 +
+                          (m.body_height_secondary if m.body_height_secondary is not None else 0)) / 2.54) // 12),
                     'body_height_secondary': round((
-                        (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
-                    'body_weight': round(m.body_weight * 2.2046, 2),
+                        ((m.body_height_primary if m.body_height_primary is not None else 0) *
+                         100 +
+                         (m.body_height_secondary if m.body_height_secondary is not None else 0)) / 2.54) % 12, 2),
+                    'body_weight': round((m.body_weight if m.body_weight is not None else 0) * 2.2046, 2),
                 }
         form.initial['timestamp'] = m.timestamp
         encounter_active = m.active
@@ -640,10 +644,10 @@ def delete_photo_view(request, patient_id=None, encounter_id=None, photo_id=None
         vitals_form = VitalsForm(unit=units)
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/photos_tab.html',
-                        {'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
-                        'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
-                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
-                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
+                      {'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                       'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -666,7 +670,8 @@ def hpi_view(request, patient_id=None, encounter_id=None):
         t = Treatment.objects.filter(encounter=m)
         hpis = []
         for x in m.chief_complaint.all():
-            hpi_object = HistoryOfPresentIllness.objects.get_or_create(encounter=m, chief_complaint=x)[0]
+            hpi_object = HistoryOfPresentIllness.objects.get_or_create(
+                encounter=m, chief_complaint=x)[0]
             hpis.append({
                 'id': hpi_object.id,
                 'form': HistoryOfPresentIllnessForm(instance=hpi_object),

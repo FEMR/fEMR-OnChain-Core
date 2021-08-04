@@ -520,14 +520,15 @@ def message_of_the_day_view(request):
         if request.user.groups.filter(name='Admin').exists():
             print("Loading form.")
             m = MessageOfTheDay.load()
-            form = MOTDForm(request.POST, instance=m)
             if request.method == "GET":
                 print("GET")
+                form = MOTDForm(instance=m)
                 form.initial['text'] = m.text
                 form.initial['start_date'] = m.start_date
                 form.initial['end_date'] = m.end_date
             elif request.method == "POST":
                 print("Post fires.")
+                form = MOTDForm(request.POST, instance=m)
                 if form.is_valid():
                     print("Form is valid.")
                     m.text = request.POST['text']
@@ -541,12 +542,13 @@ def message_of_the_day_view(request):
                             subject="fEMR On-Chain",
                             content=m.text
                         )
-                        send_mail(
-                            "fEMR On-Chain",
-                            "{0}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(
-                                m.text),
-                            os.environ.get('DEFAULT_FROM_EMAIL'),
-                            [u.email])
+                        if os.environ.get('EMAIL_HOST') is not "":
+                            send_mail(
+                                "fEMR On-Chain",
+                                "{0}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(
+                                    m.text),
+                                os.environ.get('DEFAULT_FROM_EMAIL'),
+                                [u.email])
                 else:
                     print(form.is_valid())
                     print(form.errors)
