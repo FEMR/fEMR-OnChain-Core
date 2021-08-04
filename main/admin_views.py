@@ -542,7 +542,7 @@ def message_of_the_day_view(request):
                             subject="fEMR On-Chain",
                             content=m.text
                         )
-                        if os.environ.get('EMAIL_HOST') is not "":
+                        if os.environ.get('EMAIL_HOST') != "":
                             send_mail(
                                 "fEMR On-Chain",
                                 "{0}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(
