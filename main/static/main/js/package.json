@@ -2,7 +2,7 @@
   "name": "js",
   "version": "1.0.0",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.3",
+    "@fortawesome/fontawesome-free": "^5.15.4",
     "inputmask": "^5.0.6"
   },
   "license": "ISC"
