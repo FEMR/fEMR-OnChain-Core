@@ -694,16 +694,18 @@ class MOTDForm(ModelForm):
                     css_class="col-md-12",
                 ),
                 css_class="row",
-            ),
-            ButtonHolder(
-                Submit('submit', 'Save', css_class='btn btn-primary ml-auto')
-            )
-        )
+            ))
+        self.helper.add_input(
+                Submit('submit', 'Save', css_class='btn btn-primary ml-auto'))
     
     class Meta:
         model = MessageOfTheDay
         fields = '__all__'
         widgets = {
+            'text': Textarea(attrs={
+                'rows': 6,
+                'cols': 80
+            }),
             'start_date': DateInputOverride(attrs={
                 'pattern': "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$",
                 'placeholder': "dd/mm/yyyy"
