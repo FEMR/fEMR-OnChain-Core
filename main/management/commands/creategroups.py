@@ -8,7 +8,9 @@ from django.core.management.base import BaseCommand
 GROUPS = [
     'Admin',
     'fEMR Admin',
-    'Clinician'
+    'Clinician',
+    'Operation Admin',
+    'Campaign Manager'
 ]
 
 
