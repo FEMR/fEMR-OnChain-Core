@@ -52,10 +52,10 @@ class Contact(models.Model):
         return "{0} {1}".format(self.first_name, self.last_name)
 
 
-class Instance(models.Model):
+class Organization(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
-    main_contact = models.ForeignKey(
+    organization_admin = models.ForeignKey(
         'fEMRUser', on_delete=models.CASCADE, null=True, blank=True)
 
     def __unicode__(self):
@@ -63,6 +63,22 @@ class Instance(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Instance(models.Model):
+    name = models.CharField(max_length=30, unique=True)
+    active = models.BooleanField(default=True)
+    main_contact = models.ForeignKey(
+        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, verbose_name="Operation Admin")
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Operation"
 
 
 class Campaign(models.Model):
