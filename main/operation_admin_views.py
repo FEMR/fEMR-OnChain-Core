@@ -1,5 +1,5 @@
 from django.db.models.query_utils import Q
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 
 from .models import Instance
 
@@ -11,7 +11,7 @@ def operation_admin_home_view(request):
                 active_instances = Instance.objects.filter(
                     active=True
                 ).filter(
-                    admins__in=request.user
+                    admins=request.user
                 )
             except Instance.DoesNotExist:
                 active_instances = list()

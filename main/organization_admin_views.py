@@ -9,12 +9,12 @@ def organization_admin_home_view(request):
                 instances = Instance.objects.filter(
                     active=True
                 ).filter(
-                    admins__in=request.user
+                    admins=request.user
                 )
                 campaigns = Campaign.objects.filter(
                     active=True
                 ).filter(
-                    admins__in=request.user
+                    admins=request.user
                 )
             except Instance.DoesNotExist:
                 instances = list()
