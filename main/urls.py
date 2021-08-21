@@ -1,3 +1,5 @@
+from main.operation_admin_views import operation_admin_home_view
+from main.organization_admin_views import organization_admin_home_view
 from main.delete_views import delete_chief_complaint, patient_delete_view
 from django.conf.urls import url, include
 from django.views.generic.base import RedirectView
@@ -163,6 +165,12 @@ urlpatterns = [
     path(r'view_contact/<int:id>', view_contact_view, name='view_contact'),
     url(r'^new_contact/$', new_contact_view, name='new_contact'),
     path(r'patient_export/<int:id>', patient_export_view, name='patient_export'),
+
+    # Operation Management
+    path(r'organization_admin_home_view/$', organization_admin_home_view, name='organization_admin_home_view'),
+
+    # Organization Management
+    path(r'operation_admin_home_view/$', operation_admin_home_view, name='operation_admin_home_view'),
 
     path(r'chief_complaint_form_view', chief_complaint_form_view,
          name='chief_complaint_form_view'),

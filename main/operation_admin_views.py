@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Instance
 
 
-def operation_admin_home(request):
+def operation_admin_home_view(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(Q(name='Operation Admin') | Q(name='Organization Admin')).exists():
             try:
@@ -15,7 +15,7 @@ def operation_admin_home(request):
                 )
             except Instance.DoesNotExist:
                 active_instances = list()
-            return render(request, 'admin/user_list.html',
+            return render(request, 'operation_admin/home.html',
                           {'user': request.user,
                            'active_instances': active_instances,
                            'page_name': 'Your Instances'})

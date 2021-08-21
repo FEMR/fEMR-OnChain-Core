@@ -82,11 +82,11 @@
                         <div class="dropdown-divider"></div>
                         {% endif %}
                         {% if request.user|has_group:"Organization Admin" %}
-                        <a class="dropdown-item" href="">Organization Admin</a>
+                        <a class="dropdown-item" href="{% url 'main:organization_admin_home_view' %}">Organization Admin</a>
                         <div class="dropdown-divider"></div>
                         {% endif %}
                         {% if request.user|has_group:"Operation Admin" %}
-                        <a class="dropdown-item" href="">Operation Admin</a>
+                        <a class="dropdown-item" href="{% url 'main:operation_admin_home_view' %}">Operation Admin</a>
                         <div class="dropdown-divider"></div>
                         {% endif %}
                         {% if request.user|has_group:"Campaign Manager" %}

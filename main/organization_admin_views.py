@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from main.models import Campaign, Instance
 
 
-def list_users_view(request):
+def organization_admin_home_view(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='Organization Admin').exists():
             try:
@@ -20,7 +20,7 @@ def list_users_view(request):
                 instances = list()
             except Campaign.DoesNotExist:
                 campaigns = list()
-            return render(request, 'admin/user_list.html',
+            return render(request, 'organization_admin/home.html',
                           {'user': request.user,
                            'instances': instances,
                            'campaigns': campaigns,
