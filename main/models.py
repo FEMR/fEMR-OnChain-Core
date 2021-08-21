@@ -56,8 +56,8 @@ class Organization(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
     main_contact = models.ForeignKey(
-        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True)
-    admins = models.ManyToManyField('fEMRUser')
+        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, related_name='organization_main_contact')
+    admins = models.ManyToManyField('fEMRUser', related_name='organization_admins')
 
     def __unicode__(self):
         return self.name
@@ -70,8 +70,8 @@ class Instance(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
     main_contact = models.ForeignKey(
-        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True)
-    admins = models.ManyToManyField('fEMRUser')
+        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, related_name='instance_main_contact')
+    admins = models.ManyToManyField('fEMRUser', related_name='instance_admins')
 
     def __unicode__(self):
         return self.name
@@ -96,8 +96,8 @@ class Campaign(models.Model):
     inventory = models.ForeignKey(
         "Inventory", on_delete=models.CASCADE, blank=True, null=True)
     main_contact = models.ForeignKey(
-        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True)
-    admins = models.ManyToManyField('fEMRUser')
+        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, related_name='campaign_main_contact')
+    admins = models.ManyToManyField('fEMRUser', related_name='campaign_admins')
 
     def __unicode__(self):
         return self.name
