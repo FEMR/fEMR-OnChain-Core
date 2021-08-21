@@ -10,7 +10,7 @@ def femr_admin_home(request):
         if request.method == 'POST':
             return redirect('main:index')
         else:
-            return render(request, 'femr_admin/home.html')
+            return render(request, 'femr_admin/home.html', {'page_name': 'fEMR Admin'})
     else:
         return redirect('main:not_logged_in')
 
@@ -84,7 +84,7 @@ def new_instance_view(request):
             else:
                 form = InstanceForm()
                 contact_form = fEMRAdminUserForm()
-            return render(request, 'femr_admin/instance/new_instance.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Instance', 'show': False})
+            return render(request, 'femr_admin/instance/new_instance.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Operation', 'show': False})
         else:
             return redirect('main:permission_denied')
     else:
@@ -105,7 +105,7 @@ def new_contact_view(request):
                     DatabaseChangeLog.objects.create(action="Create", model="Contact", instance=str(t),
                                                      ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                     contact_form = fEMRAdminUserForm()
-            return render(request, 'femr_admin/instance/new_instance.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Instance', 'show': True})
+            return render(request, 'femr_admin/instance/new_instance.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Operation', 'show': True})
         else:
             return redirect('main:permission_denied')
     else:
@@ -220,7 +220,7 @@ def list_instance_view(request):
                 active=False).order_by('name')
             return render(request, 'femr_admin/instance/list_instance.html', {'active_instances': active_instances,
                                                                               'inactive_instances': inactive_instances,
-                                                                              'page_name': 'Instances'})
+                                                                              'page_name': 'Operations'})
         else:
             return redirect('main:permission_denied')
     else:

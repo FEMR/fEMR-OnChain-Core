@@ -2,6 +2,8 @@
 View functions for administrative actions.
 """
 import os
+
+from django.db.models.query_utils import Q
 from clinic_messages.models import Message
 from datetime import datetime, timedelta
 import itertools
@@ -24,7 +26,7 @@ def admin_home(request):
     :return: An HttpResponse, rendering the home page.
     """
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             return render(request, 'admin/home.html', {'user': request.user, 'page_name': 'Admin'})
         else:
             return redirect('main:permission_denied')
@@ -37,7 +39,7 @@ def admin_home(request):
 # -------------------------------------------------------------------------------------------------------
 def list_users_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             try:
                 active_users = Campaign.objects.get(
                     name=request.session['campaign']).femruser_set.filter(is_active=True)
@@ -59,7 +61,7 @@ def list_users_view(request):
 
 def filter_users_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             try:
                 data = Campaign.objects.get(
                     name=request.session['campaign']).femruser_set.filter(is_active=True)
@@ -76,7 +78,7 @@ def filter_users_view(request):
 
 def search_users_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             try:
                 data = Campaign.objects.get(
                     name=request.session['campaign']).femruser_set.filter(is_active=True)
@@ -93,7 +95,7 @@ def search_users_view(request):
 
 def create_user_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             error = ""
             if request.method == "GET":
                 form = fEMRAdminUserForm() if request.user.groups.filter(
@@ -184,7 +186,7 @@ def update_user_password_view(request, id=None):
 
 def lock_user_view(request, id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             m = get_object_or_404(fEMRUser, pk=id)
             m.is_active = False
             m.save()
@@ -197,7 +199,7 @@ def lock_user_view(request, id=None):
 
 def unlock_user_view(request, id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             m = get_object_or_404(fEMRUser, pk=id)
             m.is_active = True
             m.save()
@@ -213,7 +215,7 @@ def unlock_user_view(request, id=None):
 # -------------------------------------------------------------------------------------------------------
 def get_audit_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             try:
                 data = AuditEntry.objects.filter(campaign=Campaign.objects.get(
                     name=request.session['campaign'])).order_by('-timestamp')
@@ -230,7 +232,7 @@ def get_audit_logs_view(request):
 
 def filter_audit_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             selected = 1
             try:
                 if request.GET["filter_list"] == "1":
@@ -311,7 +313,7 @@ def filter_audit_logs_view(request):
 
 def search_audit_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             try:
                 data = AuditEntry.objects.filter(
                     campaign=Campaign.objects.get(name=request.session['campaign']))
@@ -328,7 +330,7 @@ def search_audit_logs_view(request):
 
 def export_audit_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             return render(request, 'export/audit_logfile.html', {'log': AuditEntry.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign']))})
         else:
             return redirect('main:permission_denied')
@@ -341,7 +343,7 @@ def export_audit_logs_view(request):
 # -------------------------------------------------------------------------------------------------------
 def get_database_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             try:
                 excludemodels = ['Campaign', 'Instance']
                 data = DatabaseChangeLog.objects.exclude(model__in=excludemodels).filter(
@@ -359,7 +361,7 @@ def get_database_logs_view(request):
 
 def filter_database_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             selected = 1
             excludemodels = ['Campaign', 'Instance']
             try:
@@ -441,7 +443,7 @@ def filter_database_logs_view(request):
 
 def search_database_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             try:
                 excludemodels = ['Campaign', 'Instance']
                 data = DatabaseChangeLog.objects.exclude(model__in=excludemodels).filter(
@@ -459,7 +461,7 @@ def search_database_logs_view(request):
 
 def export_database_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             excludemodels = ['Campaign', 'Instance']
             return render(request, 'export/data_logfile.html', {'log': DatabaseChangeLog.objects.exclude(model__in=excludemodels).filter(campaign=Campaign.objects.get(name=request.session['campaign']))})
         else:
@@ -470,7 +472,7 @@ def export_database_logs_view(request):
 
 def add_users_to_campaign(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             return render(request, 'admin/add_users_to_campaign.html', {'users': __retrieve_needed_users(request)})
         else:
             return redirect('main:permission_denied')
@@ -480,7 +482,7 @@ def add_users_to_campaign(request):
 
 def add_user_to_campaign(request, user_id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             user = fEMRUser.objects.get(pk=user_id)
             user.campaigns.add(Campaign.objects.get(
                 name=request.session['campaign']))
@@ -494,7 +496,7 @@ def add_user_to_campaign(request, user_id=None):
 
 def cut_user_from_campaign(request, user_id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             user = fEMRUser.objects.get(pk=user_id)
             user.campaigns.remove(Campaign.objects.get(
                 name=request.session['campaign']))
@@ -517,7 +519,7 @@ def __retrieve_needed_users(request):
 
 def message_of_the_day_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
             print("Loading form.")
             m = MessageOfTheDay.load()
             if request.method == "GET":

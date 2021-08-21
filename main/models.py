@@ -55,8 +55,9 @@ class Contact(models.Model):
 class Organization(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
-    organization_admin = models.ForeignKey(
+    main_contact = models.ForeignKey(
         'fEMRUser', on_delete=models.CASCADE, null=True, blank=True)
+    admins = models.ManyToManyField('fEMRUser')
 
     def __unicode__(self):
         return self.name
@@ -69,7 +70,8 @@ class Instance(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
     main_contact = models.ForeignKey(
-        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, verbose_name="Operation Admin")
+        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True)
+    admins = models.ManyToManyField('fEMRUser')
 
     def __unicode__(self):
         return self.name
@@ -93,6 +95,9 @@ class Campaign(models.Model):
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
     inventory = models.ForeignKey(
         "Inventory", on_delete=models.CASCADE, blank=True, null=True)
+    main_contact = models.ForeignKey(
+        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True)
+    admins = models.ManyToManyField('fEMRUser')
 
     def __unicode__(self):
         return self.name

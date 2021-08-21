@@ -11,6 +11,12 @@
                     class="fa fa-question-circle"></i></a>
         </div>
         <div>
+            <a href="">Formulary Management</a>
+            <a href="#" data-toggle="popover" data-trigger="hover"
+                data-content="Click here to manage your campaign's pharmacy and inventory."><i
+                    class="fa fa-question-circle"></i></a>
+        </div>
+        <div>
             <a href="{% url 'main:get_audit_logs_view' %}">Access Audit Log Management</a>
             <a href="#" data-toggle="popover" data-trigger="hover"
                 data-content="Cick here to see who has logged in and out of fEMR On-Chain."><i
@@ -27,22 +33,6 @@
             <a href="#" data-toggle="popover" data-trigger="hover"
                 data-content="Click here to export all patient encounter data in a CSV file format"><i
                     class="fa fa-question-circle"></i></a>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <h3>Patient Encounter Database</h3>
-        <div>
-            <a href="{% url 'main:chief_complaint_form_view' %}">Create New Chief Complaint Option</a>
-        </div>
-        <div>
-            <a href="{% url 'main:diagnosis_form_view' %}">Create New Diagnosis Option</a>
-        </div>
-        <div>
-            <a href="{% url 'main:medication_form_view' %}">Create New Medication Option</a>
-        </div>
-        <div>
-            <a href="{% url 'main:treatment_form_view' %}">Create New Treatment Option</a>
         </div>
     </div>
 </div>
