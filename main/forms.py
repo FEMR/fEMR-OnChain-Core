@@ -622,6 +622,7 @@ class CampaignForm(ModelForm):
         exclude = ('inventory',)
         labels = {
             'encounter_close': 'Encounter close (Days)',
+            'instance': 'Operation',
         }
 
 
