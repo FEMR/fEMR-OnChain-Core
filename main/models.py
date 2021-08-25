@@ -469,8 +469,8 @@ class InventoryForm(models.Model):
 class InventoryEntry(models.Model):
     medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
     form = models.ForeignKey(InventoryForm, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
-    bottle = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(default=0)
+    bottles = models.PositiveIntegerField(default=0)
 
 
 class Inventory(models.Model):
