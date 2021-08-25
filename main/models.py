@@ -462,9 +462,15 @@ class Treatment(models.Model):
         return str(self.medication)
 
 
+class InventoryForm(models.Model):
+    name = models.CharField(max_length=100)
+
+
 class InventoryEntry(models.Model):
     medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
-    volume = models.IntegerField()
+    form = models.models.ForeignKey(InventoryForm)
+    quantity = models.PositiveIntegerField()
+    bottle = models.PositiveIntegerField()
 
 
 class Inventory(models.Model):

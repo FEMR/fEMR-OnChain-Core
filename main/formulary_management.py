@@ -1,5 +1,20 @@
+from main.models import Campaign
 from django.shortcuts import redirect, render
 from django.db.models.query_utils import Q
+
+
+def formulary_home_view(request):
+    if request.user.is_authenticated:
+        if request.user.groups.filter(Q(name='Campaign Manager') |
+                                      Q(name='Organization Admin') |
+                                      Q(name='Operation Admin')).exists():
+            campaign = Campaign.objects.get(name=request.session['campaign'])
+            formulary = campaign.inventory.entries.all()
+            return render(request, 'formulary/home.html', {'formulary': formulary})
+        else:
+            return redirect('main:permission_denied')
+    else:
+        return redirect('main:not_logged_in')
 
 
 def add_supply_view(request):

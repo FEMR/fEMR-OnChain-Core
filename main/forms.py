@@ -16,7 +16,7 @@ from dal import autocomplete
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, ButtonHolder, Submit
 
-from .models import HistoryOfPresentIllness, MessageOfTheDay, Patient, PatientDiagnosis, PatientEncounter, Photo, fEMRUser, Campaign, Instance, Contact, Vitals,\
+from .models import HistoryOfPresentIllness, InventoryEntry, InventoryForm, MessageOfTheDay, Patient, PatientDiagnosis, PatientEncounter, Photo, fEMRUser, Campaign, Instance, Contact, Vitals,\
     ChiefComplaint, Treatment, Diagnosis, Medication
 
 
@@ -716,3 +716,15 @@ class MOTDForm(ModelForm):
                 'placeholder': "dd/mm/yyyy"
             })
         }
+
+
+class InventoryEntryForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Save', css_class='btn btn-primary'))
+
+    class Meta:
+        model = InventoryEntry
+        fields = '__all__'
