@@ -466,11 +466,27 @@ class InventoryForm(models.Model):
     name = models.CharField(max_length=100)
 
 
+class InventoryCategory(models.Model):
+    name = models.CharField(max_length=100)
+
+
+class Manufacturer(models.Model):
+    name = models.CharField(max_length=100)
+
+
 class InventoryEntry(models.Model):
+    category = models.ForeignKey(InventoryCategory, on_delete=models.CASCADE, null=True, blank=True)
     medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
     form = models.ForeignKey(InventoryForm, on_delete=models.CASCADE)
+    strength = models.CharField(max_length=25, null=True, blank=True)
+    count = models.PositiveIntegerField(default=0)
     quantity = models.PositiveIntegerField(default=0)
-    bottles = models.PositiveIntegerField(default=0)
+    initial_quantity = models.PositiveIntegerField(default=0)
+    item_number = models.CharField(max_length=25, null=True, blank=True)
+    box_number = models.CharField(max_length=25, null=True, blank=True)
+    expiration_date = models.DateField(blank=True, null=True)
+    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now=True)
 
 
 class Inventory(models.Model):

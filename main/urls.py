@@ -1,3 +1,4 @@
+from main.formulary_management import add_supply_view, csv_export_view, csv_handler_view, csv_import_view, edit_add_supply_view, edit_sub_supply_view, formulary_home_view
 from main.operation_admin_views import operation_admin_home_view
 from main.organization_admin_views import organization_admin_home_view
 from main.delete_views import delete_chief_complaint, patient_delete_view
@@ -52,7 +53,7 @@ urlpatterns = [
          patient_edit_form_view, name='patient_edit_form_view'),
     path(r'patient_delete_view/<int:id>',
          patient_delete_view, name='patient_delete_view'),
-                  
+
     path(r'delete_chief_complaint/<int:id>/<int:patient_id>',
          delete_chief_complaint, name='delete_chief_complaint'),
     path(r'delete_chief_complaint/<int:id>/<int:patient_id>/<int:encounter_id>',
@@ -81,10 +82,10 @@ urlpatterns = [
          hpi_view, name='hpi_view'),
     path(r'submit_hpi_view/<int:patient_id>/<int:encounter_id>/<int:hpi_id>',
          submit_hpi_view, name='submit_hpi_view'),
-         
+
     path(r'edit_photo_view/<int:patient_id>/<int:encounter_id>/<int:photo_id>',
          edit_photo_view, name='edit_photo_view'),
-         
+
     path(r'delete_photo_view/<int:patient_id>/<int:encounter_id>/<int:photo_id>',
          delete_photo_view, name='delete_photo_view'),
 
@@ -108,7 +109,8 @@ urlpatterns = [
 
     url(r'^superuser_home/$', admin_home, name="superuser_home"),
     url(r'^set_timezone/$', set_timezone, name="set_timezone"),
-    url(r'^message_of_the_day_view/$', message_of_the_day_view, name="message_of_the_day_view"),
+    url(r'^message_of_the_day_view/$', message_of_the_day_view,
+        name="message_of_the_day_view"),
 
     # User Management
     url(r'^list_users_view/$', list_users_view, name='list_users_view'),
@@ -152,6 +154,17 @@ urlpatterns = [
     url(r'^filter_database_logs_view/$', filter_database_logs_view,
         name='filter_database_logs_view'),
 
+    # Formulary Management
+    url(r'^formulary_home_view/$', formulary_home_view, name='formulary_home_view'),
+    url(r'^add_supply_view/$', add_supply_view, name='add_supply_view'),
+    path(r'^edit_add_supply_view/<int:id>', edit_add_supply_view,
+        name='edit_add_supply_view'),
+    path(r'^edit_sub_supply_view/<int:id>', edit_sub_supply_view,
+        name='edit_sub_supply_view'),
+    url(r'^csv_handler_view/$', csv_handler_view, name='csv_handler_view'),
+    url(r'^csv_import_view/$', csv_import_view, name='csv_import_view'),
+    url(r'^csv_export_view/$', csv_export_view, name='csv_export_view'),
+
     # fEMR Environment Management
     url(r'^femr_admin_home/$', femr_admin_home, name='femr_admin_home'),
     url(r'^change_campaign/$', change_campaign, name='change_campaign'),
@@ -167,10 +180,12 @@ urlpatterns = [
     path(r'patient_export/<int:id>', patient_export_view, name='patient_export'),
 
     # Operation Management
-    path(r'organization_admin_home_view/$', organization_admin_home_view, name='organization_admin_home_view'),
+    path(r'organization_admin_home_view/$', organization_admin_home_view,
+         name='organization_admin_home_view'),
 
     # Organization Management
-    path(r'operation_admin_home_view/$', operation_admin_home_view, name='operation_admin_home_view'),
+    path(r'operation_admin_home_view/$', operation_admin_home_view,
+         name='operation_admin_home_view'),
 
     path(r'chief_complaint_form_view', chief_complaint_form_view,
          name='chief_complaint_form_view'),

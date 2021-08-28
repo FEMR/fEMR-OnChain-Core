@@ -3,12 +3,16 @@ Classes defining characteristics for data entry forms.
 Forms are generated as HTML from the structure of each Form's superclass.
 """
 import math
+from django.contrib.auth import models
 
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import Group
+from django.db.models import query
+from django.db.models.fields.files import FileField
 from django.forms import ModelForm, Form, CharField, PasswordInput, DateInput, ValidationError, BooleanField
-from django.forms.models import ModelMultipleChoiceField
-from django.forms.widgets import Textarea
+from django.forms.fields import IntegerField
+from django.forms.models import ModelChoiceField, ModelMultipleChoiceField
+from django.forms.widgets import Select, Textarea
 from django.utils import timezone
 
 from dal import autocomplete
@@ -728,3 +732,38 @@ class InventoryEntryForm(ModelForm):
     class Meta:
         model = InventoryEntry
         fields = '__all__'
+
+
+class AddSupplyForm(Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Save', css_class='btn btn-primary'))
+    
+    inventory_entry = ModelChoiceField(queryset=InventoryEntry.objects.all())
+    quantity = IntegerField()
+
+
+class RemoveSupplyForm(Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Save', css_class='btn btn-primary'))
+    
+    quantity = IntegerField()
+
+
+class CSVUploadForm(Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Save', css_class='btn btn-primary'))
+
+    upload = FileField()
+    mode_option = CharField(widget=Select(choices=(
+        ('1', 'New'),
+        ('2', 'Update'),
+    )))

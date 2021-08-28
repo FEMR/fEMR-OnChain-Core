@@ -1,4 +1,8 @@
-from main.models import Campaign
+import csv
+
+from django.http.response import HttpResponse
+from main.forms import AddSupplyForm, InventoryEntryForm, RemoveSupplyForm
+from main.models import Campaign, InventoryCategory, InventoryEntry, InventoryForm, Manufacturer, Medication
 from django.shortcuts import redirect, render
 from django.db.models.query_utils import Q
 
@@ -9,8 +13,9 @@ def formulary_home_view(request):
                                       Q(name='Organization Admin') |
                                       Q(name='Operation Admin')).exists():
             campaign = Campaign.objects.get(name=request.session['campaign'])
-            formulary = campaign.inventory.entries.all()
-            return render(request, 'formulary/home.html', {'formulary': formulary})
+            formulary = campaign.inventory.entries.all().order('medication')
+            return render(request, 'formulary/home.html', {'page_name': 'Inventory',
+                                                           'list_view': formulary})
         else:
             return redirect('main:permission_denied')
     else:
@@ -22,31 +27,65 @@ def add_supply_view(request):
         if request.user.groups.filter(Q(name='Campaign Manager') |
                                       Q(name='Organization Admin') |
                                       Q(name='Operation Admin')).exists():
-            return render(request, 'formulary/add_supply.html')
+            if request.method == "GET":
+                form = InventoryEntryForm()
+            else:
+                form = InventoryEntryForm(request.POST)
+                t = form.save()
+                t.save()
+            return render(request, 'formulary/add_supply.html', {'form': form})
         else:
             return redirect('main:permission_denied')
     else:
         return redirect('main:not_logged_in')
 
 
-def edit_supply_view(request):
+def edit_add_supply_view(request, id=None):
     if request.user.is_authenticated:
         if request.user.groups.filter(Q(name='Campaign Manager') |
                                       Q(name='Organization Admin') |
                                       Q(name='Operation Admin')).exists():
-            return render(request, 'formulary/edit_supply.html')
+            inventory_entry = InventoryEntry.objects.get(pk=id)
+            if request.method == "GET":
+                form = AddSupplyForm()
+                return render(request, 'formulary/edit_add_supply.html', {'page_name': inventory_entry, 'form': form, 'item_id': inventory_entry.id})
+            elif request.method == "POST":
+                form = AddSupplyForm(request.POST)
+                if form.is_valid():
+                    inventory_entry.initial_quantity = inventory_entry.initial_quantity + \
+                        request.POST['quantity']
+                    inventory_entry.quantity = inventory_entry.quantity + \
+                        request.POST['quantity']
+                    inventory_entry.save()
+                    return redirect('main:formulary_home_view')
+                else:
+                    return render(request, 'formulary/edit_add_supply.html', {'page_name': inventory_entry, 'form': form, 'item_id': inventory_entry.id})
         else:
             return redirect('main:permission_denied')
     else:
         return redirect('main:not_logged_in')
 
 
-def remove_supply_view(request):
+def edit_sub_supply_view(request, id=None):
     if request.user.is_authenticated:
         if request.user.groups.filter(Q(name='Campaign Manager') |
                                       Q(name='Organization Admin') |
                                       Q(name='Operation Admin')).exists():
-            return render(request, 'formulary/edit_supply.html')
+            inventory_entry = InventoryEntry.objects.get(pk=id)
+            if request.method == "GET":
+                form = RemoveSupplyForm()
+                return render(request, 'formulary/edit_sub_supply.html', {'page_name': inventory_entry, 'form': form, 'item_id': inventory_entry.id})
+            elif request.method == "POST":
+                form = AddSupplyForm(request.POST)
+                if form.is_valid():
+                    inventory_entry.initial_quantity = inventory_entry.initial_quantity - \
+                        request.POST['quantity']
+                    inventory_entry.quantity = inventory_entry.quantity - \
+                        request.POST['quantity']
+                    inventory_entry.save()
+                    return redirect('main:formulary_home_view')
+                else:
+                    return render(request, 'formulary/edit_add_supply.html', {'page_name': inventory_entry, 'form': form, 'item_id': inventory_entry.id})
         else:
             return redirect('main:permission_denied')
     else:
@@ -70,6 +109,53 @@ def csv_import_view(request):
         if request.user.groups.filter(Q(name='Campaign Manager') |
                                       Q(name='Organization Admin') |
                                       Q(name='Operation Admin')).exists():
+            campaign = Campaign.objects.get(name=request.session['campaign'])
+            if request.POST['mode_option'] == 1:
+                with open(request.FILES['upload']) as csvfile:
+                    reader = csv.reader(csvfile, delimiter=",")
+                    for row in reader:
+                        campaign.inventory.entries.add(
+                            InventoryEntry.objects.create(
+                                category=InventoryCategory.objects.get_or_create(
+                                    name=row[0]),
+                                medication=Medication.objects.get_or_create(
+                                    text=row[1]),
+                                form=InventoryForm.objects.get_or_create(
+                                    name=row[2]),
+                                strength=row[3],
+                                count=row[4],
+                                quantity=row[5],
+                                initial_quantity=row[6],
+                                item_number=row[7],
+                                box_number=row[8],
+                                expiration_date=row[9],
+                                manufacturer=Manufacturer.objects.get_or_create(
+                                    name=row[10])
+                            )
+                        )
+            elif request.POST['mode_option'] == 2:
+                with open(request.FILES['upload']) as csvfile:
+                    reader = csv.reader(csvfile, delimiter=",")
+                    for row in reader:
+                        campaign.inventory.entries.add(
+                            InventoryEntry.objects.update_or_create(
+                                category=InventoryCategory.objects.get_or_create(
+                                    name=row[0]),
+                                medication=Medication.objects.get_or_create(
+                                    text=row[1]),
+                                form=InventoryForm.objects.get_or_create(
+                                    name=row[2]),
+                                strength=row[3],
+                                count=row[4],
+                                quantity=row[5],
+                                initial_quantity=row[6],
+                                item_number=row[7],
+                                box_number=row[8],
+                                expiration_date=row[9],
+                                manufacturer=Manufacturer.objects.get_or_create(
+                                    name=row[10])
+                            )
+                        )
             return render(request, 'formulary/csv_import.html')
         else:
             return redirect('main:permission_denied')
@@ -82,7 +168,29 @@ def csv_export_view(request):
         if request.user.groups.filter(Q(name='Campaign Manager') |
                                       Q(name='Organization Admin') |
                                       Q(name='Operation Admin')).exists():
-            return render(request, 'formulary/csv_export.html')
+            campaign = Campaign.objects.get(name=request.session['campaign'])
+            formulary = campaign.inventory.entries.all().order('medication')
+            response = HttpResponse(
+                content_type='text/csv',
+                headers={
+                    'Content-Disposition': 'attachment; filename="formulary.csv"'},
+            )
+            writer = csv.writer(response)
+            for x in formulary:
+                writer.write([
+                    x.category,
+                    x.medication,
+                    x.form,
+                    x.strength,
+                    x.count,
+                    x.quantity,
+                    x.initial_quantity,
+                    x.item_number,
+                    x.box_number,
+                    x.expiration_date,
+                    x.manufacturer,
+                ])
+            return response
         else:
             return redirect('main:permission_denied')
     else:

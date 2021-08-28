@@ -1,6 +1,6 @@
 {% extends "data/base.html" %}
 {% block content %}
-<form method="POST" action="{% url 'main:csv_handler_view' %}">
+<form method="POST" action="{% url 'main:edit_sub_supply_view' item_id %}">
 {% crispy form %}
 </form>
 {% endblock %}
