@@ -1,9 +1,10 @@
 {% extends "data/base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
 {% load static %}
 {% load patient_tags %}
 <a class="btn btn-primary" href="{% url 'main:add_supply_view' %}">Add New</a>
-<a class="btn btn-primary" href="{% url 'main:csv_handler_view' %}" target="_blank">Import CSV</a>
+<a class="btn btn-primary" href="{% url 'main:csv_handler_view' %}">Import CSV</a>
 <a class="btn btn-primary" href="{% url 'main:csv_export_view' %}" target="_blank">Export CSV</a>
 <table class="table">
        <thead>

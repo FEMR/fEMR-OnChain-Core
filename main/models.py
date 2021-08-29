@@ -83,6 +83,10 @@ class Instance(models.Model):
         verbose_name = "Operation"
 
 
+def get_new_inventory():
+    return Inventory.objects.create().id
+
+
 class Campaign(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
@@ -94,7 +98,7 @@ class Campaign(models.Model):
         max_length=100, choices=COMMON_TIMEZONES_CHOICES)
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
     inventory = models.ForeignKey(
-        "Inventory", on_delete=models.CASCADE, blank=True, null=True)
+        "Inventory", default=get_new_inventory, on_delete=models.CASCADE)
     main_contact = models.ForeignKey(
         'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, related_name='campaign_main_contact')
     admins = models.ManyToManyField('fEMRUser', related_name='campaign_admins')

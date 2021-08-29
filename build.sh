@@ -54,7 +54,7 @@ function makemigrations() {
 }
 
 function static() {
-  python3 manage.py collectstatic
+  python3 manage.py collectstatic --no-input
 }
 
 function run() {

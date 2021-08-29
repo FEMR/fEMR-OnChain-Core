@@ -1,7 +1,7 @@
 from django.http.response import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from main.forms import CampaignForm, ContactForm, InstanceForm, fEMRAdminUserForm, fEMRAdminUserUpdateForm
-from main.models import AuditEntry, Campaign, Contact, DatabaseChangeLog, Instance, fEMRUser
+from main.models import AuditEntry, Campaign, Contact, DatabaseChangeLog, Instance, Inventory, fEMRUser
 from django.db.models import ObjectDoesNotExist
 
 

@@ -3,14 +3,11 @@ Classes defining characteristics for data entry forms.
 Forms are generated as HTML from the structure of each Form's superclass.
 """
 import math
-from django.contrib.auth import models
 
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import Group
-from django.db.models import query
-from django.db.models.fields.files import FileField
 from django.forms import ModelForm, Form, CharField, PasswordInput, DateInput, ValidationError, BooleanField
-from django.forms.fields import IntegerField
+from django.forms.fields import FileField, IntegerField
 from django.forms.models import ModelChoiceField, ModelMultipleChoiceField
 from django.forms.widgets import Select, Textarea
 from django.utils import timezone
@@ -287,7 +284,7 @@ class PatientEncounterForm(ModelForm):
         if self.cleaned_data['body_mass_index'] is not None:
             if self.cleaned_data['body_mass_index'] < 5:
                 self.add_error('body_height_primary',
-                            "BMI shouldn't be less than 5%. Check these numbers.")
+                               "BMI shouldn't be less than 5%. Check these numbers.")
                 self.add_error(
                     'body_weight', "BMI shouldn't be less than 5%. Check these numbers.")
         return self.cleaned_data['body_mass_index']
@@ -701,8 +698,8 @@ class MOTDForm(ModelForm):
                 css_class="row",
             ))
         self.helper.add_input(
-                Submit('submit', 'Save', css_class='btn btn-primary ml-auto'))
-    
+            Submit('submit', 'Save', css_class='btn btn-primary ml-auto'))
+
     class Meta:
         model = MessageOfTheDay
         fields = '__all__'
@@ -740,7 +737,7 @@ class AddSupplyForm(Form):
         self.helper = FormHelper()
         self.helper.add_input(
             Submit('submit', 'Save', css_class='btn btn-primary'))
-    
+
     inventory_entry = ModelChoiceField(queryset=InventoryEntry.objects.all())
     quantity = IntegerField()
 
@@ -751,7 +748,7 @@ class RemoveSupplyForm(Form):
         self.helper = FormHelper()
         self.helper.add_input(
             Submit('submit', 'Save', css_class='btn btn-primary'))
-    
+
     quantity = IntegerField()
 
 
