@@ -738,7 +738,6 @@ class AddSupplyForm(Form):
         self.helper.add_input(
             Submit('submit', 'Save', css_class='btn btn-primary'))
 
-    inventory_entry = ModelChoiceField(queryset=InventoryEntry.objects.all())
     quantity = IntegerField()
 
 

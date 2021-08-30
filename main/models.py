@@ -66,12 +66,17 @@ class Organization(models.Model):
         return self.name
 
 
+def get_test_org():
+    return Organization.objects.get_or_create(name="Test")[0].id
+
+
 class Instance(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
     main_contact = models.ForeignKey(
         'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, related_name='instance_main_contact')
     admins = models.ManyToManyField('fEMRUser', related_name='instance_admins')
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=get_test_org)
 
     def __unicode__(self):
         return self.name
@@ -469,13 +474,22 @@ class Treatment(models.Model):
 class InventoryForm(models.Model):
     name = models.CharField(max_length=100)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class InventoryCategory(models.Model):
     name = models.CharField(max_length=100)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Manufacturer(models.Model):
     name = models.CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class InventoryEntry(models.Model):
@@ -491,6 +505,9 @@ class InventoryEntry(models.Model):
     expiration_date = models.DateField(blank=True, null=True)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return "{0} {1}".format(self.medication, self.strength)
 
 
 class Inventory(models.Model):
@@ -539,6 +556,10 @@ class DatabaseChangeLog(models.Model):
     def __str__(self):
         return '{0} {1} {2} - by {3} at {4}, {5}'.format(self.action, self.model, self.instance, self.ip, self.username,
                                                          self.timestamp)
+
+
+class CSVUploadDocument(models.Model):
+    document = models.FileField(upload_to="csv")
 
 
 @receiver(user_logged_in)

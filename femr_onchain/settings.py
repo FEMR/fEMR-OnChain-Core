@@ -253,3 +253,5 @@ except requests.exceptions.RequestException:
 
 if EC2_PRIVATE_IP:
     ALLOWED_HOSTS.append(EC2_PRIVATE_IP)
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

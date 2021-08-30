@@ -5,6 +5,7 @@ from main.models import Campaign, Instance
 def organization_admin_home_view(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='Organization Admin').exists():
+            org = Campaign.objects.get(name=request.session['campaign']).instance.organization
             try:
                 instances = Instance.objects.filter(
                     active=True
@@ -24,7 +25,7 @@ def organization_admin_home_view(request):
                           {'user': request.user,
                            'instances': instances,
                            'campaigns': campaigns,
-                           'page_name': 'Clinic Users'})
+                           'page_name': 'Organization: {0}'.format(org.name)})
         else:
             return redirect('main:permission_denied')
     else:

@@ -40,8 +40,8 @@
                      <td>{{ o.expiration_date }}</td>
                      <td>{{ o.manufacturer }}</td>
                      <td>{{ o.timestamp }}</td>
-                     <td>{% url 'main:edit_add_supply_view' o.id %}</td>
-                     <td>{% url 'main:edit_sub_supply_view' o.id %}</td>
+                     <td><a href="{% url 'main:edit_add_supply_view' o.id %}">Add</a></td>
+                     <td><a href="{% url 'main:edit_sub_supply_view' o.id %}">Remove</a></td>
               </tr>
               {% endfor %}
        </tbody>

@@ -1,7 +1,10 @@
 {% extends "data/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<form method="POST" action="{% url 'main:csv_handler_view' %}" enctype="multipart/form-data">
+<div>
+    {{result}}
+</div>
+<form method="POST" action="{% url 'main:csv_import_view' %}" enctype="multipart/form-data">
     {% csrf_token %}
     {% crispy form %}
 </form>

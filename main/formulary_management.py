@@ -1,8 +1,9 @@
 import csv
+import chardet
 
 from django.http.response import HttpResponse
 from main.forms import AddSupplyForm, CSVUploadForm, InventoryEntryForm, RemoveSupplyForm
-from main.models import Campaign, InventoryCategory, InventoryEntry, InventoryForm, Manufacturer, Medication
+from main.models import CSVUploadDocument, Campaign, InventoryCategory, InventoryEntry, InventoryForm, Manufacturer, Medication
 from django.shortcuts import redirect, render
 from django.db.models.query_utils import Q
 
@@ -53,9 +54,9 @@ def edit_add_supply_view(request, id=None):
                 form = AddSupplyForm(request.POST)
                 if form.is_valid():
                     inventory_entry.initial_quantity = inventory_entry.initial_quantity + \
-                        request.POST['quantity']
+                        int(request.POST['quantity'])
                     inventory_entry.quantity = inventory_entry.quantity + \
-                        request.POST['quantity']
+                        int(request.POST['quantity'])
                     inventory_entry.save()
                     return redirect('main:formulary_home_view')
                 else:
@@ -78,10 +79,14 @@ def edit_sub_supply_view(request, id=None):
             elif request.method == "POST":
                 form = AddSupplyForm(request.POST)
                 if form.is_valid():
-                    inventory_entry.initial_quantity = inventory_entry.initial_quantity - \
-                        request.POST['quantity']
-                    inventory_entry.quantity = inventory_entry.quantity - \
-                        request.POST['quantity']
+                    if inventory_entry.initial_quantity > int(request.POST['quantity']) and inventory_entry.quantity > int(request.POST['quantity']):
+                        inventory_entry.initial_quantity = inventory_entry.initial_quantity - \
+                            int(request.POST['quantity'])
+                        inventory_entry.quantity = inventory_entry.quantity - \
+                            int(request.POST['quantity'])
+                    else:
+                        inventory_entry.initial_quantity = 0
+                        inventory_entry.quantity = 0
                     inventory_entry.save()
                     return redirect('main:formulary_home_view')
                 else:
@@ -110,20 +115,27 @@ def csv_import_view(request):
                                       Q(name='Organization Admin') |
                                       Q(name='Operation Admin')).exists():
             campaign = Campaign.objects.get(name=request.session['campaign'])
-            form = CSVUploadForm(request.POST)
+            form = CSVUploadForm(request.POST, request.FILES)
+            result = ""
             if form.is_valid():
-                if request.POST['mode_option'] == 1:
-                    with open(request.FILES['upload']) as csvfile:
+                print("Form is valid.")
+
+                upload = CSVUploadDocument.objects.create(document=request.FILES['upload'])
+
+                if request.POST['mode_option'] == "1":
+                    print("Mode 1 selected.")
+                    with open(upload.document.name) as csvfile:
                         reader = csv.reader(csvfile, delimiter=",")
+                        next(reader)
                         for row in reader:
                             campaign.inventory.entries.add(
                                 InventoryEntry.objects.create(
                                     category=InventoryCategory.objects.get_or_create(
-                                        name=row[0]),
+                                        name=row[0])[0],
                                     medication=Medication.objects.get_or_create(
-                                        text=row[1]),
+                                        text=row[1])[0],
                                     form=InventoryForm.objects.get_or_create(
-                                        name=row[2]),
+                                        name=row[2])[0],
                                     strength=row[3],
                                     count=row[4],
                                     quantity=row[5],
@@ -132,19 +144,21 @@ def csv_import_view(request):
                                     box_number=row[8],
                                     expiration_date=row[9],
                                     manufacturer=Manufacturer.objects.get_or_create(
-                                        name=row[10])
+                                        name=row[10])[0]
                                 )
                             )
-                elif request.POST['mode_option'] == 2:
-                    with open(request.FILES['upload']) as csvfile:
+                elif request.POST['mode_option'] == "2":
+                    print("Mode 2 selected.")
+                    with open(upload.document.name) as csvfile:
                         reader = csv.reader(csvfile, delimiter=",")
+                        next(reader)
                         for row in reader:
                             campaign.inventory.entries.add(
                                 InventoryEntry.objects.update_or_create(
                                     category=InventoryCategory.objects.get_or_create(
-                                        name=row[0]),
+                                        name=row[0])[0],
                                     medication=Medication.objects.get_or_create(
-                                        text=row[1]),
+                                        text=row[1])[0],
                                     form=InventoryForm.objects.get_or_create(
                                         name=row[2]),
                                     strength=row[3],
@@ -155,12 +169,15 @@ def csv_import_view(request):
                                     box_number=row[8],
                                     expiration_date=row[9],
                                     manufacturer=Manufacturer.objects.get_or_create(
-                                        name=row[10])
+                                        name=row[10])[0]
                                 )
                             )
-                return render(request, 'formulary/csv_import.html')
+                upload.document.delete()
+                upload.delete()
+                return render(request, 'formulary/csv_import.html', {'result': 'Formulary uploaded successfully.'})
             else:
-                return render(request, 'formulary/csv_handler.html', {'form': CSVUploadForm()})
+                print("Form not valid.")
+                return render(request, 'formulary/csv_handler.html', {'form': form, 'result': result})
         else:
             return redirect('main:permission_denied')
     else:
@@ -180,6 +197,8 @@ def csv_export_view(request):
                     'Content-Disposition': 'attachment; filename="formulary.csv"'},
             )
             writer = csv.writer(response)
+            writer.writerow(["Category", "Medication", "Form", "Strength", "Count", "Quantity",
+                             "Initial Quantity", "Item Number", "Box Number", "Expiration Date", "Manufacturer"])
             for x in formulary:
                 writer.write([
                     x.category,

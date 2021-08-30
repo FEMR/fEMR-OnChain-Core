@@ -18,7 +18,7 @@ def operation_admin_home_view(request):
             return render(request, 'operation_admin/home.html',
                           {'user': request.user,
                            'active_instances': active_instances,
-                           'page_name': 'Your Instances'})
+                           'page_name': 'Your Operations'})
         else:
             return redirect('main:permission_denied')
     else:

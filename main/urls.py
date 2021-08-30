@@ -157,9 +157,9 @@ urlpatterns = [
     # Formulary Management
     url(r'^formulary_home_view/$', formulary_home_view, name='formulary_home_view'),
     url(r'^add_supply_view/$', add_supply_view, name='add_supply_view'),
-    path(r'^edit_add_supply_view/<int:id>', edit_add_supply_view,
+    path(r'edit_add_supply_view/<int:id>', edit_add_supply_view,
         name='edit_add_supply_view'),
-    path(r'^edit_sub_supply_view/<int:id>', edit_sub_supply_view,
+    path(r'edit_sub_supply_view/<int:id>', edit_sub_supply_view,
         name='edit_sub_supply_view'),
     url(r'^csv_handler_view/$', csv_handler_view, name='csv_handler_view'),
     url(r'^csv_import_view/$', csv_import_view, name='csv_import_view'),
@@ -180,11 +180,11 @@ urlpatterns = [
     path(r'patient_export/<int:id>', patient_export_view, name='patient_export'),
 
     # Operation Management
-    path(r'organization_admin_home_view/$', organization_admin_home_view,
+    path(r'organization_admin_home_view/', organization_admin_home_view,
          name='organization_admin_home_view'),
 
     # Organization Management
-    path(r'operation_admin_home_view/$', operation_admin_home_view,
+    path(r'operation_admin_home_view/', operation_admin_home_view,
          name='operation_admin_home_view'),
 
     path(r'chief_complaint_form_view', chief_complaint_form_view,
