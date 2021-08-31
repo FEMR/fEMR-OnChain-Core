@@ -2,14 +2,12 @@
 Enumerates all contents of all database models.
 Migrations run will generate a table for each of these containing the listed fields.
 """
-from datetime import datetime
-from django.db.models.base import Model
-from django.db.models.functions import Now
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.core.validators import BaseValidator, MaxValueValidator, MinLengthValidator, MinValueValidator
 from django.db import models
+from django.db.models.fields import CharField
 from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -23,20 +21,34 @@ birth_sex_choices = (('f', 'Female'), ('m', 'Male'), ('o', 'Other'))
 suffix_choices = (('j', 'Jr.'), ('s', 'Sr.'),
                   ('1', 'I'), ('2', 'II'), ('3', 'III'))
 unit_choices = (('i', 'Imperial'), ('m', 'Metric'))
-race_choices = (
-    ('1', 'Native American or Native Alaskan'),
-    ('2', 'Asian'),
-    ('3', 'Black, African American'),
-    ('4', 'Hispanic or Latinx'),
-    ('5', 'Mixed Race'),
-    ('6', 'White'),
-    ('7', 'Nondisclosed'),
-)
-ethnicity_choices = (
-    ('1', 'Hispanic or Latinx'),
-    ('2', 'Not Hispanic or Latinx'),
-    ('3', 'Nondisclosed'),
-)
+
+
+class Race(models.Model):
+    name = CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+def get_nondisclosed_race():
+    return Race.objects.get_or_create(name="Nondisclosed")
+
+
+class Ethnicity(models.Model):
+    name = CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+def get_nondisclosed_ethnicity():
+    return Ethnicity.objects.get_or_create(name="Nondisclosed")
 
 
 class Contact(models.Model):
@@ -107,6 +119,8 @@ class Campaign(models.Model):
     main_contact = models.ForeignKey(
         'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, related_name='campaign_main_contact')
     admins = models.ManyToManyField('fEMRUser', related_name='campaign_admins')
+    race_options = models.ManyToManyField(Race)
+    ethnicity_options = models.ManyToManyField(Ethnicity)
 
     def __unicode__(self):
         return self.name
@@ -153,8 +167,10 @@ class Patient(models.Model):
     explain = models.CharField(max_length=400, null=True, blank=True)
     date_of_birth = models.DateField()
     age = models.IntegerField()
-    race = models.CharField(max_length=30, choices=race_choices)
-    ethnicity = models.CharField(max_length=30, choices=ethnicity_choices)
+
+    race = models.ForeignKey(Race, on_delete=models.CASCADE, default=get_nondisclosed_race)
+    ethnicity = models.ForeignKey(Ethnicity, on_delete=models.CASCADE, default=get_nondisclosed_ethnicity)
+
     preferred_language = models.CharField(max_length=30, null=True, blank=True)
 
     current_address = models.CharField(max_length=30, null=True, blank=True)
@@ -192,13 +208,6 @@ class Patient(models.Model):
         auto_now=True, editable=False, null=False, blank=False)
 
     campaign = models.ManyToManyField(Campaign, default=1)
-
-    # allergies = models.ManyToManyField(Allergy)
-    # immunizations = models.ManyToManyField(Immunization)
-    # problems = models.ManyToManyField(Problem)
-    # procedures = models.ManyToManyField(Procedure)
-    # health_concerns = models.ManyToManyField(HealthConcern)
-    # medications = models.ManyToManyField(Medication)
 
     def __str__(self):
         """

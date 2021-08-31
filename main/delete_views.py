@@ -6,13 +6,12 @@ If one is not found, they will direct to the appropriate error page.
 import os
 from django.core.mail import send_mail
 from clinic_messages.models import Message
-from django.forms.models import construct_instance
 from main.femr_admin_views import get_client_ip
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
-from .models import Campaign, ChiefComplaint, DatabaseChangeLog, Patient, fEMRUser
+from .models import Campaign, ChiefComplaint, DatabaseChangeLog, Patient
 
 
 def patient_delete_view(request, id=None):

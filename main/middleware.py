@@ -1,7 +1,6 @@
 from clinic_messages.models import Message
 from django.contrib.auth import logout
 from django.contrib.auth.models import AnonymousUser
-from django.http import request
 from main.forms import LoginForm
 from django.shortcuts import render
 from main.models import Campaign

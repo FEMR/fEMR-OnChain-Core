@@ -3,9 +3,7 @@ from main.operation_admin_views import operation_admin_home_view
 from main.organization_admin_views import organization_admin_home_view
 from main.delete_views import delete_chief_complaint, patient_delete_view
 from django.conf.urls import url, include
-from django.views.generic.base import RedirectView
 from django.urls import path
-from django.contrib.staticfiles.storage import staticfiles_storage
 
 from rest_framework import routers
 from rest_framework.authtoken import views as rest_framework_views
@@ -25,7 +23,7 @@ from .femr_admin_views import edit_contact_view, lock_campaign_view, new_campaig
 from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, medication_form_view, treatment_form_view
 from main.views import set_timezone
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
-from .autocomplete_views import DiagnosisAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete, TestAutocomplete
+from .autocomplete_views import DiagnosisAutocomplete, EthnicityAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete, RaceAutocomplete, TestAutocomplete
 
 app_name = 'main'
 
@@ -234,5 +232,15 @@ urlpatterns = [
         r'^administration-schedule-autocomplete/$',
         AdministrationScheduleAutocomplete.as_view(create_field='text'),
         name='administration-schedule-autocomplete',
+    ),
+    url(
+        r'^race-autocomplete/$',
+        RaceAutocomplete.as_view(create_field='name'),
+        name='race-autocomplete',
+    ),
+    url(
+        r'^ethnicity-autocomplete/$',
+        EthnicityAutocomplete.as_view(create_field='name'),
+        name='ethnicity-autocomplete',
     ),
 ]

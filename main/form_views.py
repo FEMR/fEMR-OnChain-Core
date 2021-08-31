@@ -24,6 +24,7 @@ def patient_form_view(request):
     if request.user.is_authenticated:
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
+        c = Campaign.objects.get(name=request.session['campaign'])
         ssn_error = False
         phone_error = False
         email_error = False
@@ -36,7 +37,6 @@ def patient_form_view(request):
             form = PatientForm(request.POST)
             if form.is_valid():
                 t = form.save()
-                c = Campaign.objects.get(name=request.session['campaign'])
                 t.campaign.add(c)
                 t.campaign_key = cal_key(c)
                 t.save()
@@ -64,6 +64,8 @@ def patient_form_view(request):
                         email_address=form.data['email_address'])
         else:
             form = PatientForm()
+        form.fields['race'].queryset = c.race_options
+        form.fields['ethnicity'].queryset = c.ethnicity_options
         return render(request, 'forms/new_patient.html', {'ssn_error': ssn_error,
                                                           'phone_error': phone_error,
                                                           'email_error': email_error,

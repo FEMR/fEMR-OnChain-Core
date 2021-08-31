@@ -1,6 +1,6 @@
 from dal import autocomplete
 
-from .models import Medication, ChiefComplaint, Diagnosis, AdministrationSchedule, Test
+from .models import Ethnicity, Medication, ChiefComplaint, Diagnosis, AdministrationSchedule, Race, Test
 
 
 class DiagnosisAutocomplete(autocomplete.Select2QuerySetView):
@@ -66,3 +66,30 @@ class AdministrationScheduleAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(text__icontains=self.q)
         
         return qs
+
+
+class RaceAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Race.objects.none()
+
+        qs = Race.objects.all()
+
+        if self.q:
+            qs = qs.filter(text__icontains=self.q)
+        
+        return qs
+
+
+class EthnicityAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Ethnicity.objects.none()
+
+        qs = Ethnicity.objects.all()
+
+        if self.q:
+            qs = qs.filter(text__icontains=self.q)
+        
+        return qs
+
