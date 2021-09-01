@@ -2,6 +2,7 @@
 Enumerates all contents of all database models.
 Migrations run will generate a table for each of these containing the listed fields.
 """
+from django import db
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.signals import user_logged_in, user_logged_out
@@ -49,7 +50,7 @@ class Race(models.Model):
 
 
 def get_nondisclosed_race():
-    return Race.objects.get_or_create(name="Nondisclosed")
+    return Race.objects.get_or_create(name="Nondisclosed")[0].id
 
 
 class Ethnicity(models.Model):
@@ -63,7 +64,7 @@ class Ethnicity(models.Model):
 
 
 def get_nondisclosed_ethnicity():
-    return Ethnicity.objects.get_or_create(name="Nondisclosed")
+    return Ethnicity.objects.get_or_create(name="Nondisclosed")[0].id
 
 
 class Contact(models.Model):
@@ -184,8 +185,8 @@ class Patient(models.Model):
     age = models.IntegerField()
 
 
-    race_text = models.CharField(max_length=30, choices=race_choices, null=True, blank=True)
-    ethnicity_text = models.CharField(max_length=30, choices=ethnicity_choices, null=True, blank=True)
+    race_text = models.CharField(max_length=30, choices=race_choices, null=True, blank=True, db_column="race")
+    ethnicity_text = models.CharField(max_length=30, choices=ethnicity_choices, null=True, blank=True, db_column="ethnicity")
 
     race = models.ForeignKey(Race, on_delete=models.CASCADE, default=get_nondisclosed_race, null=True, blank=True)
     ethnicity = models.ForeignKey(Ethnicity, on_delete=models.CASCADE, default=get_nondisclosed_ethnicity, null=True, blank=True)
