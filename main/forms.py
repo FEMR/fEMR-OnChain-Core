@@ -171,6 +171,8 @@ class PatientForm(ModelForm):
             'pattern'] = "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$"
         self.fields['phone_number'].widget.attrs['required'] = False
         self.fields['email_address'].widget.attrs['required'] = False
+        self.fields['race'].widget.attrs['required'] = True
+        self.fields['ethnicity'].widget.attrs['required'] = True
         self.fields['social_security_number'].widget.attrs['minlength'] = "4"
         self.fields['zip_code'].widget.attrs['minlength'] = "5"
         self.fields['age'].widget.attrs['style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"

@@ -22,6 +22,21 @@ suffix_choices = (('j', 'Jr.'), ('s', 'Sr.'),
                   ('1', 'I'), ('2', 'II'), ('3', 'III'))
 unit_choices = (('i', 'Imperial'), ('m', 'Metric'))
 
+race_choices = (
+    ('1', 'Native American or Native Alaskan'),
+    ('2', 'Asian'),
+    ('3', 'Black, African American'),
+    ('4', 'Hispanic or Latinx'),
+    ('5', 'Mixed Race'),
+    ('6', 'White'),
+    ('7', 'Nondisclosed'),
+)
+ethnicity_choices = (
+    ('1', 'Hispanic or Latinx'),
+    ('2', 'Not Hispanic or Latinx'),
+    ('3', 'Nondisclosed'),
+)
+
 
 class Race(models.Model):
     name = CharField(max_length=100)
@@ -168,8 +183,12 @@ class Patient(models.Model):
     date_of_birth = models.DateField()
     age = models.IntegerField()
 
-    race = models.ForeignKey(Race, on_delete=models.CASCADE, default=get_nondisclosed_race)
-    ethnicity = models.ForeignKey(Ethnicity, on_delete=models.CASCADE, default=get_nondisclosed_ethnicity)
+
+    race_text = models.CharField(max_length=30, choices=race_choices, null=True, blank=True)
+    ethnicity_text = models.CharField(max_length=30, choices=ethnicity_choices, null=True, blank=True)
+
+    race = models.ForeignKey(Race, on_delete=models.CASCADE, default=get_nondisclosed_race, null=True, blank=True)
+    ethnicity = models.ForeignKey(Ethnicity, on_delete=models.CASCADE, default=get_nondisclosed_ethnicity, null=True, blank=True)
 
     preferred_language = models.CharField(max_length=30, null=True, blank=True)
 

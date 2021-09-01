@@ -36,14 +36,4 @@ class Migration(migrations.Migration):
             name='race_options',
             field=models.ManyToManyField(to='main.Race'),
         ),
-        migrations.AlterField(
-            model_name='patient',
-            name='ethnicity',
-            field=models.ForeignKey(default=main.models.get_nondisclosed_ethnicity, on_delete=django.db.models.deletion.CASCADE, to='main.ethnicity'),
-        ),
-        migrations.AlterField(
-            model_name='patient',
-            name='race',
-            field=models.ForeignKey(default=main.models.get_nondisclosed_race, on_delete=django.db.models.deletion.CASCADE, to='main.race'),
-        ),
     ]
