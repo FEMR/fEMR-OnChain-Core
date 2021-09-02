@@ -79,6 +79,9 @@ function reset_migrations() {
 function setup() {
   python3 manage.py creategroups
   python3 manage.py createadmin
+  python3 manage.py adminoptions
+  python3 manage.py createinventoryforms
+  python3 manage.py createraceandethnicity
 }
 
 function createsuperuser() {
