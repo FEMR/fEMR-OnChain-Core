@@ -8,10 +8,10 @@ class AddedInventoryHandler(CSVHandler):
         super().__init__()
     
     def read(self, upload, campaign):
-        return super().read(upload, campaign)
+        return self.__import(upload, campaign)
     
     def write(self, response, formulary):
-        return super().write(response, formulary)
+        return self.__export(response, formulary)
     
     def __export(self, response, formulary):
         return super().__export(response, formulary)
