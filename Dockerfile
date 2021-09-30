@@ -4,7 +4,7 @@ COPY . /opt/app
 WORKDIR /opt/app
 
 RUN apt-get update && apt-get install -y dos2unix
-RUN dos2unix /opt/app/build.sh
+RUN find /opt/app -type f -exec dos2unix {} \;
 
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update -y && \
