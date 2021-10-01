@@ -17,7 +17,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     apt-get upgrade -y
 RUN pip3 install -r requirements.txt
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
-    apt-get install npm nodejs -y
+    apt-get install nodejs -y
 
 RUN /opt/app/build.sh all
 RUN /opt/app/build.sh setup
