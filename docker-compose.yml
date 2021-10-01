@@ -7,7 +7,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - database:/var/lib/postgresql/data
   dev:
     build: .
     volumes:
@@ -21,3 +21,5 @@ services:
       - POSTGRES_NAME=database
     depends_on:
       - database
+volumes:
+  database:
