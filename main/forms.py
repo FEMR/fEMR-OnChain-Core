@@ -17,7 +17,7 @@ from dal import autocomplete
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, ButtonHolder, Submit
 
-from .models import HistoryOfPresentIllness, InventoryEntry, InventoryForm, MessageOfTheDay, Patient, PatientDiagnosis, PatientEncounter, Photo, fEMRUser, Campaign, Instance, Contact, Vitals,\
+from .models import Ethnicity, HistoryOfPresentIllness, InventoryEntry, InventoryForm, MessageOfTheDay, Organization, Patient, PatientDiagnosis, PatientEncounter, Photo, Race, fEMRUser, Campaign, Instance, Contact, Vitals,\
     ChiefComplaint, Treatment, Diagnosis, Medication
 
 
@@ -769,3 +769,35 @@ class CSVUploadForm(Form):
         ('1', 'New'),
         ('2', 'Update'),
     )))
+
+
+class OrganizationForm(ModelForm):
+    class Meta:
+        model = Organization
+        fields = '__all__'
+
+
+class RaceForm(ModelForm):
+    """
+    Data entry form - Race
+    """
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = Race
+        fields = '__all__'
+
+
+class EthnicityForm(ModelForm):
+    """
+    Data entry form - Instance
+    """
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = Ethnicity
+        fields = '__all__'

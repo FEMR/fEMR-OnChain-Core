@@ -2,9 +2,13 @@
 {% block content %}
 <div>
     <div>Logged in as {{ user.first_name }} {{ user.last_name }}.</div>
-    <div><a href="">Organization Management</a></div>
+    <div><a href="{% url 'main:list_organization' %}">Organization Management</a></div>
     <div><a href="{% url 'main:list_instance' %}">Operation Management</a></div>
     <div><a href="{% url 'main:list_campaign' %}">Campaign Management</a></div>
+
+    <div><b>System Options Management</b></div>
+    <div><a href="{% url 'main:new_race' %">New Race Option</a></div>
+    <div><a href="{% url 'main:new_ethnicity' %">New Ethnicity Option</a></div>
 
     <h3>General Management</h3>
     <div>

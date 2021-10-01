@@ -2,7 +2,6 @@
 Enumerates all contents of all database models.
 Migrations run will generate a table for each of these containing the listed fields.
 """
-from django import db
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.signals import user_logged_in, user_logged_out
@@ -14,7 +13,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
-from localflavor.us.models import USStateField
 from rest_framework.authtoken.models import Token
 from timezone_utils.choices import COMMON_TIMEZONES_CHOICES
 
@@ -40,6 +38,16 @@ ethnicity_choices = (
 
 
 class Race(models.Model):
+    name = CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class State(models.Model):
     name = CharField(max_length=100)
 
     def __str__(self) -> str:
@@ -83,8 +91,26 @@ class Contact(models.Model):
 class Organization(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
+    address1 = models.CharField(
+        "Address line 1",
+        max_length=1024, null=True, blank=True
+    )
+    address2 = models.CharField(
+        "Address line 2",
+        max_length=1024, null=True, blank=True
+    )
+    zip_code = models.CharField(
+        "ZIP / Postal code", max_length=12, null=True, blank=True, validators=[MinLengthValidator(5)]
+    )
+
+    city = models.CharField(
+        "City",
+        max_length=1024, null=True, blank=True
+    )
+    state = models.ForeignKey(State, on_delete=models.CASCADE, null=True, blank=True)
     main_contact = models.ForeignKey(
         'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, related_name='organization_main_contact')
+    contract_start_date = models.DateField(default=timezone.datetime.today)
     admins = models.ManyToManyField('fEMRUser', related_name='organization_admins')
 
     def __unicode__(self):
@@ -184,10 +210,6 @@ class Patient(models.Model):
     date_of_birth = models.DateField()
     age = models.IntegerField()
 
-
-    race_text = models.CharField(max_length=30, choices=race_choices, null=True, blank=True, db_column="race")
-    ethnicity_text = models.CharField(max_length=30, choices=ethnicity_choices, null=True, blank=True, db_column="ethnicity")
-
     race = models.ForeignKey(Race, on_delete=models.CASCADE, default=get_nondisclosed_race, null=True, blank=True)
     ethnicity = models.ForeignKey(Ethnicity, on_delete=models.CASCADE, default=get_nondisclosed_ethnicity, null=True, blank=True)
 
@@ -213,7 +235,7 @@ class Patient(models.Model):
         max_length=1024, null=True, blank=True
     )
 
-    state = USStateField(null=True, blank=True)
+    state = models.ForeignKey(State, on_delete=models.CASCADE, null=True, blank=True)
 
     previous_address = models.CharField(max_length=30, null=True, blank=True)
     phone_number = models.CharField(

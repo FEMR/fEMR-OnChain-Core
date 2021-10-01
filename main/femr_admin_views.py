@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from main.forms import CampaignForm, InstanceForm, fEMRAdminUserForm, fEMRAdminUserUpdateForm
-from main.models import AuditEntry, Campaign, DatabaseChangeLog, Instance, fEMRUser
-from django.db.models import ObjectDoesNotExist
+from main.forms import CampaignForm, EthnicityForm, InstanceForm, OrganizationForm, RaceForm, fEMRAdminUserForm, fEMRAdminUserUpdateForm
+from main.models import AuditEntry, Campaign, DatabaseChangeLog, Instance, Organization, fEMRUser
 
 
 def femr_admin_home(request):
@@ -228,7 +227,7 @@ def list_instance_view(request):
 
 def lock_instance_view(request, id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(name='fEMR Admin').exists():
             m = get_object_or_404(Instance, pk=id)
             m.active = False
             m.save()
@@ -244,7 +243,7 @@ def lock_instance_view(request, id=None):
 
 def unlock_instance_view(request, id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(name='fEMR Admin').exists():
             m = get_object_or_404(Instance, pk=id)
             m.active = True
             m.save()
@@ -257,7 +256,7 @@ def unlock_instance_view(request, id=None):
 
 def lock_campaign_view(request, id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(name='fEMR Admin').exists():
             m = get_object_or_404(Campaign, pk=id)
             m.active = False
             m.save()
@@ -270,7 +269,7 @@ def lock_campaign_view(request, id=None):
 
 def unlock_campaign_view(request, id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Admin').exists():
+        if request.user.groups.filter(name='fEMR Admin').exists():
             m = get_object_or_404(Campaign, pk=id)
             m.active = True
             m.instance.active = True
@@ -283,13 +282,101 @@ def unlock_campaign_view(request, id=None):
         return redirect('main:not_logged_in')
 
 
-def problem_delete_view(request):
+def new_race_view(request):
     if request.user.is_authenticated:
-        try:
-            p = get_object_or_404(Instance, pk=id)
-            Instance.objects.filter(id=p.id).delete()
-        except ObjectDoesNotExist:
-            pass
-        return redirect('main:list_instance')
+        if request.user.groups.filter(name='fEMR Admin').exists():
+            if request.method == "GET":
+                form = RaceForm()
+                return render(request, "femr_admin/race/new_race.html", {'form': form})
+            if request.method == "POST":
+                form = RaceForm(request.POST)
+                if form.is_valid():
+                    m = form.save()
+                    m.save()
+                    return redirect(request.META.get('HTTP_REFERER'))
+                else:
+                    return render(request, "femr_admin/race/new_race.html", {'form': form})
+        else:
+            return redirect('main:permission_denied')
+    else:
+        return redirect('main:not_logged_in')
+
+
+def new_ethnicity_view(request):
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name='fEMR Admin').exists():
+            if request.method == "GET":
+                form = EthnicityForm()
+                return render(request, "femr_admin/race/new_race.html", {'form': form})
+            if request.method == "POST":
+                form = EthnicityForm(request.POST)
+                if form.is_valid():
+                    m = form.save()
+                    m.save()
+                    return redirect(request.META.get('HTTP_REFERER'))
+                else:
+                    return render(request, "femr_admin/race/new_race.html", {'form': form})
+        else:
+            return redirect('main:permission_denied')
+    else:
+        return redirect('main:not_logged_in')
+
+
+def list_organization_view(request):
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name='fEMR Admin').exists():
+            organizations = Instance.objects.all()
+            return render(request, 'femr_admin/organization/list_organization.html',
+                          {'user': request.user,
+                           'organizations': organizations,
+                           'page_name': 'Organizations'})
+        else:
+            return redirect('main:permission_denied')
+    else:
+        return redirect('main:not_logged_in')
+
+
+def edit_organization_view(request, id=None):
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name='fEMR Admin').exists():
+            instance = Organization.objects.get(pk=id)
+            contact = instance.main_contact
+            contact_form = fEMRAdminUserForm()
+            edit_contact_form = fEMRAdminUserUpdateForm(instance=contact)
+            if request.method == 'POST':
+                form = OrganizationForm(request.POST or None, instance=instance)
+                if form.is_valid():
+                    t = form.save()
+                    t.save()
+                    DatabaseChangeLog.objects.create(action="Edit", model="Organization", instance=str(t),
+                                                     ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                    return render(request, "femr_admin/confirm/organization_submitted.html")
+            else:
+                form = OrganizationForm(instance=instance)
+                return render(request, 'femr_admin/organization/edit_organization.html', {'form': form, 'contact_form': contact_form, 'edit_contact_form': edit_contact_form, 'page_name': 'Edit Organization', 'contact_id': contact.id, 'instance_id': id})
+        else:
+            return redirect('main:permission_denied')
+    else:
+        return redirect('main:not_logged_in')
+
+
+def new_organization_view(request):
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name='fEMR Admin').exists():
+            if request.method == 'POST':
+                form = OrganizationForm(request.POST)
+                contact_form = fEMRAdminUserForm()
+                if form.is_valid():
+                    t = form.save()
+                    t.save()
+                    DatabaseChangeLog.objects.create(action="Create", model="Organization", instance=str(t),
+                                                     ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                    return render(request, "femr_admin/confirm/organization_submitted.html")
+            else:
+                form = OrganizationForm()
+                contact_form = fEMRAdminUserForm()
+            return render(request, 'femr_admin/organization/new_organization.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Organization', 'show': False})
+        else:
+            return redirect('main:permission_denied')
     else:
         return redirect('main:not_logged_in')

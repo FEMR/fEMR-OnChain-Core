@@ -93,10 +93,6 @@
                         <a class="dropdown-item" href="{% url 'main:superuser_home' %}">Campaign Manager</a>
                         <div class="dropdown-divider"></div>
                         {% endif %}
-                        {% if request.user|has_group:"Campaign Manager" %}
-                        <a class="dropdown-item" href="{% url 'main:set_timezone' %}">
-                            Timezone Controls</a>
-                        {% endif %}
                     </div>
                 </li>
                 {% endif %}
@@ -141,7 +137,7 @@
                     Find a bug or problem? <a href="{% url 'appMR:index' %}">Let us know.</a>
                 </div>
                 <div class="col-sm-12 col-md-4 text-center">
-                    v2.0.0.8312021
+                    v2.0.0.10012021
                 </div>
                 <div class="col-sm-12 col-md-4">
                     <a target="_blank" href="https://github.com/FEMR/fEMR-OnChain-Core/wiki">fEMR On-Chain Wiki</a>

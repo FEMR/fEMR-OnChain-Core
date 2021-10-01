@@ -1,0 +1,30 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+<div class="row">
+    <div class="col-md-6">
+        <h2>Operations</h2>
+        <a href="{% url 'main:new_organization' %}">New</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Organization</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in instances %}
+                <tr>
+                    <th scope="row">{{ o.id }}</th>
+                    <td>{{ o.name }}</td>
+                    <td>{{ o.organization }}</td>
+                    <td><a href="{% url 'main:edit_organization' id=o.id %}">Edit</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -18,12 +18,12 @@ from .edit_views import aux_form_view, delete_photo_view, edit_photo_view, histo
 from .form_views import patient_form_view, referral_form_view, patient_encounter_form_view
 from .list_views import chief_complaint_list_view, patient_csv_export_view, patient_list_view, search_patient_list_view, filter_patient_list_view
 from .views import forgot_username, index, home, healthcheck, help_messages_off
-from .femr_admin_views import edit_contact_view, lock_campaign_view, new_campaign_view, new_contact_view, new_instance_view, edit_campaign_view, edit_instance_view, \
-    list_campaign_view, list_instance_view, femr_admin_home, change_campaign, unlock_campaign_view, view_contact_view
+from .femr_admin_views import edit_contact_view, edit_organization_view, list_organization_view, lock_campaign_view, new_campaign_view, new_contact_view, new_ethnicity_view, new_instance_view, edit_campaign_view, edit_instance_view, \
+    list_campaign_view, list_instance_view, femr_admin_home, change_campaign, new_organization_view, new_race_view, unlock_campaign_view, view_contact_view
 from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, medication_form_view, treatment_form_view
 from main.views import set_timezone
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
-from .autocomplete_views import DiagnosisAutocomplete, EthnicityAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete, RaceAutocomplete, TestAutocomplete
+from .autocomplete_views import DiagnosisAutocomplete, EthnicityAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete, RaceAutocomplete, StateAutocomplete, TestAutocomplete
 
 app_name = 'main'
 
@@ -176,6 +176,11 @@ urlpatterns = [
     path(r'view_contact/<int:id>', view_contact_view, name='view_contact'),
     url(r'^new_contact/$', new_contact_view, name='new_contact'),
     path(r'patient_export/<int:id>', patient_export_view, name='patient_export'),
+    url(r'^new_race/$', new_race_view, name='new_race'),
+    url(r'^new_ethnicity/$', new_ethnicity_view, name='new_ethnicity'),
+    url(r'^list_organization/$', list_organization_view, name='list_organization'),
+    url(r'^new_organization/$', new_organization_view, name='new_organization'),
+    path(r'edit_organization/<int:id>', edit_organization_view, name='edit_organization'),
 
     # Operation Management
     path(r'organization_admin_home_view/', organization_admin_home_view,
@@ -242,5 +247,10 @@ urlpatterns = [
         r'^ethnicity-autocomplete/$',
         EthnicityAutocomplete.as_view(create_field='name'),
         name='ethnicity-autocomplete',
+    ),
+    url(
+        r'^state-autocomplete/$',
+        StateAutocomplete.as_view(create_field='name'),
+        name='state-autocomplete',
     ),
 ]
