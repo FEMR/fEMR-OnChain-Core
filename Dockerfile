@@ -11,7 +11,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && \
     apt-get install -y tzdata && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
-    apt-get install unzip python3 python3-pip \
+    apt-get install unzip curl python3 python3-pip \
                     python3-dev libssl-dev python3-sphinx \
                     virtualenv -y && \
     apt-get upgrade -y
