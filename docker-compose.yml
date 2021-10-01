@@ -7,7 +7,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASS=postgres
     volumes:
-      - database:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
   dev:
     build: .
     volumes:
@@ -22,4 +22,4 @@ services:
     depends_on:
       - database
 volumes:
-  database:
+  db:
