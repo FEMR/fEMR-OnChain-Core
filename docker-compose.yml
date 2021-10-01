@@ -6,3 +6,13 @@ services:
       - .:/build
     ports:
       - "8081:8081"
+    depends_on:
+      - database
+  database:
+    image: "postgres"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - database-data:/var/lib/postgresql/data
