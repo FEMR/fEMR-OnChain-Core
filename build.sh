@@ -115,9 +115,15 @@ run)
   ;;
 
 setup)
-  all
   setup
   ;;
+
+init-all-run)
+  all
+  setup
+  run
+  ;;
+
 
 all-run)
   all
