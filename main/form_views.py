@@ -161,7 +161,7 @@ def patient_encounter_form_view(request, id=None):
                             ((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) // 12),
                         'body_height_secondary': round((
                             (encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) % 12, 2),
-                        'body_weight': round(encounter.body_weight * 2.2046, 2),
+                        'body_weight': round(encounter.body_weight * 2.2046, 2) if encounter.body_weight is not None else 0,
                     }
                 else:
                     form.initial = {
@@ -174,7 +174,7 @@ def patient_encounter_form_view(request, id=None):
                         'alcohol': encounter.alcohol,
                         'body_height_primary': encounter.body_height_primary,
                         'body_height_secondary': round(encounter.body_height_secondary, 2),
-                        'body_weight': round(encounter.body_weight, 2),
+                        'body_weight': round(encounter.body_weight, 2) if encounter.body_weight is not None else 0,
                     }
             except IndexError:
                 print("IndexError")
