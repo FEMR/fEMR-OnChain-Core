@@ -240,7 +240,8 @@ class PatientForm(ModelForm):
             'date_of_birth': DateInputOverride(attrs={
                 'pattern': "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$",
                 'placeholder': "dd/mm/yyyy"
-            })
+            }),
+            'state': autocomplete.ModelSelect2(url='main:state-autocomplete'),
         }
 
 
