@@ -1,5 +1,11 @@
 FROM ubuntu:latest
 
+COPY . /opt/app
+WORKDIR /opt/app
+
+RUN apt-get update && apt-get install -y dos2unix
+RUN find /opt/app -type f -exec dos2unix {} \;
+
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update -y && \
     ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && \
@@ -15,4 +21,4 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
 
 EXPOSE 8081
 
-ENTRYPOINT [ "/build/build.sh", "init-all-run" ]
+ENTRYPOINT [ "/opt/app/build.sh", "init-all-run" ]
