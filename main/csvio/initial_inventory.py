@@ -14,7 +14,24 @@ class InitialInventoryHandler(CSVHandler):
         return self.__export(response, formulary)
 
     def __export(self, response, formulary):
-        return super().__export(response, formulary)
+        writer = csv.writer(response)
+        writer.writerow(["Category", "Medication", "Form", "Strength", "Count", "Quantity",
+                            "Initial Quantity", "Item Number", "Box Number", "Expiration Date", "Manufacturer"])
+        for x in formulary:
+            writer.write([
+                x.category,
+                x.medication,
+                x.form,
+                x.strength,
+                x.count,
+                x.quantity,
+                x.initial_quantity,
+                x.item_number,
+                x.box_number,
+                x.expiration_date,
+                x.manufacturer,
+            ])
+        return response
     
     def __import(self, upload, campaign):
         with open(upload.document.url) as csvfile:

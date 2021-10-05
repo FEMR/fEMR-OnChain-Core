@@ -310,7 +310,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
                     ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12),
                 'body_height_secondary': round((
                     (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
-                'body_weight': round(m.body_weight * 2.2046, 2),
+                'body_weight': round(m.body_weight * 2.2046, 2) if m.body_weight is not None else 0,
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/treatment_tab.html',

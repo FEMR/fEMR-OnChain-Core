@@ -255,13 +255,15 @@ def cal_key(fk):
     present_keys = Patient.objects.filter(campaign=fk).order_by(
         '-campaign_key').values_list('campaign_key', flat=True)
     present_keys = [i for i in present_keys if i is not None]
-    print(present_keys)
-    if present_keys:
-        print("Adding.")
-        return max(present_keys) + 1
-    else:
-        print("No key.")
-        return 1
+    result = None
+    while result is None:
+        if present_keys:
+            print("Adding.")
+            result = max(present_keys) + 1
+        else:
+            print("No key.")
+            result = 1
+    return result
 
 
 @deconstructible

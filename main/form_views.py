@@ -38,7 +38,10 @@ def patient_form_view(request):
             if form.is_valid():
                 t = form.save()
                 t.campaign.add(c)
-                t.campaign_key = cal_key(c)
+                key = None
+                while key is None:
+                    key = cal_key(c)
+                t.campaign_key = key
                 t.save()
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     create_new_patient(form.cleaned_data)
