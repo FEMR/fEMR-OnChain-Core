@@ -595,6 +595,10 @@ class DatabaseChangeLog(models.Model):
 
 class CSVUploadDocument(models.Model):
     document = models.FileField(upload_to="csv")
+    mode_option = models.CharField(max_length=10, choices=(
+        ('1', 'New'),
+        ('2', 'Update'),
+    ))
 
 
 @receiver(user_logged_in)

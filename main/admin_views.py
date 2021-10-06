@@ -14,6 +14,8 @@ from django.core.mail import send_mail
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 
+from main.femr_admin_views import get_client_ip
+
 from .forms import MOTDForm, UserForm, UserUpdateForm, AdminPasswordForm, fEMRAdminUserForm, fEMRAdminUserUpdateForm
 from .models import Instance, MessageOfTheDay, fEMRUser, AuditEntry, DatabaseChangeLog, Campaign
 
@@ -115,7 +117,7 @@ def create_user_view(request):
                     t.created_by = request.user
                     t.save()
                     DatabaseChangeLog.objects.create(action="Create", model="User", instance=str(t),
-                                                     ip=request.META.get('REMOTE_ADDR'), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                     ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                     return render(request, "admin/user_edit_confirmed.html")
                 else:
                     error = "Form is invalid."
@@ -140,7 +142,7 @@ def update_user_view(request, id=None):
                 t = form.save()
                 t.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="User", instance=str(t),
-                                                 ip=request.META.get('REMOTE_ADDR'), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 return render(request, "admin/user_edit_confirmed.html")
             else:
                 error = "Form is invalid."
@@ -168,7 +170,7 @@ def update_user_password_view(request, id=None):
                 m.change_password = True
                 m.save()
                 DatabaseChangeLog.objects.create(action="Change Password", model="User", instance=str(t),
-                                                 ip=request.META.get('REMOTE_ADDR'), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 form = AdminPasswordForm()
                 error = "Form submitted successfully."
                 return render(request, "admin/user_edit_confirmed.html")

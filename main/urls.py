@@ -176,8 +176,10 @@ urlpatterns = [
     path(r'view_contact/<int:id>', view_contact_view, name='view_contact'),
     url(r'^new_contact/$', new_contact_view, name='new_contact'),
     path(r'patient_export/<int:id>', patient_export_view, name='patient_export'),
+    
     url(r'^new_race/$', new_race_view, name='new_race'),
     url(r'^new_ethnicity/$', new_ethnicity_view, name='new_ethnicity'),
+
     url(r'^list_organization/$', list_organization_view, name='list_organization'),
     url(r'^new_organization/$', new_organization_view, name='new_organization'),
     path(r'edit_organization/<int:id>', edit_organization_view, name='edit_organization'),

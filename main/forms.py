@@ -17,7 +17,7 @@ from dal import autocomplete
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, ButtonHolder, Submit
 
-from .models import Ethnicity, HistoryOfPresentIllness, InventoryEntry, InventoryForm, MessageOfTheDay, Organization, Patient, PatientDiagnosis, PatientEncounter, Photo, Race, fEMRUser, Campaign, Instance, Contact, Vitals,\
+from .models import CSVUploadDocument, Ethnicity, HistoryOfPresentIllness, InventoryEntry, InventoryForm, MessageOfTheDay, Organization, Patient, PatientDiagnosis, PatientEncounter, Photo, Race, fEMRUser, Campaign, Instance, Contact, Vitals,\
     ChiefComplaint, Treatment, Diagnosis, Medication
 
 
@@ -758,18 +758,16 @@ class RemoveSupplyForm(Form):
     quantity = IntegerField()
 
 
-class CSVUploadForm(Form):
+class CSVUploadForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(
             Submit('submit', 'Save', css_class='btn btn-primary'))
 
-    upload = FileField()
-    mode_option = CharField(widget=Select(choices=(
-        ('1', 'New'),
-        ('2', 'Update'),
-    )))
+    class Meta:
+        model = CSVUploadDocument
+        fields = '__all__'
 
 
 class OrganizationForm(ModelForm):

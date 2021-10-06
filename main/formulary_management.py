@@ -125,9 +125,9 @@ def csv_import_view(request):
                 m = form.save()
                 upload = m.save()
 
-                if request.POST['mode_option'] == "1":
+                if upload.mode_option == "1":
                     InitialInventoryHandler().read(upload, campaign)
-                elif request.POST['mode_option'] == "2":
+                elif upload.mode_option == "2":
                     AddedInventoryHandler().read(upload, campaign)
                 upload.document.delete()
                 upload.delete()
