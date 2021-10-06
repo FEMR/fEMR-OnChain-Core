@@ -307,7 +307,7 @@ def new_ethnicity_view(request):
         if request.user.groups.filter(name='fEMR Admin').exists():
             if request.method == "GET":
                 form = EthnicityForm()
-                return render(request, "femr_admin/race/new_race.html", {'form': form})
+                return render(request, "femr_admin/race/new_ethnicity.html", {'form': form})
             if request.method == "POST":
                 form = EthnicityForm(request.POST)
                 if form.is_valid():
@@ -315,7 +315,7 @@ def new_ethnicity_view(request):
                     m.save()
                     return redirect(request.META.get('HTTP_REFERER'))
                 else:
-                    return render(request, "femr_admin/race/new_race.html", {'form': form})
+                    return render(request, "femr_admin/race/new_ethnicity.html", {'form': form})
         else:
             return redirect('main:permission_denied')
     else:
