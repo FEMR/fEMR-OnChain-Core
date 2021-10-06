@@ -32,6 +32,7 @@ def patient_edit_form_view(request, id=None):
                                instance=m)
             if form.is_valid():
                 t = form.save()
+                t.campaign_key = m.campaign_key
                 t.campaign.add(Campaign.objects.get(
                     name=request.session['campaign']))
                 t.save()
