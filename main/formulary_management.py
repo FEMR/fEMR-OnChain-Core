@@ -122,8 +122,8 @@ def csv_import_view(request):
             if form.is_valid():
                 print("Form is valid.")
 
-                m = form.save()
-                upload = m.save()
+                upload = form.save()
+                upload.save()
 
                 if upload.mode_option == "1":
                     InitialInventoryHandler().read(upload, campaign)
