@@ -758,7 +758,7 @@ class RemoveSupplyForm(Form):
     quantity = IntegerField()
 
 
-class CSVUploadForm(Form):
+class CSVUploadForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
