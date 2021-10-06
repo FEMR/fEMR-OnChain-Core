@@ -187,7 +187,8 @@ def logout_view(request):
     if 'campaign' in request.session:
         del request.session['campaign']
     logout(request)
-    response = redirect('main:index')
+    form = LoginForm()
+    response = render(request, 'auth/login.html', {'form': form})
     if 'username' in request.COOKIES:
         response.delete_cookie('username')
     return response
