@@ -7,9 +7,9 @@ import math
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import Group
 from django.forms import ModelForm, Form, CharField, PasswordInput, DateInput, ValidationError, BooleanField
-from django.forms.fields import FileField, IntegerField
+from django.forms.fields import IntegerField
 from django.forms.models import ModelMultipleChoiceField
-from django.forms.widgets import Select, Textarea
+from django.forms.widgets import Textarea
 from django.utils import timezone
 
 from dal import autocomplete
@@ -241,7 +241,7 @@ class PatientForm(ModelForm):
                 'pattern': "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$",
                 'placeholder': "dd/mm/yyyy"
             }),
-            'state': autocomplete.ModelSelect2(url='main:state-autocomplete'),
+            'state': autocomplete.ModelSelect2Multiple(url='main:state-autocomplete'),
         }
 
 

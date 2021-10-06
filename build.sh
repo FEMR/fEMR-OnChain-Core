@@ -2,7 +2,7 @@
 
 export DEBUG=True
 export SECRET_KEY="2HY>fXi!dQ&(9Vf.XghCa;L6G=Ul4r-Bwqh>ae0RG3vIh1ZJ%T"
-export QLDB_ENABLED="TRUE"  # Toggles QLDB on or off.
+export QLDB_ENABLED="FALSE"  # Toggles QLDB on or off.
 export qldb_name="fEMR-OnChain-Test"
 export ADMIN_NAME=""
 export ADMIN_EMAIL=""

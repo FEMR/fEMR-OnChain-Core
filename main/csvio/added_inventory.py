@@ -1,4 +1,5 @@
 import csv
+import urllib
 from main.models import InventoryCategory, InventoryEntry, InventoryForm, Manufacturer, Medication
 from main.csvio.csv_interface import CSVHandler
 
@@ -34,7 +35,8 @@ class AddedInventoryHandler(CSVHandler):
         return response
 
     def __import(self, upload, campaign):
-        with open(upload.document.url) as csvfile:
+        opener = urllib.URLopener()
+        with opener.open(upload.document.url) as csvfile:
             reader = csv.reader(csvfile, delimiter=",")
             next(reader)
             for row in reader:

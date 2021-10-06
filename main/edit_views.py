@@ -26,16 +26,20 @@ def patient_edit_form_view(request, id=None):
             return redirect('main:home')
         error = ""
         m = get_object_or_404(Patient, pk=id)
+        print(m.campaign_key)
+        campaign_key = m.campaign_key
         encounters = PatientEncounter.objects.filter(patient=m)
         if request.method == 'POST':
             form = PatientForm(request.POST or None,
                                instance=m)
             if form.is_valid():
                 t = form.save()
-                t.campaign_key = m.campaign_key
+                print(m.campaign_key)
+                t.campaign_key = campaign_key
                 t.campaign.add(Campaign.objects.get(
                     name=request.session['campaign']))
                 t.save()
+                print(t.campaign_key)
                 DatabaseChangeLog.objects.create(action="Edit", model="Patient", instance=str(t),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
