@@ -26,3 +26,4 @@ Vagrantfile~
 /photos/
 /attachments/
 csv/
+build/
