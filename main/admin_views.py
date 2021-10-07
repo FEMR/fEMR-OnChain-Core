@@ -17,7 +17,7 @@ from django.utils import timezone
 from main.femr_admin_views import get_client_ip
 
 from .forms import MOTDForm, UserForm, UserUpdateForm, AdminPasswordForm, fEMRAdminUserForm, fEMRAdminUserUpdateForm
-from .models import Instance, MessageOfTheDay, fEMRUser, AuditEntry, DatabaseChangeLog, Campaign
+from .models import MessageOfTheDay, fEMRUser, AuditEntry, DatabaseChangeLog, Campaign
 
 
 def admin_home(request):

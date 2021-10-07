@@ -62,10 +62,7 @@ function run() {
 }
 
 function documents() {
-  pushd docs || exit
   make html
-  cp -r build/html/* .
-  popd
 }
 
 function reset_migrations() {
@@ -93,6 +90,10 @@ function shell() {
 }
 
 case "$1" in
+
+doc)
+  documents
+  ;;
 
 startapp)
   python3 manage.py startapp $2

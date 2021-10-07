@@ -6,9 +6,13 @@
 Welcome to fEMR OnChain's documentation!
 ========================================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+.. autosummary::
+   :toctree: _autosummary
+   :recursive:
+
+   main
+   clinic_messages
+   appMR
 
 
 
