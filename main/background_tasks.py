@@ -5,6 +5,9 @@ from main.models import Campaign, Patient, PatientEncounter
 
 
 def run_encounter_close():
+    """
+    When triggered, this function will search for expired PatientEncounter objects and set them as inactive.
+    """
     print("Checking for encounter closure.")
     campaigns = Campaign.objects.all()
     now = timezone.now()
