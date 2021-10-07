@@ -2,14 +2,19 @@
 {% block content %}
 <div>
     <div>Logged in as {{ user.first_name }} {{ user.last_name }}.</div>
+    <div><a href="{% url 'main:list_organization' %}">Organization Management</a></div>
+    <div><a href="{% url 'main:list_instance' %}">Operation Management</a></div>
     <div><a href="{% url 'main:list_campaign' %}">Campaign Management</a></div>
-    <div><a href="{% url 'main:list_instance' %}">Instance Management</a></div>
+
+    <div><b>System Options Management</b></div>
+    <div><a href="{% url 'main:new_race' %}">New Race Option</a></div>
+    <div><a href="{% url 'main:new_ethnicity' %}">New Ethnicity Option</a></div>
 
     <h3>General Management</h3>
     <div>
         <a href="{% url 'main:message_of_the_day_view' %}">Message of the Day</a>
         <a href="#" data-toggle="popover" data-trigger="hover"
-            data-content="Click here to export all patient encounter data in a CSV file format"><i
+            data-content="Click here to create an administrative message."><i
                 class="fa fa-question-circle"></i></a>
     </div>
 </div>

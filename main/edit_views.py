@@ -26,15 +26,20 @@ def patient_edit_form_view(request, id=None):
             return redirect('main:home')
         error = ""
         m = get_object_or_404(Patient, pk=id)
+        print(m.campaign_key)
+        campaign_key = m.campaign_key
         encounters = PatientEncounter.objects.filter(patient=m)
         if request.method == 'POST':
             form = PatientForm(request.POST or None,
                                instance=m)
             if form.is_valid():
                 t = form.save()
+                print(m.campaign_key)
+                t.campaign_key = campaign_key
                 t.campaign.add(Campaign.objects.get(
                     name=request.session['campaign']))
                 t.save()
+                print(t.campaign_key)
                 DatabaseChangeLog.objects.create(action="Edit", model="Patient", instance=str(t),
                                                  ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
@@ -224,7 +229,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
                     ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12),
                 'body_height_secondary': round((
                     (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
-                'body_weight': round(m.body_weight * 2.2046, 2),
+                'body_weight': round(m.body_weight if m.body_weight is not None else 0 * 2.2046, 2),
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/treatment_tab.html',
@@ -310,7 +315,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
                     ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12),
                 'body_height_secondary': round((
                     (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
-                'body_weight': round(m.body_weight * 2.2046, 2),
+                'body_weight': round(m.body_weight * 2.2046, 2) if m.body_weight is not None else 0,
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/treatment_tab.html',
@@ -458,7 +463,7 @@ def history_view(request, patient_id=None, encounter_id=None):
                     ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12),
                 'body_height_secondary': round((
                     (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
-                'body_weight': round(m.body_weight * 2.2046, 2),
+                'body_weight': round(m.body_weight if m.body_weight is not None else 0 * 2.2046, 2),
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/history_tab.html',

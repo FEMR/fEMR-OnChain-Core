@@ -1,0 +1,111 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+{% load crispy_forms_tags %}
+<form action="{% url 'main:edit_organization' id=organization_id %}" method="post"
+  onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+  {% csrf_token %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="row">
+        {% for x in form %}
+        <div class="col-md-3">{{ x|as_crispy_field }}</div>
+        {% endfor %}
+        <div class="col-md-3">
+          <div id="div_id_new_contact" class="form-group">
+            <label for="id_new_contact" class="">
+              New contact
+            </label>
+            <div class="justify-content-center">
+              <div id="contact_form_activate" class="btn btn-primary ml-auto"><i class="fa fa-plus-circle fa-6"
+                  aria-hidden="true"></i></div>
+              <div id="contact_edit_form_activate" class="btn btn-primary ml-auto">Edit Contact</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-2">
+        <input class="btn btn-primary ml-auto" type="reset" value="Reset Fields" />
+      </div>
+      <div class="col-md-2">
+        <input class="btn btn-primary ml-auto" type="submit" value="Save User" />
+      </div>
+    </div>
+  </div>
+</form>
+<div id="contact_form_div" style="visibility: hidden; display: none;">
+  <form action="{% url 'main:new_contact' %}" method="post"
+    onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+    {% csrf_token %}
+    <div class="row justify-content-center">
+      <div class="row">
+        {% for x in contact_form %}
+        <div class="col-md-3">{{ x|as_crispy_field }}</div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-2">
+        <input class="btn btn-primary ml-auto" type="reset" value="Reset Fields" />
+      </div>
+      <div class="col-md-2">
+        <input class="btn btn-primary ml-auto" type="submit" value="Save Contact" />
+      </div>
+    </div>
+  </form>
+</div>
+<div id="contact_edit_form_div" style="visibility: hidden; display: none;">
+  <form action="{% url 'main:edit_contact' contact_id %}" method="post"
+    onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+    {% csrf_token %}
+    <div class="row justify-content-center">
+      <div class="row">
+        {% for x in edit_contact_form %}
+        <div class="col-md-3">{{ x|as_crispy_field }}</div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-2">
+        <input class="btn btn-primary ml-auto" type="reset" value="Reset Fields" />
+      </div>
+      <div class="col-md-2">
+        <input class="btn btn-primary ml-auto" type="submit" value="Save Contact" />
+      </div>
+    </div>
+  </form>
+</div>
+<script src="{% static 'main/js/node_modules/inputmask/dist/jquery.inputmask.min.js' %}"></script>
+<script>
+  $(document).on("keydown", ":input:not(textarea)", function (event) {
+    return event.key != "Enter";
+  });
+  $('#contact_form_activate').off('click');
+  $('#contact_form_activate').on('click', function (event) {
+    console.log('Event fired.');
+    if ($('#contact_form_div').css("visibility") == "hidden") {
+      console.log("Working.");
+      $('#contact_form_div').css("visibility", "visible");
+      $('#contact_form_div').css("display", "block");
+    } else {
+      $('#contact_form_div').css("visibility", "hidden");
+      $('#contact_form_div').css("display", "none");
+    }
+  });
+  $('#contact_edit_form_activate').off('click');
+  $('#contact_edit_form_activate').on('click', function (event) {
+    console.log('Event fired.');
+    if ($('#contact_edit_form_div').css("visibility") == "hidden") {
+      console.log("Working.");
+      $('#contact_edit_form_div').css("visibility", "visible");
+      $('#contact_edit_form_div').css("display", "block");
+    } else {
+      $('#contact_edit_form_div').css("visibility", "hidden");
+      $('#contact_edit_form_div').css("display", "none");
+    }
+  });
+</script>
+{% endblock %}

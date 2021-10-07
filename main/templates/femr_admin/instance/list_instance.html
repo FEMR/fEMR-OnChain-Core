@@ -3,8 +3,8 @@
 {% load static %}
 <div class="row">
     <div class="col-md-6">
-        <h2>Active Instances</h2>
-        <div><a class="btn btn-primary" href="{% url 'main:new_instance' %}">New Instance</a></div>
+        <h2>Active Operation</h2>
+        <div><a class="btn btn-primary" href="{% url 'main:new_instance' %}">New Operation</a></div>
         <table class="table">
             <thead>
                 <tr>
@@ -23,9 +23,9 @@
                     <td><a href="{% url 'main:edit_contact' id=o.main_contact.id %}">{{ o.main_contact }}</a></td>
                     <td><a href="{% url 'main:edit_instance' id=o.id %}">Edit</a></td>
                     {% if o.active %}
-                    <td><a href="{% url 'main:lock_instance_view' id=o.id %}">Lock Instance</a></td>
+                    <td><a href="{% url 'main:lock_instance_view' id=o.id %}">Lock Operation</a></td>
                     {% else %}
-                    <td><a href="{% url 'main:unlock_instance_view' id=o.id %}">Unlock Instance</a></td>
+                    <td><a href="{% url 'main:unlock_instance_view' id=o.id %}">Unlock Operation</a></td>
                     {% endif %}
                 </tr>
                 {% endfor %}
@@ -33,7 +33,7 @@
         </table>
     </div>
     <div class="col-md-6">
-        <h2>Inactive Instances</h2>
+        <h2>Inactive Operations</h2>
         <table class="table">
             <thead>
                 <tr>
@@ -52,9 +52,9 @@
                     <td><a href="{% url 'main:view_contact' id=o.main_contact.id %}">{{ o.main_contact }}</a></td>
                     <td><a href="{% url 'main:edit_instance' id=o.id %}">Edit</a></td>
                     {% if o.active %}
-                    <td><a href="{% url 'main:lock_instance_view' id=o.id %}">Lock Instance</a></td>
+                    <td><a href="{% url 'main:lock_instance_view' id=o.id %}">Lock Operation</a></td>
                     {% else %}
-                    <td><a href="{% url 'main:unlock_instance_view' id=o.id %}">Unlock Instance</a></td>
+                    <td><a href="{% url 'main:unlock_instance_view' id=o.id %}">Unlock Operation</a></td>
                     {% endif %}
                 </tr>
                 {% endfor %}

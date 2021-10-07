@@ -2,20 +2,17 @@
 Enumerates all contents of all database models.
 Migrations run will generate a table for each of these containing the listed fields.
 """
-from datetime import datetime
-from django.db.models.base import Model
-from django.db.models.functions import Now
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.core.validators import BaseValidator, MaxValueValidator, MinLengthValidator, MinValueValidator
 from django.db import models
+from django.db.models.fields import CharField
 from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
-from localflavor.us.models import USStateField
 from rest_framework.authtoken.models import Token
 from timezone_utils.choices import COMMON_TIMEZONES_CHOICES
 
@@ -23,6 +20,7 @@ birth_sex_choices = (('f', 'Female'), ('m', 'Male'), ('o', 'Other'))
 suffix_choices = (('j', 'Jr.'), ('s', 'Sr.'),
                   ('1', 'I'), ('2', 'II'), ('3', 'III'))
 unit_choices = (('i', 'Imperial'), ('m', 'Metric'))
+
 race_choices = (
     ('1', 'Native American or Native Alaskan'),
     ('2', 'Asian'),
@@ -39,6 +37,44 @@ ethnicity_choices = (
 )
 
 
+class Race(models.Model):
+    name = CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+class State(models.Model):
+    name = CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+def get_nondisclosed_race():
+    return Race.objects.get_or_create(name="Nondisclosed")[0].id
+
+
+class Ethnicity(models.Model):
+    name = CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+
+def get_nondisclosed_ethnicity():
+    return Ethnicity.objects.get_or_create(name="Nondisclosed")[0].id
+
+
 class Contact(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -52,17 +88,44 @@ class Contact(models.Model):
         return "{0} {1}".format(self.first_name, self.last_name)
 
 
-class Instance(models.Model):
+class Organization(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
     main_contact = models.ForeignKey(
-        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True)
+        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, related_name='organization_main_contact')
+    admins = models.ManyToManyField('fEMRUser', related_name='organization_admins')
 
     def __unicode__(self):
         return self.name
 
     def __str__(self):
         return self.name
+
+
+def get_test_org():
+    return Organization.objects.get_or_create(name="Test")[0].id
+
+
+class Instance(models.Model):
+    name = models.CharField(max_length=30, unique=True)
+    active = models.BooleanField(default=True)
+    main_contact = models.ForeignKey(
+        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, related_name='instance_main_contact')
+    admins = models.ManyToManyField('fEMRUser', related_name='instance_admins')
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=get_test_org)
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Operation"
+
+
+def get_new_inventory():
+    return Inventory.objects.create().id
 
 
 class Campaign(models.Model):
@@ -76,7 +139,12 @@ class Campaign(models.Model):
         max_length=100, choices=COMMON_TIMEZONES_CHOICES)
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE)
     inventory = models.ForeignKey(
-        "Inventory", on_delete=models.CASCADE, blank=True, null=True)
+        "Inventory", default=get_new_inventory, on_delete=models.CASCADE)
+    main_contact = models.ForeignKey(
+        'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, related_name='campaign_main_contact')
+    admins = models.ManyToManyField('fEMRUser', related_name='campaign_admins')
+    race_options = models.ManyToManyField(Race)
+    ethnicity_options = models.ManyToManyField(Ethnicity)
 
     def __unicode__(self):
         return self.name
@@ -123,8 +191,10 @@ class Patient(models.Model):
     explain = models.CharField(max_length=400, null=True, blank=True)
     date_of_birth = models.DateField()
     age = models.IntegerField()
-    race = models.CharField(max_length=30, choices=race_choices)
-    ethnicity = models.CharField(max_length=30, choices=ethnicity_choices)
+
+    race = models.ForeignKey(Race, on_delete=models.CASCADE, default=get_nondisclosed_race, null=True, blank=True)
+    ethnicity = models.ForeignKey(Ethnicity, on_delete=models.CASCADE, default=get_nondisclosed_ethnicity, null=True, blank=True)
+
     preferred_language = models.CharField(max_length=30, null=True, blank=True)
 
     current_address = models.CharField(max_length=30, null=True, blank=True)
@@ -147,7 +217,7 @@ class Patient(models.Model):
         max_length=1024, null=True, blank=True
     )
 
-    state = USStateField(null=True, blank=True)
+    state = models.ForeignKey(State, on_delete=models.CASCADE, null=True, blank=True)
 
     previous_address = models.CharField(max_length=30, null=True, blank=True)
     phone_number = models.CharField(
@@ -162,13 +232,6 @@ class Patient(models.Model):
         auto_now=True, editable=False, null=False, blank=False)
 
     campaign = models.ManyToManyField(Campaign, default=1)
-
-    # allergies = models.ManyToManyField(Allergy)
-    # immunizations = models.ManyToManyField(Immunization)
-    # problems = models.ManyToManyField(Problem)
-    # procedures = models.ManyToManyField(Procedure)
-    # health_concerns = models.ManyToManyField(HealthConcern)
-    # medications = models.ManyToManyField(Medication)
 
     def __str__(self):
         """
@@ -192,13 +255,15 @@ def cal_key(fk):
     present_keys = Patient.objects.filter(campaign=fk).order_by(
         '-campaign_key').values_list('campaign_key', flat=True)
     present_keys = [i for i in present_keys if i is not None]
-    print(present_keys)
-    if present_keys:
-        print("Adding.")
-        return max(present_keys) + 1
-    else:
-        print("No key.")
-        return 1
+    result = None
+    while result is None:
+        if present_keys:
+            print("Adding.")
+            result = max(present_keys) + 1
+        else:
+            print("No key.")
+            result = 1
+    return result
 
 
 @deconstructible
@@ -441,9 +506,43 @@ class Treatment(models.Model):
         return str(self.medication)
 
 
+class InventoryForm(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class InventoryCategory(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class Manufacturer(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class InventoryEntry(models.Model):
+    category = models.ForeignKey(InventoryCategory, on_delete=models.CASCADE, null=True, blank=True)
     medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
-    volume = models.IntegerField()
+    form = models.ForeignKey(InventoryForm, on_delete=models.CASCADE)
+    strength = models.CharField(max_length=25, null=True, blank=True)
+    count = models.PositiveIntegerField(default=0)
+    quantity = models.PositiveIntegerField(default=0)
+    initial_quantity = models.PositiveIntegerField(default=0)
+    item_number = models.CharField(max_length=25, null=True, blank=True)
+    box_number = models.CharField(max_length=25, null=True, blank=True)
+    expiration_date = models.DateField(blank=True, null=True)
+    manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return "{0} {1}".format(self.medication, self.strength)
 
 
 class Inventory(models.Model):
@@ -492,6 +591,14 @@ class DatabaseChangeLog(models.Model):
     def __str__(self):
         return '{0} {1} {2} - by {3} at {4}, {5}'.format(self.action, self.model, self.instance, self.ip, self.username,
                                                          self.timestamp)
+
+
+class CSVUploadDocument(models.Model):
+    document = models.FileField(upload_to="csv/")
+    mode_option = models.CharField(max_length=10, choices=(
+        ('1', 'New'),
+        ('2', 'Update'),
+    ))
 
 
 @receiver(user_logged_in)

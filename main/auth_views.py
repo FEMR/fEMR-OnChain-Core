@@ -3,7 +3,6 @@ View functions geared toward user authentication.
 All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
-from os import error
 from main.models import fEMRUser
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -188,7 +187,8 @@ def logout_view(request):
     if 'campaign' in request.session:
         del request.session['campaign']
     logout(request)
-    response = redirect('main:index')
+    form = LoginForm()
+    response = render(request, 'auth/login.html', {'form': form})
     if 'username' in request.COOKIES:
         response.delete_cookie('username')
     return response

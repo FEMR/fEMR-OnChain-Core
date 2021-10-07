@@ -10,6 +10,12 @@
                 data-content="Click here to create new users or edit existing users."><i
                     class="fa fa-question-circle"></i></a>
         </div>
+        <!-- <div>
+            <a href="{% url 'main:formulary_home_view' %}">Formulary Management</a>
+            <a href="#" data-toggle="popover" data-trigger="hover"
+                data-content="Click here to manage your campaign's pharmacy and inventory."><i
+                    class="fa fa-question-circle"></i></a>
+        </div> -->
         <div>
             <a href="{% url 'main:get_audit_logs_view' %}">Access Audit Log Management</a>
             <a href="#" data-toggle="popover" data-trigger="hover"
@@ -25,24 +31,14 @@
         <div>
             <a href="{% url 'main:patient_csv_export_view' %}">Export Deidentified Patient Encounter Data</a>
             <a href="#" data-toggle="popover" data-trigger="hover"
-                data-content="Click here to export all patient encounter data in a CSV file format"><i
+                data-content="Click here to create an administrative message."><i
                     class="fa fa-question-circle"></i></a>
         </div>
-    </div>
-
-    <div class="col-md-6">
-        <h3>Patient Encounter Database</h3>
         <div>
-            <a href="{% url 'main:chief_complaint_form_view' %}">Create New Chief Complaint Option</a>
-        </div>
-        <div>
-            <a href="{% url 'main:diagnosis_form_view' %}">Create New Diagnosis Option</a>
-        </div>
-        <div>
-            <a href="{% url 'main:medication_form_view' %}">Create New Medication Option</a>
-        </div>
-        <div>
-            <a href="{% url 'main:treatment_form_view' %}">Create New Treatment Option</a>
+            <a href="{% url 'main:set_timezone' %}">Timezone Controls</a>
+            <a href="#" data-toggle="popover" data-trigger="hover"
+                data-content="Adjust campaign-wide timezone settings."><i
+                    class="fa fa-question-circle"></i></a>
         </div>
     </div>
 </div>

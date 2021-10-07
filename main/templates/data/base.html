@@ -81,11 +81,17 @@
                         <a class="dropdown-item" href="{% url 'main:femr_admin_home' %}">fEMR Admin</a>
                         <div class="dropdown-divider"></div>
                         {% endif %}
-                        <a class="dropdown-item" href="{% url 'main:superuser_home' %}">Admin</a>
-                        {% if request.user|has_group:"Admin" %}
+                        {% if request.user|has_group:"Organization Admin" %}
+                        <a class="dropdown-item" href="{% url 'main:organization_admin_home_view' %}">Organization Admin</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'main:set_timezone' %}">
-                            Timezone Controls</a>
+                        {% endif %}
+                        {% if request.user|has_group:"Operation Admin" %}
+                        <a class="dropdown-item" href="{% url 'main:operation_admin_home_view' %}">Operation Admin</a>
+                        <div class="dropdown-divider"></div>
+                        {% endif %}
+                        {% if request.user|has_group:"Campaign Manager" %}
+                        <a class="dropdown-item" href="{% url 'main:superuser_home' %}">Campaign Manager</a>
+                        <div class="dropdown-divider"></div>
                         {% endif %}
                     </div>
                 </li>
@@ -131,7 +137,7 @@
                     Find a bug or problem? <a href="{% url 'appMR:index' %}">Let us know.</a>
                 </div>
                 <div class="col-sm-12 col-md-4 text-center">
-                    v1.3.4.8062021
+                    v1.4.0.10052021
                 </div>
                 <div class="col-sm-12 col-md-4">
                     <a target="_blank" href="https://github.com/FEMR/fEMR-OnChain-Core/wiki">fEMR On-Chain Wiki</a>

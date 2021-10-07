@@ -4,7 +4,6 @@ Application-wide functions for interfacing with AWS QLDB.
 from pyqldb.driver.qldb_driver import QldbDriver
 
 import os
-import json
 
 try:
     LEDGER_NAME = os.environ['qldb_name']

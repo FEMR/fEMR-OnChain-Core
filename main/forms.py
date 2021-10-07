@@ -7,6 +7,7 @@ import math
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import Group
 from django.forms import ModelForm, Form, CharField, PasswordInput, DateInput, ValidationError, BooleanField
+from django.forms.fields import IntegerField
 from django.forms.models import ModelMultipleChoiceField
 from django.forms.widgets import Textarea
 from django.utils import timezone
@@ -16,7 +17,7 @@ from dal import autocomplete
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, ButtonHolder, Submit
 
-from .models import HistoryOfPresentIllness, MessageOfTheDay, Patient, PatientDiagnosis, PatientEncounter, Photo, fEMRUser, Campaign, Instance, Contact, Vitals,\
+from .models import CSVUploadDocument, Ethnicity, HistoryOfPresentIllness, InventoryEntry, InventoryForm, MessageOfTheDay, Organization, Patient, PatientDiagnosis, PatientEncounter, Photo, Race, fEMRUser, Campaign, Instance, Contact, Vitals,\
     ChiefComplaint, Treatment, Diagnosis, Medication
 
 
@@ -170,6 +171,8 @@ class PatientForm(ModelForm):
             'pattern'] = "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$"
         self.fields['phone_number'].widget.attrs['required'] = False
         self.fields['email_address'].widget.attrs['required'] = False
+        self.fields['race'].widget.attrs['required'] = True
+        self.fields['ethnicity'].widget.attrs['required'] = True
         self.fields['social_security_number'].widget.attrs['minlength'] = "4"
         self.fields['zip_code'].widget.attrs['minlength'] = "5"
         self.fields['age'].widget.attrs['style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
@@ -237,7 +240,8 @@ class PatientForm(ModelForm):
             'date_of_birth': DateInputOverride(attrs={
                 'pattern': "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$",
                 'placeholder': "dd/mm/yyyy"
-            })
+            }),
+            'state': autocomplete.ModelSelect2Multiple(url='main:state-autocomplete'),
         }
 
 
@@ -283,7 +287,7 @@ class PatientEncounterForm(ModelForm):
         if self.cleaned_data['body_mass_index'] is not None:
             if self.cleaned_data['body_mass_index'] < 5:
                 self.add_error('body_height_primary',
-                            "BMI shouldn't be less than 5%. Check these numbers.")
+                               "BMI shouldn't be less than 5%. Check these numbers.")
                 self.add_error(
                     'body_weight', "BMI shouldn't be less than 5%. Check these numbers.")
         return self.cleaned_data['body_mass_index']
@@ -622,6 +626,11 @@ class CampaignForm(ModelForm):
         exclude = ('inventory',)
         labels = {
             'encounter_close': 'Encounter close (Days)',
+            'instance': 'Operation',
+        }
+        widgets = {
+            'race': autocomplete.ModelSelect2Multiple(url='main:race-autocomplete'),
+            'ethnicity': autocomplete.ModelSelect2Multiple(url='main:ethnicity-autocomplete'),
         }
 
 
@@ -696,8 +705,8 @@ class MOTDForm(ModelForm):
                 css_class="row",
             ))
         self.helper.add_input(
-                Submit('submit', 'Save', css_class='btn btn-primary ml-auto'))
-    
+            Submit('submit', 'Save', css_class='btn btn-primary ml-auto'))
+
     class Meta:
         model = MessageOfTheDay
         fields = '__all__'
@@ -715,3 +724,79 @@ class MOTDForm(ModelForm):
                 'placeholder': "dd/mm/yyyy"
             })
         }
+
+
+class InventoryEntryForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Save', css_class='btn btn-primary'))
+
+    class Meta:
+        model = InventoryEntry
+        fields = '__all__'
+
+
+class AddSupplyForm(Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Save', css_class='btn btn-primary'))
+
+    quantity = IntegerField()
+
+
+class RemoveSupplyForm(Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Save', css_class='btn btn-primary'))
+
+    quantity = IntegerField()
+
+
+class CSVUploadForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(
+            Submit('submit', 'Save', css_class='btn btn-primary'))
+
+    class Meta:
+        model = CSVUploadDocument
+        fields = '__all__'
+
+
+class OrganizationForm(ModelForm):
+    class Meta:
+        model = Organization
+        fields = '__all__'
+
+
+class RaceForm(ModelForm):
+    """
+    Data entry form - Race
+    """
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = Race
+        fields = '__all__'
+
+
+class EthnicityForm(ModelForm):
+    """
+    Data entry form - Instance
+    """
+
+    class Meta:
+        """
+        Metaclass controlling model references.
+        """
+        model = Ethnicity
+        fields = '__all__'

@@ -1,0 +1,26 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+<div class="row">
+    <div class="col-md-6">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Organization</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in active_instances %}
+                <tr>
+                    <th scope="row">{{ o.id }}</th>
+                    <td>{{ o.name }}</td>
+                    <td>{{ o.organization }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
