@@ -76,7 +76,7 @@ class RaceAutocomplete(autocomplete.Select2QuerySetView):
         qs = Race.objects.all()
 
         if self.q:
-            qs = qs.filter(text__icontains=self.q)
+            qs = qs.filter(name__icontains=self.q)
         
         return qs
 
@@ -89,7 +89,7 @@ class EthnicityAutocomplete(autocomplete.Select2QuerySetView):
         qs = Ethnicity.objects.all()
 
         if self.q:
-            qs = qs.filter(text__icontains=self.q)
+            qs = qs.filter(name__icontains=self.q)
         
         return qs
 
@@ -102,6 +102,6 @@ class StateAutocomplete(autocomplete.Select2QuerySetView):
         qs = State.objects.all()
 
         if self.q:
-            qs = qs.filter(text__icontains=self.q)
+            qs = qs.filter(name__icontains=self.q)
         
         return qs

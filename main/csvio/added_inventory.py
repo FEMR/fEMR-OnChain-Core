@@ -35,7 +35,7 @@ class AddedInventoryHandler(CSVHandler):
         return response
 
     def __import(self, upload, campaign):
-        csvfile = requests.get(upload.document.url).content.decode('utf-8')
+        csvfile = requests.get(upload.document.url).content
         reader = csv.reader(csvfile, delimiter=",")
         next(reader)
         for row in reader:
