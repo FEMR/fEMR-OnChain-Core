@@ -7,6 +7,7 @@ from django.urls import path
 
 from rest_framework import routers
 from rest_framework.authtoken import views as rest_framework_views
+from rest_framework_swagger.views import get_swagger_view
 
 from main.admin_views import add_user_to_campaign, add_users_to_campaign, admin_home, create_user_view, cut_user_from_campaign, export_audit_logs_view, export_database_logs_view, \
     filter_audit_logs_view, filter_database_logs_view, filter_users_view, get_audit_logs_view, get_database_logs_view, \
@@ -210,6 +211,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^get_auth_token/$', rest_framework_views.obtain_auth_token,
         name='get_auth_token'),
+    path('swagger/', get_swagger_view(title='fEMR OnChain API')),
 
     url(r'^forgot_username', forgot_username, name='forgot_username'),
 

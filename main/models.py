@@ -91,6 +91,23 @@ class Contact(models.Model):
 class Organization(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
+    contract_start_date = models.DateField(null=True, blank=True)
+    address1 = models.CharField(
+        "Address line 1",
+        max_length=1024, null=True, blank=True
+    )
+    address2 = models.CharField(
+        "Address line 2",
+        max_length=1024, null=True, blank=True
+    )
+    zip_code = models.CharField(
+        "ZIP / Postal code", max_length=12, null=True, blank=True, validators=[MinLengthValidator(5)]
+    )
+    city = models.CharField(
+        "City",
+        max_length=1024, null=True, blank=True
+    )
+    state = models.ForeignKey(State, on_delete=models.CASCADE, null=True, blank=True)
     main_contact = models.ForeignKey(
         'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, related_name='organization_main_contact')
     admins = models.ManyToManyField('fEMRUser', related_name='organization_admins')
