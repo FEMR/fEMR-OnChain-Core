@@ -5,6 +5,7 @@ Migrations run will generate a table for each of these containing the listed fie
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.signals import user_logged_in, user_logged_out
+from django.contrib.sessions.models import Session
 from django.core.validators import BaseValidator, MaxValueValidator, MinLengthValidator, MinValueValidator
 from django.db import models
 from django.db.models.fields import CharField
@@ -35,6 +36,21 @@ ethnicity_choices = (
     ('2', 'Not Hispanic or Latinx'),
     ('3', 'Nondisclosed'),
 )
+
+
+class UserSession(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    session = models.OneToOneField(Session, on_delete=models.CASCADE)
+
+
+@receiver(user_logged_in)
+def remove_other_sessions(sender, user, request, **kwargs):
+    Session.objects.filter(usersession__user=user).delete()
+    request.session.save()
+    UserSession.objects.get_or_create(
+        user=user,
+        session_id=request.session.session_key
+    )
 
 
 class Race(models.Model):
