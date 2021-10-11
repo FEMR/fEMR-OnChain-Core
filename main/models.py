@@ -166,7 +166,7 @@ class Campaign(models.Model):
     active = models.BooleanField(default=True)
     units = models.CharField(max_length=30, choices=unit_choices, default="m")
     telehealth = models.BooleanField(default=False)
-    encounter_close = models.PositiveIntegerField()
+    encounter_close = models.PositiveIntegerField(default=30)
     country = models.CharField(max_length=30)
     timezone = models.CharField(
         max_length=100, choices=COMMON_TIMEZONES_CHOICES)
