@@ -71,6 +71,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'axes.middleware.AxesMiddleware',
     'session_security.middleware.SessionSecurityMiddleware',
+    'main.middleware.CheckForSessionInvalidatedMiddleware',
     'main.middleware.TimezoneMiddleware',
     'main.middleware.CampaignActivityCheckMiddleware',
     'main.middleware.ClinicMessageMiddleware',
