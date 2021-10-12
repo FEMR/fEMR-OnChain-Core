@@ -2,11 +2,12 @@ from clinic_messages.models import Message
 from django.contrib.auth import logout
 from django.contrib.auth.models import AnonymousUser
 from main.forms import LoginForm
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from main.models import Campaign
 import pytz
 
 from django.utils import timezone
+from django.contrib.sessions.exceptions import SessionInterrupted
 
 
 class TimezoneMiddleware:
@@ -107,3 +108,13 @@ class ClinicMessageMiddleware:
         if request.user.is_authenticated:
             request.message_number = len(Message.objects.filter(recipient=request.user).filter(read=False))
         return self.get_response(request)
+
+
+class CheckForSessionInvalidatedMiddleware:
+    def __init__(self, get_response) -> None:
+        self.get_response = get_response
+    
+    def process_exception(self, request, exception):
+        if not isinstance(exception, SessionInterrupted):
+            return self.get_response(request)
+        return redirect('main:logout')
