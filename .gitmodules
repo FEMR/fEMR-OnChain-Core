@@ -1,3 +1,6 @@
 [submodule "appMR"]
 	path = appMR
 	url = git@github.com:Romulus10/AppMR.git
+[submodule "clinic_messages"]
+	path = clinic_messages
+	url = git@github.com:Romulus10/DjangoMessage.git
