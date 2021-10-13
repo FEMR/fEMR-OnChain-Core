@@ -41,6 +41,9 @@ class Command(BaseCommand):
             superuser.first_name = "Admin"
             superuser.last_name = "User"
             superuser.campaigns.add(campaign)
+            superuser.user_permissions.add(Permission.objects.get(name='Can add state'))
+            superuser.user_permissions.add(Permission.objects.get(name='Can add diagnosis'))
+            superuser.user_permissions.add(Permission.objects.get(name='Can add chief complaint'))
             superuser.save()
             Group.objects.get(name='Admin').user_set.add(superuser)
             Group.objects.get(name='fEMR Admin').user_set.add(superuser)
@@ -48,8 +51,5 @@ class Command(BaseCommand):
             Group.objects.get(name='Clinician').user_set.add(superuser)
             Group.objects.get(name='Operation Admin').user_set.add(superuser)
             Group.objects.get(name='Campaign Manager').user_set.add(superuser)
-            superuser.user_permissions.add(Permission.objects.get(name='Can add state'))
-            superuser.user_permissions.add(Permission.objects.get(name='Can add diagnosis'))
-            superuser.user_permissions.add(Permission.objects.get(name='Can add chief complaint'))
             instance.main_contact = superuser
             instance.save()
