@@ -1,8 +1,6 @@
-from django.contrib.sessions.models import Session
 from clinic_messages.models import Message
 from django.contrib.auth import logout
 from django.contrib.auth.models import AnonymousUser
-from main.background_tasks import reset_sessions
 from main.forms import LoginForm
 from django.shortcuts import redirect, render
 from main.models import Campaign, UserSession
@@ -117,7 +115,6 @@ class CheckForSessionInvalidatedMiddleware:
         self.get_response = get_response
     
     def __call__(self, request):
-        reset_sessions()
         if request.user.is_authenticated:
             try:
                 request.user.logged_in_user.session_key = request.session.session_key

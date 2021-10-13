@@ -6,7 +6,7 @@ If one is not found, they will direct to the appropriate error page.
 from main.models import UserSession, fEMRUser
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import MultipleObjectsReturned
 from django.db import IntegrityError, DataError
 from django.shortcuts import redirect, render
@@ -193,7 +193,8 @@ def logout_view(request):
     """
     if 'campaign' in request.session:
         del request.session['campaign']
-    UserSession.objects.filter(user=request.user).delete()
+    if not isinstance(request.user, AnonymousUser):
+        UserSession.objects.filter(user=request.user).delete()
     logout(request)
     form = LoginForm()
     response = render(request, 'auth/login.html', {'form': form})

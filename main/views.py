@@ -7,7 +7,7 @@ from django.utils import timezone
 from main.forms import ForgotUsernameForm
 from django.core.exceptions import ObjectDoesNotExist
 from main.models import Campaign, MessageOfTheDay, fEMRUser
-from .background_tasks import run_encounter_close
+from .background_tasks import reset_sessions, run_encounter_close
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 import pytz
@@ -22,6 +22,7 @@ def index(request):
     """
     print(request.user_agent.browser.family)
     run_encounter_close()
+    reset_sessions()
     if request.user_agent.browser.family not in ["Chrome", "Firefox", "Firefox Mobile", "Chrome Mobile iOS"]:
         return render(request, 'data/stop.html')
     else:
@@ -36,6 +37,7 @@ def home(request):
     :return: An HttpResponse, rendering the home page.
     """
     run_encounter_close()
+    reset_sessions()
     if request.user.is_authenticated:
         motd = MessageOfTheDay.load()
         if motd.start_date is not None or motd.end_date is not None:
