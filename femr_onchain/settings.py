@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ["DEBUG"]
+DEBUG = True if os.environ["DEBUG"] == "True" else False
 
 ALLOWED_HOSTS = [
     "*",
@@ -71,10 +71,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'axes.middleware.AxesMiddleware',
     'session_security.middleware.SessionSecurityMiddleware',
-    'main.middleware.CheckForSessionInvalidatedMiddleware',
     'main.middleware.TimezoneMiddleware',
     'main.middleware.CampaignActivityCheckMiddleware',
     'main.middleware.ClinicMessageMiddleware',
+    'main.middleware.CheckForSessionInvalidatedMiddleware',
+    'main.middleware.HandleErrorMiddleware',
     'django_user_agents.middleware.UserAgentMiddleware',
 ]
 

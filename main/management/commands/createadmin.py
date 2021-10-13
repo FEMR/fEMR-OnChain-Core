@@ -1,11 +1,12 @@
 """
 Defines a createadmin command extending manage.py.
 """
+import os
 
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 
-from main.models import fEMRUser, Instance, Campaign, Contact
+from main.models import fEMRUser, Instance, Campaign
 from main.qldb_interface import create_tables
 
 
@@ -25,7 +26,8 @@ class Command(BaseCommand):
         if not Instance.objects.filter(name="Test").exists():
             print("Populating instance table.")
             instance = Instance.objects.create(name="Test")
-            create_tables()
+            if os.environ.get('QLDB_ENABLED') == "TRUE":
+                create_tables()
         else:
             instance = Instance.objects.get(name="Test")
         if not Campaign.objects.filter(name="Test").exists():

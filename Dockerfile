@@ -1,11 +1,5 @@
 FROM ubuntu:latest
 
-COPY . /opt/app
-WORKDIR /opt/app
-
-RUN apt-get update && apt-get install -y dos2unix
-RUN find /opt/app -type f -exec dos2unix {} \;
-
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update -y && \
     ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && \
@@ -15,10 +9,18 @@ RUN DEBIAN_FRONTEND=noninteractive \
                     python3-dev libssl-dev python3-sphinx \
                     virtualenv libpq-dev -y && \
     apt-get upgrade -y
-RUN pip3 install -r requirements.txt
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
     apt-get install nodejs -y
+RUN apt-get install -y dos2unix
+
+COPY requirements.txt /opt/app/requirements.txt
+WORKDIR /opt/app
+RUN pip3 install -r requirements.txt
 
 EXPOSE 8081
+
+ARG FOO
+COPY . /opt/app
+RUN find /opt/app -type f -exec dos2unix {} \;
 
 ENTRYPOINT [ "/opt/app/build.sh", "init-all-run" ]

@@ -1,9 +1,11 @@
+from django.contrib.sessions.models import Session
 from clinic_messages.models import Message
 from django.contrib.auth import logout
 from django.contrib.auth.models import AnonymousUser
+from main.background_tasks import reset_sessions
 from main.forms import LoginForm
 from django.shortcuts import redirect, render
-from main.models import Campaign
+from main.models import Campaign, UserSession
 import pytz
 
 from django.utils import timezone
@@ -115,9 +117,27 @@ class CheckForSessionInvalidatedMiddleware:
         self.get_response = get_response
     
     def __call__(self, request):
-        return self.get_response(request)
+        reset_sessions()
+        if request.user.is_authenticated:
+            try:
+                request.user.logged_in_user.session_key = request.session.session_key
+                request.user.logged_in_user.save()
+            except:
+                UserSession.objects.get_or_create(user=request.user)
+
+        response = self.get_response(request)
+
+        return response
+
+
+class HandleErrorMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
     
-    def process_exception(self, request, exception):
-        if not isinstance(exception, SessionInterrupted):
-            return self.get_response(request)
-        return redirect('main:logout')
+    def __call__(self, request):
+        response = self.get_response(request)
+        return response
+    
+    def process_exception(aelf, request, exception):
+        if isinstance(exception, SessionInterrupted):
+            return redirect('main:logout_view')

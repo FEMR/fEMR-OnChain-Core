@@ -1,7 +1,7 @@
 from datetime import timedelta
 from django.utils import timezone
 
-from main.models import Campaign, Patient, PatientEncounter
+from main.models import Campaign, Patient, PatientEncounter, UserSession
 
 
 def run_encounter_close():
@@ -23,3 +23,11 @@ def run_encounter_close():
                     print("Set {0} inactive.".format(e))
                     e.active = False
                     e.save_no_timestamp()
+
+
+def reset_sessions():
+    now = timezone.now()
+    d = now - timedelta(minutes=1)
+    for x in UserSession.objects.all():
+        if x.timestamp < d:
+            x.delete()

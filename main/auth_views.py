@@ -3,7 +3,7 @@ View functions geared toward user authentication.
 All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
-from main.models import fEMRUser
+from main.models import UserSession, fEMRUser
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
@@ -124,6 +124,13 @@ def login_view(request):
                                 password=request.POST['password'])
             if user is not None:
                 login(request, user)
+                if UserSession.objects.filter(user=request.user).exists():
+                    form = LoginForm()
+                    logout(request)
+                    return render(request,
+                              'auth/login.html',
+                              {'error_message': "This user is logged in elsewhere, or the last session wasn't ended correctly. Either log out of your last session, or wait for that session to end in one minute.",
+                               'form': form})
                 is_admin = request.user.groups.filter(
                     name='fEMR Admin').exists()
                 if len(user.campaigns.all()) == 1 and not user.campaigns.all()[0].active:
@@ -186,6 +193,7 @@ def logout_view(request):
     """
     if 'campaign' in request.session:
         del request.session['campaign']
+    UserSession.objects.filter(user=request.user).delete()
     logout(request)
     form = LoginForm()
     response = render(request, 'auth/login.html', {'form': form})
