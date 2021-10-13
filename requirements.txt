@@ -30,7 +30,7 @@ django-user-agents==0.4.0
 djangorestframework==3.12.4
 docutils==0.17.1
 dparse==0.5.1
-idna==3.2
+idna==3.3
 ionhash==1.2.1
 isort==5.9.3
 jmespath==0.10.0
