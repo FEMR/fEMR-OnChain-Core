@@ -5,6 +5,7 @@ import itertools
 import operator
 import os
 from datetime import datetime, timedelta
+from django.contrib.auth.models import Permission
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
@@ -118,6 +119,9 @@ def create_user_view(request):
                         for x in request.POST.getlist('groups'):
                             t.groups.add(x)
                     t.created_by = request.user
+                    t.user_permissions.add(Permission.objects.get(name='Can add state'))
+                    t.user_permissions.add(Permission.objects.get(name='Can add diagnosis'))
+                    t.user_permissions.add(Permission.objects.get(name='Can add chief complaint'))
                     t.save()
                     DatabaseChangeLog.objects.create(action="Create", model="User", instance=str(t),
                                                      ip=get_client_ip(request), username=request.user.username,

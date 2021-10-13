@@ -3,7 +3,7 @@ Defines a createadmin command extending manage.py.
 """
 import os
 
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.core.management.base import BaseCommand
 
 from main.models import fEMRUser, Instance, Campaign
@@ -48,5 +48,8 @@ class Command(BaseCommand):
             Group.objects.get(name='Clinician').user_set.add(superuser)
             Group.objects.get(name='Operation Admin').user_set.add(superuser)
             Group.objects.get(name='Campaign Manager').user_set.add(superuser)
+            superuser.user_permissions.add(Permission.objects.get(name='Can add state'))
+            superuser.user_permissions.add(Permission.objects.get(name='Can add diagnosis'))
+            superuser.user_permissions.add(Permission.objects.get(name='Can add chief complaint'))
             instance.main_contact = superuser
             instance.save()
