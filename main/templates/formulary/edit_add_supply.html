@@ -1,7 +1,7 @@
 {% extends "data/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<form method="POST" action="{% url 'main:edit_add_supply_view' item_id %}">
+<form action="{% url 'main:edit_add_supply_view' item_id %}" method="POST">
     {% csrf_token %}
     {% crispy form %}
 </form>

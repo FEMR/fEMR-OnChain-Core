@@ -4,7 +4,6 @@ Migrations run will generate a table for each of these containing the listed fie
 """
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.contrib.sessions.models import Session
 from django.core.validators import BaseValidator, MaxValueValidator, MinLengthValidator, MinValueValidator
 from django.db import models
 from django.db.models.fields import CharField
@@ -45,7 +44,7 @@ class Race(models.Model):
     name = CharField(max_length=100)
 
     def __str__(self) -> str:
-        return self.name
+        return str(self.name)
 
     def __unicode__(self):
         return self.name
@@ -55,7 +54,7 @@ class State(models.Model):
     name = CharField(max_length=100)
 
     def __str__(self) -> str:
-        return self.name
+        return str(self.name)
 
     def __unicode__(self):
         return self.name
@@ -69,7 +68,7 @@ class Ethnicity(models.Model):
     name = CharField(max_length=100)
 
     def __str__(self) -> str:
-        return self.name
+        return str(self.name)
 
     def __unicode__(self):
         return self.name
@@ -140,7 +139,7 @@ class Instance(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     class Meta:
         verbose_name = "Operation"
 
@@ -214,7 +213,8 @@ class Patient(models.Model):
     age = models.IntegerField()
 
     race = models.ForeignKey(Race, on_delete=models.CASCADE, default=get_nondisclosed_race, null=True, blank=True)
-    ethnicity = models.ForeignKey(Ethnicity, on_delete=models.CASCADE, default=get_nondisclosed_ethnicity, null=True, blank=True)
+    ethnicity = models.ForeignKey(Ethnicity, on_delete=models.CASCADE, default=get_nondisclosed_ethnicity, null=True,
+                                  blank=True)
 
     preferred_language = models.CharField(max_length=30, null=True, blank=True)
 
@@ -369,11 +369,11 @@ class PatientEncounter(models.Model):
         Patient, on_delete=models.CASCADE, null=True, blank=True)
 
     body_height_primary = models.IntegerField(default=0, null=True, blank=True,
-        validators=[MaxValueValidator(8), MinValueValidator(0)])
+                                              validators=[MaxValueValidator(8), MinValueValidator(0)])
     body_height_secondary = models.FloatField(null=True, blank=True,
-        validators=[ModifiedMaxValueValidator(100), MinValueValidator(0)])
+                                              validators=[ModifiedMaxValueValidator(100), MinValueValidator(0)])
     body_weight = models.FloatField(null=True, blank=True,
-        validators=[MaxValueValidator(500), MinValueValidator(0.25)])
+                                    validators=[MaxValueValidator(500), MinValueValidator(0.25)])
     bmi_percentile = models.IntegerField(
         validators=[MaxValueValidator(100), MinValueValidator(1)], null=True, blank=True)
     weight_for_length_percentile = models.IntegerField(
@@ -415,22 +415,14 @@ class PatientEncounter(models.Model):
 
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, null=False, blank=False, editable=False, default=1)
 
-    @property
-    def unit_aware_primary_height(self, unit):
-        pass
-
-    @property
-    def unit_aware_secondary_height(self, unit):
-        pass
-
-    @property
+    # noinspection PyTypeChecker
     def unit_aware_weight(self, unit):
-        return self.body_weight if unit == "m" else (self.body_weight * 2.2046)
-    
+        return self.body_weight if unit == "m" else (float(self.body_weight) * 2.2046)
+
     def save(self, *args, **kwargs):
         self.timestamp = timezone.now()
         super(PatientEncounter, self).save(*args, **kwargs)
-    
+
     def save_no_timestamp(self, *args, **kwargs):
         super(PatientEncounter, self).save(*args, **kwargs)
 
@@ -482,9 +474,9 @@ class Vitals(models.Model):
     timestamp = models.DateTimeField(
         auto_now=True, editable=False, null=False, blank=False)
 
-    @property
+    # noinspection PyTypeChecker
     def unit_aware_temperature(self, unit):
-        return self.body_temperature if unit == "m" else (self.body_temperature * 1.8) + 32
+        return self.body_temperature if unit == "m" else (float(self.body_temperature) * 1.8) + 32
 
 
 class fEMRUser(AbstractUser):
@@ -531,21 +523,21 @@ class InventoryForm(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self) -> str:
-        return self.name
+        return str(self.name)
 
 
 class InventoryCategory(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self) -> str:
-        return self.name
+        return str(self.name)
 
 
 class Manufacturer(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self) -> str:
-        return self.name
+        return str(self.name)
 
 
 class InventoryEntry(models.Model):
@@ -620,4 +612,3 @@ class CSVUploadDocument(models.Model):
         ('1', 'New'),
         ('2', 'Update'),
     ))
-

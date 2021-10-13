@@ -3,14 +3,17 @@ Handles template rendering and logic for editing web forms.
 All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
-from main.femr_admin_views import get_client_ip
 import math
 import os
+
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import AuxiliaryPatientEncounterForm, HistoryOfPresentIllnessForm, HistoryPatientEncounterForm, PatientDiagnosisForm, PatientForm, PatientEncounterForm, PhotoForm, TreatmentForm, VitalsForm
-from .models import Campaign, Diagnosis, HistoryOfPresentIllness, Patient, PatientDiagnosis, PatientEncounter, DatabaseChangeLog, Photo, Vitals, Treatment
+from main.femr_admin_views import get_client_ip
 from main.qldb_interface import update_patient, update_patient_encounter
+from .forms import AuxiliaryPatientEncounterForm, HistoryOfPresentIllnessForm, HistoryPatientEncounterForm, \
+    PatientDiagnosisForm, PatientForm, PatientEncounterForm, PhotoForm, TreatmentForm, VitalsForm
+from .models import Campaign, Diagnosis, HistoryOfPresentIllness, Patient, PatientDiagnosis, PatientEncounter, \
+    DatabaseChangeLog, Photo, Vitals, Treatment
 
 
 def patient_edit_form_view(request, id=None):
@@ -41,7 +44,8 @@ def patient_edit_form_view(request, id=None):
                 t.save()
                 print(t.campaign_key)
                 DatabaseChangeLog.objects.create(action="Edit", model="Patient", instance=str(t),
-                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                 ip=get_client_ip(request), username=request.user.username,
+                                                 campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     update_patient(form.cleaned_data)
                 return render(request, "data/patient_submitted.html", {'patient': t,
@@ -50,7 +54,8 @@ def patient_edit_form_view(request, id=None):
                 error = "Form is invalid."
         else:
             DatabaseChangeLog.objects.create(action="View", model="Patient", instance=str(m),
-                                             ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                             ip=get_client_ip(request), username=request.user.username,
+                                             campaign=Campaign.objects.get(name=request.session['campaign']))
             form = PatientForm(instance=m)
         return render(request, 'forms/patient.html', {'error': error, 'patient_id': id, 'encounters': encounters,
                                                       'form': form, 'page_name': 'Returning Patient'})
@@ -63,7 +68,8 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
     Used to edit Encounter objects.
 
     :param request: Django Request object.
-    :param id: The ID of the object to edit.
+    :param patient_id: The ID of the object to edit.
+    :param encounter_id:
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
@@ -88,7 +94,8 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 encounter.active = True
                 encounter.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(encounter),
-                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                 ip=get_client_ip(request), username=request.user.username,
+                                                 campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(encounter).data
@@ -105,20 +112,21 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 print(form.errors)
         else:
             DatabaseChangeLog.objects.create(action="View", model="Patient", instance=str(m),
-                                             ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                             ip=get_client_ip(request), username=request.user.username,
+                                             campaign=Campaign.objects.get(name=request.session['campaign']))
             form = PatientEncounterForm(
                 instance=m, unit=units)
             if not m.active:
                 for field in form:
                     try:
                         field.widget.attrs['readonly'] = True
-                    except:
-                        pass
+                    except Exception as e:
+                        print(e)
                 for field in vitals_form:
                     try:
                         field.widget.attrs['readonly'] = True
-                    except:
-                        pass
+                    except Exception as e:
+                        print(e)
             if units == 'i':
                 form.initial = {
                     'body_mass_index': m.body_mass_index,
@@ -135,9 +143,12 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                           100 +
                           (m.body_height_secondary if m.body_height_secondary is not None else 0)) / 2.54) // 12),
                     'body_height_secondary': round((
-                        ((m.body_height_primary if m.body_height_primary is not None else 0) *
-                         100 +
-                         (m.body_height_secondary if m.body_height_secondary is not None else 0)) / 2.54) % 12, 2),
+                                                           ((
+                                                                m.body_height_primary if m.body_height_primary is not None else 0) *
+                                                            100 +
+                                                            (
+                                                                m.body_height_secondary if m.body_height_secondary is not None else 0)) / 2.54) % 12,
+                                                   2),
                     'body_weight': round((m.body_weight if m.body_weight is not None else 0) * 2.2046, 2),
                 }
         form.initial['timestamp'] = m.timestamp
@@ -146,9 +157,11 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         return render(request, 'forms/edit_encounter.html',
                       {'active': encounter_active, 'aux_form': aux_form,
                        'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units,
+                       'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -158,7 +171,8 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
     Used to edit Encounter objects.
 
     :param request: Django Request object.
-    :param id: The ID of the object to edit.
+    :param patient_id: The ID of the object to edit.
+    :param encounter_id:
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
@@ -206,7 +220,8 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
                     treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none(
                     )
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
-                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                 ip=get_client_ip(request), username=request.user.username,
+                                                 campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(m).data
@@ -228,15 +243,20 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
                 'body_height_primary': math.floor(
                     ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12),
                 'body_height_secondary': round((
-                    (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
+                                                       (
+                                                               m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12,
+                                               2),
                 'body_weight': round(m.body_weight if m.body_weight is not None else 0 * 2.2046, 2),
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/treatment_tab.html',
-                      {'active': m.active, 'aux_form': aux_form, 'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                      {'active': m.active, 'aux_form': aux_form, 'form': form, 'vitals': v, 'treatments': t,
+                       'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units,
+                       'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -246,7 +266,8 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
     Used to edit Encounter objects.
 
     :param request: Django Request object.
-    :param id: The ID of the object to edit.
+    :param patient_id: The ID of the object to edit.
+    :param encounter_id:
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
@@ -292,7 +313,8 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
                     treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none(
                     )
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
-                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                 ip=get_client_ip(request), username=request.user.username,
+                                                 campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(m).data
@@ -314,15 +336,20 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
                 'body_height_primary': math.floor(
                     ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12),
                 'body_height_secondary': round((
-                    (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
+                                                       (
+                                                               m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12,
+                                               2),
                 'body_weight': round(m.body_weight * 2.2046, 2) if m.body_weight is not None else 0,
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/treatment_tab.html',
-                      {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                      {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
+                       'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units,
+                       'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -332,7 +359,8 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
     Used to edit Encounter objects.
 
     :param request: Django Request object.
-    :param id: The ID of the object to edit.
+    :param patient_id: The ID of the object to edit.
+    :param encounter_id:
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
@@ -376,7 +404,8 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
                     treatment_form.fields['diagnosis'].queryset = Diagnosis.objects.none(
                     )
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
-                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                 ip=get_client_ip(request), username=request.user.username,
+                                                 campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(m).data
@@ -399,26 +428,31 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
                 'body_height_primary': math.floor(
                     ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12),
                 'body_height_secondary': round((
-                    (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
+                                                       (
+                                                               m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12,
+                                               2),
                 'body_weight': round(m.body_weight * 2.2046, 2),
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/treatment_tab.html',
-                      {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                      {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
+                       'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units,
+                       'patient': p})
     else:
         return redirect('/not_logged_in')
 
 
 def history_view(request, patient_id=None, encounter_id=None):
     """
-    Used to edit Encounter objects.
 
-    :param request: Django Request object.
-    :param id: The ID of the object to edit.
-    :return: HTTPResponse.
+    :param request:
+    :param patient_id:
+    :param encounter_id:
+    :return:
     """
     if request.user.is_authenticated:
         if request.session['campaign'] == "RECOVERY MODE":
@@ -439,7 +473,8 @@ def history_view(request, patient_id=None, encounter_id=None):
                 m.family_history = request.POST['family_history']
                 m.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
-                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                 ip=get_client_ip(request), username=request.user.username,
+                                                 campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(m).data
@@ -462,15 +497,19 @@ def history_view(request, patient_id=None, encounter_id=None):
                 'body_height_primary': math.floor(
                     ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12),
                 'body_height_secondary': round((
-                    (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
+                                                       (
+                                                               m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12,
+                                               2),
                 'body_weight': round(m.body_weight if m.body_weight is not None else 0 * 2.2046, 2),
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/history_tab.html',
                       {'form': form, 'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units,
+                       'patient': p})
     else:
         return redirect('/not_logged_in')
 
@@ -480,7 +519,8 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
     Used to edit Encounter objects.
 
     :param request: Django Request object.
-    :param id: The ID of the object to edit.
+    :param patient_id: The ID of the object to edit.
+    :param encounter_id: THe ID of the encounter the vitals object is connected to.
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
@@ -498,7 +538,8 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
                 vitals.encounter = m
                 vitals.save()
                 DatabaseChangeLog.objects.create(action="New", model="Vitals", instance=str(m),
-                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                 ip=get_client_ip(request), username=request.user.username,
+                                                 campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(m).data
@@ -520,13 +561,16 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
                 'body_height_primary': math.floor(
                     ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12),
                 'body_height_secondary': round((
-                    (m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2),
+                                                       (
+                                                               m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12,
+                                               2),
                 'body_weight': round(m.body_weight * 2.2046, 2),
             }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/edit_encounter.html',
                       {'active': m.active, 'form': form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id, 'patient': p,
                        'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units})
     else:
@@ -535,11 +579,11 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
 
 def upload_photo_view(request, patient_id=None, encounter_id=None):
     """
-    Used to edit Encounter objects.
 
-    :param request: Django Request object.
-    :param id: The ID of the object to edit.
-    :return: HTTPResponse.
+    :param request:
+    :param patient_id:
+    :param encounter_id:
+    :return:
     """
     if request.user.is_authenticated:
         if request.session['campaign'] == "RECOVERY MODE":
@@ -559,7 +603,8 @@ def upload_photo_view(request, patient_id=None, encounter_id=None):
                 m.photos.add(ph)
                 m.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
-                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                 ip=get_client_ip(request), username=request.user.username,
+                                                 campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(m).data
@@ -568,20 +613,23 @@ def upload_photo_view(request, patient_id=None, encounter_id=None):
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/photos_tab.html',
                       {'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units,
+                       'patient': p})
     else:
         return redirect('/not_logged_in')
 
 
 def edit_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
     """
-    Used to edit Encounter objects.
 
-    :param request: Django Request object.
-    :param id: The ID of the object to edit.
-    :return: HTTPResponse.
+    :param request:
+    :param patient_id:
+    :param encounter_id:
+    :param photo_id:
+    :return:
     """
     if request.user.is_authenticated:
         if request.session['campaign'] == "RECOVERY MODE":
@@ -602,7 +650,8 @@ def edit_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
                 except ValueError:
                     ph.delete()
                 DatabaseChangeLog.objects.create(action="Edit", model="Photo", instance=str(ph),
-                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                 ip=get_client_ip(request), username=request.user.username,
+                                                 campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(m).data
@@ -611,9 +660,11 @@ def edit_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
                 suffix = p.get_suffix_display() if p.suffix is not None else ""
                 return render(request, 'forms/photos_tab.html',
                               {'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
-                               'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                               'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                               'encounter': m,
                                'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
-                               'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
+                               'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units,
+                               'patient': p})
         else:
             aux_form = PhotoForm(instance=photo)
             return render(request, 'forms/edit_photo.html', {
@@ -632,7 +683,9 @@ def delete_photo_view(request, patient_id=None, encounter_id=None, photo_id=None
     Used to edit Encounter objects.
 
     :param request: Django Request object.
-    :param id: The ID of the object to edit.
+    :param patient_id:
+    :param encounter_id: The ID of the object to edit.
+    :param photo_id:
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
@@ -650,20 +703,22 @@ def delete_photo_view(request, patient_id=None, encounter_id=None, photo_id=None
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/photos_tab.html',
                       {'aux_form': aux_form, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units,
+                       'patient': p})
     else:
         return redirect('/not_logged_in')
 
 
 def hpi_view(request, patient_id=None, encounter_id=None):
     """
-    Used to edit Encounter objects.
 
-    :param request: Django Request object.
-    :param id: The ID of the object to edit.
-    :return: HTTPResponse.
+    :param request:
+    :param patient_id:
+    :param encounter_id:
+    :return:
     """
     if request.user.is_authenticated:
         if request.session['campaign'] == "RECOVERY MODE":
@@ -686,38 +741,37 @@ def hpi_view(request, patient_id=None, encounter_id=None):
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         return render(request, 'forms/hpi_tab.html',
                       {'hpis': hpis, 'vitals': v, 'treatments': t, 'vitals_form': vitals_form,
-                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix), 'encounter': m,
+                       'page_name': 'Edit Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'encounter': m,
                        'birth_sex': p.sex_assigned_at_birth, 'encounter_id': encounter_id,
-                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units, 'patient': p})
+                       'patient_name': "{} {} {}".format(p.first_name, p.last_name, suffix), 'units': units,
+                       'patient': p})
     else:
         return redirect('/not_logged_in')
 
 
 def submit_hpi_view(request, patient_id=None, encounter_id=None, hpi_id=None):
     """
-    Used to edit Encounter objects.
 
-    :param request: Django Request object.
-    :param id: The ID of the object to edit.
-    :return: HTTPResponse.
+    :param request:
+    :param patient_id:
+    :param encounter_id:
+    :param hpi_id:
+    :return:
     """
     if request.user.is_authenticated:
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
-        units = Campaign.objects.get(name=request.session['campaign']).units
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
-        p = get_object_or_404(Patient, pk=patient_id)
-        v = Vitals.objects.filter(encounter=m)
-        t = Treatment.objects.filter(encounter=m)
         h = HistoryOfPresentIllness.objects.get(pk=hpi_id)
-        aux_form = HistoryOfPresentIllnessForm(instance=h)
         if request.method == 'POST':
             aux_form = HistoryOfPresentIllnessForm(request.POST, instance=h)
             if aux_form.is_valid():
                 ph = aux_form.save()
                 ph.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
-                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                 ip=get_client_ip(request), username=request.user.username,
+                                                 campaign=Campaign.objects.get(name=request.session['campaign']))
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(m).data

@@ -5,17 +5,17 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
     <title>fEMR On-Chain</title>
-    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+    <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}" type="text/javascript"></script>
     <!-- <script crossorigin="anonymous" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script> -->
     <script crossorigin="anonymous" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+            src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="{% static 'main/js/node_modules/inputmask/dist/jquery.inputmask.min.js' %}"></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css'>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css' rel='stylesheet'>
     <link href="{% static 'main/css/main.css' %}" media="screen" rel="stylesheet">
     <link href="{% static 'main/assets/styles.css' %}" media="screen" rel="stylesheet">
     {% if request.session|is_help_off %}
@@ -24,140 +24,143 @@
             visibility: hidden;
             display: none;
         }
+
     </style>
     {% endif %}
 </head>
 
 <body class="page-home">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark-femr">
-        <a class="navbar-brand" href="{% url 'main:home' %}">
-            <img src="https://demo.teamfemr.org/assets/img/52749c927045848ae798e9df58dcc0dd-logo_color_sm.png"
-                width="60" alt="">
-        </a>
-        <a id="main_popover" href="#" data-toggle="popover" data-trigger="hover"
-            data-content="Make sure you are using Google Chrome. Make sure Campaign is set to the correct clinic location or program. It is easiest to tab through each screen. For help contact Help@TeamfEMR.org."><i
-                class="fa fa-question-circle"></i></a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark-femr">
+    <a class="navbar-brand" href="{% url 'main:home' %}">
+        <img alt=""
+             src="https://demo.teamfemr.org/assets/img/52749c927045848ae798e9df58dcc0dd-logo_color_sm.png" width="60">
+    </a>
+    <a data-content="Make sure you are using Google Chrome. Make sure Campaign is set to the correct clinic location or program. It is easiest to tab through each screen. For help contact Help@TeamfEMR.org." data-toggle="popover" data-trigger="hover" href="#"
+       id="main_popover"><i
+            class="fa fa-question-circle"></i></a>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
-            aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <button aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+            data-target="#navbarText" data-toggle="collapse" type="button">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-        <div style="color: white;">{{ request.session.campaign }}</div>
+    <div style="color: white;">{{ request.session.campaign }}</div>
 
-        <div class="collapse navbar-collapse" id="navbarText">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main:home' %}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main:patient_form_view' %}">New Patient</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main:patient_list_view' %}">
-                        Manager</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="">Pharmacy</a>
-                </li>
-                {% if request.message_number > 0 %}
-                <li class="nav-item" style="background-color: red;">
-                    <a class="nav-link" href="{% url 'clinic_messages:index' %}" style="color: black;">Messages ({{
-                        request.message_number }})</a>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'clinic_messages:index' %}">
-                        Messages ({{ request.message_number }})</a>
-                </li>
-                {% endif %}
-                <div class="dropdown-divider"></div>
-                {% if request.user|has_group:"Admin" %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownOne" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Admin
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownOne">
-                        {% if request.user|has_group:"fEMR Admin" %}
-                        <a class="dropdown-item" href="{% url 'main:femr_admin_home' %}">fEMR Admin</a>
-                        <div class="dropdown-divider"></div>
-                        {% endif %}
-                        {% if request.user|has_group:"Organization Admin" %}
-                        <a class="dropdown-item" href="{% url 'main:organization_admin_home_view' %}">Organization
-                            Admin</a>
-                        <div class="dropdown-divider"></div>
-                        {% endif %}
-                        {% if request.user|has_group:"Operation Admin" %}
-                        <a class="dropdown-item" href="{% url 'main:operation_admin_home_view' %}">Operation Admin</a>
-                        <div class="dropdown-divider"></div>
-                        {% endif %}
-                        {% if request.user|has_group:"Campaign Manager" %}
-                        <a class="dropdown-item" href="{% url 'main:superuser_home' %}">Campaign Manager</a>
-                        <div class="dropdown-divider"></div>
-                        {% endif %}
-                    </div>
-                </li>
-                {% endif %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownTwo" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-user-circle" aria-hidden="true"></i>
-                        {{ request.user }}
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownTwo">
-                        <a class="dropdown-item" href="{% url 'main:help_messages_off' %}">Toggle Help Messages</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'main:logout_view' %}">Logout</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <main>
-        <div class="page-content">
-            <div class="container" id="page">
-                <div class="row">
-                    <h1>{{ page_name }}</h1>
-                    {% if page_tip %}
-                    <a id="page_popover" href="#" data-toggle="popover" data-trigger="hover"
-                        data-content="{{ page_tip }}"><i class="fa fa-question-circle"></i></a>
+    <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'main:home' %}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'main:patient_form_view' %}">New Patient</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'main:patient_list_view' %}">
+                    Manager</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="">Pharmacy</a>
+            </li>
+            {% if request.message_number > 0 %}
+            <li class="nav-item" style="background-color: red;">
+                <a class="nav-link" href="{% url 'clinic_messages:index' %}" style="color: black;">Messages ({{
+                    request.message_number }})</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'clinic_messages:index' %}">
+                    Messages ({{ request.message_number }})</a>
+            </li>
+            {% endif %}
+            <!--suppress HtmlUnknownTag -->
+            <div class="dropdown-divider"></div>
+            {% if request.user|has_group:"Admin" %}
+            <li class="nav-item dropdown">
+                <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
+                   href="#" id="navbarDropdownOne" role="button">
+                    Admin
+                </a>
+                <div aria-labelledby="navbarDropdownOne" class="dropdown-menu">
+                    {% if request.user|has_group:"fEMR Admin" %}
+                    <a class="dropdown-item" href="{% url 'main:femr_admin_home' %}">fEMR Admin</a>
+                    <div class="dropdown-divider"></div>
+                    {% endif %}
+                    {% if request.user|has_group:"Organization Admin" %}
+                    <a class="dropdown-item" href="{% url 'main:organization_admin_home_view' %}">Organization
+                        Admin</a>
+                    <div class="dropdown-divider"></div>
+                    {% endif %}
+                    {% if request.user|has_group:"Operation Admin" %}
+                    <a class="dropdown-item" href="{% url 'main:operation_admin_home_view' %}">Operation Admin</a>
+                    <div class="dropdown-divider"></div>
+                    {% endif %}
+                    {% if request.user|has_group:"Campaign Manager" %}
+                    <a class="dropdown-item" href="{% url 'main:superuser_home' %}">Campaign Manager</a>
+                    <div class="dropdown-divider"></div>
                     {% endif %}
                 </div>
-                {% block content %}
-                {% endblock %}
-            </div>
-        </div>
-    </main>
+            </li>
+            {% endif %}
+            <li class="nav-item dropdown">
+                <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
+                   href="#" id="navbarDropdownTwo" role="button">
+                    <i aria-hidden="true" class="fa fa-user-circle"></i>
+                    {{ request.user }}
+                </a>
+                <div aria-labelledby="navbarDropdownTwo" class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'main:help_messages_off' %}">Toggle Help Messages</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'main:logout_view' %}">Logout</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
 
-    <footer class="footer mt-auto py-3">
-        <div class="container">
+<main>
+    <div class="page-content">
+        <div class="container" id="page">
             <div class="row">
-                <div class="col-sm-12 col-md-4">
-                    Find a bug or problem? <a href="{% url 'appMR:index' %}">Let us know.</a>
-                </div>
-                <div class="col-sm-12 col-md-4 text-center">
-                    v1.4.2.10112021
-                </div>
-                <div class="col-sm-12 col-md-4">
-                    <a target="_blank" href="https://github.com/FEMR/fEMR-OnChain-Core/wiki">fEMR On-Chain Wiki</a>
-                </div>
+                <h1>{{ page_name }}</h1>
+                {% if page_tip %}
+                <a data-content="{{ page_tip }}" data-toggle="popover" data-trigger="hover" href="#"
+                   id="page_popover"><i class="fa fa-question-circle"></i></a>
+                {% endif %}
+            </div>
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</main>
+
+<footer class="footer mt-auto py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-4">
+                Find a bug or problem? <a href="{% url 'appMR:index' %}">Let us know.</a>
+            </div>
+            <div class="col-sm-12 col-md-4 text-center">
+                v1.4.2.10132021
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <a href="https://github.com/FEMR/fEMR-OnChain-Core/wiki" target="_blank">fEMR On-Chain Wiki</a>
             </div>
         </div>
-    </footer>
+    </div>
+</footer>
 
-    <script>
+<script>
         $(document).ready(function () {
             console.log("Firing popover event.");
             $('[data-toggle="popover"]').popover();
         });
-    </script>
-    <!-- <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script> -->
-    <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script> -->
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js'></script>
+
+</script>
+<!-- <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script> -->
+<!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script> -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js'></script>
 </body>
 
 </html>

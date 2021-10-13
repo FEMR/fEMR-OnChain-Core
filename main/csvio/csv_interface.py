@@ -1,6 +1,3 @@
-import csv
-
-
 class CSVHandler(object):
     def __init__(self) -> None:
         super().__init__()
@@ -11,7 +8,7 @@ class CSVHandler(object):
 
     def write(self, response, formulary):
         return self.__export(response, formulary)
-    
+
     def __import(self, upload, campaign):
         pass
 

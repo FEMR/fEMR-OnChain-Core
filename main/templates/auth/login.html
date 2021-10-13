@@ -2,17 +2,17 @@
 {% block content %}
 {% load crispy_forms_tags %}
 {{ error_message }}
-<form action="{% url 'main:login_view' %}" method="post" class="form-signin container-sm my-auto mx-auto"
-    id="login_form" name="login_form">
+<form action="{% url 'main:login_view' %}" class="form-signin container-sm my-auto mx-auto" id="login_form"
+      method="post" name="login_form">
     <p class="text-center" id="header_image">
-        <img class="mb-4" src="https://demo.teamfemr.org/assets/img/52749c927045848ae798e9df58dcc0dd-logo_color_sm.png"
-            alt="">
+        <img alt="" class="mb-4"
+             src="https://demo.teamfemr.org/assets/img/52749c927045848ae798e9df58dcc0dd-logo_color_sm.png">
     </p>
     <div id="divon" style="visibility:hidden;color:red;">Caps Lock is on.</div>
     {% csrf_token %}
     {{ form|crispy }}
     <button class="btn btn-lg btn-primary btn-block mb-2" type="submit">Log in</button>
-    <a href="{% url 'main:forgot_username' %}">Forgot username</a><br />
+    <a href="{% url 'main:forgot_username' %}">Forgot username</a><br/>
     <a href="{% url 'password_reset' %}">Forgot password</a>
 </form>
 <script>
@@ -26,5 +26,6 @@
             document.getElementById('divon').style.visibility = 'hidden';
         }
     });
+
 </script>
 {% endblock %}

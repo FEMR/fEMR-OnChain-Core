@@ -3,12 +3,13 @@ Handles template rendering and logic for web forms.
 All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
-from datetime import datetime
-from main.femr_admin_views import get_client_ip
 import math
 import os
+from datetime import datetime
+
 from django.shortcuts import render, redirect
 
+from main.femr_admin_views import get_client_ip
 from .forms import DiagnosisForm, PatientForm, PatientEncounterForm, TreatmentForm, VitalsForm
 from .models import Campaign, Patient, DatabaseChangeLog, PatientEncounter, cal_key
 from .qldb_interface import create_new_patient, create_new_patient_encounter, update_patient_encounter
@@ -31,8 +32,6 @@ def patient_form_view(request):
         shared_phone_error = False
         shared_email_error = False
         match = None
-        if request.method == "GET":
-            form = PatientForm()
         if request.method == "POST":
             form = PatientForm(request.POST)
             if form.is_valid():
@@ -46,14 +45,16 @@ def patient_form_view(request):
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     create_new_patient(form.cleaned_data)
                 DatabaseChangeLog.objects.create(action="Create", model="Patient", instance=str(t),
-                                                 ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
-                if t.id != '' and t.id != None:
+                                                 ip=get_client_ip(request), username=request.user.username,
+                                                 campaign=Campaign.objects.get(name=request.session['campaign']))
+                if t.id != '' and t.id is not None:
                     return render(request, "data/patient_submitted.html", {'patient': t, 'encounters': list()})
                 else:
                     return render(request, "data/patient_not_submitted.html")
             else:
                 print(form.errors)
-                if 'social_security_number' in form.errors and 'Must be 4 or 9 digits' not in form.errors['social_security_number'][0]:
+                if 'social_security_number' in form.errors and 'Must be 4 or 9 digits' not in \
+                        form.errors['social_security_number'][0]:
                     ssn_error = True
                     match = Patient.objects.get(
                         social_security_number=form.data['social_security_number'])
@@ -87,6 +88,7 @@ def patient_encounter_form_view(request, id=None):
     Used to create new PatientEncounter objects.
 
     :param request: Django Request object.
+    :param id:
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
@@ -160,8 +162,11 @@ def patient_encounter_form_view(request, id=None):
                         'body_height_primary': math.floor(
                             ((encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) // 12),
                         'body_height_secondary': round((
-                            (encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) % 12, 2),
-                        'body_weight': round(encounter.body_weight * 2.2046, 2) if encounter.body_weight is not None else 0,
+                                                               (
+                                                                           encounter.body_height_primary * 100 + encounter.body_height_secondary) / 2.54) % 12,
+                                                       2),
+                        'body_weight': round(encounter.body_weight * 2.2046,
+                                             2) if encounter.body_weight is not None else 0,
                     }
                 else:
                     form.initial = {
@@ -179,13 +184,16 @@ def patient_encounter_form_view(request, id=None):
             except IndexError:
                 print("IndexError")
                 form.initial = {
-                        'timestamp': datetime.now().date(),
+                    'timestamp': datetime.now().date(),
                 }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
         print(encounter_open)
         return render(request, 'forms/encounter.html',
-                      {'form': form, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form, 'treatment_form': treatment_form, 'page_name': 'New Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
-                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': id, 'units': units, 'telehealth': telehealth, 'encounter_open': encounter_open,
+                      {'form': form, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form,
+                       'treatment_form': treatment_form,
+                       'page_name': 'New Encounter for {} {} {}'.format(p.first_name, p.last_name, suffix),
+                       'birth_sex': p.sex_assigned_at_birth, 'patient_id': id, 'units': units, 'telehealth': telehealth,
+                       'encounter_open': encounter_open,
                        'page_tip': "Complete form with patient vitals as instructed. Any box with an asterix (*) is required. For max efficiency, use 'tab' to navigate through this page."})
     else:
         return redirect('/not_logged_in')
@@ -207,7 +215,8 @@ def referral_form_view(request, id=None):
             return render(request, 'forms/referral.html', {
                 'patient_id': id,
                 'page_name': "Campaign Referral",
-                'campaigns': Campaign.objects.filter(instance=(Campaign.objects.get(name=request.session['campaign']).instance)).filter(active=True)
+                'campaigns': Campaign.objects.filter(
+                    instance=Campaign.objects.get(name=request.session['campaign']).instance).filter(active=True)
             })
     else:
         return redirect('/not_logged_in')

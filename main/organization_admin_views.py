@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render
+
 from main.models import Campaign, Instance
 
 
@@ -6,6 +7,8 @@ def organization_admin_home_view(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='Organization Admin').exists():
             org = Campaign.objects.get(name=request.session['campaign']).instance.organization
+            instances = list()
+            campaigns = list()
             try:
                 instances = Instance.objects.filter(
                     active=True
@@ -18,9 +21,9 @@ def organization_admin_home_view(request):
                     admins=request.user
                 )
             except Instance.DoesNotExist:
-                instances = list()
+                pass
             except Campaign.DoesNotExist:
-                campaigns = list()
+                pass
             return render(request, 'organization_admin/home.html',
                           {'user': request.user,
                            'instances': instances,

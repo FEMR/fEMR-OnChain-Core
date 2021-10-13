@@ -12,38 +12,39 @@
             border-collapse: separate;
             border-spacing: 1em 0;
         }
+
     </style>
 </head>
 
 <body>
-    <h1>Access Audit Log - {{ today_time }}</h1>
+<h1>Access Audit Log - {{ today_time }}</h1>
 
 <table>
     <thead>
-        <tr>
-            <th>
-                Action
-            </th>
-            <th>
-                IP Address
-            </th>
-            <th>
-                User
-            </th>
-            <th>
-                Timestamp
-            </th>
-        </tr>
+    <tr>
+        <th>
+            Action
+        </th>
+        <th>
+            IP Address
+        </th>
+        <th>
+            User
+        </th>
+        <th>
+            Timestamp
+        </th>
+    </tr>
     </thead>
     <tbody>
-        {% for line in log %}
-        <tr>
-            <td>{{ line.action }}</td>
-            <td>{{ line.ip }}</td>
-            <td>{{ line.username }}</td>
-            <td>{{ line.timestamp }} {{ TIME_ZONE }}</td>
-        </tr>
-        {% endfor %}
+    {% for line in log %}
+    <tr>
+        <td>{{ line.action }}</td>
+        <td>{{ line.ip }}</td>
+        <td>{{ line.username }}</td>
+        <td>{{ line.timestamp }} {{ TIME_ZONE }}</td>
+    </tr>
+    {% endfor %}
     </tbody>
 </table>
 </body>

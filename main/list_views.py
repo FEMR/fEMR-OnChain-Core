@@ -3,10 +3,10 @@ View functions handling displaying data models as sortable, filterable lists.
 All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
-import itertools
 import csv
-from datetime import datetime, timedelta
+import itertools
 import math
+from datetime import datetime, timedelta
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
@@ -61,30 +61,35 @@ def patient_csv_export_view(request):
     """
     if request.user.is_authenticated:
         units = Campaign.objects.get(name=request.session['campaign']).units
-        telehealth = Campaign.objects.get(
-            name=request.session['campaign']).telehealth
         resp = HttpResponse(content_type='text/csv')
         resp['Content-Disposition'] = 'attachment; filename="patient_export.csv"'
         writer = csv.writer(resp)
         if units == 'i':
-            title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure', 'Heart Rate',
-                         'Body Temperature (F)', 'Height', 'Weight (lbs)', 'BMI', 'Oxygen Concentration', 'Glucose Level', 'History of Tobacco Use',
+            title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure',
+                         'Mean Arterial Pressure', 'Heart Rate',
+                         'Body Temperature (F)', 'Height', 'Weight (lbs)', 'BMI', 'Oxygen Concentration',
+                         'Glucose Level', 'History of Tobacco Use',
                          'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
-                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes', 'Procedure/Counseling', 'Pharmacy Notes',
+                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes',
+                         'Procedure/Counseling', 'Pharmacy Notes',
                          'Medical/Surgical History', 'Social History', 'Current Medications', 'Family History']
         else:
-            title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure', 'Mean Arterial Pressure',
-                         'Heart Rate', 'Body Temperature (C)', 'Height', 'Weight (kg)', 'BMI', 'Oxygen Concentration', 'Glucose Level',
-                         'History of Tobacco Use', 'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
-                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes', 'Procedure/Counseling', 'Pharmacy Notes',
+            title_row = ['Patient', 'Date Seen', 'Systolic Blood Pressure', 'Diastolic Blood Pressure',
+                         'Mean Arterial Pressure',
+                         'Heart Rate', 'Body Temperature (C)', 'Height', 'Weight (kg)', 'BMI', 'Oxygen Concentration',
+                         'Glucose Level',
+                         'History of Tobacco Use', 'History of Diabetes', 'History of Hypertension',
+                         'History of High Cholesterol',
+                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes',
+                         'Procedure/Counseling', 'Pharmacy Notes',
                          'Medical/Surgical History', 'Socil History', 'Current Medications', 'Family History']
         try:
             data = Patient.objects.filter(
                 campaign=Campaign.objects.get(name=request.session['campaign'])).exclude(
-                    Q(first_name__icontains="test") |
-                    Q(last_name__icontains="test") |
-                    Q(middle_name__icontains="test") |
-                    Q(city__icontains="test")
+                Q(first_name__icontains="test") |
+                Q(last_name__icontains="test") |
+                Q(middle_name__icontains="test") |
+                Q(city__icontains="test")
             )
         except ObjectDoesNotExist:
             data = list()
@@ -106,27 +111,33 @@ def patient_csv_export_view(request):
                            vital.systolic_blood_pressure, vital.diastolic_blood_pressure,
                            vital.mean_arterial_pressure, vital.heart_rate,
                            round(
-                                ((vital.body_temperature if vital.body_temperature is not None else 0) * 9/5) + 32, 2),
+                               ((vital.body_temperature if vital.body_temperature is not None else 0) * 9 / 5) + 32, 2),
                            "{0}' {1}\"".format(
                                math.floor(
                                    round(
                                        (
-                                           (encounter.body_height_primary if encounter.body_height_primary is not None else 0)
-                                           * 100 + 
-                                           (encounter.body_height_secondary if encounter.body_height_secondary is not None else 0)
+                                               (
+                                                   encounter.body_height_primary if encounter.body_height_primary is not None else 0)
+                                               * 100 +
+                                               (
+                                                   encounter.body_height_secondary if encounter.body_height_secondary is not None else 0)
                                        ) / 2.54) // 12),
                                round(
                                    (
-                                       (encounter.body_height_primary)
-                                       * 100 + 
-                                       (encounter.body_height_secondary)
+                                           encounter.body_height_primary
+                                           * 100 +
+                                           encounter.body_height_secondary
                                    ) / 2.54) % 12),
                            round(
                                (encounter.body_weight if encounter.body_weight is not None else 0) * 2.2046, 2),
-                           encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, encounter.smoking,
-                           encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
-                           encounter.alcohol, encounter.community_health_worker_notes, encounter.procedure, encounter.pharmacy_notes,
-                           encounter.medical_history, encounter.social_history, encounter.current_medications, encounter.family_history]
+                           encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level,
+                           encounter.smoking,
+                           encounter.history_of_diabetes, encounter.history_of_hypertension,
+                           encounter.history_of_high_cholesterol,
+                           encounter.alcohol, encounter.community_health_worker_notes, encounter.procedure,
+                           encounter.pharmacy_notes,
+                           encounter.medical_history, encounter.social_history, encounter.current_medications,
+                           encounter.family_history]
                 else:
                     row = [id,
                            "{} {}".format(encounter.timestamp.astimezone(
@@ -135,10 +146,14 @@ def patient_csv_export_view(request):
                            vital.mean_arterial_pressure, vital.heart_rate, vital.body_temperature,
                            "{0} m {1} cm".format(
                                encounter.body_height_primary, encounter.body_height_secondary), encounter.body_weight,
-                           encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level, encounter.smoking,
-                           encounter.history_of_diabetes, encounter.history_of_hypertension, encounter.history_of_high_cholesterol,
-                           encounter.alcohol, encounter.community_health_worker_notes, encounter.procedure, encounter.pharmacy_notes,
-                           encounter.medical_history, encounter.social_history, encounter.current_medications, encounter.family_history]
+                           encounter.body_mass_index, vital.oxygen_concentration, vital.glucose_level,
+                           encounter.smoking,
+                           encounter.history_of_diabetes, encounter.history_of_hypertension,
+                           encounter.history_of_high_cholesterol,
+                           encounter.alcohol, encounter.community_health_worker_notes, encounter.procedure,
+                           encounter.pharmacy_notes,
+                           encounter.medical_history, encounter.social_history, encounter.current_medications,
+                           encounter.family_history]
                 treatments = Treatment.objects.filter(encounter=encounter)
                 max_treatments = len(treatments) if len(
                     treatments) > max_treatments else max_treatments
@@ -180,29 +195,40 @@ def filter_patient_list_view(request):
             elif request.GET["filter_list"] == "2":
                 timestamp_from = timezone.now() - timedelta(days=7)
                 timestamp_to = timezone.now()
-                data = Patient.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign'])).filter(patientencounter__timestamp__gte=timestamp_from,
-                                                                                                                      patientencounter__timestamp__lt=timestamp_to)
-                data = set(list(itertools.chain(data, Patient.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign'])).filter(timestamp__gte=timestamp_from,
-                                                                                                                                                     timestamp__lt=timestamp_to))))
+                data = Patient.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
+                    patientencounter__timestamp__gte=timestamp_from,
+                    patientencounter__timestamp__lt=timestamp_to)
+                data = set(list(itertools.chain(data, Patient.objects.filter(
+                    campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
+                    timestamp__gte=timestamp_from,
+                    timestamp__lt=timestamp_to))))
                 selected = 2
             elif request.GET["filter_list"] == "3":
                 timestamp_from = timezone.now() - timedelta(days=30)
                 timestamp_to = timezone.now()
-                data = Patient.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign'])).filter(patientencounter__timestamp__gte=timestamp_from,
-                                                                                                                      patientencounter__timestamp__lt=timestamp_to)
-                data = set(list(itertools.chain(data, Patient.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign'])).filter(timestamp__gte=timestamp_from,
-                                                                                                                                                     timestamp__lt=timestamp_to))))
+                data = Patient.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
+                    patientencounter__timestamp__gte=timestamp_from,
+                    patientencounter__timestamp__lt=timestamp_to)
+                data = set(list(itertools.chain(data, Patient.objects.filter(
+                    campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
+                    timestamp__gte=timestamp_from,
+                    timestamp__lt=timestamp_to))))
                 selected = 3
             elif request.GET["filter_list"] == "4":
                 try:
                     timestamp_from = datetime.strptime(
                         request.GET["date_filter_day"], "%Y-%m-%d").replace(hour=0, minute=0, second=0, microsecond=0)
                     timestamp_to = datetime.strptime(
-                        request.GET["date_filter_day"], "%Y-%m-%d").replace(hour=23, minute=59, second=59, microsecond=0)
-                    data = Patient.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign'])).filter(patientencounter__timestamp__gte=timestamp_from,
-                                                                                                                          patientencounter__timestamp__lt=timestamp_to)
-                    data = set(list(itertools.chain(data, Patient.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign'])).filter(timestamp__gte=timestamp_from,
-                                                                                                                                                         timestamp__lt=timestamp_to))))
+                        request.GET["date_filter_day"], "%Y-%m-%d").replace(hour=23, minute=59, second=59,
+                                                                            microsecond=0)
+                    data = Patient.objects.filter(
+                        campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
+                        patientencounter__timestamp__gte=timestamp_from,
+                        patientencounter__timestamp__lt=timestamp_to)
+                    data = set(list(itertools.chain(data, Patient.objects.filter(
+                        campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
+                        timestamp__gte=timestamp_from,
+                        timestamp__lt=timestamp_to))))
                 except ValueError:
                     data = list()
                 selected = 4
@@ -212,10 +238,14 @@ def filter_patient_list_view(request):
                         request.GET["date_filter_start"], "%Y-%m-%d")
                     timestamp_to = datetime.strptime(
                         request.GET["date_filter_end"], "%Y-%m-%d") + timedelta(days=1)
-                    data = Patient.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign'])).filter(patientencounter__timestamp__gte=timestamp_from,
-                                                                                                                          patientencounter__timestamp__lt=timestamp_to)
-                    data = set(list(itertools.chain(data, Patient.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign'])).filter(timestamp__gte=timestamp_from,
-                                                                                                                                                         timestamp__lt=timestamp_to))))
+                    data = Patient.objects.filter(
+                        campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
+                        patientencounter__timestamp__gte=timestamp_from,
+                        patientencounter__timestamp__lt=timestamp_to)
+                    data = set(list(itertools.chain(data, Patient.objects.filter(
+                        campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
+                        timestamp__gte=timestamp_from,
+                        timestamp__lt=timestamp_to))))
                 except ValueError:
                     data = list()
                 selected = 5
@@ -261,7 +291,8 @@ def search_patient_list_view(request):
                 Q(email_address__iexact=request.GET['name_search'])
             )
             for term in request.GET['name_search'].split():
-                data = set(list(itertools.chain(data, Patient.objects.filter(campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
+                data = set(list(itertools.chain(data, Patient.objects.filter(
+                    campaign=Campaign.objects.get(name=request.session['campaign'])).filter(
                     Q(first_name__icontains=term) |
                     Q(last_name__icontains=term)
                 ))))

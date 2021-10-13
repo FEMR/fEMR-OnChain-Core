@@ -3,8 +3,9 @@ from django.shortcuts import render, redirect
 from .forms import TreatmentForm, MedicationForm, DiagnosisForm, ChiefComplaintForm
 
 
-def chief_complaint_form_view(request, id=None):
+def chief_complaint_form_view(request):
     if request.user.is_authenticated:
+        form = ChiefComplaintForm()
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         if request.method == "POST":
@@ -12,8 +13,6 @@ def chief_complaint_form_view(request, id=None):
             if form.is_valid():
                 form.save()
                 return redirect('main:patient_list_view')
-        if request.method == "GET":
-            form = ChiefComplaintForm()
         return render(request, 'forms/generic.html', {
             'form': form
         })
@@ -21,8 +20,9 @@ def chief_complaint_form_view(request, id=None):
         return redirect('/not_logged_in')
 
 
-def treatment_form_view(request, id=None):
+def treatment_form_view(request):
     if request.user.is_authenticated:
+        form = TreatmentForm()
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         if request.method == "POST":
@@ -30,8 +30,6 @@ def treatment_form_view(request, id=None):
             if form.is_valid():
                 form.save()
                 return redirect('main:patient_list_view')
-        if request.method == "GET":
-            form = TreatmentForm()
         return render(request, 'forms/generic.html', {
             'form': form
         })
@@ -39,8 +37,9 @@ def treatment_form_view(request, id=None):
         return redirect('/not_logged_in')
 
 
-def diagnosis_form_view(request, id=None):
+def diagnosis_form_view(request):
     if request.user.is_authenticated:
+        form = DiagnosisForm()
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         if request.method == "POST":
@@ -48,8 +47,6 @@ def diagnosis_form_view(request, id=None):
             if form.is_valid():
                 form.save()
                 return redirect('main:patient_list_view')
-        if request.method == "GET":
-            form = DiagnosisForm()
         return render(request, 'forms/generic.html', {
             'form': form
         })
@@ -57,8 +54,9 @@ def diagnosis_form_view(request, id=None):
         return redirect('/not_logged_in')
 
 
-def medication_form_view(request, id=None):
+def medication_form_view(request):
     if request.user.is_authenticated:
+        form = MedicationForm()
         if request.session['campaign'] == "RECOVERY MODE":
             return redirect('main:home')
         if request.method == "POST":
@@ -66,11 +64,8 @@ def medication_form_view(request, id=None):
             if form.is_valid():
                 form.save()
                 return redirect('main:patient_list_view')
-        if request.method == "GET":
-            form = MedicationForm()
         return render(request, 'forms/generic.html', {
             'form': form
         })
     else:
         return redirect('/not_logged_in')
-

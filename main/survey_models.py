@@ -15,7 +15,7 @@ class SurveyValueSet(models.Model):
 
 class Survey(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    
+
     item = models.CharField(max_length=250)
     code = models.CharField(max_length=250)
     data_type = models.CharField(max_length=2)

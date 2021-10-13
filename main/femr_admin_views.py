@@ -1,5 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from main.forms import CampaignForm, EthnicityForm, InstanceForm, OrganizationForm, RaceForm, fEMRAdminUserForm, fEMRAdminUserUpdateForm
+
+from main.forms import CampaignForm, EthnicityForm, InstanceForm, OrganizationForm, RaceForm, fEMRAdminUserForm, \
+    fEMRAdminUserUpdateForm
 from main.models import AuditEntry, Campaign, DatabaseChangeLog, Instance, Organization, fEMRUser
 
 
@@ -23,8 +25,6 @@ def change_campaign(request):
                                           ip=get_client_ip(request),
                                           username=request.user.username,
                                           campaign=Campaign.objects.get(name=request.session['campaign']))
-            else:
-                campaign = "RECOVERY MODE"
             return redirect('main:home')
         else:
             return redirect('main:index')
@@ -54,13 +54,17 @@ def new_campaign_view(request):
                         t = form.save()
                         t.save()
                         DatabaseChangeLog.objects.create(action="Create", model="Campaign", instance=str(t),
-                                                         ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                         ip=get_client_ip(request), username=request.user.username,
+                                                         campaign=Campaign.objects.get(
+                                                             name=request.session['campaign']))
                         return render(request, "femr_admin/confirm/campaign_submitted.html")
                     else:
-                        return render(request, 'femr_admin/campaign/new_campaign.html', {'form': form, 'page_name': 'New Campaign'})
+                        return render(request, 'femr_admin/campaign/new_campaign.html',
+                                      {'form': form, 'page_name': 'New Campaign'})
                 else:
                     form = CampaignForm()
-                    return render(request, 'femr_admin/campaign/new_campaign.html', {'form': form, 'page_name': 'New Campaign'})
+                    return render(request, 'femr_admin/campaign/new_campaign.html',
+                                  {'form': form, 'page_name': 'New Campaign'})
         else:
             return redirect('main:permission_denied')
     else:
@@ -77,12 +81,14 @@ def new_instance_view(request):
                     t = form.save()
                     t.save()
                     DatabaseChangeLog.objects.create(action="Create", model="Instance", instance=str(t),
-                                                     ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                     ip=get_client_ip(request), username=request.user.username,
+                                                     campaign=Campaign.objects.get(name=request.session['campaign']))
                     return render(request, "femr_admin/confirm/instance_submitted.html")
             else:
                 form = InstanceForm()
                 contact_form = fEMRAdminUserForm()
-            return render(request, 'femr_admin/instance/new_instance.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Operation', 'show': False})
+            return render(request, 'femr_admin/instance/new_instance.html',
+                          {'form': form, 'contact_form': contact_form, 'page_name': 'New Operation', 'show': False})
         else:
             return redirect('main:permission_denied')
     else:
@@ -101,9 +107,11 @@ def new_contact_view(request):
                     t.campaigns.add(Campaign.objects.get(name='Test'))
                     t.save()
                     DatabaseChangeLog.objects.create(action="Create", model="Contact", instance=str(t),
-                                                     ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                     ip=get_client_ip(request), username=request.user.username,
+                                                     campaign=Campaign.objects.get(name=request.session['campaign']))
                     contact_form = fEMRAdminUserForm()
-            return render(request, 'femr_admin/instance/new_instance.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Operation', 'show': True})
+            return render(request, 'femr_admin/instance/new_instance.html',
+                          {'form': form, 'contact_form': contact_form, 'page_name': 'New Operation', 'show': True})
         else:
             return redirect('main:permission_denied')
     else:
@@ -125,11 +133,13 @@ def edit_campaign_view(request, id=None):
                         t = form.save()
                         t.save()
                         DatabaseChangeLog.objects.create(action="Edit", model="Campaign", instance=str(t),
-                                                         ip=get_client_ip(request), username=request.user.username, campaign=instance)
+                                                         ip=get_client_ip(request), username=request.user.username,
+                                                         campaign=instance)
                         return render(request, "femr_admin/confirm/campaign_submitted.html")
                 else:
                     form = CampaignForm(instance=instance)
-                    return render(request, 'femr_admin/campaign/edit_campaign.html', {'form': form, 'page_name': 'Edit Campaign', 'campaign_id': id})
+                    return render(request, 'femr_admin/campaign/edit_campaign.html',
+                                  {'form': form, 'page_name': 'Edit Campaign', 'campaign_id': id})
         else:
             return redirect('main:permission_denied')
     else:
@@ -147,11 +157,13 @@ def edit_contact_view(request, id=None):
                     t = form.save()
                     t.save()
                     DatabaseChangeLog.objects.create(action="Edit", model="Contact", instance=str(t),
-                                                     ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                     ip=get_client_ip(request), username=request.user.username,
+                                                     campaign=Campaign.objects.get(name=request.session['campaign']))
                     return render(request, "femr_admin/confirm/contact_submitted.html")
             else:
                 form = fEMRAdminUserUpdateForm(instance=instance)
-            return render(request, 'femr_admin/contact/edit_contact.html', {'form': form, 'page_name': 'Edit Contact', 'contact_id': id})
+            return render(request, 'femr_admin/contact/edit_contact.html',
+                          {'form': form, 'page_name': 'Edit Contact', 'contact_id': id})
         else:
             return redirect('main:permission_denied')
     else:
@@ -162,7 +174,8 @@ def view_contact_view(request, id=None):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='fEMR Admin').exists():
             instance = fEMRUser.objects.get(pk=id)
-            return render(request, 'femr_admin/contact/contact_info.html', {'instance': instance, 'page_name': 'Contact Info'})
+            return render(request, 'femr_admin/contact/contact_info.html',
+                          {'instance': instance, 'page_name': 'Contact Info'})
         else:
             return redirect('main:permission_denied')
     else:
@@ -182,11 +195,14 @@ def edit_instance_view(request, id=None):
                     t = form.save()
                     t.save()
                     DatabaseChangeLog.objects.create(action="Edit", model="Instance", instance=str(t),
-                                                     ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                     ip=get_client_ip(request), username=request.user.username,
+                                                     campaign=Campaign.objects.get(name=request.session['campaign']))
                     return render(request, "femr_admin/confirm/instance_submitted.html")
             else:
                 form = InstanceForm(instance=instance)
-                return render(request, 'femr_admin/instance/edit_instance.html', {'form': form, 'contact_form': contact_form, 'edit_contact_form': edit_contact_form, 'page_name': 'Edit Instance', 'contact_id': contact.id, 'instance_id': id})
+                return render(request, 'femr_admin/instance/edit_instance.html',
+                              {'form': form, 'contact_form': contact_form, 'edit_contact_form': edit_contact_form,
+                               'page_name': 'Edit Instance', 'contact_id': contact.id, 'instance_id': id})
         else:
             return redirect('main:permission_denied')
     else:
@@ -349,11 +365,14 @@ def edit_organization_view(request, id=None):
                     t = form.save()
                     t.save()
                     DatabaseChangeLog.objects.create(action="Edit", model="Organization", instance=str(t),
-                                                     ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                     ip=get_client_ip(request), username=request.user.username,
+                                                     campaign=Campaign.objects.get(name=request.session['campaign']))
                     return render(request, "femr_admin/confirm/organization_submitted.html")
             else:
                 form = OrganizationForm(instance=instance)
-                return render(request, 'femr_admin/organization/edit_organization.html', {'form': form, 'contact_form': contact_form, 'edit_contact_form': edit_contact_form, 'page_name': 'Edit Organization', 'contact_id': contact.id, 'instance_id': id})
+                return render(request, 'femr_admin/organization/edit_organization.html',
+                              {'form': form, 'contact_form': contact_form, 'edit_contact_form': edit_contact_form,
+                               'page_name': 'Edit Organization', 'contact_id': contact.id, 'instance_id': id})
         else:
             return redirect('main:permission_denied')
     else:
@@ -370,12 +389,14 @@ def new_organization_view(request):
                     t = form.save()
                     t.save()
                     DatabaseChangeLog.objects.create(action="Create", model="Organization", instance=str(t),
-                                                     ip=get_client_ip(request), username=request.user.username, campaign=Campaign.objects.get(name=request.session['campaign']))
+                                                     ip=get_client_ip(request), username=request.user.username,
+                                                     campaign=Campaign.objects.get(name=request.session['campaign']))
                     return render(request, "femr_admin/confirm/organization_submitted.html")
             else:
                 form = OrganizationForm()
                 contact_form = fEMRAdminUserForm()
-            return render(request, 'femr_admin/organization/new_organization.html', {'form': form, 'contact_form': contact_form, 'page_name': 'New Organization', 'show': False})
+            return render(request, 'femr_admin/organization/new_organization.html',
+                          {'form': form, 'contact_form': contact_form, 'page_name': 'New Organization', 'show': False})
         else:
             return redirect('main:permission_denied')
     else:

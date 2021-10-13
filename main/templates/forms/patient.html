@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 {% load tz %}
 <form action="{% url 'main:patient_edit_form_view' id=patient_id %}" method="post"
-    onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+      onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
     {% csrf_token %}
     <div class="container">
         <div class="row justify-content-center">
@@ -80,32 +80,32 @@
                         <a href="{% url 'main:patient_delete_view' patient_id %}">Delete Patient</a>
                     </div>
                     <div class="col-md-4">
-                        <a target="_blank" href="{% url 'main:patient_export' patient_id %}">Export Patient</a>
-                        <a href="#" data-toggle="popover" data-trigger="hover"
-                            data-content="This button opens a new tab with the patient's entire record on it."><i
+                        <a href="{% url 'main:patient_export' patient_id %}" target="_blank">Export Patient</a>
+                        <a data-content="This button opens a new tab with the patient's entire record on it." data-toggle="popover" data-trigger="hover"
+                           href="#"><i
                                 class="fa fa-question-circle"></i></a>
                     </div>
                     <table class="table">
                         <tbody>
-                            {% for en in encounters %}
-                            <tr>
-                                <th scope="row">{{ en.id }}</th>
-                                <td>{{ en.timestamp }}</td>
-                                <td>{{ en.campaign }}</td>
-                                <td><a href="{% url 'main:encounter_edit_form_view' patient_id en.id %}">View/Edit</a>
-                                </td>
-                            </tr>
-                            {% endfor %}
+                        {% for en in encounters %}
+                        <tr>
+                            <th scope="row">{{ en.id }}</th>
+                            <td>{{ en.timestamp }}</td>
+                            <td>{{ en.campaign }}</td>
+                            <td><a href="{% url 'main:encounter_edit_form_view' patient_id en.id %}">View/Edit</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <input class="btn btn-primary ml-auto" type="reset" value="Reset Fields" />
+                    <input class="btn btn-primary ml-auto" type="reset" value="Reset Fields"/>
                 </div>
                 <div class="col-md-6">
-                    <input class="btn btn-primary ml-auto" type="submit" value="Save Patient" />
+                    <input class="btn btn-primary ml-auto" type="submit" value="Save Patient"/>
                 </div>
             </div>
         </div>
@@ -115,6 +115,7 @@
     $(document).on("keydown", ":input:not(textarea)", function (event) {
         return event.key != "Enter";
     });
+
 </script>
 <script src="{% static 'main/js/bmi_calc.js' %}"></script>
 <script src="{% static 'main/js/birth_sex_options.js' %}"></script>

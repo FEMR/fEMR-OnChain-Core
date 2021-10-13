@@ -1,14 +1,13 @@
-from django.http import response
-from clinic_messages.models import Message
+import pytz
 from django.contrib.auth import logout
 from django.contrib.auth.models import AnonymousUser
-from main.forms import LoginForm
-from django.shortcuts import redirect, render
-from main.models import Campaign, UserSession
-import pytz
-
-from django.utils import timezone
 from django.contrib.sessions.exceptions import SessionInterrupted
+from django.shortcuts import redirect, render
+from django.utils import timezone
+
+from clinic_messages.models import Message
+from main.forms import LoginForm
+from main.models import Campaign, UserSession
 
 
 class TimezoneMiddleware:
@@ -53,13 +52,15 @@ class CampaignActivityCheckMiddleware:
                     request.session['campaign'] = request.user.campaigns.filter(active=True)[
                         0].name
                     return self.get_response(request)
-                except:
+                except Exception as e:
+                    print(e)
                     logout(request)
                     form = LoginForm()
                     return render(request, 'auth/login.html',
                                   {
                                       'form': form,
-                                      'error_message': 'You have no active campaigns. Please contact your administrator to proceed.'
+                                      'error_message': 'You have no active campaigns. Please contact your '
+                                                       'administrator to proceed. '
                                   })
             campaign = Campaign.objects.get(name=campaign_name)
             if not campaign.active:
@@ -114,37 +115,31 @@ class ClinicMessageMiddleware:
 class CheckForSessionInvalidatedMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-    
+
     def __call__(self, request):
         if request.user.is_authenticated:
             try:
                 request.user.logged_in_user.session_key = request.session.session_key
                 request.user.logged_in_user.save()
-            except:
+            except Exception as e:
+                print(e)
                 UserSession.objects.get_or_create(user=request.user)
 
-        response = self.get_response(request)
-
-        return response
+        return self.get_response(request)
 
 
 class HandleErrorMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-    
+
     def __call__(self, request):
-        response = self.get_response(request)
-        return response
-    
-    def process_exception(aelf, request, exception):
-        if isinstance(exception, SessionInterrupted):
-            return redirect('main:logout_view')
+        return self.get_response(request)
 
 
 class CheckBrowserMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-    
+
     def __call__(self, request):
         print(request.user_agent.browser.family)
         if request.user_agent.browser.family not in ["Chrome", "Firefox", "Firefox Mobile", "Chrome Mobile iOS"]:

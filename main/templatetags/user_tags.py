@@ -1,15 +1,16 @@
 # -*- coding:utf-8 -*-
 from __future__ import unicode_literals
-from main.models import Campaign
 
 # Core Django imports
 from django import template
+
+from main.models import Campaign
 
 # Stdlib imports
 
 # Third-party app imports
 
-# Realative imports of the 'app-name' package
+# Relative imports of the 'app-name' package
 
 
 register = template.Library()

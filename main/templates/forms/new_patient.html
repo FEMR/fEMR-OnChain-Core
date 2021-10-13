@@ -39,6 +39,7 @@
 </div>
 <script>
     $('#modal_popup').modal('toggle')
+
 </script>
 {% elif phone_error %}
 <div class="modal" id="modal_popup" role="dialog" tabindex="-1">
@@ -60,7 +61,7 @@
                         already
                         exists.
                         <a class="btn btn-primary ml-auto" href="{% url 'main:patient_edit_form_view' id=match.id %}"
-                            style="margin-bottom: 10px;">Edit
+                           style="margin-bottom: 10px;">Edit
                             Existing
                             Patient</a>
                     </div>
@@ -70,7 +71,7 @@
                         already
                         exists.
                         <a class="btn btn-primary ml-auto" href="{% url 'main:patient_edit_form_view' id=match.id %}"
-                            style="margin-bottom: 10px;">Edit
+                           style="margin-bottom: 10px;">Edit
                             Existing
                             Patient</a>
                     </div>
@@ -87,6 +88,7 @@
 </div>
 <script>
     $('#modal_popup').modal('toggle');
+
 </script>
 {% elif email_error %}
 <div class="modal" id="modal_popup" role="dialog" tabindex="-1">
@@ -108,7 +110,7 @@
                         already
                         exists.
                         <a class="btn btn-primary" href="{% url 'main:patient_edit_form_view' id=match.id %}"
-                            style="margin-bottom: 10px;">Edit
+                           style="margin-bottom: 10px;">Edit
                             Existing
                             Patient</a>
                     </div>
@@ -118,7 +120,7 @@
                         already
                         exists.
                         <a class="btn btn-primary" href="{% url 'main:patient_edit_form_view' id=match.id %}"
-                            style="margin-bottom: 10px;">Edit
+                           style="margin-bottom: 10px;">Edit
                             Existing
                             Patient</a>
                     </div>
@@ -135,10 +137,11 @@
 </div>
 <script>
     $('#modal_popup').modal('toggle');
+
 </script>
 {% endif %}
 <form action="{% url 'main:patient_form_view' %}" method="post"
-    onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+      onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
     {% csrf_token %}
     <div class="container">
         <div class="row justify-content-center">
@@ -207,10 +210,10 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <input class="btn btn-primary ml-auto" type="reset" value="Reset Fields" />
+                        <input class="btn btn-primary ml-auto" type="reset" value="Reset Fields"/>
                     </div>
                     <div class="col-md-6">
-                        <input class="btn btn-primary ml-auto" type="submit" value="Save Patient" />
+                        <input class="btn btn-primary ml-auto" type="submit" value="Save Patient"/>
                     </div>
                 </div>
             </div>
@@ -221,6 +224,7 @@
     $(document).on("keydown", ":input:not(textarea)", function (event) {
         return event.key != "Enter";
     });
+
 </script>
 <script src="{% static 'main/js/birth_sex_options.js' %}"></script>
 <script src="{% static 'main/js/node_modules/inputmask/dist/jquery.inputmask.min.js' %}"></script>

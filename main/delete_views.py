@@ -4,13 +4,14 @@ All views, except auth views and the index view, should be considered to check f
 If one is not found, they will direct to the appropriate error page.
 """
 import os
-from django.core.mail import send_mail
-from clinic_messages.models import Message
-from main.femr_admin_views import get_client_ip
+
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
+from clinic_messages.models import Message
+from main.femr_admin_views import get_client_ip
 from .models import Campaign, ChiefComplaint, DatabaseChangeLog, Patient
 
 
@@ -19,6 +20,7 @@ def patient_delete_view(request, id=None):
     Delete function.
 
     :param request: Django Request object.
+    :param id: The ID of the patient to delete.
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
@@ -29,7 +31,8 @@ def patient_delete_view(request, id=None):
                     name=request.session['campaign'])
                 contact = this_campaign.instance.main_contact
                 DatabaseChangeLog.objects.create(action="Delete", model="Patient", instance=str(p),
-                                                 ip=get_client_ip(request), username=request.user.username, campaign=this_campaign)
+                                                 ip=get_client_ip(request), username=request.user.username,
+                                                 campaign=this_campaign)
                 message_content = """{0} has deleted a patient record for the fEMR On-Chain deployment to {1} from fEMR On-Chain on {2}.
 To view audit logs, visit the Admin tab in fEMR On-Chain.""".format(
                     request.user, this_campaign, timezone.now())

@@ -28,9 +28,12 @@
 </div>
 <script>
     $('#patient_modal_popup').modal('toggle')
+
+
+
 </script>
 {% endif %}
-<div class="modal" id="modal_popup" role="dialog" tabindex="-1" style="display: none;">
+<div class="modal" id="modal_popup" role="dialog" style="display: none;" tabindex="-1">
     <div class="modal-dialog" role="document">
         <div class="modal-content" style="width: 150%">
             <div class="modal-header">
@@ -40,7 +43,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" action="{% url 'main:new_vitals_view' patient.id encounter_id %}">
+                <form action="{% url 'main:new_vitals_view' patient.id encounter_id %}" method="post">
                     {% crispy vitals_form %}
                 </form>
             </div>
@@ -78,10 +81,11 @@
     <div class="row justify-content-center">
         <div class="col-4">
             <div class="row">
-                <button id="vitals_modal_button" type="button" class="btn btn-primary">New</button>
+                <button class="btn btn-primary" id="vitals_modal_button" type="button">New</button>
             </div>
             <div class="row">
                 <div style="overflow-x:auto;">
+                    <!--suppress HtmlUnknownTag -->
                     <style>
                         table {
                             font-family: arial, sans-serif;
@@ -99,6 +103,9 @@
                         tr:nth-child(even) {
                             background-color: #dddddd;
                         }
+
+
+
                     </style>
                     <table>
                         <tr>
@@ -182,11 +189,11 @@
                     <div class="row">
                         <div class=""><b>Prescriber |</b></div>
                         <div class=""><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">
-                                {{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
+                            {{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
                         <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
                     </div>
                 </div>
-                <hr />
+                <hr/>
                 {% endfor %}
             </div>
         </div>
@@ -194,27 +201,29 @@
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a class="nav-link"
-                        href="{% url 'main:encounter_edit_form_view' patient.id encounter_id %}">Medical</a>
+                       href="{% url 'main:encounter_edit_form_view' patient.id encounter_id %}">Medical</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'main:hpi_view' patient.id encounter_id %}">HPI &
                         Assessment
-                        <button data-toggle="popover" data-trigger="hover" class="btn btn-link"
-                            data-content="History of Present Illness"><i class="fa fa-question-circle"></i></button></a>
+                        <button class="btn btn-link" data-content="History of Present Illness" data-toggle="popover"
+                                data-trigger="hover"><i class="fa fa-question-circle"></i></button>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page"
-                        href="{% url 'main:new_diagnosis_view' patient.id encounter_id %}">Treatment</a>
+                    <a aria-current="page" class="nav-link"
+                       href="{% url 'main:new_diagnosis_view' patient.id encounter_id %}">Treatment</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page"
-                        href="{% url 'main:history_view' patient.id encounter_id %}">PMH
-                        <button data-toggle="popover" data-trigger="hover" class="btn btn-link"
-                            data-content="Past Medical History"><i class="fa fa-question-circle"></i></button></a>
+                    <a aria-current="page" class="nav-link"
+                       href="{% url 'main:history_view' patient.id encounter_id %}">PMH
+                        <button class="btn btn-link" data-content="Past Medical History" data-toggle="popover"
+                                data-trigger="hover"><i class="fa fa-question-circle"></i></button>
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page"
-                        href="{% url 'main:upload_photo_view' patient.id encounter_id %}">Photo/Imaging</a>
+                    <a aria-current="page" class="nav-link"
+                       href="{% url 'main:upload_photo_view' patient.id encounter_id %}">Photo/Imaging</a>
                 </li>
             </ul>
             <div class="col-9">
@@ -222,12 +231,12 @@
                     {% for f in hpis %}
                     <div>
                         <h3>{{ f.complaint }}</h3>
-                        <form method="post" action="{% url 'main:submit_hpi_view' patient.id encounter_id f.id %}"
-                            onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+                        <form action="{% url 'main:submit_hpi_view' patient.id encounter_id f.id %}" method="post"
+                              onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
                             {% crispy f.form %}
                         </form>
                     </div>
-                    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+                    <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}" type="text/javascript"></script>
                     {{ f.form.media }}
                     {% endfor %}
                 </div>
@@ -255,12 +264,18 @@
                 modal.style.display = "none";
             }
         }
+
+
+
     </script>
 
     <script>
         $(document).on("keydown", ":input:not(textarea)", function (event) {
             return event.key != "Enter";
         });
+
+
+
     </script>
     {% if units == 'i' %}
     <script src="{% static 'main/js/bmi_edit_calc.js' %}"></script>
@@ -271,4 +286,5 @@
     <script src="{% static 'main/js/node_modules/inputmask/dist/jquery.inputmask.min.js' %}"></script>
     <script src="{% static 'main/js/inputmasks.js' %}"></script>
     <script src="{% static 'main/js/max_date_fix.js' %}"></script>
-    {% endblock %}
+</div>
+{% endblock %}

@@ -6,20 +6,20 @@
         <h2>Operations</h2>
         <table class="table">
             <thead>
-                <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Organization</th>
-                </tr>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Name</th>
+                <th scope="col">Organization</th>
+            </tr>
             </thead>
             <tbody>
-                {% for o in instances %}
-                <tr>
-                    <th scope="row">{{ o.id }}</th>
-                    <td>{{ o.name }}</td>
-                    <td>{{ o.organization }}</td>
-                </tr>
-                {% endfor %}
+            {% for o in instances %}
+            <tr>
+                <th scope="row">{{ o.id }}</th>
+                <td>{{ o.name }}</td>
+                <td>{{ o.organization }}</td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
@@ -27,20 +27,20 @@
         <h2>Campaigns</h2>
         <table class="table">
             <thead>
-                <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Operation</th>
-                </tr>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Name</th>
+                <th scope="col">Operation</th>
+            </tr>
             </thead>
             <tbody>
-                {% for o in campaigns %}
-                <tr>
-                    <th scope="row">{{ o.id }}</th>
-                    <td>{{ o.name }}</td>
-                    <td>{{ o.instance }}</td>
-                </tr>
-                {% endfor %}
+            {% for o in campaigns %}
+            <tr>
+                <th scope="row">{{ o.id }}</th>
+                <td>{{ o.name }}</td>
+                <td>{{ o.instance }}</td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>

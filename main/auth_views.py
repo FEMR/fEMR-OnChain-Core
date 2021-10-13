@@ -3,8 +3,6 @@ View functions geared toward user authentication.
 All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
-from main.background_tasks import reset_sessions, run_encounter_close
-from main.models import UserSession, fEMRUser
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import AnonymousUser, User
@@ -13,7 +11,9 @@ from django.db import IntegrityError, DataError
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
+from main.background_tasks import reset_sessions, run_encounter_close
 from main.forms import RegisterForm, LoginForm
+from main.models import UserSession, fEMRUser
 
 
 def register(request):
@@ -131,9 +131,12 @@ def login_view(request):
                     form = LoginForm()
                     logout(request)
                     return render(request,
-                              'auth/login.html',
-                              {'error_message': "This user is logged in elsewhere, or the last session wasn't ended correctly. Either log out of your last session, or wait for that session to end in one minute.",
-                               'form': form})
+                                  'auth/login.html',
+                                  {
+                                      'error_message': "This user is logged in elsewhere, or the last session wasn't "
+                                                       "ended correctly. Either log out of your last session, "
+                                                       "or wait for that session to end in one minute.",
+                                      'form': form})
                 is_admin = request.user.groups.filter(
                     name='fEMR Admin').exists()
                 if len(user.campaigns.all()) == 1 and not user.campaigns.all()[0].active:
@@ -223,7 +226,6 @@ def change_password(request):
                 user.change_password = False
                 user.password_reset_last = timezone.now()
                 user.save()
-                error = 'Password changed successfully.'
                 return redirect('main:index')
             else:
                 error = 'Something went wrong.'
@@ -253,7 +255,6 @@ def required_change_password(request):
                 update_session_auth_hash(request, user)
                 user.change_password = False
                 user.save()
-                error = 'Password changed successfully.'
                 return redirect('main:index')
             else:
                 error = 'Something went wrong.'

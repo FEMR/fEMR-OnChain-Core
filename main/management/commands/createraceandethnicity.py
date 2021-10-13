@@ -2,8 +2,9 @@
 Defines a createadmin command extending manage.py.
 """
 
-from main.models import Ethnicity, Race
 from django.core.management.base import BaseCommand
+
+from main.models import Ethnicity, Race
 
 R_OPTIONS = [
     'Native American or Native Alaskan',

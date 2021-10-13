@@ -12,7 +12,7 @@ class DiagnosisAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(text__icontains=self.q)
-        
+
         return qs
 
 
@@ -25,7 +25,7 @@ class ChiefComplaintAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(text__icontains=self.q)
-        
+
         return qs
 
 
@@ -38,7 +38,7 @@ class MedicationAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(text__icontains=self.q)
-        
+
         return qs
 
 
@@ -51,7 +51,7 @@ class TestAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(text__icontains=self.q)
-        
+
         return qs
 
 
@@ -64,7 +64,7 @@ class AdministrationScheduleAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(text__icontains=self.q)
-        
+
         return qs
 
 
@@ -77,7 +77,7 @@ class RaceAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(name__icontains=self.q)
-        
+
         return qs
 
 
@@ -90,7 +90,7 @@ class EthnicityAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(name__icontains=self.q)
-        
+
         return qs
 
 
@@ -103,5 +103,5 @@ class StateAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(name__icontains=self.q)
-        
+
         return qs

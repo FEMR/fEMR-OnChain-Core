@@ -1,13 +1,13 @@
-from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password
-
-from .models import fEMRUser
+from django.core.exceptions import ValidationError
 
 
 class NewPasswordValidator(object):
-    def validate(self, password, user=None):
+    @staticmethod
+    def validate(password, user=None):
         if check_password(password, user.password):
             raise ValidationError("Password must not match the password currently in use.")
 
-    def get_help_text(self):
+    @staticmethod
+    def get_help_text():
         return "Password must not match the password currently in use."

@@ -1,12 +1,13 @@
 {% extends "data/base.html" %}
 {% block content %}
 {% load tz %}
+<!--suppress HtmlUnknownAttribute -->
 <form action="{% url 'main:set_timezone' %}" method="POST">
     {% csrf_token %}
     <label for="timezone">Time zone:</label>
-    <select name="timezone">
+    <select id="timezone" name="timezone">
         {% for tz in timezones %}
-        <option value="{{ tz }}" {% if tz == selected_time_zone %} selected {% endif %}>{{ tz }}</option>
+        <option %} %} endif if selected selected_time_zone tz== value="{{ tz }}" {%>{{ tz }}</option>
         {% endfor %}
     </select>
     <input type="submit" value="Set">

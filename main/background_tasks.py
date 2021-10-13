@@ -1,4 +1,5 @@
 from datetime import timedelta
+
 from django.utils import timezone
 
 from main.models import Campaign, Patient, PatientEncounter, UserSession

@@ -9,7 +9,7 @@
 </div>
 {% endif %}
 <div>
-    Welcome to fEMR On-Chain v1.4.2.10112021, {{ user.first_name }} {{ user.last_name }}!
+    Welcome to fEMR On-Chain v1.4.2.10132021, {{ user.first_name }} {{ user.last_name }}!
 </div>
 <div>
     Please select a tab at the top, search below, or select a campaign below to get started!
@@ -19,25 +19,27 @@
         {% csrf_token %}
         <select name="campaign">
             {% for campaign in campaigns %}
-            <option value="{{ campaign }}" {% if campaign|is_selected:selected_campaign %} selected {% endif %}>
+            <!--suppress HtmlUnknownAttribute -->
+            <option %} %} campaign|is_selected:selected_campaign endif if selected value="{{ campaign }}" {% {%>
                 {{ campaign }}
             </option>
             {% endfor %}
         </select>
         <input type="submit" value="Set Campaign">
     </form>
-    <a href="#" data-toggle="popover" data-trigger="hover"
-        data-content="'Campaign' refers to location of clinic or screening event. Campaign selected will appear at the top of the screen next to the fEMR logo."><i
+    <a data-content="'Campaign' refers to location of clinic or screening event. Campaign selected will appear at the top of the screen next to the fEMR logo." data-toggle="popover" data-trigger="hover"
+       href="#"><i
             class="fa fa-question-circle"></i></a>
 </div>
 <form action="{% url 'main:search_patient_list_view' %}" class="form-inline my-2 my-lg-0" method="get">
     <div class="input-group mt-3">
         <input aria-label="Search" class="form-control" id="name_search" name="name_search"
-            placeholder="Patient Name, ID, Phone Number, or Email" size="40" type="search" />
+               placeholder="Patient Name, ID, Phone Number, or Email" size="40" type="search"/>
     </div>
     <div class="input-group-append">
-        <button class="btn btn-primary mt-3" type="submit" id="button-addon2"><i class="fa fa-search"
-                aria-hidden="true"></i>Search</button>
+        <button class="btn btn-primary mt-3" id="button-addon2" type="submit"><i aria-hidden="true"
+                                                                                 class="fa fa-search"></i>Search
+        </button>
     </div>
 </form>
 {% endblock %}

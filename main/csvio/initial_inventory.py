@@ -1,23 +1,25 @@
 import csv
+
 import requests
-from main.models import InventoryCategory, InventoryEntry, InventoryForm, Manufacturer, Medication
+
 from main.csvio.csv_interface import CSVHandler
+from main.models import InventoryCategory, InventoryEntry, InventoryForm, Manufacturer, Medication
 
 
 class InitialInventoryHandler(CSVHandler):
     def __init__(self) -> None:
         super().__init__()
-    
+
     def read(self, upload, campaign):
         return self.__import(upload, campaign)
-    
+
     def write(self, response, formulary):
         return self.__export(response, formulary)
 
     def __export(self, response, formulary):
         writer = csv.writer(response)
         writer.writerow(["Category", "Medication", "Form", "Strength", "Count", "Quantity",
-                            "Initial Quantity", "Item Number", "Box Number", "Expiration Date", "Manufacturer"])
+                         "Initial Quantity", "Item Number", "Box Number", "Expiration Date", "Manufacturer"])
         for x in formulary:
             writer.write([
                 x.category,
@@ -33,7 +35,7 @@ class InitialInventoryHandler(CSVHandler):
                 x.manufacturer,
             ])
         return response
-    
+
     def __import(self, upload, campaign):
         csvfile = requests.get(upload.document.url).content
         reader = csv.reader(csvfile, delimiter=",")

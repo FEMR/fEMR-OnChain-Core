@@ -1,13 +1,14 @@
-from django.contrib import admin
 from django.conf.urls import url
+from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.urls import path, include
-from django.contrib.auth import views as auth_views
 from django.views.generic.base import RedirectView
+
 from main.auth_views import change_password, required_change_password
 
 urlpatterns = [
-     path(
+    path(
         "favicon.ico",
         RedirectView.as_view(url=staticfiles_storage.url("main/assets/favicon.ico")),
     ),
@@ -25,9 +26,9 @@ urlpatterns = [
             template_name='auth/password_reset_done.html'),
         name='password_reset_done'),
     path('reset/<uidb64>/<token>/',
-        auth_views.PasswordResetConfirmView.as_view(
-            template_name='auth/password_reset_confirm.html'),
-        name='password_reset_confirm'),
+         auth_views.PasswordResetConfirmView.as_view(
+             template_name='auth/password_reset_confirm.html'),
+         name='password_reset_confirm'),
     url(r'^reset/done/$',
         auth_views.PasswordResetCompleteView.as_view(
             template_name='auth/password_reset_complete.html'),

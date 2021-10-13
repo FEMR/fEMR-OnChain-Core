@@ -18,7 +18,6 @@ sys.path.insert(0, os.path.abspath('..'))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'femr_onchain.settings')
 django.setup()
 
-
 # -- Project information -----------------------------------------------------
 
 project = 'fEMR OnChain'
@@ -27,7 +26,6 @@ author = 'Team fEMR'
 
 # The full version, including alpha/beta/rc tags
 release = 'v1.4.1'
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -47,7 +45,6 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
-
 
 # -- Options for HTML output -------------------------------------------------
 

@@ -3,16 +3,17 @@ View functions for top-level locations.
 All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
-from django.utils import timezone
-from main.forms import ForgotUsernameForm
+import pytz
 from django.core.exceptions import ObjectDoesNotExist
-from main.models import Campaign, MessageOfTheDay, fEMRUser
-from .background_tasks import reset_sessions, run_encounter_close
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-import pytz
+from django.utils import timezone
+
+from main.forms import ForgotUsernameForm
+from main.models import Campaign, MessageOfTheDay, fEMRUser
 
 
+# noinspection PyUnusedLocal
 def index(request):
     """
     Initial landing view.
@@ -33,7 +34,7 @@ def home(request):
     if request.user.is_authenticated:
         motd = MessageOfTheDay.load()
         if motd.start_date is not None or motd.end_date is not None:
-            if timezone.now().date() > motd.start_date and timezone.now().date() < motd.end_date:
+            if motd.start_date < timezone.now().date() < motd.end_date:
                 motd_final = motd.text
             else:
                 motd_final = ""
@@ -63,6 +64,7 @@ def library(request):
         return redirect('main:not_logged_in')
 
 
+# noinspection PyUnusedLocal
 def healthcheck(request):
     """
     Returns a success message.

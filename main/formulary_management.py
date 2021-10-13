@@ -1,13 +1,12 @@
-import csv
+from main.csvio.added_inventory import AddedInventoryHandler
+from django.db.models.query_utils import Q
+from django.http.response import HttpResponse
+from django.shortcuts import redirect, render
+
 from main.csvio.added_inventory import AddedInventoryHandler
 from main.csvio.initial_inventory import InitialInventoryHandler
-import chardet
-
-from django.http.response import HttpResponse
 from main.forms import AddSupplyForm, CSVUploadForm, InventoryEntryForm, RemoveSupplyForm
-from main.models import CSVUploadDocument, Campaign, InventoryCategory, InventoryEntry, InventoryForm, Manufacturer, Medication
-from django.shortcuts import redirect, render
-from django.db.models.query_utils import Q
+from main.models import Campaign, InventoryEntry
 
 
 def formulary_home_view(request):
@@ -51,18 +50,19 @@ def edit_add_supply_view(request, id=None):
             inventory_entry = InventoryEntry.objects.get(pk=id)
             if request.method == "GET":
                 form = AddSupplyForm()
-                return render(request, 'formulary/edit_add_supply.html', {'page_name': inventory_entry, 'form': form, 'item_id': inventory_entry.id})
+                return render(request, 'formulary/edit_add_supply.html',
+                              {'page_name': inventory_entry, 'form': form, 'item_id': inventory_entry.id})
             elif request.method == "POST":
                 form = AddSupplyForm(request.POST)
                 if form.is_valid():
                     inventory_entry.initial_quantity = inventory_entry.initial_quantity + \
-                        int(request.POST['quantity'])
-                    inventory_entry.quantity = inventory_entry.quantity + \
-                        int(request.POST['quantity'])
+                                                       int(request.POST['quantity'])
+                    inventory_entry.quantity = inventory_entry.quantity + int(request.POST['quantity'])
                     inventory_entry.save()
                     return redirect('main:formulary_home_view')
                 else:
-                    return render(request, 'formulary/edit_add_supply.html', {'page_name': inventory_entry, 'form': form, 'item_id': inventory_entry.id})
+                    return render(request, 'formulary/edit_add_supply.html',
+                                  {'page_name': inventory_entry, 'form': form, 'item_id': inventory_entry.id})
         else:
             return redirect('main:permission_denied')
     else:
@@ -77,22 +77,24 @@ def edit_sub_supply_view(request, id=None):
             inventory_entry = InventoryEntry.objects.get(pk=id)
             if request.method == "GET":
                 form = RemoveSupplyForm()
-                return render(request, 'formulary/edit_sub_supply.html', {'page_name': inventory_entry, 'form': form, 'item_id': inventory_entry.id})
+                return render(request, 'formulary/edit_sub_supply.html',
+                              {'page_name': inventory_entry, 'form': form, 'item_id': inventory_entry.id})
             elif request.method == "POST":
                 form = AddSupplyForm(request.POST)
                 if form.is_valid():
-                    if inventory_entry.initial_quantity > int(request.POST['quantity']) and inventory_entry.quantity > int(request.POST['quantity']):
+                    if inventory_entry.initial_quantity > int(
+                            request.POST['quantity']) and inventory_entry.quantity > int(request.POST['quantity']):
                         inventory_entry.initial_quantity = inventory_entry.initial_quantity - \
-                            int(request.POST['quantity'])
-                        inventory_entry.quantity = inventory_entry.quantity - \
-                            int(request.POST['quantity'])
+                                                           int(request.POST['quantity'])
+                        inventory_entry.quantity = inventory_entry.quantity - int(request.POST['quantity'])
                     else:
                         inventory_entry.initial_quantity = 0
                         inventory_entry.quantity = 0
                     inventory_entry.save()
                     return redirect('main:formulary_home_view')
                 else:
-                    return render(request, 'formulary/edit_add_supply.html', {'page_name': inventory_entry, 'form': form, 'item_id': inventory_entry.id})
+                    return render(request, 'formulary/edit_add_supply.html',
+                                  {'page_name': inventory_entry, 'form': form, 'item_id': inventory_entry.id})
         else:
             return redirect('main:permission_denied')
     else:

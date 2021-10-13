@@ -4,6 +4,9 @@ Forms are generated as HTML from the structure of each Form's superclass.
 """
 import math
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Div, ButtonHolder, Submit
+from dal import autocomplete
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import Group
 from django.forms import ModelForm, Form, CharField, PasswordInput, DateInput, ValidationError, BooleanField
@@ -12,12 +15,9 @@ from django.forms.models import ModelMultipleChoiceField
 from django.forms.widgets import Textarea
 from django.utils import timezone
 
-from dal import autocomplete
-
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div, ButtonHolder, Submit
-
-from .models import CSVUploadDocument, Ethnicity, HistoryOfPresentIllness, InventoryEntry, InventoryForm, MessageOfTheDay, Organization, Patient, PatientDiagnosis, PatientEncounter, Photo, Race, fEMRUser, Campaign, Instance, Contact, Vitals,\
+from .models import CSVUploadDocument, Ethnicity, HistoryOfPresentIllness, InventoryEntry, MessageOfTheDay, \
+    Organization, Patient, PatientDiagnosis, PatientEncounter, Photo, Race, fEMRUser, Campaign, \
+    Instance, Contact, Vitals, \
     ChiefComplaint, Treatment, Diagnosis, Medication
 
 
@@ -175,15 +175,16 @@ class PatientForm(ModelForm):
         self.fields['ethnicity'].widget.attrs['required'] = True
         self.fields['social_security_number'].widget.attrs['minlength'] = "4"
         self.fields['zip_code'].widget.attrs['minlength'] = "5"
-        self.fields['age'].widget.attrs['style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
+        self.fields['age'].widget.attrs[
+            'style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
         self.fields['age'].widget.attrs['readonly'] = ""
 
     def clean_social_security_number(self):
         if self.cleaned_data['social_security_number'] is None:
             return self.cleaned_data['social_security_number']
         if len(self.cleaned_data['social_security_number'].replace(
-            '-', '').replace('_', '')) != 4 and len(self.cleaned_data['social_security_number'].replace(
-                '-', '').replace('_', '')) != 9:
+                '-', '').replace('_', '')) != 4 and len(self.cleaned_data['social_security_number'].replace(
+                    '-', '').replace('_', '')) != 9:
             raise ValidationError('Must be 4 or 9 digits.')
         return self.cleaned_data['social_security_number']
 
@@ -191,8 +192,8 @@ class PatientForm(ModelForm):
         if self.cleaned_data['zip_code'] is None:
             return self.cleaned_data['zip_code']
         if len(self.cleaned_data['zip_code'].replace(
-            '-', '').replace('_', '')) != 5 and len(self.cleaned_data['zip_code'].replace(
-                '-', '').replace('_', '')) != 9:
+                '-', '').replace('_', '')) != 5 and len(self.cleaned_data['zip_code'].replace(
+                    '-', '').replace('_', '')) != 9:
             raise ValidationError('Must be 5 or 9 digits.')
         return self.cleaned_data['zip_code']
 
@@ -264,7 +265,8 @@ class PatientEncounterForm(ModelForm):
         self.fields['body_mass_index'].widget.attrs['step'] = .1
         self.fields['bmi_percentile'].widget.attrs['min'] = 0
         self.fields['body_mass_index'].widget.attrs['min'] = 0
-        self.fields['body_mass_index'].widget.attrs['style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
+        self.fields['body_mass_index'].widget.attrs[
+            'style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
         self.fields['body_mass_index'].widget.attrs['readonly'] = ""
         self.fields['weeks_pregnant'].widget.attrs['min'] = 0
         self.fields['weeks_pregnant'].widget.attrs['max'] = 45
@@ -300,7 +302,7 @@ class PatientEncounterForm(ModelForm):
                 m.body_height_primary = math.floor(
                     (((m.body_height_primary * 12) + m.body_height_secondary) * 2.54) // 100)
                 m.body_height_secondary = (
-                    ((tmp * 12) + m.body_height_secondary) * 2.54) % 100
+                                                  ((tmp * 12) + m.body_height_secondary) * 2.54) % 100
             if m.body_weight is not None:
                 m.body_weight = m.body_weight / 2.2046
         if commit:
@@ -402,7 +404,8 @@ class VitalsForm(ModelForm):
         self.fields['heart_rate'].widget.attrs['max'] = 170
         self.fields['respiratory_rate'].widget.attrs['min'] = 0
         self.fields['body_temperature'].widget.attrs['step'] = 0.01
-        self.fields['mean_arterial_pressure'].widget.attrs['style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
+        self.fields['mean_arterial_pressure'].widget.attrs[
+            'style'] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
         self.fields['mean_arterial_pressure'].widget.attrs['readonly'] = ""
         self.fields['glucose_level'].widget.attrs['min'] = 0
         if self.unit == 'i':
@@ -463,7 +466,7 @@ class VitalsForm(ModelForm):
     def save(self, commit=True):
         m = super(VitalsForm, self).save(commit=False)
         if self.unit == 'i' and m.body_temperature is not None:
-            m.body_temperature = round((m.body_temperature - 32) * (5/9), 2)
+            m.body_temperature = round((m.body_temperature - 32) * (5 / 9), 2)
         if commit:
             m.save()
         return m

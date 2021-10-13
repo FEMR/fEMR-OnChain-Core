@@ -4,10 +4,10 @@
     {% csrf_token %}
     <div class="container">
         <div class="row justify-content-center">
-            <input name="id" id="id" hidden value="{{ patient_id }}" />
-            <div col="cold-md-6"><label for="campaign">Refer to campaign: </label></div>
-            <div col="cold-md-6">
-                <select id="campaign" name="campaign" class="form-group">
+            <input hidden id="id" name="id" value="{{ patient_id }}"/>
+            <div class="col-md-6"><label for="campaign">Refer to campaign: </label></div>
+            <div class="col-md-6">
+                <select class="form-group" id="campaign" name="campaign">
                     {% for x in campaigns %}
                     <option value="{{ x.id }}">{{ x }}</option>
                     {% endfor %}
@@ -17,9 +17,8 @@
     </div>
     <div class="row justify-content-center">
         <div class="col-md-2">
-            <input class="btn btn-primary ml-auto" type="submit" value="Save User" />
+            <input class="btn btn-primary ml-auto" type="submit" value="Save User"/>
         </div>
-    </div>
     </div>
 </form>
 {% endblock %}

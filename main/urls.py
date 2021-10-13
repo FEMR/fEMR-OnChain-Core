@@ -1,30 +1,40 @@
-from main.formulary_management import add_supply_view, csv_export_view, csv_handler_view, csv_import_view, edit_add_supply_view, edit_sub_supply_view, formulary_home_view
-from main.operation_admin_views import operation_admin_home_view
-from main.organization_admin_views import organization_admin_home_view
-from main.delete_views import delete_chief_complaint, patient_delete_view
 from django.conf.urls import url, include
 from django.urls import path
-
 from rest_framework import routers
 from rest_framework.authtoken import views as rest_framework_views
 from rest_framework_swagger.views import get_swagger_view
 
-from main.admin_views import add_user_to_campaign, add_users_to_campaign, admin_home, create_user_view, cut_user_from_campaign, export_audit_logs_view, export_database_logs_view, \
+from main.admin_views import add_user_to_campaign, add_users_to_campaign, admin_home, create_user_view, \
+    cut_user_from_campaign, export_audit_logs_view, export_database_logs_view, \
     filter_audit_logs_view, filter_database_logs_view, filter_users_view, get_audit_logs_view, get_database_logs_view, \
-    list_users_view, lock_user_view, message_of_the_day_view, unlock_user_view, search_audit_logs_view, search_database_logs_view, \
+    list_users_view, lock_user_view, message_of_the_day_view, unlock_user_view, search_audit_logs_view, \
+    search_database_logs_view, \
     search_users_view, update_user_view, update_user_password_view
-from .api_views import UserViewSet, GroupViewSet, PatientViewSet, PatientEncounterViewSet, InstanceViewSet, CampaignViewSet
-from .auth_views import all_locked, not_logged_in, login_view, logout_view, permission_denied
-from .edit_views import aux_form_view, delete_photo_view, edit_photo_view, history_view, hpi_view, new_diagnosis_view, new_treatment_view, patient_edit_form_view, encounter_edit_form_view, patient_export_view, patient_medical, new_vitals_view, submit_hpi_view, upload_photo_view
-from .form_views import patient_form_view, referral_form_view, patient_encounter_form_view
-from .list_views import chief_complaint_list_view, patient_csv_export_view, patient_list_view, search_patient_list_view, filter_patient_list_view
-from .views import forgot_username, index, home, healthcheck, help_messages_off
-from .femr_admin_views import edit_contact_view, edit_organization_view, list_organization_view, lock_campaign_view, new_campaign_view, new_contact_view, new_ethnicity_view, new_instance_view, edit_campaign_view, edit_instance_view, \
-    list_campaign_view, list_instance_view, femr_admin_home, change_campaign, new_organization_view, new_race_view, unlock_campaign_view, view_contact_view
-from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, medication_form_view, treatment_form_view
-from main.views import set_timezone
+from main.delete_views import delete_chief_complaint, patient_delete_view
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
-from .autocomplete_views import DiagnosisAutocomplete, EthnicityAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete, RaceAutocomplete, StateAutocomplete, TestAutocomplete
+from main.formulary_management import add_supply_view, csv_export_view, csv_handler_view, csv_import_view, \
+    edit_add_supply_view, edit_sub_supply_view, formulary_home_view
+from main.operation_admin_views import operation_admin_home_view
+from main.organization_admin_views import organization_admin_home_view
+from main.views import set_timezone
+from .api_views import UserViewSet, GroupViewSet, PatientViewSet, PatientEncounterViewSet, InstanceViewSet, \
+    CampaignViewSet
+from .auth_views import all_locked, not_logged_in, login_view, logout_view, permission_denied
+from .autocomplete_views import DiagnosisAutocomplete, EthnicityAutocomplete, MedicationAutocomplete, \
+    ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete, RaceAutocomplete, StateAutocomplete, \
+    TestAutocomplete
+from .edit_views import aux_form_view, delete_photo_view, edit_photo_view, history_view, hpi_view, new_diagnosis_view, \
+    new_treatment_view, patient_edit_form_view, encounter_edit_form_view, patient_export_view, patient_medical, \
+    new_vitals_view, submit_hpi_view, upload_photo_view
+from .femr_admin_views import edit_contact_view, edit_organization_view, list_organization_view, lock_campaign_view, \
+    new_campaign_view, new_contact_view, new_ethnicity_view, new_instance_view, edit_campaign_view, edit_instance_view, \
+    list_campaign_view, list_instance_view, femr_admin_home, change_campaign, new_organization_view, new_race_view, \
+    unlock_campaign_view, view_contact_view
+from .form_views import patient_form_view, referral_form_view, patient_encounter_form_view
+from .list_views import chief_complaint_list_view, patient_csv_export_view, patient_list_view, search_patient_list_view, \
+    filter_patient_list_view
+from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, medication_form_view, treatment_form_view
+from .views import forgot_username, index, home, healthcheck, help_messages_off
 
 app_name = 'main'
 
@@ -43,7 +53,7 @@ urlpatterns = [
     url(r'^logout/$', logout_view, name='logout_view'),
     url(r'^login_view/$', login_view, name='login_view'),
     url(r'^not_logged_in/$', not_logged_in, name='not_logged_in'),
-    url(r'^permissioned_denied/$', permission_denied, name='permission_denied'),
+    url(r'^permission_denied/$', permission_denied, name='permission_denied'),
     url(r'^all_locked/$', all_locked, name='all_locked'),
     url(r'^healthcheck/$', healthcheck, name='healthcheck'),
     url(r'^patient_form_view/$', patient_form_view, name='patient_form_view'),
@@ -157,9 +167,9 @@ urlpatterns = [
     url(r'^formulary_home_view/$', formulary_home_view, name='formulary_home_view'),
     url(r'^add_supply_view/$', add_supply_view, name='add_supply_view'),
     path(r'edit_add_supply_view/<int:id>', edit_add_supply_view,
-        name='edit_add_supply_view'),
+         name='edit_add_supply_view'),
     path(r'edit_sub_supply_view/<int:id>', edit_sub_supply_view,
-        name='edit_sub_supply_view'),
+         name='edit_sub_supply_view'),
     url(r'^csv_handler_view/$', csv_handler_view, name='csv_handler_view'),
     url(r'^csv_import_view/$', csv_import_view, name='csv_import_view'),
     url(r'^csv_export_view/$', csv_export_view, name='csv_export_view'),
@@ -177,7 +187,7 @@ urlpatterns = [
     path(r'view_contact/<int:id>', view_contact_view, name='view_contact'),
     url(r'^new_contact/$', new_contact_view, name='new_contact'),
     path(r'patient_export/<int:id>', patient_export_view, name='patient_export'),
-    
+
     url(r'^new_race/$', new_race_view, name='new_race'),
     url(r'^new_ethnicity/$', new_ethnicity_view, name='new_ethnicity'),
 

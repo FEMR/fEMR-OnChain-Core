@@ -4,31 +4,31 @@
 {% load user_tags %}
 <table class="table">
     <thead>
-        <tr>
-            <th scope="col"></th>
-            <th scope="col">First Name</th>
-            <th scope="col">Last Name</th>
-            <th scope="col">In Campaign</th>
-            <th scope="col"></th>
-            <th scope="col"></th>
-            <th scope="col"></th>
-        </tr>
+    <tr>
+        <th scope="col"></th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">In Campaign</th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+    </tr>
     </thead>
     <tbody>
-        {% for o in users %}
-        <tr>
-            <th scope="row">{{ o.id }}</th>
-            <td>{{ o.first_name }}</td>
-            <td>{{o.last_name }}</td>
-            {% if o|has_campaign:request.session.campaign %}
-            <td>Yes</td>
-            {% else %}
-            <td>No</td>
-            {% endif %}
-            <td><a href="{% url 'main:add_user_to_campaign' user_id=o.id %}">Add</a></td>
-            <td><a href="{% url 'main:cut_user_from_campaign' user_id=o.id %}">Remove</a></td>
-        </tr>
-        {% endfor %}
+    {% for o in users %}
+    <tr>
+        <th scope="row">{{ o.id }}</th>
+        <td>{{ o.first_name }}</td>
+        <td>{{o.last_name }}</td>
+        {% if o|has_campaign:request.session.campaign %}
+        <td>Yes</td>
+        {% else %}
+        <td>No</td>
+        {% endif %}
+        <td><a href="{% url 'main:add_user_to_campaign' user_id=o.id %}">Add</a></td>
+        <td><a href="{% url 'main:cut_user_from_campaign' user_id=o.id %}">Remove</a></td>
+    </tr>
+    {% endfor %}
     </tbody>
 </table>
 {% endblock %}

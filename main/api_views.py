@@ -5,13 +5,14 @@ If one is not found, they will direct to the appropriate error page.
 """
 
 from django.contrib.auth.models import Group
-
-from rest_framework import viewsets
 from rest_framework import permissions
+from rest_framework import viewsets
 
-from .models import Patient, fEMRUser, PatientEncounter, Instance, Campaign
-from .serializers import UserSerializer, GroupSerializer, PatientSerializer, PatientEncounterSerializer, InstanceSerializer, CampaignSerializer
 from .api_permissions import IsAdmin, IsfEMRAdmin
+from .models import Patient, fEMRUser, PatientEncounter, Instance, Campaign
+from .serializers import UserSerializer, GroupSerializer, PatientSerializer, PatientEncounterSerializer, \
+    InstanceSerializer, CampaignSerializer
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """

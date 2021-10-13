@@ -1,7 +1,7 @@
 {% extends "data/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<form method="POST" action="{% url 'main:add_supply_view' %}" enctype="multipart/form-data">
+<form action="{% url 'main:add_supply_view' %}" enctype="multipart/form-data" method="POST">
     {% csrf_token %}
     {% crispy form %}
 </form>

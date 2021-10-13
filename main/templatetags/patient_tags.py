@@ -1,9 +1,11 @@
 # -*- coding:utf-8 -*-
 from __future__ import unicode_literals
+
 import math
 
 # Core Django imports
 from django import template
+
 from main.models import PatientEncounter
 
 # Stdlib imports
@@ -74,7 +76,7 @@ def imperial_weight(m):
 @register.filter('imperial_temperature')
 def imperial_temperature(m):
     if m.body_temperature is not None:
-        return round((m.body_temperature * 9/5) + 32, 2)
+        return round((m.body_temperature * 9 / 5) + 32, 2)
     else:
         return None
 

@@ -4,7 +4,7 @@
 <div>
     {{result}}
 </div>
-<form method="POST" action="{% url 'main:csv_import_view' %}" enctype="multipart/form-data">
+<form action="{% url 'main:csv_import_view' %}" enctype="multipart/form-data" method="POST">
     {% csrf_token %}
     {% crispy form %}
 </form>
