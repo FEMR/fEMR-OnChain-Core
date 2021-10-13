@@ -1,9 +1,8 @@
-from main.error_handlers import bad_request_handler
 from main.formulary_management import add_supply_view, csv_export_view, csv_handler_view, csv_import_view, edit_add_supply_view, edit_sub_supply_view, formulary_home_view
 from main.operation_admin_views import operation_admin_home_view
 from main.organization_admin_views import organization_admin_home_view
 from main.delete_views import delete_chief_complaint, patient_delete_view
-from django.conf.urls import handler400, url, include
+from django.conf.urls import url, include
 from django.urls import path
 
 from rest_framework import routers
@@ -28,8 +27,6 @@ from main.femr_admin_views import lock_instance_view, unlock_instance_view
 from .autocomplete_views import DiagnosisAutocomplete, EthnicityAutocomplete, MedicationAutocomplete, ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete, RaceAutocomplete, StateAutocomplete, TestAutocomplete
 
 app_name = 'main'
-
-handler400 = bad_request_handler
 
 router = routers.DefaultRouter()
 router.register(r'Users', UserViewSet)
