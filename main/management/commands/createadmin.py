@@ -53,3 +53,8 @@ class Command(BaseCommand):
             Group.objects.get(name='Campaign Manager').user_set.add(superuser)
             instance.main_contact = superuser
             instance.save()
+        else:
+            for x in fEMRUser.objects.all():
+                x.user_permissions.add(Permission.objects.get(name='Can add state'))
+                x.user_permissions.add(Permission.objects.get(name='Can add diagnosis'))
+                x.user_permissions.add(Permission.objects.get(name='Can add chief complaint'))
