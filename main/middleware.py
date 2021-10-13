@@ -1,3 +1,4 @@
+from django.http import response
 from clinic_messages.models import Message
 from django.contrib.auth import logout
 from django.contrib.auth.models import AnonymousUser
@@ -138,3 +139,15 @@ class HandleErrorMiddleware:
     def process_exception(aelf, request, exception):
         if isinstance(exception, SessionInterrupted):
             return redirect('main:logout_view')
+
+
+class CheckBrowserMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+    
+    def __call__(self, request):
+        print(request.user_agent.browser.family)
+        if request.user_agent.browser.family not in ["Chrome", "Firefox", "Firefox Mobile", "Chrome Mobile iOS"]:
+            return render(request, 'data/stop.html')
+        else:
+            return self.get_response(request)

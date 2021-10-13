@@ -20,13 +20,7 @@ def index(request):
     :param request: A Django request object.
     :return: A template rendered as an HTTPResponse.
     """
-    print(request.user_agent.browser.family)
-    run_encounter_close()
-    reset_sessions()
-    if request.user_agent.browser.family not in ["Chrome", "Firefox", "Firefox Mobile", "Chrome Mobile iOS"]:
-        return render(request, 'data/stop.html')
-    else:
-        return redirect('main:login_view')
+    return redirect('main:login_view')
 
 
 def home(request):
@@ -36,8 +30,6 @@ def home(request):
     :param request: Django Request object.
     :return: An HttpResponse, rendering the home page.
     """
-    run_encounter_close()
-    reset_sessions()
     if request.user.is_authenticated:
         motd = MessageOfTheDay.load()
         if motd.start_date is not None or motd.end_date is not None:

@@ -3,6 +3,7 @@ View functions geared toward user authentication.
 All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
+from main.background_tasks import reset_sessions, run_encounter_close
 from main.models import UserSession, fEMRUser
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -114,6 +115,8 @@ def login_view(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
+    run_encounter_close()
+    reset_sessions()
     if request.user.is_authenticated:
         return redirect('main:home')
     if request.method == 'POST':
