@@ -7,13 +7,13 @@ import os
 from datetime import datetime, timedelta
 from django.contrib.auth.models import Permission
 
+from clinic_messages.models import Message
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.db.models.query_utils import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
-from clinic_messages.models import Message
 from main.femr_admin_views import get_client_ip
 from .forms import MOTDForm, UserForm, UserUpdateForm, AdminPasswordForm, fEMRAdminUserForm, fEMRAdminUserUpdateForm
 from .models import MessageOfTheDay, fEMRUser, AuditEntry, DatabaseChangeLog, Campaign
@@ -122,6 +122,7 @@ def create_user_view(request):
                     t.user_permissions.add(Permission.objects.get(name='Can add state'))
                     t.user_permissions.add(Permission.objects.get(name='Can add diagnosis'))
                     t.user_permissions.add(Permission.objects.get(name='Can add chief complaint'))
+                    t.user_permissions.add(Permission.objects.get(name='Can add medication'))
                     t.save()
                     DatabaseChangeLog.objects.create(action="Create", model="User", instance=str(t),
                                                      ip=get_client_ip(request), username=request.user.username,

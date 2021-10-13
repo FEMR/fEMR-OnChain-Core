@@ -29,6 +29,8 @@ function all() {
 
 function run_tests() {
   python3 manage.py test main.tests
+  python3 manage.py test appMR.tests
+  python3 manage.py test clinic_messages.tests
 }
 
 function clean() {

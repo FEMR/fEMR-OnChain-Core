@@ -44,6 +44,7 @@ class Command(BaseCommand):
             superuser.user_permissions.add(Permission.objects.get(name='Can add state'))
             superuser.user_permissions.add(Permission.objects.get(name='Can add diagnosis'))
             superuser.user_permissions.add(Permission.objects.get(name='Can add chief complaint'))
+            superuser.user_permissions.add(Permission.objects.get(name='Can add medication'))
             superuser.save()
             Group.objects.get(name='Admin').user_set.add(superuser)
             Group.objects.get(name='fEMR Admin').user_set.add(superuser)
@@ -58,3 +59,4 @@ class Command(BaseCommand):
                 x.user_permissions.add(Permission.objects.get(name='Can add state'))
                 x.user_permissions.add(Permission.objects.get(name='Can add diagnosis'))
                 x.user_permissions.add(Permission.objects.get(name='Can add chief complaint'))
+                x.user_permissions.add(Permission.objects.get(name='Can add medication'))

@@ -19,6 +19,6 @@ services:
       - POSTGRES_PASS=postgres
       - POSTGRES_NAME=database
     depends_on:
-      - database
+      - "database"
 volumes:
   db:
