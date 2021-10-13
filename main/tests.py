@@ -11,8 +11,8 @@ class URLTestCase(TestCase):
 
     def test_index_page(self):
         """
-        Double-checks that the index page responds.
+        Double-checks that the index page responds by correctly redirecting to Login.
         """
         c = Client()
         response = c.get("/")
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
