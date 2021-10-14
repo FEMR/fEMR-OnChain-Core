@@ -63,8 +63,8 @@
             </li>
             {% if request.message_number > 0 %}
             <li class="nav-item" style="background-color: red;">
-                <a class="nav-link" href="{% url 'clinic_messages:index' %}" style="color: black;">Messages ({{
-                    request.message_number }})</a>
+                <a class="nav-link" href="{% url 'clinic_messages:index' %}" style="color: black;">
+                    Messages ({{ request.message_number }})</a>
             </li>
             {% else %}
             <li class="nav-item">
