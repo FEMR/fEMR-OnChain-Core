@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>main.migrations package &#8212; fEMR OnChain v1.4.3 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="main-migrations-package">
+<h1>main.migrations package<a class="headerlink" href="#main-migrations-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-main.migrations.0001_initial">
+<span id="main-migrations-0001-initial-module"></span><h2>main.migrations.0001_initial module<a class="headerlink" href="#module-main.migrations.0001_initial" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="main.migrations.0001_initial.Migration">
+<em class="property">class </em><code class="sig-prename descclassname">main.migrations.0001_initial.</code><code class="sig-name descname">Migration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">app_label</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.migrations.0001_initial.Migration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.migrations.migration.Migration</span></code></p>
+<dl class="py attribute">
+<dt id="main.migrations.0001_initial.Migration.dependencies">
+<code class="sig-name descname">dependencies</code><em class="property"> = [('auth', '0012_alter_user_first_name_max_length')]</em><a class="headerlink" href="#main.migrations.0001_initial.Migration.dependencies" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="main.migrations.0001_initial.Migration.initial">
+<code class="sig-name descname">initial</code><em class="property"> = True</em><a class="headerlink" href="#main.migrations.0001_initial.Migration.initial" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="main.migrations.0001_initial.Migration.operations">
+<code class="sig-name descname">operations</code><em class="property"> = [&lt;CreateModel  name='fEMRUser', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('password', &lt;django.db.models.fields.CharField&gt;), ('last_login', &lt;django.db.models.fields.DateTimeField&gt;), ('is_superuser', &lt;django.db.models.fields.BooleanField&gt;), ('username', &lt;django.db.models.fields.CharField&gt;), ('first_name', &lt;django.db.models.fields.CharField&gt;), ('last_name', &lt;django.db.models.fields.CharField&gt;), ('is_staff', &lt;django.db.models.fields.BooleanField&gt;), ('is_active', &lt;django.db.models.fields.BooleanField&gt;), ('date_joined', &lt;django.db.models.fields.DateTimeField&gt;), ('email', &lt;django.db.models.fields.EmailField&gt;), ('change_password', &lt;django.db.models.fields.BooleanField&gt;), ('password_reset_last', &lt;django.db.models.fields.DateTimeField&gt;)], options={'verbose_name': 'user', 'verbose_name_plural': 'users', 'abstract': False}, managers=[('objects', &lt;django.contrib.auth.models.UserManager object&gt;)]&gt;, &lt;CreateModel  name='AdministrationSchedule', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('text', &lt;django.db.models.fields.CharField&gt;)]&gt;, &lt;CreateModel  name='Campaign', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('name', &lt;django.db.models.fields.CharField&gt;), ('active', &lt;django.db.models.fields.BooleanField&gt;), ('units', &lt;django.db.models.fields.CharField&gt;), ('telehealth', &lt;django.db.models.fields.BooleanField&gt;), ('encounter_close', &lt;django.db.models.fields.PositiveIntegerField&gt;), ('country', &lt;django.db.models.fields.CharField&gt;), ('timezone', &lt;django.db.models.fields.CharField&gt;), ('admins', &lt;django.db.models.fields.related.ManyToManyField&gt;)]&gt;, &lt;CreateModel  name='ChiefComplaint', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('text', &lt;django.db.models.fields.CharField&gt;), ('active', &lt;django.db.models.fields.BooleanField&gt;)]&gt;, &lt;CreateModel  name='Contact', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('first_name', &lt;django.db.models.fields.CharField&gt;), ('last_name', &lt;django.db.models.fields.CharField&gt;), ('email_address', &lt;django.db.models.fields.CharField&gt;), ('phone_number', &lt;django.db.models.fields.CharField&gt;)]&gt;, &lt;CreateModel  name='CSVUploadDocument', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('document', &lt;django.db.models.fields.files.FileField&gt;), ('mode_option', &lt;django.db.models.fields.CharField&gt;)]&gt;, &lt;CreateModel  name='Diagnosis', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('text', &lt;django.db.models.fields.CharField&gt;)]&gt;, &lt;CreateModel  name='Ethnicity', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('name', &lt;django.db.models.fields.CharField&gt;)]&gt;, &lt;CreateModel  name='InventoryCategory', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('name', &lt;django.db.models.fields.CharField&gt;)]&gt;, &lt;CreateModel  name='InventoryForm', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('name', &lt;django.db.models.fields.CharField&gt;)]&gt;, &lt;CreateModel  name='Manufacturer', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('name', &lt;django.db.models.fields.CharField&gt;)]&gt;, &lt;CreateModel  name='Medication', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('text', &lt;django.db.models.fields.CharField&gt;)]&gt;, &lt;CreateModel  name='MessageOfTheDay', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('text', &lt;django.db.models.fields.CharField&gt;), ('start_date', &lt;django.db.models.fields.DateField&gt;), ('end_date', &lt;django.db.models.fields.DateField&gt;)], options={'abstract': False}&gt;, &lt;CreateModel  name='Patient', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('campaign_key', &lt;django.db.models.fields.PositiveIntegerField&gt;), ('first_name', &lt;django.db.models.fields.CharField&gt;), ('middle_name', &lt;django.db.models.fields.CharField&gt;), ('last_name', &lt;django.db.models.fields.CharField&gt;), ('suffix', &lt;django.db.models.fields.CharField&gt;), ('social_security_number', &lt;django.db.models.fields.CharField&gt;), ('sex_assigned_at_birth', &lt;django.db.models.fields.CharField&gt;), ('explain', &lt;django.db.models.fields.CharField&gt;), ('date_of_birth', &lt;django.db.models.fields.DateField&gt;), ('age', &lt;django.db.models.fields.IntegerField&gt;), ('preferred_language', &lt;django.db.models.fields.CharField&gt;), ('current_address', &lt;django.db.models.fields.CharField&gt;), ('address1', &lt;django.db.models.fields.CharField&gt;), ('address2', &lt;django.db.models.fields.CharField&gt;), ('zip_code', &lt;django.db.models.fields.CharField&gt;), ('city', &lt;django.db.models.fields.CharField&gt;), ('previous_address', &lt;django.db.models.fields.CharField&gt;), ('phone_number', &lt;django.db.models.fields.CharField&gt;), ('phone_number_type', &lt;django.db.models.fields.CharField&gt;), ('shared_phone_number', &lt;django.db.models.fields.BooleanField&gt;), ('email_address', &lt;django.db.models.fields.CharField&gt;), ('shared_email_address', &lt;django.db.models.fields.BooleanField&gt;), ('timestamp', &lt;django.db.models.fields.DateTimeField&gt;), ('campaign', &lt;django.db.models.fields.related.ManyToManyField&gt;), ('ethnicity', &lt;django.db.models.fields.related.ForeignKey&gt;)]&gt;, &lt;CreateModel  name='PatientEncounter', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('body_height_primary', &lt;django.db.models.fields.IntegerField&gt;), ('body_height_secondary', &lt;django.db.models.fields.FloatField&gt;), ('body_weight', &lt;django.db.models.fields.FloatField&gt;), ('bmi_percentile', &lt;django.db.models.fields.IntegerField&gt;), ('weight_for_length_percentile', &lt;django.db.models.fields.IntegerField&gt;), ('head_occipital_frontal_circumference_percentile', &lt;django.db.models.fields.IntegerField&gt;), ('body_mass_index', &lt;django.db.models.fields.FloatField&gt;), ('weeks_pregnant', &lt;django.db.models.fields.IntegerField&gt;), ('smoking', &lt;django.db.models.fields.BooleanField&gt;), ('history_of_diabetes', &lt;django.db.models.fields.BooleanField&gt;), ('history_of_hypertension', &lt;django.db.models.fields.BooleanField&gt;), ('history_of_high_cholesterol', &lt;django.db.models.fields.BooleanField&gt;), ('alcohol', &lt;django.db.models.fields.BooleanField&gt;), ('patient_history', &lt;django.db.models.fields.CharField&gt;), ('community_health_worker_notes', &lt;django.db.models.fields.CharField&gt;), ('procedure', &lt;django.db.models.fields.CharField&gt;), ('pharmacy_notes', &lt;django.db.models.fields.CharField&gt;), ('medical_history', &lt;django.db.models.fields.CharField&gt;), ('social_history', &lt;django.db.models.fields.CharField&gt;), ('current_medications', &lt;django.db.models.fields.CharField&gt;), ('family_history', &lt;django.db.models.fields.CharField&gt;), ('timestamp', &lt;django.db.models.fields.DateTimeField&gt;), ('active', &lt;django.db.models.fields.BooleanField&gt;), ('campaign', &lt;django.db.models.fields.related.ForeignKey&gt;), ('chief_complaint', &lt;django.db.models.fields.related.ManyToManyField&gt;), ('patient', &lt;django.db.models.fields.related.ForeignKey&gt;)]&gt;, &lt;CreateModel  name='Photo', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('description', &lt;django.db.models.fields.CharField&gt;), ('photo', &lt;django.db.models.fields.files.FileField&gt;), ('imaging_link', &lt;django.db.models.fields.CharField&gt;)]&gt;, &lt;CreateModel  name='Race', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('name', &lt;django.db.models.fields.CharField&gt;)]&gt;, &lt;CreateModel  name='State', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('name', &lt;django.db.models.fields.CharField&gt;)]&gt;, &lt;CreateModel  name='Test', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('text', &lt;django.db.models.fields.CharField&gt;)]&gt;, &lt;CreateModel  name='UnitsSetting', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('units', &lt;django.db.models.fields.CharField&gt;)], options={'abstract': False}&gt;, &lt;CreateModel  name='Vitals', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('diastolic_blood_pressure', &lt;django.db.models.fields.IntegerField&gt;), ('systolic_blood_pressure', &lt;django.db.models.fields.IntegerField&gt;), ('mean_arterial_pressure', &lt;django.db.models.fields.FloatField&gt;), ('heart_rate', &lt;django.db.models.fields.IntegerField&gt;), ('respiratory_rate', &lt;django.db.models.fields.IntegerField&gt;), ('body_temperature', &lt;django.db.models.fields.FloatField&gt;), ('oxygen_concentration', &lt;django.db.models.fields.IntegerField&gt;), ('glucose_level', &lt;django.db.models.fields.FloatField&gt;), ('timestamp', &lt;django.db.models.fields.DateTimeField&gt;), ('encounter', &lt;django.db.models.fields.related.ForeignKey&gt;)]&gt;, &lt;CreateModel  name='Treatment', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('days', &lt;django.db.models.fields.IntegerField&gt;), ('timestamp', &lt;django.db.models.fields.DateTimeField&gt;), ('administration_schedule', &lt;django.db.models.fields.related.ForeignKey&gt;), ('diagnosis', &lt;django.db.models.fields.related.ForeignKey&gt;), ('encounter', &lt;django.db.models.fields.related.ForeignKey&gt;), ('medication', &lt;django.db.models.fields.related.ManyToManyField&gt;), ('prescriber', &lt;django.db.models.fields.related.ForeignKey&gt;)]&gt;, &lt;AddField  model_name='patientencounter', name='photos', field=&lt;django.db.models.fields.related.ManyToManyField&gt;&gt;, &lt;CreateModel  name='PatientDiagnosis', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('diagnosis', &lt;django.db.models.fields.related.ManyToManyField&gt;), ('encounter', &lt;django.db.models.fields.related.ForeignKey&gt;)]&gt;, &lt;AddField  model_name='patient', name='race', field=&lt;django.db.models.fields.related.ForeignKey&gt;&gt;, &lt;AddField  model_name='patient', name='state', field=&lt;django.db.models.fields.related.ForeignKey&gt;&gt;, &lt;CreateModel  name='Organization', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('name', &lt;django.db.models.fields.CharField&gt;), ('active', &lt;django.db.models.fields.BooleanField&gt;), ('admins', &lt;django.db.models.fields.related.ManyToManyField&gt;), ('main_contact', &lt;django.db.models.fields.related.ForeignKey&gt;)]&gt;, &lt;CreateModel  name='InventoryEntry', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('strength', &lt;django.db.models.fields.CharField&gt;), ('count', &lt;django.db.models.fields.PositiveIntegerField&gt;), ('quantity', &lt;django.db.models.fields.PositiveIntegerField&gt;), ('initial_quantity', &lt;django.db.models.fields.PositiveIntegerField&gt;), ('item_number', &lt;django.db.models.fields.CharField&gt;), ('box_number', &lt;django.db.models.fields.CharField&gt;), ('expiration_date', &lt;django.db.models.fields.DateField&gt;), ('timestamp', &lt;django.db.models.fields.DateTimeField&gt;), ('category', &lt;django.db.models.fields.related.ForeignKey&gt;), ('form', &lt;django.db.models.fields.related.ForeignKey&gt;), ('manufacturer', &lt;django.db.models.fields.related.ForeignKey&gt;), ('medication', &lt;django.db.models.fields.related.ForeignKey&gt;)]&gt;, &lt;CreateModel  name='Inventory', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('entries', &lt;django.db.models.fields.related.ManyToManyField&gt;)]&gt;, &lt;CreateModel  name='Instance', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('name', &lt;django.db.models.fields.CharField&gt;), ('active', &lt;django.db.models.fields.BooleanField&gt;), ('admins', &lt;django.db.models.fields.related.ManyToManyField&gt;), ('main_contact', &lt;django.db.models.fields.related.ForeignKey&gt;), ('organization', &lt;django.db.models.fields.related.ForeignKey&gt;)], options={'verbose_name': 'Operation'}&gt;, &lt;CreateModel  name='HistoryOfPresentIllness', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('onset', &lt;django.db.models.fields.CharField&gt;), ('provokes', &lt;django.db.models.fields.CharField&gt;), ('palliates', &lt;django.db.models.fields.CharField&gt;), ('quality', &lt;django.db.models.fields.CharField&gt;), ('radiation', &lt;django.db.models.fields.CharField&gt;), ('severity', &lt;django.db.models.fields.CharField&gt;), ('time_of_day', &lt;django.db.models.fields.CharField&gt;), ('narrative', &lt;django.db.models.fields.CharField&gt;), ('physical_examination', &lt;django.db.models.fields.CharField&gt;), ('chief_complaint', &lt;django.db.models.fields.related.ForeignKey&gt;), ('encounter', &lt;django.db.models.fields.related.ForeignKey&gt;), ('tests_ordered', &lt;django.db.models.fields.related.ManyToManyField&gt;)]&gt;, &lt;CreateModel  name='DatabaseChangeLog', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('action', &lt;django.db.models.fields.CharField&gt;), ('model', &lt;django.db.models.fields.CharField&gt;), ('instance', &lt;django.db.models.fields.CharField&gt;), ('ip', &lt;django.db.models.fields.GenericIPAddressField&gt;), ('username', &lt;django.db.models.fields.CharField&gt;), ('timestamp', &lt;django.db.models.fields.DateTimeField&gt;), ('campaign', &lt;django.db.models.fields.related.ForeignKey&gt;)]&gt;, &lt;AddField  model_name='campaign', name='ethnicity_options', field=&lt;django.db.models.fields.related.ManyToManyField&gt;&gt;, &lt;AddField  model_name='campaign', name='instance', field=&lt;django.db.models.fields.related.ForeignKey&gt;&gt;, &lt;AddField  model_name='campaign', name='inventory', field=&lt;django.db.models.fields.related.ForeignKey&gt;&gt;, &lt;AddField  model_name='campaign', name='main_contact', field=&lt;django.db.models.fields.related.ForeignKey&gt;&gt;, &lt;AddField  model_name='campaign', name='race_options', field=&lt;django.db.models.fields.related.ManyToManyField&gt;&gt;, &lt;CreateModel  name='AuditEntry', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('action', &lt;django.db.models.fields.CharField&gt;), ('ip', &lt;django.db.models.fields.GenericIPAddressField&gt;), ('username', &lt;django.db.models.fields.CharField&gt;), ('timestamp', &lt;django.db.models.fields.DateTimeField&gt;), ('campaign', &lt;django.db.models.fields.related.ForeignKey&gt;)]&gt;, &lt;AddField  model_name='femruser', name='campaigns', field=&lt;django.db.models.fields.related.ManyToManyField&gt;&gt;, &lt;AddField  model_name='femruser', name='created_by', field=&lt;django.db.models.fields.related.ForeignKey&gt;&gt;, &lt;AddField  model_name='femruser', name='groups', field=&lt;django.db.models.fields.related.ManyToManyField&gt;&gt;, &lt;AddField  model_name='femruser', name='user_permissions', field=&lt;django.db.models.fields.related.ManyToManyField&gt;&gt;]</em><a class="headerlink" href="#main.migrations.0001_initial.Migration.operations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-main.migrations.0002_auto_20211007_1254">
+<span id="main-migrations-0002-auto-20211007-1254-module"></span><h2>main.migrations.0002_auto_20211007_1254 module<a class="headerlink" href="#module-main.migrations.0002_auto_20211007_1254" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="main.migrations.0002_auto_20211007_1254.Migration">
+<em class="property">class </em><code class="sig-prename descclassname">main.migrations.0002_auto_20211007_1254.</code><code class="sig-name descname">Migration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">app_label</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.migrations.0002_auto_20211007_1254.Migration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.migrations.migration.Migration</span></code></p>
+<dl class="py attribute">
+<dt id="main.migrations.0002_auto_20211007_1254.Migration.dependencies">
+<code class="sig-name descname">dependencies</code><em class="property"> = [('main', '0001_initial')]</em><a class="headerlink" href="#main.migrations.0002_auto_20211007_1254.Migration.dependencies" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="main.migrations.0002_auto_20211007_1254.Migration.operations">
+<code class="sig-name descname">operations</code><em class="property"> = [&lt;AddField  model_name='organization', name='address1', field=&lt;django.db.models.fields.CharField&gt;&gt;, &lt;AddField  model_name='organization', name='address2', field=&lt;django.db.models.fields.CharField&gt;&gt;, &lt;AddField  model_name='organization', name='city', field=&lt;django.db.models.fields.CharField&gt;&gt;, &lt;AddField  model_name='organization', name='contract_start_date', field=&lt;django.db.models.fields.DateField&gt;&gt;, &lt;AddField  model_name='organization', name='state', field=&lt;django.db.models.fields.related.ForeignKey&gt;&gt;, &lt;AddField  model_name='organization', name='zip_code', field=&lt;django.db.models.fields.CharField&gt;&gt;]</em><a class="headerlink" href="#main.migrations.0002_auto_20211007_1254.Migration.operations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-main.migrations.0003_usersession">
+<span id="main-migrations-0003-usersession-module"></span><h2>main.migrations.0003_usersession module<a class="headerlink" href="#module-main.migrations.0003_usersession" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="main.migrations.0003_usersession.Migration">
+<em class="property">class </em><code class="sig-prename descclassname">main.migrations.0003_usersession.</code><code class="sig-name descname">Migration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">app_label</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.migrations.0003_usersession.Migration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.migrations.migration.Migration</span></code></p>
+<dl class="py attribute">
+<dt id="main.migrations.0003_usersession.Migration.dependencies">
+<code class="sig-name descname">dependencies</code><em class="property"> = [('sessions', '0001_initial'), ('main', '0002_auto_20211007_1254')]</em><a class="headerlink" href="#main.migrations.0003_usersession.Migration.dependencies" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="main.migrations.0003_usersession.Migration.operations">
+<code class="sig-name descname">operations</code><em class="property"> = [&lt;CreateModel  name='UserSession', fields=[('id', &lt;django.db.models.fields.BigAutoField&gt;), ('session', &lt;django.db.models.fields.related.OneToOneField&gt;), ('user', &lt;django.db.models.fields.related.ForeignKey&gt;)]&gt;]</em><a class="headerlink" href="#main.migrations.0003_usersession.Migration.operations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-main.migrations.0004_alter_campaign_encounter_close">
+<span id="main-migrations-0004-alter-campaign-encounter-close-module"></span><h2>main.migrations.0004_alter_campaign_encounter_close module<a class="headerlink" href="#module-main.migrations.0004_alter_campaign_encounter_close" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="main.migrations.0004_alter_campaign_encounter_close.Migration">
+<em class="property">class </em><code class="sig-prename descclassname">main.migrations.0004_alter_campaign_encounter_close.</code><code class="sig-name descname">Migration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">app_label</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.migrations.0004_alter_campaign_encounter_close.Migration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.migrations.migration.Migration</span></code></p>
+<dl class="py attribute">
+<dt id="main.migrations.0004_alter_campaign_encounter_close.Migration.dependencies">
+<code class="sig-name descname">dependencies</code><em class="property"> = [('main', '0003_usersession')]</em><a class="headerlink" href="#main.migrations.0004_alter_campaign_encounter_close.Migration.dependencies" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="main.migrations.0004_alter_campaign_encounter_close.Migration.operations">
+<code class="sig-name descname">operations</code><em class="property"> = [&lt;AlterField  model_name='campaign', name='encounter_close', field=&lt;django.db.models.fields.PositiveIntegerField&gt;&gt;]</em><a class="headerlink" href="#main.migrations.0004_alter_campaign_encounter_close.Migration.operations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-main.migrations.0005_auto_20211012_2105">
+<span id="main-migrations-0005-auto-20211012-2105-module"></span><h2>main.migrations.0005_auto_20211012_2105 module<a class="headerlink" href="#module-main.migrations.0005_auto_20211012_2105" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="main.migrations.0005_auto_20211012_2105.Migration">
+<em class="property">class </em><code class="sig-prename descclassname">main.migrations.0005_auto_20211012_2105.</code><code class="sig-name descname">Migration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">app_label</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.migrations.0005_auto_20211012_2105.Migration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.migrations.migration.Migration</span></code></p>
+<dl class="py attribute">
+<dt id="main.migrations.0005_auto_20211012_2105.Migration.dependencies">
+<code class="sig-name descname">dependencies</code><em class="property"> = [('main', '0004_alter_campaign_encounter_close')]</em><a class="headerlink" href="#main.migrations.0005_auto_20211012_2105.Migration.dependencies" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="main.migrations.0005_auto_20211012_2105.Migration.operations">
+<code class="sig-name descname">operations</code><em class="property"> = [&lt;RemoveField  model_name='usersession', name='session'&gt;, &lt;AddField  model_name='usersession', name='session_key', field=&lt;django.db.models.fields.CharField&gt;&gt;, &lt;AddField  model_name='usersession', name='timestamp', field=&lt;django.db.models.fields.DateTimeField&gt;&gt;, &lt;AlterField  model_name='usersession', name='user', field=&lt;django.db.models.fields.related.OneToOneField&gt;&gt;]</em><a class="headerlink" href="#main.migrations.0005_auto_20211012_2105.Migration.operations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-main.migrations">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-main.migrations" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">fEMR OnChain</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/main.html">main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/clinic_messages.html">clinic_messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/appMR.html">appMR</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Team fEMR.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/main.migrations.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

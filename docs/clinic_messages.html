@@ -1,0 +1,397 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>clinic_messages package &#8212; fEMR OnChain v1.4.3 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="clinic-messages-package">
+<h1>clinic_messages package<a class="headerlink" href="#clinic-messages-package" title="Permalink to this headline">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="clinic_messages.migrations.html">clinic_messages.migrations package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="clinic_messages.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clinic_messages.migrations.html#module-clinic_messages.migrations.0001_initial">clinic_messages.migrations.0001_initial module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clinic_messages.migrations.html#module-clinic_messages.migrations.0002_message_read">clinic_messages.migrations.0002_message_read module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clinic_messages.migrations.html#module-clinic_messages.migrations.0003_alter_message_read">clinic_messages.migrations.0003_alter_message_read module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clinic_messages.migrations.html#module-clinic_messages.migrations.0004_auto_20210608_2159">clinic_messages.migrations.0004_auto_20210608_2159 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clinic_messages.migrations.html#module-clinic_messages.migrations.0005_message_timestamp">clinic_messages.migrations.0005_message_timestamp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clinic_messages.migrations.html#module-clinic_messages.migrations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-clinic_messages.admin">
+<span id="clinic-messages-admin-module"></span><h2>clinic_messages.admin module<a class="headerlink" href="#module-clinic_messages.admin" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-clinic_messages.apps">
+<span id="clinic-messages-apps-module"></span><h2>clinic_messages.apps module<a class="headerlink" href="#module-clinic_messages.apps" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="clinic_messages.apps.MessagesConfig">
+<em class="property">class </em><code class="sig-prename descclassname">clinic_messages.apps.</code><code class="sig-name descname">MessagesConfig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app_name</span></em>, <em class="sig-param"><span class="n">app_module</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clinic_messages.apps.MessagesConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.apps.config.AppConfig</span></code></p>
+<dl class="py attribute">
+<dt id="clinic_messages.apps.MessagesConfig.default_auto_field">
+<code class="sig-name descname">default_auto_field</code><em class="property"> = 'django.db.models.BigAutoField'</em><a class="headerlink" href="#clinic_messages.apps.MessagesConfig.default_auto_field" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.apps.MessagesConfig.name">
+<code class="sig-name descname">name</code><em class="property"> = 'clinic_messages'</em><a class="headerlink" href="#clinic_messages.apps.MessagesConfig.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-clinic_messages.form">
+<span id="clinic-messages-form-module"></span><h2>clinic_messages.form module<a class="headerlink" href="#module-clinic_messages.form" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="clinic_messages.form.MessageForm">
+<em class="property">class </em><code class="sig-prename descclassname">clinic_messages.form.</code><code class="sig-name descname">MessageForm</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clinic_messages.form.MessageForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.forms.models.ModelForm</span></code></p>
+<dl class="py class">
+<dt id="clinic_messages.form.MessageForm.Meta">
+<em class="property">class </em><code class="sig-name descname">Meta</code><a class="headerlink" href="#clinic_messages.form.MessageForm.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="clinic_messages.form.MessageForm.Meta.fields">
+<code class="sig-name descname">fields</code><em class="property"> = '__all__'</em><a class="headerlink" href="#clinic_messages.form.MessageForm.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.form.MessageForm.Meta.model">
+<code class="sig-name descname">model</code><a class="headerlink" href="#clinic_messages.form.MessageForm.Meta.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#clinic_messages.models.Message" title="clinic_messages.models.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">clinic_messages.models.Message</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.form.MessageForm.base_fields">
+<code class="sig-name descname">base_fields</code><em class="property"> = {'content': &lt;django.forms.fields.CharField object&gt;, 'recipient': &lt;django.forms.models.ModelChoiceField object&gt;, 'subject': &lt;django.forms.fields.CharField object&gt;}</em><a class="headerlink" href="#clinic_messages.form.MessageForm.base_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.form.MessageForm.declared_fields">
+<code class="sig-name descname">declared_fields</code><em class="property"> = {}</em><a class="headerlink" href="#clinic_messages.form.MessageForm.declared_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.form.MessageForm.helper">
+<code class="sig-name descname">helper</code><em class="property"> = &lt;crispy_forms.helper.FormHelper object&gt;</em><a class="headerlink" href="#clinic_messages.form.MessageForm.helper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="clinic_messages.form.MessageForm.media">
+<em class="property">property </em><code class="sig-name descname">media</code><a class="headerlink" href="#clinic_messages.form.MessageForm.media" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all media required to render the widgets on this form.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-clinic_messages.models">
+<span id="clinic-messages-models-module"></span><h2>clinic_messages.models module<a class="headerlink" href="#module-clinic_messages.models" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="clinic_messages.models.Message">
+<em class="property">class </em><code class="sig-prename descclassname">clinic_messages.models.</code><code class="sig-name descname">Message</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">subject</span></em>, <em class="sig-param"><span class="n">content</span></em>, <em class="sig-param"><span class="n">sender</span></em>, <em class="sig-param"><span class="n">recipient</span></em>, <em class="sig-param"><span class="n">replied_to</span></em>, <em class="sig-param"><span class="n">read</span></em>, <em class="sig-param"><span class="n">deleted_by_sender</span></em>, <em class="sig-param"><span class="n">deleted_by_recipient</span></em>, <em class="sig-param"><span class="n">timestamp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clinic_messages.models.Message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.base.Model</span></code></p>
+<dl class="py exception">
+<dt id="clinic_messages.models.Message.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#clinic_messages.models.Message.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="clinic_messages.models.Message.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#clinic_messages.models.Message.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.content">
+<code class="sig-name descname">content</code><a class="headerlink" href="#clinic_messages.models.Message.content" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.deleted_by_recipient">
+<code class="sig-name descname">deleted_by_recipient</code><a class="headerlink" href="#clinic_messages.models.Message.deleted_by_recipient" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.deleted_by_sender">
+<code class="sig-name descname">deleted_by_sender</code><a class="headerlink" href="#clinic_messages.models.Message.deleted_by_sender" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="clinic_messages.models.Message.get_next_by_timestamp">
+<code class="sig-name descname">get_next_by_timestamp</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">field=&lt;django.db.models.fields.DateTimeField: timestamp&gt;</em>, <em class="sig-param">is_next=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#clinic_messages.models.Message.get_next_by_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="clinic_messages.models.Message.get_previous_by_timestamp">
+<code class="sig-name descname">get_previous_by_timestamp</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">field=&lt;django.db.models.fields.DateTimeField: timestamp&gt;</em>, <em class="sig-param">is_next=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#clinic_messages.models.Message.get_previous_by_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#clinic_messages.models.Message.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.message_set">
+<code class="sig-name descname">message_set</code><a class="headerlink" href="#clinic_messages.models.Message.message_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.objects">
+<code class="sig-name descname">objects</code><em class="property"> = &lt;django.db.models.manager.Manager object&gt;</em><a class="headerlink" href="#clinic_messages.models.Message.objects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.read">
+<code class="sig-name descname">read</code><a class="headerlink" href="#clinic_messages.models.Message.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.recipient">
+<code class="sig-name descname">recipient</code><a class="headerlink" href="#clinic_messages.models.Message.recipient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.recipient_id">
+<code class="sig-name descname">recipient_id</code><a class="headerlink" href="#clinic_messages.models.Message.recipient_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.replied_to">
+<code class="sig-name descname">replied_to</code><a class="headerlink" href="#clinic_messages.models.Message.replied_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.replied_to_id">
+<code class="sig-name descname">replied_to_id</code><a class="headerlink" href="#clinic_messages.models.Message.replied_to_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.sender">
+<code class="sig-name descname">sender</code><a class="headerlink" href="#clinic_messages.models.Message.sender" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.sender_id">
+<code class="sig-name descname">sender_id</code><a class="headerlink" href="#clinic_messages.models.Message.sender_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.subject">
+<code class="sig-name descname">subject</code><a class="headerlink" href="#clinic_messages.models.Message.subject" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="clinic_messages.models.Message.timestamp">
+<code class="sig-name descname">timestamp</code><a class="headerlink" href="#clinic_messages.models.Message.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-clinic_messages.tests">
+<span id="clinic-messages-tests-module"></span><h2>clinic_messages.tests module<a class="headerlink" href="#module-clinic_messages.tests" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-clinic_messages.urls">
+<span id="clinic-messages-urls-module"></span><h2>clinic_messages.urls module<a class="headerlink" href="#module-clinic_messages.urls" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-clinic_messages.views">
+<span id="clinic-messages-views-module"></span><h2>clinic_messages.views module<a class="headerlink" href="#module-clinic_messages.views" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="clinic_messages.views.delete_message">
+<code class="sig-prename descclassname">clinic_messages.views.</code><code class="sig-name descname">delete_message</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">id</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clinic_messages.views.delete_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clinic_messages.views.delete_sent_message">
+<code class="sig-prename descclassname">clinic_messages.views.</code><code class="sig-name descname">delete_sent_message</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">id</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clinic_messages.views.delete_sent_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clinic_messages.views.index">
+<code class="sig-prename descclassname">clinic_messages.views.</code><code class="sig-name descname">index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clinic_messages.views.index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clinic_messages.views.new_message">
+<code class="sig-prename descclassname">clinic_messages.views.</code><code class="sig-name descname">new_message</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">sender_id</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clinic_messages.views.new_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clinic_messages.views.reply_message">
+<code class="sig-prename descclassname">clinic_messages.views.</code><code class="sig-name descname">reply_message</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">message_id</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sender_id</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clinic_messages.views.reply_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clinic_messages.views.sent_box">
+<code class="sig-prename descclassname">clinic_messages.views.</code><code class="sig-name descname">sent_box</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clinic_messages.views.sent_box" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="clinic_messages.views.view_message">
+<code class="sig-prename descclassname">clinic_messages.views.</code><code class="sig-name descname">view_message</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">message_id</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#clinic_messages.views.view_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-clinic_messages">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-clinic_messages" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">fEMR OnChain</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/main.html">main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/clinic_messages.html">clinic_messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/appMR.html">appMR</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Team fEMR.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/clinic_messages.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

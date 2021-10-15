@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>main.templatetags package &#8212; fEMR OnChain v1.4.3 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="main-templatetags-package">
+<h1>main.templatetags package<a class="headerlink" href="#main-templatetags-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-main.templatetags.campaign_tags">
+<span id="main-templatetags-campaign-tags-module"></span><h2>main.templatetags.campaign_tags module<a class="headerlink" href="#module-main.templatetags.campaign_tags" title="Permalink to this headline">¶</a></h2>
+<p>TemplateTags used to carry out more complex display actions on Campaigns.</p>
+<dl class="py function">
+<dt id="main.templatetags.campaign_tags.is_selected">
+<code class="sig-prename descclassname">main.templatetags.campaign_tags.</code><code class="sig-name descname">is_selected</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">campaign</span><span class="p">:</span> <span class="n"><a class="reference internal" href="main.html#main.models.Campaign" title="main.models.Campaign">main.models.Campaign</a></span></em>, <em class="sig-param"><span class="n">selected</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#main.templatetags.campaign_tags.is_selected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a campaign and a campaign name, check if they match.
+:param campaign:
+:param selected:
+:return:</p>
+</dd></dl>
+
+</section>
+<section id="module-main.templatetags.encounter_tags">
+<span id="main-templatetags-encounter-tags-module"></span><h2>main.templatetags.encounter_tags module<a class="headerlink" href="#module-main.templatetags.encounter_tags" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="main.templatetags.encounter_tags.temp_round">
+<code class="sig-prename descclassname">main.templatetags.encounter_tags.</code><code class="sig-name descname">temp_round</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">temp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.encounter_tags.temp_round" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-main.templatetags.help_tags">
+<span id="main-templatetags-help-tags-module"></span><h2>main.templatetags.help_tags module<a class="headerlink" href="#module-main.templatetags.help_tags" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="main.templatetags.help_tags.is_help_off">
+<code class="sig-prename descclassname">main.templatetags.help_tags.</code><code class="sig-name descname">is_help_off</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">session</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.help_tags.is_help_off" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-main.templatetags.patient_tags">
+<span id="main-templatetags-patient-tags-module"></span><h2>main.templatetags.patient_tags module<a class="headerlink" href="#module-main.templatetags.patient_tags" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="main.templatetags.patient_tags.complaint_as_string">
+<code class="sig-prename descclassname">main.templatetags.patient_tags.</code><code class="sig-name descname">complaint_as_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.patient_tags.complaint_as_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.patient_tags.get_campaign_info">
+<code class="sig-prename descclassname">main.templatetags.patient_tags.</code><code class="sig-name descname">get_campaign_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.patient_tags.get_campaign_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.patient_tags.get_chief_complaint">
+<code class="sig-prename descclassname">main.templatetags.patient_tags.</code><code class="sig-name descname">get_chief_complaint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">encounter</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.patient_tags.get_chief_complaint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.patient_tags.get_medications">
+<code class="sig-prename descclassname">main.templatetags.patient_tags.</code><code class="sig-name descname">get_medications</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.patient_tags.get_medications" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.patient_tags.has_middle_name">
+<code class="sig-prename descclassname">main.templatetags.patient_tags.</code><code class="sig-name descname">has_middle_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">patient</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.patient_tags.has_middle_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.patient_tags.has_suffix">
+<code class="sig-prename descclassname">main.templatetags.patient_tags.</code><code class="sig-name descname">has_suffix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">patient</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.patient_tags.has_suffix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.patient_tags.imperial_primary_height">
+<code class="sig-prename descclassname">main.templatetags.patient_tags.</code><code class="sig-name descname">imperial_primary_height</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.patient_tags.imperial_primary_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.patient_tags.imperial_secondary_height">
+<code class="sig-prename descclassname">main.templatetags.patient_tags.</code><code class="sig-name descname">imperial_secondary_height</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.patient_tags.imperial_secondary_height" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.patient_tags.imperial_temperature">
+<code class="sig-prename descclassname">main.templatetags.patient_tags.</code><code class="sig-name descname">imperial_temperature</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.patient_tags.imperial_temperature" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.patient_tags.imperial_weight">
+<code class="sig-prename descclassname">main.templatetags.patient_tags.</code><code class="sig-name descname">imperial_weight</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">m</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.patient_tags.imperial_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.patient_tags.last_timestamp">
+<code class="sig-prename descclassname">main.templatetags.patient_tags.</code><code class="sig-name descname">last_timestamp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">patient</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.patient_tags.last_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.patient_tags.mask_social">
+<code class="sig-prename descclassname">main.templatetags.patient_tags.</code><code class="sig-name descname">mask_social</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">patient</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.patient_tags.mask_social" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.patient_tags.open_encounters">
+<code class="sig-prename descclassname">main.templatetags.patient_tags.</code><code class="sig-name descname">open_encounters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">patient</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.templatetags.patient_tags.open_encounters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-main.templatetags.user_tags">
+<span id="main-templatetags-user-tags-module"></span><h2>main.templatetags.user_tags module<a class="headerlink" href="#module-main.templatetags.user_tags" title="Permalink to this headline">¶</a></h2>
+<p>Django TemplateTags for processing complex logic interacting with fEMRUser objects in templates.</p>
+<dl class="py function">
+<dt id="main.templatetags.user_tags.campaign_active">
+<code class="sig-prename descclassname">main.templatetags.user_tags.</code><code class="sig-name descname">campaign_active</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">campaign_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#main.templatetags.user_tags.campaign_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return whether the given campaign_name refers to an active campaign.
+:param campaign_name:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.user_tags.has_campaign">
+<code class="sig-prename descclassname">main.templatetags.user_tags.</code><code class="sig-name descname">has_campaign</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user</span><span class="p">:</span> <span class="n"><a class="reference internal" href="main.html#main.models.fEMRUser" title="main.models.fEMRUser">main.models.fEMRUser</a></span></em>, <em class="sig-param"><span class="n">campaign_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#main.templatetags.user_tags.has_campaign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a campaign name, return whether user is a member of that campaign.
+:param user:
+:param campaign_name:
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.templatetags.user_tags.has_group">
+<code class="sig-prename descclassname">main.templatetags.user_tags.</code><code class="sig-name descname">has_group</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">user</span><span class="p">:</span> <span class="n"><a class="reference internal" href="main.html#main.models.fEMRUser" title="main.models.fEMRUser">main.models.fEMRUser</a></span></em>, <em class="sig-param"><span class="n">group_name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#main.templatetags.user_tags.has_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given group_name, return whether user is a member of that group.
+:param user:
+:param group_name:
+:return:</p>
+</dd></dl>
+
+</section>
+<section id="module-main.templatetags">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-main.templatetags" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">fEMR OnChain</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/main.html">main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/clinic_messages.html">clinic_messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/appMR.html">appMR</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Team fEMR.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/main.templatetags.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
