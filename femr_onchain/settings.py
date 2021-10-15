@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'session_security',
     'django_user_agents',
     'background_task',
-    'rest_framework_swagger',
+    'drf_yasg',
 ]
 
 AUTHENTICATION_BACKENDS = [

@@ -11,7 +11,7 @@ function get_input_and_calc() {
 }
 
 function set_final_value() {
-  console.log("Metric BMI compuation.");
+  console.log("Metric BMI computation.");
   $("#id_form-body_mass_index").val(get_input_and_calc);
 }
 

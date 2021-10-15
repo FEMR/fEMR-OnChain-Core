@@ -1,8 +1,14 @@
+"""
+URL configurations for the fEMR OnChain module.
+"""
 from django.conf.urls import url, include
 from django.urls import path
 from rest_framework import routers
 from rest_framework.authtoken import views as rest_framework_views
-from rest_framework_swagger.views import get_swagger_view
+
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 from main.admin_views import add_user_to_campaign, add_users_to_campaign, admin_home, create_user_view, \
     cut_user_from_campaign, export_audit_logs_view, export_database_logs_view, \
@@ -27,16 +33,29 @@ from .edit_views import aux_form_view, delete_photo_view, edit_photo_view, histo
     new_treatment_view, patient_edit_form_view, encounter_edit_form_view, patient_export_view, patient_medical, \
     new_vitals_view, submit_hpi_view, upload_photo_view
 from .femr_admin_views import edit_contact_view, edit_organization_view, list_organization_view, lock_campaign_view, \
-    new_campaign_view, new_contact_view, new_ethnicity_view, new_instance_view, edit_campaign_view, edit_instance_view, \
+    new_campaign_view, new_contact_view, new_ethnicity_view, new_instance_view, edit_campaign_view, \
     list_campaign_view, list_instance_view, femr_admin_home, change_campaign, new_organization_view, new_race_view, \
-    unlock_campaign_view, view_contact_view
+    unlock_campaign_view, view_contact_view, edit_instance_view
 from .form_views import patient_form_view, referral_form_view, patient_encounter_form_view
-from .list_views import chief_complaint_list_view, patient_csv_export_view, patient_list_view, search_patient_list_view, \
-    filter_patient_list_view
+from .list_views import chief_complaint_list_view, patient_csv_export_view, patient_list_view, \
+    filter_patient_list_view, search_patient_list_view
 from .small_forms_views import chief_complaint_form_view, diagnosis_form_view, medication_form_view, treatment_form_view
 from .views import forgot_username, index, home, healthcheck, help_messages_off
 
 app_name = 'main'
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="fEMR OnChain API",
+      default_version='v1',
+      description="API endpoints providing an interface with the fEMR OnChain application.",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="info@teamfemr.org"),
+      license=openapi.License(name="GPL v3"),
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
 
 router = routers.DefaultRouter()
 router.register(r'Users', UserViewSet)
@@ -221,7 +240,9 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^get_auth_token/$', rest_framework_views.obtain_auth_token,
         name='get_auth_token'),
-    path('swagger/', get_swagger_view(title='fEMR OnChain API')),
+    url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
     url(r'^forgot_username', forgot_username, name='forgot_username'),
 

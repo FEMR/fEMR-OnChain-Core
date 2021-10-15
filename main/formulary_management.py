@@ -1,4 +1,3 @@
-from main.csvio.added_inventory import AddedInventoryHandler
 from django.db.models.query_utils import Q
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
@@ -55,9 +54,8 @@ def edit_add_supply_view(request, id=None):
             elif request.method == "POST":
                 form = AddSupplyForm(request.POST)
                 if form.is_valid():
-                    inventory_entry.initial_quantity = inventory_entry.initial_quantity + \
-                                                       int(request.POST['quantity'])
-                    inventory_entry.quantity = inventory_entry.quantity + int(request.POST['quantity'])
+                    inventory_entry.initial_quantity += int(request.POST['quantity'])
+                    inventory_entry.quantity += int(request.POST['quantity'])
                     inventory_entry.save()
                     return redirect('main:formulary_home_view')
                 else:
@@ -84,9 +82,8 @@ def edit_sub_supply_view(request, id=None):
                 if form.is_valid():
                     if inventory_entry.initial_quantity > int(
                             request.POST['quantity']) and inventory_entry.quantity > int(request.POST['quantity']):
-                        inventory_entry.initial_quantity = inventory_entry.initial_quantity - \
-                                                           int(request.POST['quantity'])
-                        inventory_entry.quantity = inventory_entry.quantity - int(request.POST['quantity'])
+                        inventory_entry.initial_quantity -= int(request.POST['quantity'])
+                        inventory_entry.quantity -= int(request.POST['quantity'])
                     else:
                         inventory_entry.initial_quantity = 0
                         inventory_entry.quantity = 0

@@ -1,3 +1,6 @@
+"""
+Main URL configurations for fEMR-OnChain-Core. This redirects to the other apps in this project.
+"""
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views

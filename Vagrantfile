@@ -18,7 +18,8 @@ Vagrant.configure("2") do |config|
     apt-get clean
     rm -rf /var/lib/apt/lists/*
     apt-get update
-    apt-get install -y unzip apache2 python3 python3-pip mysql-server libmysqlclient-dev python3-dev libssl-dev python3-sphinx libpq-dev virtualenv
+    apt-get install -y unzip apache2 python3 python3-pip mysql-server libmysqlclient-dev \
+                       python3-dev libssl-dev python3-sphinx libpq-dev virtualenv
     apt-get upgrade -y
     pip3 install -r /home/vagrant/femr_onchain/requirements.txt
     curl -sL https://deb.nodesource.com/setup_14.x | bash -

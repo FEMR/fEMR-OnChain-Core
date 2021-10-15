@@ -60,6 +60,14 @@ To view audit logs, visit the Admin tab in fEMR On-Chain.""".format(
 
 
 def delete_chief_complaint(request, id=None, patient_id=None, encounter_id=None):
+    """
+    Delete a selected Chief Complaint and redirect back.
+    :param request:
+    :param id:
+    :param patient_id:
+    :param encounter_id:
+    :return:
+    """
     if request.user.is_authenticated:
         p = get_object_or_404(ChiefComplaint, pk=id)
         p.active = False

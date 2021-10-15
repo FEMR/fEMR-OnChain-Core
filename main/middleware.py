@@ -1,8 +1,7 @@
 import pytz
 from django.contrib.auth import logout
 from django.contrib.auth.models import AnonymousUser
-from django.contrib.sessions.exceptions import SessionInterrupted
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django.utils import timezone
 
 from clinic_messages.models import Message

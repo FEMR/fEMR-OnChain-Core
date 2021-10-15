@@ -6,7 +6,7 @@ import os
 from django.contrib.auth.models import Group, Permission
 from django.core.management.base import BaseCommand
 
-from main.models import fEMRUser, Instance, Campaign
+from main.models import Photo, fEMRUser, Instance, Campaign
 from main.qldb_interface import create_tables
 
 
@@ -60,3 +60,7 @@ class Command(BaseCommand):
                 x.user_permissions.add(Permission.objects.get(name='Can add diagnosis'))
                 x.user_permissions.add(Permission.objects.get(name='Can add chief complaint'))
                 x.user_permissions.add(Permission.objects.get(name='Can add medication'))
+        # Hijacking this script to run a cleanup.
+        for x in Photo.objects.all():
+            if not bool(x):
+                x.delete()
