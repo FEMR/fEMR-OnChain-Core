@@ -92,6 +92,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 form.save_m2m()
                 encounter.patient = p
                 encounter.active = True
+                encounter.photos = m.photos
                 encounter.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username,
