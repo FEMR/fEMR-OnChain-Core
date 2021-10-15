@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from django.utils import timezone
 
-from main.models import Campaign, Patient, PatientEncounter, Photo, UserSession
+from main.models import Campaign, Patient, PatientEncounter, UserSession
 
 
 def run_encounter_close():
@@ -38,7 +38,4 @@ def reset_sessions() -> None:
     d = now - timedelta(minutes=1)
     for x in UserSession.objects.all():
         if x.timestamp < d:
-            x.delete()
-    for x in Photo.objects.all():
-        if not bool(x):
             x.delete()

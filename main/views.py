@@ -10,7 +10,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 
 from main.forms import ForgotUsernameForm
-from main.models import Campaign, MessageOfTheDay, fEMRUser
+from main.models import Campaign, MessageOfTheDay, Photo, fEMRUser
 
 
 # noinspection PyUnusedLocal
@@ -31,6 +31,9 @@ def home(request):
     :param request: Django Request object.
     :return: An HttpResponse, rendering the home page.
     """
+    for x in Photo.objects.all():
+        if not bool(x):
+            x.delete()
     if request.user.is_authenticated:
         motd = MessageOfTheDay.load()
         if motd.start_date is not None or motd.end_date is not None:
