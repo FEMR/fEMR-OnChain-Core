@@ -1,0 +1,34 @@
+main.api\_views
+===============
+
+.. automodule:: main.api_views
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      CampaignViewSet
+      GroupViewSet
+      InstanceViewSet
+      PatientEncounterViewSet
+      PatientViewSet
+      UserViewSet
+   
+   
+
+   
+   
+   
+
+
+

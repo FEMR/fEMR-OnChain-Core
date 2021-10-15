@@ -1,0 +1,38 @@
+main.auth\_views
+================
+
+.. automodule:: main.auth_views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      all_locked
+      change_password
+      login_view
+      logout_view
+      not_logged_in
+      permission_denied
+      please_register
+      register
+      required_change_password
+      thank_you_for_registering
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

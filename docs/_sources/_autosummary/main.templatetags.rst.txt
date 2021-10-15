@@ -1,0 +1,35 @@
+main.templatetags
+=================
+
+.. automodule:: main.templatetags
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   main.templatetags.campaign_tags
+   main.templatetags.encounter_tags
+   main.templatetags.help_tags
+   main.templatetags.patient_tags
+   main.templatetags.user_tags
+

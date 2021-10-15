@@ -1,0 +1,30 @@
+main.admin
+==========
+
+.. automodule:: main.admin
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      PatientEncounterAdmin
+      TreatmentAdmin
+   
+   
+
+   
+   
+   
+
+
+

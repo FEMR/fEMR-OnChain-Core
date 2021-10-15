@@ -1,0 +1,36 @@
+main.autocomplete\_views
+========================
+
+.. automodule:: main.autocomplete_views
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AdministrationScheduleAutocomplete
+      ChiefComplaintAutocomplete
+      DiagnosisAutocomplete
+      EthnicityAutocomplete
+      MedicationAutocomplete
+      RaceAutocomplete
+      StateAutocomplete
+      TestAutocomplete
+   
+   
+
+   
+   
+   
+
+
+

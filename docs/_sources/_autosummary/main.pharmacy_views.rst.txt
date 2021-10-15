@@ -1,0 +1,29 @@
+main.pharmacy\_views
+====================
+
+.. automodule:: main.pharmacy_views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      pharmacy_home_view
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

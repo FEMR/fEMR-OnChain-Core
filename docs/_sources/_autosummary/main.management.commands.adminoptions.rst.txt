@@ -1,0 +1,29 @@
+main.management.commands.adminoptions
+=====================================
+
+.. automodule:: main.management.commands.adminoptions
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Command
+   
+   
+
+   
+   
+   
+
+
+

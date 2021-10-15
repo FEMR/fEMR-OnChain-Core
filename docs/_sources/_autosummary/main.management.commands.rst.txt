@@ -1,0 +1,35 @@
+main.management.commands
+========================
+
+.. automodule:: main.management.commands
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   main.management.commands.adminoptions
+   main.management.commands.createadmin
+   main.management.commands.creategroups
+   main.management.commands.createinventoryforms
+   main.management.commands.createraceandethnicity
+

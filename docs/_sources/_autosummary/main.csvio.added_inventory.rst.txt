@@ -1,0 +1,29 @@
+main.csvio.added\_inventory
+===========================
+
+.. automodule:: main.csvio.added_inventory
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AddedInventoryHandler
+   
+   
+
+   
+   
+   
+
+
+

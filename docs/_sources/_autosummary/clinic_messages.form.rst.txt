@@ -1,0 +1,29 @@
+clinic\_messages.form
+=====================
+
+.. automodule:: clinic_messages.form
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      MessageForm
+   
+   
+
+   
+   
+   
+
+
+

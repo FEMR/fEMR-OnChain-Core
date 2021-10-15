@@ -1,0 +1,29 @@
+main.management.commands.createraceandethnicity
+===============================================
+
+.. automodule:: main.management.commands.createraceandethnicity
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Command
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,29 @@
+main.apps
+=========
+
+.. automodule:: main.apps
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      MainConfig
+   
+   
+
+   
+   
+   
+
+
+

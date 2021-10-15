@@ -1,0 +1,23 @@
+clinic\_messages.tests
+======================
+
+.. automodule:: clinic_messages.tests
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

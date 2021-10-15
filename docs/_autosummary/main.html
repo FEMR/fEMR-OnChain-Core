@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>main &#8212; fEMR OnChain v1.4.3 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="main.admin" href="main.admin.html" />
+    <link rel="prev" title="Welcome to fEMR OnChain’s documentation!" href="../index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-main">
+<span id="main"></span><h1>main<a class="headerlink" href="#module-main" title="Permalink to this headline">¶</a></h1>
+<p>data app module file.</p>
+<p class="rubric">Modules</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.admin.html#module-main.admin" title="main.admin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.admin</span></code></a></p></td>
+<td><p>Registers main fEMR-OnChain data model types to the backend administrative system.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.admin_views.html#module-main.admin_views" title="main.admin_views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.admin_views</span></code></a></p></td>
+<td><p>View functions for administrative actions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.api_permissions.html#module-main.api_permissions" title="main.api_permissions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.api_permissions</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.api_views.html#module-main.api_views" title="main.api_views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.api_views</span></code></a></p></td>
+<td><p>Responsible for defining endpoints relevant to data interchange through a RESTful API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.apps.html#module-main.apps" title="main.apps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.apps</span></code></a></p></td>
+<td><p>Handles top-level app configuration.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.auth_views.html#module-main.auth_views" title="main.auth_views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.auth_views</span></code></a></p></td>
+<td><p>View functions geared toward user authentication.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.autocomplete_views.html#module-main.autocomplete_views" title="main.autocomplete_views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.autocomplete_views</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.background_tasks.html#module-main.background_tasks" title="main.background_tasks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.background_tasks</span></code></a></p></td>
+<td><p>Non-view functions used to carry out background processes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.csvio.html#module-main.csvio" title="main.csvio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.csvio</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.delete_views.html#module-main.delete_views" title="main.delete_views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.delete_views</span></code></a></p></td>
+<td><p>View functions handling displaying data models as sortable, filterable lists.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.edit_views.html#module-main.edit_views" title="main.edit_views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.edit_views</span></code></a></p></td>
+<td><p>Handles template rendering and logic for editing web forms.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.femr_admin_views.html#module-main.femr_admin_views" title="main.femr_admin_views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.femr_admin_views</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.form_views.html#module-main.form_views" title="main.form_views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.form_views</span></code></a></p></td>
+<td><p>Handles template rendering and logic for web forms.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.forms.html#module-main.forms" title="main.forms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.forms</span></code></a></p></td>
+<td><p>Classes defining characteristics for data entry forms.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.formulary_management.html#module-main.formulary_management" title="main.formulary_management"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.formulary_management</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.list_views.html#module-main.list_views" title="main.list_views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.list_views</span></code></a></p></td>
+<td><p>View functions handling displaying data models as sortable, filterable lists.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.management.html#module-main.management" title="main.management"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.management</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.middleware.html#module-main.middleware" title="main.middleware"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.middleware</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.migrations.html#module-main.migrations" title="main.migrations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.migrations</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.models.html#module-main.models" title="main.models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.models</span></code></a></p></td>
+<td><p>Enumerates all contents of all database models.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.operation_admin_views.html#module-main.operation_admin_views" title="main.operation_admin_views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.operation_admin_views</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.organization_admin_views.html#module-main.organization_admin_views" title="main.organization_admin_views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.organization_admin_views</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.password_validators.html#module-main.password_validators" title="main.password_validators"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.password_validators</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.pharmacy_views.html#module-main.pharmacy_views" title="main.pharmacy_views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.pharmacy_views</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.qldb_interface.html#module-main.qldb_interface" title="main.qldb_interface"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.qldb_interface</span></code></a></p></td>
+<td><p>Application-wide functions for interfacing with AWS QLDB.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.serializers.html#module-main.serializers" title="main.serializers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.serializers</span></code></a></p></td>
+<td><p>Serializer objects defining what fields of each model should be exposed to the API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.small_forms_views.html#module-main.small_forms_views" title="main.small_forms_views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.small_forms_views</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.survey_models.html#module-main.survey_models" title="main.survey_models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.survey_models</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.templatetags.html#module-main.templatetags" title="main.templatetags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.templatetags</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="main.tests.html#module-main.tests" title="main.tests"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.tests</span></code></a></p></td>
+<td><p>Contains unit tests for verifying correct functionality of functions used in the application.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="main.views.html#module-main.views" title="main.views"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main.views</span></code></a></p></td>
+<td><p>View functions for top-level locations.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">fEMR OnChain</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">main</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="main.admin.html">main.admin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.admin_views.html">main.admin_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.api_permissions.html">main.api_permissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.api_views.html">main.api_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.apps.html">main.apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.auth_views.html">main.auth_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.autocomplete_views.html">main.autocomplete_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.background_tasks.html">main.background_tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.csvio.html">main.csvio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.delete_views.html">main.delete_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.edit_views.html">main.edit_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.femr_admin_views.html">main.femr_admin_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.form_views.html">main.form_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.forms.html">main.forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.formulary_management.html">main.formulary_management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.list_views.html">main.list_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.management.html">main.management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.middleware.html">main.middleware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.migrations.html">main.migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.models.html">main.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.operation_admin_views.html">main.operation_admin_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.organization_admin_views.html">main.organization_admin_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.password_validators.html">main.password_validators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.pharmacy_views.html">main.pharmacy_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.qldb_interface.html">main.qldb_interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.serializers.html">main.serializers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.small_forms_views.html">main.small_forms_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.survey_models.html">main.survey_models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.templatetags.html">main.templatetags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.tests.html">main.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.views.html">main.views</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="clinic_messages.html">clinic_messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appMR.html">appMR</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">Welcome to fEMR OnChain’s documentation!</a></li>
+      <li>Next: <a href="main.admin.html" title="next chapter">main.admin</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Team fEMR.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/_autosummary/main.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

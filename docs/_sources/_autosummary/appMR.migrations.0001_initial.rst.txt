@@ -1,0 +1,29 @@
+appMR.migrations.0001\_initial
+==============================
+
+.. automodule:: appMR.migrations.0001_initial
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Migration
+   
+   
+
+   
+   
+   
+
+
+

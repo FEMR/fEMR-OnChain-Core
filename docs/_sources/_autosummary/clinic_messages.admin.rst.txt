@@ -1,0 +1,23 @@
+clinic\_messages.admin
+======================
+
+.. automodule:: clinic_messages.admin
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

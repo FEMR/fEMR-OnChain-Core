@@ -1,0 +1,66 @@
+main.forms
+==========
+
+.. automodule:: main.forms
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      filter_campaigns_for_instances
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AddSupplyForm
+      AdminPasswordForm
+      AuxiliaryPatientEncounterForm
+      CSVUploadForm
+      CampaignForm
+      ChiefComplaintForm
+      ContactForm
+      DateInputOverride
+      DiagnosisForm
+      EthnicityForm
+      ForgotUsernameForm
+      HistoryOfPresentIllnessForm
+      HistoryPatientEncounterForm
+      InstanceForm
+      InventoryEntryForm
+      LoginForm
+      MOTDForm
+      MedicationForm
+      OrganizationForm
+      PatientDiagnosisForm
+      PatientEncounterForm
+      PatientForm
+      PhotoForm
+      RaceForm
+      RegisterForm
+      RemoveSupplyForm
+      TreatmentForm
+      UserForm
+      UserUpdateForm
+      VitalsForm
+      fEMRAdminUserForm
+      fEMRAdminUserUpdateForm
+   
+   
+
+   
+   
+   
+
+
+

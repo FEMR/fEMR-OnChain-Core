@@ -1,0 +1,31 @@
+main.form\_views
+================
+
+.. automodule:: main.form_views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      patient_encounter_form_view
+      patient_form_view
+      referral_form_view
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

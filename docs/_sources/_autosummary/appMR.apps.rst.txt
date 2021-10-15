@@ -1,0 +1,29 @@
+appMR.apps
+==========
+
+.. automodule:: appMR.apps
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AppmrConfig
+   
+   
+
+   
+   
+   
+
+
+

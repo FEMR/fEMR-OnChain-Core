@@ -1,0 +1,29 @@
+main.organization\_admin\_views
+===============================
+
+.. automodule:: main.organization_admin_views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      organization_admin_home_view
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

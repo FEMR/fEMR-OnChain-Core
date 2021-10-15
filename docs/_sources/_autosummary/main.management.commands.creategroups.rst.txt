@@ -1,0 +1,29 @@
+main.management.commands.creategroups
+=====================================
+
+.. automodule:: main.management.commands.creategroups
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Command
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,31 @@
+main.api\_permissions
+=====================
+
+.. automodule:: main.api_permissions
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      IsAdmin
+      IsManager
+      IsfEMRAdmin
+   
+   
+
+   
+   
+   
+
+
+

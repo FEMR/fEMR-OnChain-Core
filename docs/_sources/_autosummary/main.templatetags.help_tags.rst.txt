@@ -1,0 +1,29 @@
+main.templatetags.help\_tags
+============================
+
+.. automodule:: main.templatetags.help_tags
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      is_help_off
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

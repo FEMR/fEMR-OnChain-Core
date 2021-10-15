@@ -1,0 +1,38 @@
+﻿clinic\_messages
+================
+
+.. automodule:: clinic_messages
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   clinic_messages.admin
+   clinic_messages.apps
+   clinic_messages.form
+   clinic_messages.migrations
+   clinic_messages.models
+   clinic_messages.tests
+   clinic_messages.urls
+   clinic_messages.views
+

@@ -1,0 +1,33 @@
+main.csvio
+==========
+
+.. automodule:: main.csvio
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   main.csvio.added_inventory
+   main.csvio.csv_interface
+   main.csvio.initial_inventory
+

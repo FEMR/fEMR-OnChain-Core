@@ -1,0 +1,29 @@
+appMR.migrations.0007\_auto\_20210306\_1808
+===========================================
+
+.. automodule:: appMR.migrations.0007_auto_20210306_1808
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Migration
+   
+   
+
+   
+   
+   
+
+
+

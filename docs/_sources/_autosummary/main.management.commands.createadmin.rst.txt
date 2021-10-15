@@ -1,0 +1,29 @@
+main.management.commands.createadmin
+====================================
+
+.. automodule:: main.management.commands.createadmin
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Command
+   
+   
+
+   
+   
+   
+
+
+

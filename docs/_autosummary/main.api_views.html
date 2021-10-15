@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>main.api_views &#8212; fEMR OnChain v1.4.3 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="main.apps" href="main.apps.html" />
+    <link rel="prev" title="main.api_permissions" href="main.api_permissions.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-main.api_views">
+<span id="main-api-views"></span><h1>main.api_views<a class="headerlink" href="#module-main.api_views" title="Permalink to this headline">¶</a></h1>
+<p>Responsible for defining endpoints relevant to data interchange through a RESTful API.
+All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
+If one is not found, they will direct to the appropriate error page.</p>
+<p class="rubric">Classes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">CampaignViewSet</span></code>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">GroupViewSet</span></code>(**kwargs)</p></td>
+<td><p>API Endpoint Adapter - Allergy</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">InstanceViewSet</span></code>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PatientEncounterViewSet</span></code>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PatientViewSet</span></code>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">UserViewSet</span></code>(**kwargs)</p></td>
+<td><p>API Endpoint Adapter - Allergy</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">fEMR OnChain</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="main.html">main</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="main.admin.html">main.admin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.admin_views.html">main.admin_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.api_permissions.html">main.api_permissions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">main.api_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.apps.html">main.apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.auth_views.html">main.auth_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.autocomplete_views.html">main.autocomplete_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.background_tasks.html">main.background_tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.csvio.html">main.csvio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.delete_views.html">main.delete_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.edit_views.html">main.edit_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.femr_admin_views.html">main.femr_admin_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.form_views.html">main.form_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.forms.html">main.forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.formulary_management.html">main.formulary_management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.list_views.html">main.list_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.management.html">main.management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.middleware.html">main.middleware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.migrations.html">main.migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.models.html">main.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.operation_admin_views.html">main.operation_admin_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.organization_admin_views.html">main.organization_admin_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.password_validators.html">main.password_validators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.pharmacy_views.html">main.pharmacy_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.qldb_interface.html">main.qldb_interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.serializers.html">main.serializers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.small_forms_views.html">main.small_forms_views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.survey_models.html">main.survey_models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.templatetags.html">main.templatetags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.tests.html">main.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.views.html">main.views</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="clinic_messages.html">clinic_messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appMR.html">appMR</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="main.html">main</a><ul>
+      <li>Previous: <a href="main.api_permissions.html" title="previous chapter">main.api_permissions</a></li>
+      <li>Next: <a href="main.apps.html" title="next chapter">main.apps</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Team fEMR.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/_autosummary/main.api_views.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

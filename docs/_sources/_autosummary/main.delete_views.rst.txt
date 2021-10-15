@@ -1,0 +1,30 @@
+main.delete\_views
+==================
+
+.. automodule:: main.delete_views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      delete_chief_complaint
+      patient_delete_view
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

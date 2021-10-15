@@ -1,0 +1,30 @@
+appMR.models
+============
+
+.. automodule:: appMR.models
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Comment
+      SupportTicket
+   
+   
+
+   
+   
+   
+
+
+

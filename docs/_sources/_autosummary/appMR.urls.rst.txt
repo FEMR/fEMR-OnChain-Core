@@ -1,0 +1,23 @@
+appMR.urls
+==========
+
+.. automodule:: appMR.urls
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,29 @@
+clinic\_messages.apps
+=====================
+
+.. automodule:: clinic_messages.apps
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      MessagesConfig
+   
+   
+
+   
+   
+   
+
+
+

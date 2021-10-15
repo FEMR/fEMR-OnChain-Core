@@ -1,0 +1,41 @@
+main.templatetags.patient\_tags
+===============================
+
+.. automodule:: main.templatetags.patient_tags
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      complaint_as_string
+      get_campaign_info
+      get_chief_complaint
+      get_medications
+      has_middle_name
+      has_suffix
+      imperial_primary_height
+      imperial_secondary_height
+      imperial_temperature
+      imperial_weight
+      last_timestamp
+      mask_social
+      open_encounters
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
