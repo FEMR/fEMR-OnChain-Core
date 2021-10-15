@@ -1,3 +1,6 @@
+"""
+Non-view functions used to carry out background processes.
+"""
 from datetime import timedelta
 
 from django.utils import timezone
@@ -26,7 +29,11 @@ def run_encounter_close():
                     e.save_no_timestamp()
 
 
-def reset_sessions():
+def reset_sessions() -> None:
+    """
+    Empty out sessions older than 1 minute.
+    :return:
+    """
     now = timezone.now()
     d = now - timedelta(minutes=1)
     for x in UserSession.objects.all():

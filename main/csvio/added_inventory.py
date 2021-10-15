@@ -1,3 +1,6 @@
+"""
+AddedInventoryHandler and required imports.
+"""
 import csv
 
 import requests
@@ -7,13 +10,28 @@ from main.models import InventoryCategory, InventoryEntry, InventoryForm, Manufa
 
 
 class AddedInventoryHandler(CSVHandler):
+    """
+    Implements CSVHandler and adds inventory to supplies that already existed in the formulary.
+    """
     def __init__(self) -> None:
         super().__init__()
 
     def read(self, upload, campaign):
+        """
+        Given an upload file and a campaign to upload to, execute a CSV import.
+        :param upload:
+        :param campaign:
+        :return:
+        """
         return self.__import(upload, campaign)
 
     def write(self, response, formulary):
+        """
+        Given an HTTPResponse and a formulary object, write out the formulary as a CSV file.
+        :param response:
+        :param formulary:
+        :return:
+        """
         return self.__export(response, formulary)
 
     def __export(self, response, formulary):

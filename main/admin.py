@@ -11,10 +11,16 @@ from .models import Ethnicity, MessageOfTheDay, Patient, Contact, PatientDiagnos
 
 
 class TreatmentAdmin(admin.ModelAdmin):
+    """
+    Register a TreatmentForm as accessible in the Admin site.
+    """
     form = TreatmentForm
 
 
 class PatientEncounterAdmin(admin.ModelAdmin):
+    """
+    Register a PatientEncounterForm as accessible in the Admin site.
+    """
     form = PatientEncounterForm
 
 

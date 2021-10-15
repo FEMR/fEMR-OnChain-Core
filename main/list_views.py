@@ -70,7 +70,7 @@ def patient_csv_export_view(request):
                          'Body Temperature (F)', 'Height', 'Weight (lbs)', 'BMI', 'Oxygen Concentration',
                          'Glucose Level', 'History of Tobacco Use',
                          'History of Diabetes', 'History of Hypertension', 'History of High Cholesterol',
-                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes',
+                         'History of Alcohol Abuse/Substance Abuse', 'Community Health Worker Notes',
                          'Procedure/Counseling', 'Pharmacy Notes',
                          'Medical/Surgical History', 'Social History', 'Current Medications', 'Family History']
         else:
@@ -80,9 +80,9 @@ def patient_csv_export_view(request):
                          'Glucose Level',
                          'History of Tobacco Use', 'History of Diabetes', 'History of Hypertension',
                          'History of High Cholesterol',
-                         'History of Alchol Abuse/Substance Abuse', 'Community Health Worker Notes',
+                         'History of Alcohol Abuse/Substance Abuse', 'Community Health Worker Notes',
                          'Procedure/Counseling', 'Pharmacy Notes',
-                         'Medical/Surgical History', 'Socil History', 'Current Medications', 'Family History']
+                         'Medical/Surgical History', 'Social History', 'Current Medications', 'Family History']
         try:
             data = Patient.objects.filter(
                 campaign=Campaign.objects.get(name=request.session['campaign'])).exclude(

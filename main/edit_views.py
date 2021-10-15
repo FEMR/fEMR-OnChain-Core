@@ -602,6 +602,7 @@ def upload_photo_view(request, patient_id=None, encounter_id=None):
                 ph.save()
                 m.photos.add(ph)
                 m.save()
+                aux_form = PhotoForm()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(m),
                                                  ip=get_client_ip(request), username=request.user.username,
                                                  campaign=Campaign.objects.get(name=request.session['campaign']))

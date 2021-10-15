@@ -10,7 +10,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 
 from main.forms import ForgotUsernameForm
-from main.models import Campaign, MessageOfTheDay, fEMRUser
+from main.models import Campaign, MessageOfTheDay, Photo, fEMRUser
 
 
 # noinspection PyUnusedLocal
@@ -31,6 +31,9 @@ def home(request):
     :param request: Django Request object.
     :return: An HttpResponse, rendering the home page.
     """
+    for x in Photo.objects.all():
+        if not x.photo.name:
+            x.delete()
     if request.user.is_authenticated:
         motd = MessageOfTheDay.load()
         if motd.start_date is not None or motd.end_date is not None:
@@ -96,6 +99,7 @@ def forgot_username(request):
         try:
             user = fEMRUser.objects.get(email__iexact=request.POST['email'])
             from django.core.mail import send_mail
+            # noinspection LongLine
             send_mail(
                 'Username Recovery',
                 'Someone recently requested a username reminder from fEMR On-Chain. If this was you, your username is:\n\n\n {}\n\n\n If it wasn\'t you, you can safely ignore this email.\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.'.format(

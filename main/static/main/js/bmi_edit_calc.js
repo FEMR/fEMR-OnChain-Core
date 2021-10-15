@@ -11,7 +11,7 @@ function get_input_and_calc() {
 }
 
 function set_final_value() {
-  console.log("Imperial BMI compuation.");
+  console.log("Imperial BMI computation.");
   $("#id_body_mass_index").val(get_input_and_calc);
 }
 

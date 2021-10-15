@@ -304,7 +304,7 @@ class PatientEncounterForm(ModelForm):
                 m.body_height_secondary = (
                                                   ((tmp * 12) + m.body_height_secondary) * 2.54) % 100
             if m.body_weight is not None:
-                m.body_weight = m.body_weight / 2.2046
+                m.body_weight /= 2.2046
         if commit:
             m.save()
         return m
