@@ -77,6 +77,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
             return redirect('main:home')
         units = Campaign.objects.get(name=request.session['campaign']).units
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
+        photos = list(m.photos.all())
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
         t = Treatment.objects.filter(encounter=m)
@@ -92,6 +93,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 form.save_m2m()
                 encounter.patient = p
                 encounter.active = True
+                encounter.photos.set(photos)
                 encounter.save()
                 DatabaseChangeLog.objects.create(action="Edit", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username,
