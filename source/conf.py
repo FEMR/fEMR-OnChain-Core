@@ -34,6 +34,7 @@ release = 'v1.4.3'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
 ]
 autosummary_generate = True
