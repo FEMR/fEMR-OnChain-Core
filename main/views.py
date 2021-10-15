@@ -32,7 +32,7 @@ def home(request):
     :return: An HttpResponse, rendering the home page.
     """
     for x in Photo.objects.all():
-        if not bool(x):
+        if not x.photo.name:
             x.delete()
     if request.user.is_authenticated:
         motd = MessageOfTheDay.load()
