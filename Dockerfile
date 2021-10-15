@@ -6,12 +6,13 @@ RUN DEBIAN_FRONTEND=noninteractive \
     apt-get install -y tzdata && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     apt-get install unzip curl python3 python3-pip \
-                    python3-dev libssl-dev python3-sphinx \
+                    python3-dev libssl-dev \
                     virtualenv libpq-dev -y && \
     apt-get upgrade -y
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
     apt-get install nodejs -y
 RUN apt-get install -y dos2unix
+RUN pip install sphinx
 
 COPY requirements.txt /opt/app/requirements.txt
 WORKDIR /opt/app
@@ -22,5 +23,7 @@ EXPOSE 8081
 ARG FOO
 COPY . /opt/app
 RUN find /opt/app -type f -exec dos2unix {} \;
+
+RUN /opt/app/build.sh doc
 
 ENTRYPOINT [ "/opt/app/build.sh", "init-all-run" ]

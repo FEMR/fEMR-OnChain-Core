@@ -25,7 +25,7 @@ copyright = '2021, Team fEMR'
 author = 'Team fEMR'
 
 # The full version, including alpha/beta/rc tags
-release = 'v1.4.1'
+release = 'v1.4.3'
 
 # -- General configuration ---------------------------------------------------
 
