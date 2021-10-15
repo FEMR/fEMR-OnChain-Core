@@ -1,0 +1,29 @@
+clinic\_messages.migrations.0005\_message\_timestamp
+====================================================
+
+.. automodule:: clinic_messages.migrations.0005_message_timestamp
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Migration
+   
+   
+
+   
+   
+   
+
+
+

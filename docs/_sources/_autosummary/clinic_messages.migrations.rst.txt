@@ -1,0 +1,35 @@
+clinic\_messages.migrations
+===========================
+
+.. automodule:: clinic_messages.migrations
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   clinic_messages.migrations.0001_initial
+   clinic_messages.migrations.0002_message_read
+   clinic_messages.migrations.0003_alter_message_read
+   clinic_messages.migrations.0004_auto_20210608_2159
+   clinic_messages.migrations.0005_message_timestamp
+

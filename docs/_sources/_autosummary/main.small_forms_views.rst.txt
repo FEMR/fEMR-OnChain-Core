@@ -1,0 +1,32 @@
+main.small\_forms\_views
+========================
+
+.. automodule:: main.small_forms_views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      chief_complaint_form_view
+      diagnosis_form_view
+      medication_form_view
+      treatment_form_view
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,31 @@
+main.templatetags.user\_tags
+============================
+
+.. automodule:: main.templatetags.user_tags
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      campaign_active
+      has_campaign
+      has_group
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

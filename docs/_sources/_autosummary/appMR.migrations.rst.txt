@@ -1,0 +1,40 @@
+appMR.migrations
+================
+
+.. automodule:: appMR.migrations
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   appMR.migrations.0001_initial
+   appMR.migrations.0002_supportticket_active
+   appMR.migrations.0003_auto_20210306_1728
+   appMR.migrations.0004_auto_20210306_1743
+   appMR.migrations.0005_auto_20210306_1746
+   appMR.migrations.0006_auto_20210306_1748
+   appMR.migrations.0007_auto_20210306_1808
+   appMR.migrations.0008_auto_20210306_1839
+   appMR.migrations.0009_auto_20210803_1440
+   appMR.migrations.0010_auto_20210830_1504
+

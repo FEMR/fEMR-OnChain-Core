@@ -64,7 +64,10 @@ function run() {
 }
 
 function documents() {
+  rm -rf build/
   make html
+  mkdir -p docs/
+  cp -rf build/html/* docs/
 }
 
 function reset_migrations() {

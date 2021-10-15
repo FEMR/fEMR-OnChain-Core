@@ -1,0 +1,49 @@
+main.femr\_admin\_views
+=======================
+
+.. automodule:: main.femr_admin_views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      change_campaign
+      edit_campaign_view
+      edit_contact_view
+      edit_instance_view
+      edit_organization_view
+      femr_admin_home
+      get_client_ip
+      list_campaign_view
+      list_instance_view
+      list_organization_view
+      lock_campaign_view
+      lock_instance_view
+      new_campaign_view
+      new_contact_view
+      new_ethnicity_view
+      new_instance_view
+      new_organization_view
+      new_race_view
+      unlock_campaign_view
+      unlock_instance_view
+      view_contact_view
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

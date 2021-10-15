@@ -1,0 +1,23 @@
+appMR.admin
+===========
+
+.. automodule:: appMR.admin
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

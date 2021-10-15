@@ -1,0 +1,29 @@
+main.management.commands.createinventoryforms
+=============================================
+
+.. automodule:: main.management.commands.createinventoryforms
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Command
+   
+   
+
+   
+   
+   
+
+
+

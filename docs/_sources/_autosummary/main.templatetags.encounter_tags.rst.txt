@@ -1,0 +1,29 @@
+main.templatetags.encounter\_tags
+=================================
+
+.. automodule:: main.templatetags.encounter_tags
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      temp_round
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

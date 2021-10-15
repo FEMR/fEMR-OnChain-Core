@@ -1,0 +1,29 @@
+main.migrations.0002\_auto\_20211007\_1254
+==========================================
+
+.. automodule:: main.migrations.0002_auto_20211007_1254
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Migration
+   
+   
+
+   
+   
+   
+
+
+

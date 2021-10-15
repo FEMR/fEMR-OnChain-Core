@@ -1,0 +1,30 @@
+main.background\_tasks
+======================
+
+.. automodule:: main.background_tasks
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      reset_sessions
+      run_encounter_close
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

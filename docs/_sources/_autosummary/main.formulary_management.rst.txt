@@ -1,0 +1,35 @@
+main.formulary\_management
+==========================
+
+.. automodule:: main.formulary_management
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      add_supply_view
+      csv_export_view
+      csv_handler_view
+      csv_import_view
+      edit_add_supply_view
+      edit_sub_supply_view
+      formulary_home_view
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,31 @@
+appMR.tests
+===========
+
+.. automodule:: appMR.tests
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   appMR.tests.test_background_tasks
+

@@ -1,0 +1,34 @@
+main.list\_views
+================
+
+.. automodule:: main.list_views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      chief_complaint_list_view
+      filter_patient_list_view
+      get_latest_timestamp
+      patient_csv_export_view
+      patient_list_view
+      search_patient_list_view
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

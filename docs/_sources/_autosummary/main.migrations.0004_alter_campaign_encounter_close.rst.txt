@@ -1,0 +1,29 @@
+main.migrations.0004\_alter\_campaign\_encounter\_close
+=======================================================
+
+.. automodule:: main.migrations.0004_alter_campaign_encounter_close
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Migration
+   
+   
+
+   
+   
+   
+
+
+

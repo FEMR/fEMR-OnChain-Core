@@ -1,0 +1,42 @@
+main.edit\_views
+================
+
+.. automodule:: main.edit_views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      aux_form_view
+      delete_photo_view
+      edit_photo_view
+      encounter_edit_form_view
+      history_view
+      hpi_view
+      new_diagnosis_view
+      new_treatment_view
+      new_vitals_view
+      patient_edit_form_view
+      patient_export_view
+      patient_medical
+      submit_hpi_view
+      upload_photo_view
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

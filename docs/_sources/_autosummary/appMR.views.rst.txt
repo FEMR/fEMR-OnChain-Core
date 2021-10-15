@@ -1,0 +1,34 @@
+appMR.views
+===========
+
+.. automodule:: appMR.views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      bug_detail_view
+      bug_list_view
+      change_bug_list_view
+      new_bug_view
+      not_logged_in
+      post_comment_view
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,35 @@
+main.qldb\_interface
+====================
+
+.. automodule:: main.qldb_interface
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      create_new_patient
+      create_new_patient_encounter
+      create_tables
+      get_all_patient_encounters
+      get_all_patients
+      update_patient
+      update_patient_encounter
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,29 @@
+clinic\_messages.migrations.0003\_alter\_message\_read
+======================================================
+
+.. automodule:: clinic_messages.migrations.0003_alter_message_read
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Migration
+   
+   
+
+   
+   
+   
+
+
+

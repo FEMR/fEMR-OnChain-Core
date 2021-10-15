@@ -1,0 +1,29 @@
+main.tests
+==========
+
+.. automodule:: main.tests
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      URLTestCase
+   
+   
+
+   
+   
+   
+
+
+

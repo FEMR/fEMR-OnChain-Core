@@ -1,0 +1,29 @@
+appMR.tests.test\_background\_tasks
+===================================
+
+.. automodule:: appMR.tests.test_background_tasks
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Test
+   
+   
+
+   
+   
+   
+
+
+

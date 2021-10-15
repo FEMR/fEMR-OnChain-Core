@@ -1,0 +1,29 @@
+appMR.migrations.0002\_supportticket\_active
+============================================
+
+.. automodule:: appMR.migrations.0002_supportticket_active
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Migration
+   
+   
+
+   
+   
+   
+
+
+

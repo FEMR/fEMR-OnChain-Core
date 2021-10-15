@@ -1,0 +1,23 @@
+clinic\_messages.urls
+=====================
+
+.. automodule:: clinic_messages.urls
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,29 @@
+main.templatetags.campaign\_tags
+================================
+
+.. automodule:: main.templatetags.campaign_tags
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      is_selected
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

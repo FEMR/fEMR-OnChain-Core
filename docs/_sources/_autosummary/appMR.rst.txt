@@ -1,0 +1,39 @@
+﻿appMR
+=====
+
+.. automodule:: appMR
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   appMR.admin
+   appMR.apps
+   appMR.background_tasks
+   appMR.forms
+   appMR.migrations
+   appMR.models
+   appMR.tests
+   appMR.urls
+   appMR.views
+

@@ -1,0 +1,35 @@
+clinic\_messages.views
+======================
+
+.. automodule:: clinic_messages.views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      delete_message
+      delete_sent_message
+      index
+      new_message
+      reply_message
+      sent_box
+      view_message
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

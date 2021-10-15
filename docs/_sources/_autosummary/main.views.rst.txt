@@ -1,0 +1,35 @@
+main.views
+==========
+
+.. automodule:: main.views
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      forgot_username
+      healthcheck
+      help_messages_off
+      home
+      index
+      library
+      set_timezone
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,29 @@
+clinic\_messages.migrations.0004\_auto\_20210608\_2159
+======================================================
+
+.. automodule:: clinic_messages.migrations.0004_auto_20210608_2159
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Migration
+   
+   
+
+   
+   
+   
+
+
+

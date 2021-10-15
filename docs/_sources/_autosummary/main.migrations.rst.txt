@@ -1,0 +1,35 @@
+main.migrations
+===============
+
+.. automodule:: main.migrations
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   main.migrations.0001_initial
+   main.migrations.0002_auto_20211007_1254
+   main.migrations.0003_usersession
+   main.migrations.0004_alter_campaign_encounter_close
+   main.migrations.0005_auto_20211012_2105
+

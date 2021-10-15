@@ -1,0 +1,71 @@
+main.models
+===========
+
+.. automodule:: main.models
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      cal_key
+      get_new_inventory
+      get_nondisclosed_ethnicity
+      get_nondisclosed_race
+      get_test_org
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AdministrationSchedule
+      AuditEntry
+      CSVUploadDocument
+      Campaign
+      ChiefComplaint
+      Contact
+      DatabaseChangeLog
+      Diagnosis
+      Ethnicity
+      HistoryOfPresentIllness
+      Instance
+      Inventory
+      InventoryCategory
+      InventoryEntry
+      InventoryForm
+      Manufacturer
+      Medication
+      MessageOfTheDay
+      ModifiedMaxValueValidator
+      Organization
+      Patient
+      PatientDiagnosis
+      PatientEncounter
+      Photo
+      Race
+      SingletonModel
+      State
+      Test
+      Treatment
+      UnitsSetting
+      UserSession
+      Vitals
+      fEMRUser
+   
+   
+
+   
+   
+   
+
+
+

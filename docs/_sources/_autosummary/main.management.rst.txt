@@ -1,0 +1,31 @@
+main.management
+===============
+
+.. automodule:: main.management
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   main.management.commands
+
