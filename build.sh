@@ -64,7 +64,9 @@ function run() {
 }
 
 function documents() {
+  rm -rf build/
   make html
+  cp -rf build/html/* docs/
 }
 
 function reset_migrations() {
