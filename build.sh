@@ -65,6 +65,9 @@ function run() {
 
 function documents() {
   rm -rf build/
+  sphinx-apidoc -f -o source main
+  sphinx-apidoc -f -o source appMR
+  sphinx-apidoc -f -o source clinic_messages
   make html
   mkdir -p docs/
   cp -rf build/html/* docs/

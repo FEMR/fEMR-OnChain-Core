@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>main.csvio package &#8212; fEMR OnChain v1.4.3 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="main-csvio-package">
+<h1>main.csvio package<a class="headerlink" href="#main-csvio-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-main.csvio.added_inventory">
+<span id="main-csvio-added-inventory-module"></span><h2>main.csvio.added_inventory module<a class="headerlink" href="#module-main.csvio.added_inventory" title="Permalink to this headline">¶</a></h2>
+<p>AddedInventoryHandler and required imports.</p>
+<dl class="py class">
+<dt id="main.csvio.added_inventory.AddedInventoryHandler">
+<em class="property">class </em><code class="sig-prename descclassname">main.csvio.added_inventory.</code><code class="sig-name descname">AddedInventoryHandler</code><a class="headerlink" href="#main.csvio.added_inventory.AddedInventoryHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#main.csvio.csv_interface.CSVHandler" title="main.csvio.csv_interface.CSVHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">main.csvio.csv_interface.CSVHandler</span></code></a></p>
+<p>Implements CSVHandler and adds inventory to supplies that already existed in the formulary.</p>
+<dl class="py method">
+<dt id="main.csvio.added_inventory.AddedInventoryHandler.read">
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upload</span></em>, <em class="sig-param"><span class="n">campaign</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.csvio.added_inventory.AddedInventoryHandler.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an upload file and a campaign to upload to, execute a CSV import.
+:param upload:
+:param campaign:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="main.csvio.added_inventory.AddedInventoryHandler.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">response</span></em>, <em class="sig-param"><span class="n">formulary</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.csvio.added_inventory.AddedInventoryHandler.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an HTTPResponse and a formulary object, write out the formulary as a CSV file.
+:param response:
+:param formulary:
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-main.csvio.csv_interface">
+<span id="main-csvio-csv-interface-module"></span><h2>main.csvio.csv_interface module<a class="headerlink" href="#module-main.csvio.csv_interface" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="main.csvio.csv_interface.CSVHandler">
+<em class="property">class </em><code class="sig-prename descclassname">main.csvio.csv_interface.</code><code class="sig-name descname">CSVHandler</code><a class="headerlink" href="#main.csvio.csv_interface.CSVHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="main.csvio.csv_interface.CSVHandler.read">
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upload</span></em>, <em class="sig-param"><span class="n">campaign</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.csvio.csv_interface.CSVHandler.read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="main.csvio.csv_interface.CSVHandler.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">response</span></em>, <em class="sig-param"><span class="n">formulary</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.csvio.csv_interface.CSVHandler.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-main.csvio.initial_inventory">
+<span id="main-csvio-initial-inventory-module"></span><h2>main.csvio.initial_inventory module<a class="headerlink" href="#module-main.csvio.initial_inventory" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="main.csvio.initial_inventory.InitialInventoryHandler">
+<em class="property">class </em><code class="sig-prename descclassname">main.csvio.initial_inventory.</code><code class="sig-name descname">InitialInventoryHandler</code><a class="headerlink" href="#main.csvio.initial_inventory.InitialInventoryHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#main.csvio.csv_interface.CSVHandler" title="main.csvio.csv_interface.CSVHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">main.csvio.csv_interface.CSVHandler</span></code></a></p>
+<dl class="py method">
+<dt id="main.csvio.initial_inventory.InitialInventoryHandler.read">
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">upload</span></em>, <em class="sig-param"><span class="n">campaign</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.csvio.initial_inventory.InitialInventoryHandler.read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="main.csvio.initial_inventory.InitialInventoryHandler.write">
+<code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">response</span></em>, <em class="sig-param"><span class="n">formulary</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.csvio.initial_inventory.InitialInventoryHandler.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-main.csvio">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-main.csvio" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">fEMR OnChain</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/main.html">main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/clinic_messages.html">clinic_messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/appMR.html">appMR</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Team fEMR.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/main.csvio.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

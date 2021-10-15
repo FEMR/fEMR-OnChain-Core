@@ -1,0 +1,596 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>appMR package &#8212; fEMR OnChain v1.4.3 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="appmr-package">
+<h1>appMR package<a class="headerlink" href="#appmr-package" title="Permalink to this headline">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="appMR.migrations.html">appMR.migrations package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="appMR.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appMR.migrations.html#module-appMR.migrations.0001_initial">appMR.migrations.0001_initial module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appMR.migrations.html#module-appMR.migrations.0002_supportticket_active">appMR.migrations.0002_supportticket_active module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appMR.migrations.html#module-appMR.migrations.0003_auto_20210306_1728">appMR.migrations.0003_auto_20210306_1728 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appMR.migrations.html#module-appMR.migrations.0004_auto_20210306_1743">appMR.migrations.0004_auto_20210306_1743 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appMR.migrations.html#module-appMR.migrations.0005_auto_20210306_1746">appMR.migrations.0005_auto_20210306_1746 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appMR.migrations.html#module-appMR.migrations.0006_auto_20210306_1748">appMR.migrations.0006_auto_20210306_1748 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appMR.migrations.html#module-appMR.migrations.0007_auto_20210306_1808">appMR.migrations.0007_auto_20210306_1808 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appMR.migrations.html#module-appMR.migrations.0008_auto_20210306_1839">appMR.migrations.0008_auto_20210306_1839 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appMR.migrations.html#module-appMR.migrations.0009_auto_20210803_1440">appMR.migrations.0009_auto_20210803_1440 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appMR.migrations.html#module-appMR.migrations.0010_auto_20210830_1504">appMR.migrations.0010_auto_20210830_1504 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appMR.migrations.html#module-appMR.migrations">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="appMR.tests.html">appMR.tests package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="appMR.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appMR.tests.html#module-appMR.tests.test_background_tasks">appMR.tests.test_background_tasks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="appMR.tests.html#module-appMR.tests">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-appMR.admin">
+<span id="appmr-admin-module"></span><h2>appMR.admin module<a class="headerlink" href="#module-appMR.admin" title="Permalink to this headline">¶</a></h2>
+<p>Register appMR models with the admin site.</p>
+</section>
+<section id="module-appMR.apps">
+<span id="appmr-apps-module"></span><h2>appMR.apps module<a class="headerlink" href="#module-appMR.apps" title="Permalink to this headline">¶</a></h2>
+<p>appMR AppConfig.</p>
+<dl class="py class">
+<dt id="appMR.apps.AppmrConfig">
+<em class="property">class </em><code class="sig-prename descclassname">appMR.apps.</code><code class="sig-name descname">AppmrConfig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app_name</span></em>, <em class="sig-param"><span class="n">app_module</span></em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.apps.AppmrConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.apps.config.AppConfig</span></code></p>
+<p>Configurations for appMR.</p>
+<dl class="py attribute">
+<dt id="appMR.apps.AppmrConfig.name">
+<code class="sig-name descname">name</code><em class="property"> = 'appMR'</em><a class="headerlink" href="#appMR.apps.AppmrConfig.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-appMR.background_tasks">
+<span id="appmr-background-tasks-module"></span><h2>appMR.background_tasks module<a class="headerlink" href="#module-appMR.background_tasks" title="Permalink to this headline">¶</a></h2>
+<p>Non-view functions used to carry out background processes.</p>
+<dl class="py function">
+<dt id="appMR.background_tasks.check_old_tickets">
+<code class="sig-prename descclassname">appMR.background_tasks.</code><code class="sig-name descname">check_old_tickets</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">now</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#appMR.background_tasks.check_old_tickets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close tickets with no activity for 30 days.
+:param now:
+:return:</p>
+</dd></dl>
+
+</section>
+<section id="module-appMR.forms">
+<span id="appmr-forms-module"></span><h2>appMR.forms module<a class="headerlink" href="#module-appMR.forms" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="appMR.forms.CommentForm">
+<em class="property">class </em><code class="sig-prename descclassname">appMR.forms.</code><code class="sig-name descname">CommentForm</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">files=None</em>, <em class="sig-param">auto_id='id_%s'</em>, <em class="sig-param">prefix=None</em>, <em class="sig-param">initial=None</em>, <em class="sig-param">error_class=&lt;class 'django.forms.utils.ErrorList'&gt;</em>, <em class="sig-param">label_suffix=None</em>, <em class="sig-param">empty_permitted=False</em>, <em class="sig-param">instance=None</em>, <em class="sig-param">use_required_attribute=None</em>, <em class="sig-param">renderer=None</em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.forms.CommentForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.forms.models.ModelForm</span></code></p>
+<dl class="py class">
+<dt id="appMR.forms.CommentForm.Meta">
+<em class="property">class </em><code class="sig-name descname">Meta</code><a class="headerlink" href="#appMR.forms.CommentForm.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="appMR.forms.CommentForm.Meta.fields">
+<code class="sig-name descname">fields</code><em class="property"> = ['comment', 'attachment']</em><a class="headerlink" href="#appMR.forms.CommentForm.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.forms.CommentForm.Meta.model">
+<code class="sig-name descname">model</code><a class="headerlink" href="#appMR.forms.CommentForm.Meta.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#appMR.models.Comment" title="appMR.models.Comment"><code class="xref py py-class docutils literal notranslate"><span class="pre">appMR.models.Comment</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.forms.CommentForm.base_fields">
+<code class="sig-name descname">base_fields</code><em class="property"> = {'attachment': &lt;django.forms.fields.FileField object&gt;, 'comment': &lt;django.forms.fields.CharField object&gt;}</em><a class="headerlink" href="#appMR.forms.CommentForm.base_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.forms.CommentForm.declared_fields">
+<code class="sig-name descname">declared_fields</code><em class="property"> = {'comment': &lt;django.forms.fields.CharField object&gt;}</em><a class="headerlink" href="#appMR.forms.CommentForm.declared_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="appMR.forms.CommentForm.media">
+<em class="property">property </em><code class="sig-name descname">media</code><a class="headerlink" href="#appMR.forms.CommentForm.media" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all media required to render the widgets on this form.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="appMR.forms.SupportTicketForm">
+<em class="property">class </em><code class="sig-prename descclassname">appMR.forms.</code><code class="sig-name descname">SupportTicketForm</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">files=None</em>, <em class="sig-param">auto_id='id_%s'</em>, <em class="sig-param">prefix=None</em>, <em class="sig-param">initial=None</em>, <em class="sig-param">error_class=&lt;class 'django.forms.utils.ErrorList'&gt;</em>, <em class="sig-param">label_suffix=None</em>, <em class="sig-param">empty_permitted=False</em>, <em class="sig-param">instance=None</em>, <em class="sig-param">use_required_attribute=None</em>, <em class="sig-param">renderer=None</em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.forms.SupportTicketForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.forms.models.ModelForm</span></code></p>
+<dl class="py class">
+<dt id="appMR.forms.SupportTicketForm.Meta">
+<em class="property">class </em><code class="sig-name descname">Meta</code><a class="headerlink" href="#appMR.forms.SupportTicketForm.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="appMR.forms.SupportTicketForm.Meta.fields">
+<code class="sig-name descname">fields</code><em class="property"> = ['title', 'description', 'status', 'attachment']</em><a class="headerlink" href="#appMR.forms.SupportTicketForm.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.forms.SupportTicketForm.Meta.model">
+<code class="sig-name descname">model</code><a class="headerlink" href="#appMR.forms.SupportTicketForm.Meta.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#appMR.models.SupportTicket" title="appMR.models.SupportTicket"><code class="xref py py-class docutils literal notranslate"><span class="pre">appMR.models.SupportTicket</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.forms.SupportTicketForm.base_fields">
+<code class="sig-name descname">base_fields</code><em class="property"> = {'attachment': &lt;django.forms.fields.FileField object&gt;, 'description': &lt;django.forms.fields.CharField object&gt;, 'status': &lt;django.forms.fields.TypedChoiceField object&gt;, 'title': &lt;django.forms.fields.CharField object&gt;}</em><a class="headerlink" href="#appMR.forms.SupportTicketForm.base_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.forms.SupportTicketForm.declared_fields">
+<code class="sig-name descname">declared_fields</code><em class="property"> = {'description': &lt;django.forms.fields.CharField object&gt;}</em><a class="headerlink" href="#appMR.forms.SupportTicketForm.declared_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="appMR.forms.SupportTicketForm.media">
+<em class="property">property </em><code class="sig-name descname">media</code><a class="headerlink" href="#appMR.forms.SupportTicketForm.media" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all media required to render the widgets on this form.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-appMR.models">
+<span id="appmr-models-module"></span><h2>appMR.models module<a class="headerlink" href="#module-appMR.models" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="appMR.models.Comment">
+<em class="property">class </em><code class="sig-prename descclassname">appMR.models.</code><code class="sig-name descname">Comment</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.models.Comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.base.Model</span></code></p>
+<p>Database model for comments on SupportTickets.</p>
+<dl class="py exception">
+<dt id="appMR.models.Comment.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#appMR.models.Comment.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="appMR.models.Comment.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#appMR.models.Comment.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.Comment.attachment">
+<code class="sig-name descname">attachment</code><a class="headerlink" href="#appMR.models.Comment.attachment" title="Permalink to this definition">¶</a></dt>
+<dd><p>The descriptor for the file attribute on the model instance. Return a
+FieldFile when accessed so you can write code like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">myapp.models</span> <span class="kn">import</span> <span class="n">MyModel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">instance</span> <span class="o">=</span> <span class="n">MyModel</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">instance</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+<p>Assign a file object on assignment so you can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/path/to/hello.world&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">instance</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.Comment.author">
+<code class="sig-name descname">author</code><a class="headerlink" href="#appMR.models.Comment.author" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.Comment.author_id">
+<code class="sig-name descname">author_id</code><a class="headerlink" href="#appMR.models.Comment.author_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.Comment.comment">
+<code class="sig-name descname">comment</code><a class="headerlink" href="#appMR.models.Comment.comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="appMR.models.Comment.get_next_by_timestamp">
+<code class="sig-name descname">get_next_by_timestamp</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">field=&lt;django.db.models.fields.DateTimeField: timestamp&gt;</em>, <em class="sig-param">is_next=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.models.Comment.get_next_by_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="appMR.models.Comment.get_previous_by_timestamp">
+<code class="sig-name descname">get_previous_by_timestamp</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">field=&lt;django.db.models.fields.DateTimeField: timestamp&gt;</em>, <em class="sig-param">is_next=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.models.Comment.get_previous_by_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.Comment.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#appMR.models.Comment.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.Comment.objects">
+<code class="sig-name descname">objects</code><em class="property"> = &lt;django.db.models.manager.Manager object&gt;</em><a class="headerlink" href="#appMR.models.Comment.objects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.Comment.supportticket_set">
+<code class="sig-name descname">supportticket_set</code><a class="headerlink" href="#appMR.models.Comment.supportticket_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the forward and reverse sides of
+a many-to-many relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pizza</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">toppings</span> <span class="o">=</span> <span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Topping</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;pizzas&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Pizza.toppings</span></code> and <code class="docutils literal notranslate"><span class="pre">Topping.pizzas</span></code> are <code class="docutils literal notranslate"><span class="pre">ManyToManyDescriptor</span></code>
+instances.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.Comment.timestamp">
+<code class="sig-name descname">timestamp</code><a class="headerlink" href="#appMR.models.Comment.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="appMR.models.SupportTicket">
+<em class="property">class </em><code class="sig-prename descclassname">appMR.models.</code><code class="sig-name descname">SupportTicket</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.models.SupportTicket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.base.Model</span></code></p>
+<p>Database model for support tickets.</p>
+<dl class="py exception">
+<dt id="appMR.models.SupportTicket.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#appMR.models.SupportTicket.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="appMR.models.SupportTicket.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#appMR.models.SupportTicket.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.SupportTicket.active">
+<code class="sig-name descname">active</code><a class="headerlink" href="#appMR.models.SupportTicket.active" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.SupportTicket.attachment">
+<code class="sig-name descname">attachment</code><a class="headerlink" href="#appMR.models.SupportTicket.attachment" title="Permalink to this definition">¶</a></dt>
+<dd><p>The descriptor for the file attribute on the model instance. Return a
+FieldFile when accessed so you can write code like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">myapp.models</span> <span class="kn">import</span> <span class="n">MyModel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">instance</span> <span class="o">=</span> <span class="n">MyModel</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">instance</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">size</span>
+</pre></div>
+</div>
+<p>Assign a file object on assignment so you can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/path/to/hello.world&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">instance</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.SupportTicket.comments">
+<code class="sig-name descname">comments</code><a class="headerlink" href="#appMR.models.SupportTicket.comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the forward and reverse sides of
+a many-to-many relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pizza</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">toppings</span> <span class="o">=</span> <span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Topping</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;pizzas&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Pizza.toppings</span></code> and <code class="docutils literal notranslate"><span class="pre">Topping.pizzas</span></code> are <code class="docutils literal notranslate"><span class="pre">ManyToManyDescriptor</span></code>
+instances.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.SupportTicket.description">
+<code class="sig-name descname">description</code><a class="headerlink" href="#appMR.models.SupportTicket.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="appMR.models.SupportTicket.get_next_by_timestamp">
+<code class="sig-name descname">get_next_by_timestamp</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">field=&lt;django.db.models.fields.DateTimeField: timestamp&gt;</em>, <em class="sig-param">is_next=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.models.SupportTicket.get_next_by_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="appMR.models.SupportTicket.get_previous_by_timestamp">
+<code class="sig-name descname">get_previous_by_timestamp</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">field=&lt;django.db.models.fields.DateTimeField: timestamp&gt;</em>, <em class="sig-param">is_next=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.models.SupportTicket.get_previous_by_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="appMR.models.SupportTicket.get_status_display">
+<code class="sig-name descname">get_status_display</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">field=&lt;django.db.models.fields.CharField: status&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.models.SupportTicket.get_status_display" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.SupportTicket.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#appMR.models.SupportTicket.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.SupportTicket.objects">
+<code class="sig-name descname">objects</code><em class="property"> = &lt;django.db.models.manager.Manager object&gt;</em><a class="headerlink" href="#appMR.models.SupportTicket.objects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.SupportTicket.reporter">
+<code class="sig-name descname">reporter</code><a class="headerlink" href="#appMR.models.SupportTicket.reporter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.SupportTicket.reporter_id">
+<code class="sig-name descname">reporter_id</code><a class="headerlink" href="#appMR.models.SupportTicket.reporter_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.SupportTicket.status">
+<code class="sig-name descname">status</code><a class="headerlink" href="#appMR.models.SupportTicket.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.SupportTicket.timestamp">
+<code class="sig-name descname">timestamp</code><a class="headerlink" href="#appMR.models.SupportTicket.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="appMR.models.SupportTicket.title">
+<code class="sig-name descname">title</code><a class="headerlink" href="#appMR.models.SupportTicket.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-appMR.urls">
+<span id="appmr-urls-module"></span><h2>appMR.urls module<a class="headerlink" href="#module-appMR.urls" title="Permalink to this headline">¶</a></h2>
+<p>appMR URL configurations.</p>
+</section>
+<section id="module-appMR.views">
+<span id="appmr-views-module"></span><h2>appMR.views module<a class="headerlink" href="#module-appMR.views" title="Permalink to this headline">¶</a></h2>
+<p>appMR view functions.</p>
+<dl class="py function">
+<dt id="appMR.views.bug_detail_view">
+<code class="sig-prename descclassname">appMR.views.</code><code class="sig-name descname">bug_detail_view</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">id</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.views.bug_detail_view" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – </p></li>
+<li><p><strong>id</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="appMR.views.bug_list_view">
+<code class="sig-prename descclassname">appMR.views.</code><code class="sig-name descname">bug_list_view</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">ticket_type</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.views.bug_list_view" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – </p></li>
+<li><p><strong>ticket_type</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="appMR.views.change_bug_list_view">
+<code class="sig-prename descclassname">appMR.views.</code><code class="sig-name descname">change_bug_list_view</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">ticket_type</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.views.change_bug_list_view" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – </p></li>
+<li><p><strong>ticket_type</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="appMR.views.new_bug_view">
+<code class="sig-prename descclassname">appMR.views.</code><code class="sig-name descname">new_bug_view</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">ticket_type</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.views.new_bug_view" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – </p></li>
+<li><p><strong>ticket_type</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="appMR.views.not_logged_in">
+<code class="sig-prename descclassname">appMR.views.</code><code class="sig-name descname">not_logged_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.views.not_logged_in" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="appMR.views.post_comment_view">
+<code class="sig-prename descclassname">appMR.views.</code><code class="sig-name descname">post_comment_view</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em>, <em class="sig-param"><span class="n">bug_id</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#appMR.views.post_comment_view" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> – </p></li>
+<li><p><strong>bug_id</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-appMR">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-appMR" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">fEMR OnChain</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/main.html">main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/clinic_messages.html">clinic_messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/appMR.html">appMR</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Team fEMR.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/appMR.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
