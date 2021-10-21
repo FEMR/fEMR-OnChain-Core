@@ -341,7 +341,7 @@ def new_ethnicity_view(request):
 def list_organization_view(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='fEMR Admin').exists():
-            organizations = Instance.objects.all()
+            organizations = Organization.objects.all()
             return render(request, 'femr_admin/organization/list_organization.html',
                           {'user': request.user,
                            'organizations': organizations,
