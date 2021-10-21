@@ -23,8 +23,7 @@ from main.formulary_management import add_supply_view, csv_export_view, csv_hand
 from main.operation_admin_views import operation_admin_home_view
 from main.organization_admin_views import organization_admin_home_view
 from main.views import set_timezone
-from .api_views import UserViewSet, GroupViewSet, PatientViewSet, PatientEncounterViewSet, InstanceViewSet, \
-    CampaignViewSet
+from .api_views import *
 from .auth_views import all_locked, not_logged_in, login_view, logout_view, permission_denied
 from .autocomplete_views import DiagnosisAutocomplete, EthnicityAutocomplete, MedicationAutocomplete, \
     ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete, RaceAutocomplete, StateAutocomplete, \
@@ -64,6 +63,27 @@ router.register(r'Patient', PatientViewSet)
 router.register(r'Encounter', PatientEncounterViewSet)
 router.register(r'Campaign', CampaignViewSet)
 router.register(r'Instance', InstanceViewSet)
+router.register(r'Race', RaceViewSet)
+router.register(r'State', StateViewSet)
+router.register(r'Ethnicity', EthnicityViewSet)
+router.register(r'Organization', OrganizationViewSet)
+router.register(r'ChiefComplaint', ChiefComplaintViewSet)
+router.register(r'AdministrationSchedule', AdministrationScheduleViewSet)
+router.register(r'Diagnosis', DiagnosisViewSet)
+router.register(r'Medication', MedicationViewSet)
+router.register(r'Test', TestViewSet)
+router.register(r'Photo', PhotoViewSet)
+router.register(r'HistoryOfPresentIllness', HistoryOfPresentIllnessViewSet)
+router.register(r'Vitals', VitalsViewSet)
+router.register(r'PatientDiagnosis', PatientDiagnosisViewSet)
+router.register(r'Treatment', TreatmentViewSet)
+router.register(r'InventoryForm', InventoryFormViewSet)
+router.register(r'InventoryCategory', InventoryCategoryViewSet)
+router.register(r'Manufacturer', ManufacturerViewSet)
+router.register(r'InventoryEntry', InventoryEntryViewSet)
+router.register(r'Inventory', InventoryViewSet)
+router.register(r'UnitSetting', UnitsSettingViewSet)
+router.register(r'MessageOfTheDayViewSet', MessageOfTheDayViewSet)
 
 urlpatterns = [
     url(r'^$', index, name='index'),

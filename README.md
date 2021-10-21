@@ -5,3 +5,5 @@ The fastest way to get a running version of fEMR OnChain is to install Docker, t
 
 ## Documentation
 Documentation is rebuilt periodically and hosted at https://femr.github.io/fEMR-OnChain-Core/
+
+The RESTful API Swagger is hosted at https://chain.teamfemr.org/swagger and is kept updated as changes are made.
