@@ -121,7 +121,6 @@ class CheckForSessionInvalidatedMiddleware:
                 request.user.logged_in_user.session_key = request.session.session_key
                 request.user.logged_in_user.save()
             except Exception as e:
-                print(e)
                 UserSession.objects.get_or_create(user=request.user)
 
         return self.get_response(request)
@@ -133,15 +132,3 @@ class HandleErrorMiddleware:
 
     def __call__(self, request):
         return self.get_response(request)
-
-
-class CheckBrowserMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
-        print(request.user_agent.browser.family)
-        if request.user_agent.browser.family not in ["Chrome", "Firefox", "Firefox Mobile", "Chrome Mobile iOS"]:
-            return render(request, 'data/stop.html')
-        else:
-            return self.get_response(request)

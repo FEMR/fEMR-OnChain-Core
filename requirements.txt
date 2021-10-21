@@ -54,7 +54,6 @@ s3transfer==0.5.0
 safety==1.10.3
 setuptools==58.2.0
 six==1.16.0
-six==1.16.0
 sqlparse==0.4.2
 toml==0.10.2
 typed-ast==1.4.3

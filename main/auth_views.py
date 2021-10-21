@@ -11,7 +11,7 @@ from django.db import IntegrityError, DataError
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from main.background_tasks import reset_sessions, run_encounter_close
+from main.background_tasks import reset_sessions, run_encounter_close, check_browser
 from main.forms import RegisterForm, LoginForm
 from main.models import UserSession, fEMRUser
 
@@ -115,6 +115,8 @@ def login_view(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
+    if not check_browser(request):
+        return render(request, 'data/stop.html')
     run_encounter_close()
     reset_sessions()
     if request.user.is_authenticated:

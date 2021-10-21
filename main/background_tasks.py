@@ -39,3 +39,13 @@ def reset_sessions() -> None:
     for x in UserSession.objects.all():
         if x.timestamp < d:
             x.delete()
+
+
+def check_browser(request) -> bool:
+    print(request.user_agent.browser.family)
+    if request.user_agent.browser.family not in ["Chrome", "Firefox", "Firefox Mobile", "Chrome Mobile iOS"]:
+        print("Blocking browser.")
+        return False
+    else:
+        print("Allowing browser.")
+        return True

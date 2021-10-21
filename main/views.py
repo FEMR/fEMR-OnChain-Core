@@ -43,7 +43,6 @@ def home(request):
                 motd_final = ""
         else:
             motd_final = ""
-        print(motd_final)
         return render(request, 'data/home.html', {'user': request.user,
                                                   'page_name': 'Home',
                                                   'campaigns': request.user.campaigns.filter(active=True),
