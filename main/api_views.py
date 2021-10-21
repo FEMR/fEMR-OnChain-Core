@@ -9,8 +9,17 @@ from rest_framework import permissions
 from rest_framework import viewsets
 
 from .api_permissions import IsAdmin, IsfEMRAdmin, IsAPIAllowed
-from .models import *
-from .serializers import *
+from .models import fEMRUser, Patient, PatientEncounter, MessageOfTheDay, Campaign, Instance, Race, State, Ethnicity, \
+    Organization, ChiefComplaint, AdministrationSchedule, Diagnosis, Medication, Test, Photo, HistoryOfPresentIllness, \
+    Vitals, PatientDiagnosis, Treatment, InventoryForm, InventoryCategory, Manufacturer, InventoryEntry, Inventory, \
+    UnitsSetting
+from .serializers import UserSerializer, GroupSerializer, PatientSerializer, PatientEncounterSerializer, \
+    MessageOfTheDaySerializer, CampaignSerializer, InstanceSerializer, RaceSerializer, StateSerializer, \
+    EthnicitySerializer, OrganizationSerializer, ChiefComplaintSerializer, AdministrationScheduleSerializer, \
+    DiagnosisSerializer, MedicationSerializer, TestSerializer, PhotoSerializer, HistoryOfPresentIllnessSerializer, \
+    VitalsSerializer, PatientDiagnosisSerializer, TreatmentSerializer, InventoryFormSerializer, \
+    InventoryCategorySerializer, ManufacturerSerializer, InventoryEntrySerializer, InventorySerializer, \
+    UnitsSettingSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):

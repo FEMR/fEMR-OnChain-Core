@@ -23,7 +23,11 @@ from main.formulary_management import add_supply_view, csv_export_view, csv_hand
 from main.operation_admin_views import operation_admin_home_view
 from main.organization_admin_views import organization_admin_home_view
 from main.views import set_timezone
-from .api_views import *
+from .api_views import UserViewSet, GroupViewSet, PatientViewSet, PatientEncounterViewSet, CampaignViewSet, \
+    InstanceViewSet, RaceViewSet, StateViewSet, EthnicityViewSet, MessageOfTheDayViewSet, UnitsSettingViewSet, \
+    InventoryViewSet, InventoryEntryViewSet, ManufacturerViewSet, InventoryFormViewSet, InventoryCategoryViewSet, \
+    TreatmentViewSet, PatientDiagnosisViewSet, VitalsViewSet, HistoryOfPresentIllnessViewSet, PhotoViewSet, TestViewSet, \
+    MedicationViewSet, DiagnosisViewSet, AdministrationScheduleViewSet, ChiefComplaintViewSet, OrganizationViewSet
 from .auth_views import all_locked, not_logged_in, login_view, logout_view, permission_denied
 from .autocomplete_views import DiagnosisAutocomplete, EthnicityAutocomplete, MedicationAutocomplete, \
     ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete, RaceAutocomplete, StateAutocomplete, \
