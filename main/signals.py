@@ -1,3 +1,13 @@
+from django.conf import settings
+from django.contrib.auth import user_logged_in, user_logged_out
+from django.contrib.sessions.models import Session
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
+
+from main.models import UserSession, Campaign, AuditEntry
+
+
 @receiver(user_logged_in)
 def remove_other_sessions(sender, user, request, **kwargs):
     Session.objects.filter(usersession__user=user).delete()
@@ -6,6 +16,12 @@ def remove_other_sessions(sender, user, request, **kwargs):
         user=user,
         session_id=request.session.session_key
     )
+
+
+@receiver(user_logged_out)
+def remove_session_on_logout(sender, user, request, **kwargs):
+    Session.objects.filter(usersession__user=user).delete()
+    UserSession.objects.filter(user=user).delete()
 
 
 @receiver(user_logged_in)
