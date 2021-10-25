@@ -1,26 +1,10 @@
-def test_index():
-    assert False
+from django.test.client import RequestFactory
 
-
-def test_home():
-    assert False
-
-
-def test_library():
-    assert False
+from main.views import healthcheck
 
 
 def test_healthcheck():
-    assert False
-
-
-def test_set_timezone():
-    assert False
-
-
-def test_forgot_username():
-    assert False
-
-
-def test_help_messages_off():
-    assert False
+    factory = RequestFactory()
+    request = factory.get('/healthcheck')
+    response = healthcheck(request)
+    assert response.status_code, 200

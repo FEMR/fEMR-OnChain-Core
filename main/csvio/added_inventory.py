@@ -5,11 +5,10 @@ import csv
 
 import requests
 
-from main.csvio.csv_interface import CSVHandler
 from main.models import InventoryCategory, InventoryEntry, InventoryForm, Manufacturer, Medication
 
 
-class AddedInventoryHandler(CSVHandler):
+class AddedInventoryHandler(object):
     """
     Implements CSVHandler and adds inventory to supplies that already existed in the formulary.
     """

@@ -84,6 +84,22 @@ appMR.migrations.0010\_auto\_20210830\_1504 module
    :undoc-members:
    :show-inheritance:
 
+appMR.migrations.0011\_supportticket\_last\_updated module
+----------------------------------------------------------
+
+.. automodule:: appMR.migrations.0011_supportticket_last_updated
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+appMR.migrations.0012\_alter\_supportticket\_last\_updated module
+-----------------------------------------------------------------
+
+.. automodule:: appMR.migrations.0012_alter_supportticket_last_updated
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

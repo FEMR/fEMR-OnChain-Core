@@ -2,11 +2,10 @@ import csv
 
 import requests
 
-from main.csvio.csv_interface import CSVHandler
 from main.models import InventoryCategory, InventoryEntry, InventoryForm, Manufacturer, Medication
 
 
-class InitialInventoryHandler(CSVHandler):
+class InitialInventoryHandler(object):
     def __init__(self) -> None:
         super().__init__()
 

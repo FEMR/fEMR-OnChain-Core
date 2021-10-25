@@ -12,14 +12,6 @@ main.csvio.added\_inventory module
    :undoc-members:
    :show-inheritance:
 
-main.csvio.csv\_interface module
---------------------------------
-
-.. automodule:: main.csvio.csv_interface
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 main.csvio.initial\_inventory module
 ------------------------------------
 

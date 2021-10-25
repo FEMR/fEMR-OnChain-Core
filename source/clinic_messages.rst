@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    clinic_messages.migrations
+   clinic_messages.tests
 
 Submodules
 ----------
@@ -40,14 +41,6 @@ clinic\_messages.models module
 ------------------------------
 
 .. automodule:: clinic_messages.models
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-clinic\_messages.tests module
------------------------------
-
-.. automodule:: clinic_messages.tests
    :members:
    :undoc-members:
    :show-inheritance:

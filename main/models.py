@@ -75,9 +75,6 @@ class Contact(models.Model):
     email_address = models.CharField(max_length=30, unique=True)
     phone_number = models.CharField(max_length=30, unique=True)
 
-    def __unicode__(self):
-        return "{0} {1}".format(self.first_name, self.last_name)
-
     def __str__(self):
         return "{0} {1}".format(self.first_name, self.last_name)
 
@@ -563,9 +560,6 @@ class AuditEntry(models.Model):
     campaign = models.ForeignKey(
         Campaign, on_delete=models.CASCADE, blank=True, null=True)
 
-    def __unicode__(self):
-        return '{0} - {1} - {2} - {3} - {4}'.format(self.action, self.username, self.ip, self.timestamp, self.campaign)
-
     def __str__(self):
         return '{0} - {1} - {2} - {3} - {4}'.format(self.action, self.username, self.ip, self.timestamp, self.campaign)
 
@@ -578,10 +572,6 @@ class DatabaseChangeLog(models.Model):
     username = models.CharField(max_length=256, null=True)
     timestamp = models.DateTimeField(auto_now=True)
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
-
-    def __unicode__(self):
-        return '{0} {1} {2} - by {3} at {4}, {5}'.format(self.action, self.model, self.instance, self.ip, self.username,
-                                                         self.timestamp)
 
     def __str__(self):
         return '{0} {1} {2} - by {3} at {4}, {5}'.format(self.action, self.model, self.instance, self.ip, self.username,

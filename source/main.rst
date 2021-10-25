@@ -11,6 +11,7 @@ Subpackages
    main.management
    main.migrations
    main.templatetags
+   main.tests
 
 Submodules
 ----------
@@ -199,26 +200,18 @@ main.serializers module
    :undoc-members:
    :show-inheritance:
 
+main.signals module
+-------------------
+
+.. automodule:: main.signals
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 main.small\_forms\_views module
 -------------------------------
 
 .. automodule:: main.small_forms_views
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-main.survey\_models module
---------------------------
-
-.. automodule:: main.survey_models
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-main.tests module
------------------
-
-.. automodule:: main.tests
    :members:
    :undoc-members:
    :show-inheritance:

@@ -12,6 +12,30 @@ appMR.tests.test\_background\_tasks module
    :undoc-members:
    :show-inheritance:
 
+appMR.tests.test\_forms module
+------------------------------
+
+.. automodule:: appMR.tests.test_forms
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+appMR.tests.test\_models module
+-------------------------------
+
+.. automodule:: appMR.tests.test_models
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+appMR.tests.test\_views module
+------------------------------
+
+.. automodule:: appMR.tests.test_views
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

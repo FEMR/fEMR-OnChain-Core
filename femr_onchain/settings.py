@@ -60,6 +60,7 @@ NOSE_ARGS = [
     '--with-coverage',
     '--cover-package=main,appMR,clinic_messages',
     '--cover-html',
+    '--cover-inclusive',
 ]
 
 AUTHENTICATION_BACKENDS = [

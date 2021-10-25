@@ -17,13 +17,13 @@ function all() {
   pip3 install -r requirements.txt
   python3 -m safety check -r requirements.txt
   python3 manage.py check
-  # documents
+  documents
   migrate
   static
   run_tests
-  pushd ./main/static/main/js
+  pushd ./main/static/main/js || exit
   npm install
-  popd
+  popd || exit
   static
 }
 
@@ -35,14 +35,15 @@ function clean() {
   rm -rf main/migrations/*
   files=$(find . -name "__pycache__")
   files2=$(find . -iregex ".*\.\(pyc\)")
-  rm -rf ${files2}
-  rm -rf ${files}
+  rm -rf "${files2}"
+  rm -rf "${files}"
 }
 
 function migrate() {
   pwd
   python3 manage.py makemigrations main
   python3 manage.py makemigrations appMR
+  python3 manage.py makemigrations clinic_messages
   python3 manage.py makemigrations
   python3 manage.py migrate
 }
@@ -50,6 +51,7 @@ function migrate() {
 function makemigrations() {
   python3 manage.py makemigrations main
   python3 manage.py makemigrations appMR
+  python3 manage.py makemigrations clinic_messages
   python3 manage.py makemigrations
 }
 
@@ -102,7 +104,7 @@ doc)
   ;;
 
 startapp)
-  python3 manage.py startapp $2
+  python3 manage.py startapp "$2"
   ;;
 
 clean)
