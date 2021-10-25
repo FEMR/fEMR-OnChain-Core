@@ -46,18 +46,12 @@ class Race(models.Model):
     def __str__(self) -> str:
         return str(self.name)
 
-    def __unicode__(self):
-        return self.name
-
 
 class State(models.Model):
     name = CharField(max_length=100)
 
     def __str__(self) -> str:
         return str(self.name)
-
-    def __unicode__(self):
-        return self.name
 
 
 def get_nondisclosed_race():
@@ -69,9 +63,6 @@ class Ethnicity(models.Model):
 
     def __str__(self) -> str:
         return str(self.name)
-
-    def __unicode__(self):
-        return self.name
 
 
 def get_nondisclosed_ethnicity():
@@ -115,9 +106,6 @@ class Organization(models.Model):
         'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, related_name='organization_main_contact')
     admins = models.ManyToManyField('fEMRUser', related_name='organization_admins')
 
-    def __unicode__(self):
-        return self.name
-
     def __str__(self):
         return self.name
 
@@ -133,9 +121,6 @@ class Instance(models.Model):
         'fEMRUser', on_delete=models.CASCADE, null=True, blank=True, related_name='instance_main_contact')
     admins = models.ManyToManyField('fEMRUser', related_name='instance_admins')
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=get_test_org)
-
-    def __unicode__(self):
-        return self.name
 
     def __str__(self):
         return self.name
@@ -165,9 +150,6 @@ class Campaign(models.Model):
     admins = models.ManyToManyField('fEMRUser', related_name='campaign_admins')
     race_options = models.ManyToManyField(Race)
     ethnicity_options = models.ManyToManyField(Ethnicity)
-
-    def __unicode__(self):
-        return self.name
 
     def __str__(self):
         return self.name

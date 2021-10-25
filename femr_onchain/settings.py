@@ -51,6 +51,15 @@ INSTALLED_APPS = [
     'background_task',
     'drf_yasg',
     'django_user_agents',
+    'django_nose',
+]
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=main,appMR,clinic_messages',
+    '--cover-html',
 ]
 
 AUTHENTICATION_BACKENDS = [

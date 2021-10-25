@@ -28,3 +28,5 @@ Vagrantfile~
 csv/
 build/
 source/_autosummary
+.coverage
+cover/
