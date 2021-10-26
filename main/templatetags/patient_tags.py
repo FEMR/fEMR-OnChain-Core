@@ -58,8 +58,6 @@ def get_chief_complaint(encounter):
 
 @register.filter('imperial_primary_height')
 def imperial_primary_height(m):
-    print(m.body_height_primary)
-    print(m.body_height_secondary)
     return math.floor(((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12)
 
 

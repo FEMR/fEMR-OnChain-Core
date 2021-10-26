@@ -119,8 +119,6 @@ def csv_import_view(request):
             form = CSVUploadForm(request.POST, request.FILES)
             result = ""
             if form.is_valid():
-                print("Form is valid.")
-
                 upload = form.save()
                 upload.save()
 
@@ -132,7 +130,6 @@ def csv_import_view(request):
                 upload.delete()
                 return render(request, 'formulary/csv_import.html', {'result': 'Formulary uploaded successfully.'})
             else:
-                print("Form not valid.")
                 return render(request, 'formulary/csv_handler.html', {'form': form, 'result': result})
         else:
             return redirect('main:permission_denied')

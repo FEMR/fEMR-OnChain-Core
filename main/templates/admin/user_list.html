@@ -13,6 +13,7 @@
                 <th scope="col">Last Name</th>
                 <th scope="col"></th>
                 <th scope="col"></th>
+                <th scope="col"></th>
             </tr>
             </thead>
             <tbody>
@@ -36,6 +37,7 @@
                 <td><a href="{% url 'main:unlock_user_view' id=o.id %}">Unlock Account</a></td>
                 {% endif %}
                 {% endif %}
+                <td><a href="{% url 'main:reset_lockouts' username=o.username %}">Reset Login Attempts</a></td>
             </tr>
             {% endfor %}
             </tbody>

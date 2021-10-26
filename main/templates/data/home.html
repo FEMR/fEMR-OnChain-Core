@@ -1,10 +1,18 @@
 {% extends "data/base.html" %}
 {% load campaign_tags %}
+{% load user_tags %}
 {% block content %}
 {% if motd %}
 <div class="container justify-content-center">
     <div>
         <u>Message from fEMR OnChain Admin: {{ motd }}</u>
+    </div>
+</div>
+{% endif %}
+{% if not request.user|has_any_group %}
+<div class="container justify-content-center">
+    <div>
+        <u>You are not currently assigned to a group. Please have your administrator assign you.</u>
     </div>
 </div>
 {% endif %}

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'django_user_agents',
     'django_nose',
+    'silk',
 ]
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -85,6 +86,9 @@ MIDDLEWARE = [
     'main.middleware.HandleErrorMiddleware',
     'django_user_agents.middleware.UserAgentMiddleware',
 ]
+
+if os.environ.get('SILK_OFF', None) is None:
+    MIDDLEWARE += ['silk.middleware.SilkyMiddleware']
 
 ROOT_URLCONF = 'femr_onchain.urls'
 
@@ -246,6 +250,7 @@ AXES_RESET_ON_SUCCESS = True
 AXES_ENABLE_ADMIN_SITE = True
 AXES_COOLOFF_TIME = timedelta(minutes=15)
 AXES_ONLY_USER_FAILURES = True
+AXES_LOCKOUT_TEMPLATE = 'main/auth/lockout.html'
 
 SESSION_COOKIE_AGE = 900
 SESSION_SECURITY_EXPIRE_AFTER = 900
@@ -277,3 +282,12 @@ if EC2_PRIVATE_IP:
     ALLOWED_HOSTS.append(EC2_PRIVATE_IP)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SILKY_PYTHON_PROFILER = True
+SILKY_AUTHENTICATION = True
+SILKY_PERMISSIONS = lambda user: user.is_superuser
+SILKY_MAX_RESPONSE_BODY_SIZE = 1024
+SILKY_META = True
+SILKY_INTERCEPT_PERCENT = 50
+SILKY_MAX_RECORDED_REQUESTS = 10**4
+SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 10

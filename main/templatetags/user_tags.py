@@ -52,3 +52,8 @@ def campaign_active(campaign_name: str) -> bool:
     :return:
     """
     return Campaign.objects.get(name=campaign_name).active
+
+
+@register.filter('has_any_group')
+def has_any_group(user: fEMRUser) -> bool:
+    return user.groups.all()

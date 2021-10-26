@@ -17,10 +17,10 @@ function all() {
   pip3 install -r requirements.txt
   python3 -m safety check -r requirements.txt
   python3 manage.py check
-  documents
   migrate
   static
   run_tests
+  documents
   pushd ./main/static/main/js || exit
   npm install
   popd || exit

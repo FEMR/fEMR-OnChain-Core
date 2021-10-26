@@ -52,7 +52,6 @@ def patient_form_view(request):
                 else:
                     return render(request, "data/patient_not_submitted.html")
             else:
-                print(form.errors)
                 if 'social_security_number' in form.errors and 'Must be 4 or 9 digits' not in \
                         form.errors['social_security_number'][0]:
                     ssn_error = True
@@ -101,7 +100,6 @@ def patient_encounter_form_view(request, id=None):
         diagnosis_form = DiagnosisForm()
         if request.method == "POST":
             encounter_open = False
-            print("Post")
             units = Campaign.objects.get(
                 name=request.session['campaign']).units
             form = PatientEncounterForm(
@@ -109,7 +107,6 @@ def patient_encounter_form_view(request, id=None):
             vitals_form = VitalsForm(
                 request.POST, unit=units, prefix="vitals_form")
             if form.is_valid() and vitals_form.is_valid():
-                print("Valid")
                 encounter = form.save(commit=False)
                 vitals = vitals_form.save(commit=False)
                 encounter.patient = p
@@ -122,7 +119,6 @@ def patient_encounter_form_view(request, id=None):
                 if os.environ.get('QLDB_ENABLED') == "TRUE":
                     from .serializers import PatientEncounterSerializer
                     encounter_data = PatientEncounterSerializer(encounter).data
-                    print(encounter_data)
                     create_new_patient_encounter(encounter_data)
                 DatabaseChangeLog.objects.create(action="Create", model="PatientEncounter", instance=str(encounter),
                                                  ip=get_client_ip(request), username=request.user.username,
@@ -137,11 +133,7 @@ def patient_encounter_form_view(request, id=None):
                     return redirect('main:referral_form_view', **kwargs)
                 else:
                     return render(request, 'data/encounter_submitted.html')
-            else:
-                print(form.errors)
-                print(vitals_form.errors)
         else:
-            print("Get")
             encounter_open = len(PatientEncounter.objects.filter(patient=p).filter(active=True)) > 0
             units = Campaign.objects.get(
                 name=request.session['campaign']).units
@@ -182,12 +174,10 @@ def patient_encounter_form_view(request, id=None):
                         'body_weight': round(encounter.body_weight, 2) if encounter.body_weight is not None else 0,
                     }
             except IndexError:
-                print("IndexError")
                 form.initial = {
                     'timestamp': datetime.now().date(),
                 }
         suffix = p.get_suffix_display() if p.suffix is not None else ""
-        print(encounter_open)
         return render(request, 'forms/encounter.html',
                       {'form': form, 'vitals_form': vitals_form, 'diagnosis_form': diagnosis_form,
                        'treatment_form': treatment_form,

@@ -46,13 +46,11 @@ class CampaignActivityCheckMiddleware:
         if request.user.is_authenticated and not is_admin:
             campaign_name = request.session.get('campaign', None)
             if campaign_name is None:
-                print("Campaign is NONE for {}".format(request.user.username))
                 try:
                     request.session['campaign'] = request.user.campaigns.filter(active=True)[
                         0].name
                     return self.get_response(request)
                 except Exception as e:
-                    print(e)
                     logout(request)
                     form = LoginForm()
                     return render(request, 'auth/login.html',
@@ -63,7 +61,6 @@ class CampaignActivityCheckMiddleware:
                                   })
             campaign = Campaign.objects.get(name=campaign_name)
             if not campaign.active:
-                print("Campaign is inactive for {}".format(request.user.username))
                 del request.session['campaign']
                 logout(request)
                 form = LoginForm()

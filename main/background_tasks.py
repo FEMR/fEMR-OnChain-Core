@@ -4,15 +4,16 @@ Non-view functions used to carry out background processes.
 from datetime import timedelta
 
 from django.utils import timezone
+from silk.profiling.profiler import silk_profile
 
 from main.models import Campaign, Patient, PatientEncounter, UserSession
 
 
+@silk_profile("run-encounter-close")
 def run_encounter_close():
     """
     When triggered, this function will search for expired PatientEncounter objects and set them as inactive.
     """
-    print("Checking for encounter closure.")
     campaigns = Campaign.objects.all()
     now = timezone.now()
 
@@ -24,11 +25,11 @@ def run_encounter_close():
             encounters = PatientEncounter.objects.filter(patient=p)
             for e in encounters:
                 if e.timestamp < d:
-                    print("Set {0} inactive.".format(e))
                     e.active = False
                     e.save_no_timestamp()
 
 
+@silk_profile("reset_sessions")
 def reset_sessions() -> None:
     """
     Empty out sessions older than 1 minute.
@@ -41,11 +42,9 @@ def reset_sessions() -> None:
             x.delete()
 
 
+@silk_profile("check_browser")
 def check_browser(request) -> bool:
-    print(request.user_agent.browser.family)
     if request.user_agent.browser.family not in ["Chrome", "Firefox", "Firefox Mobile", "Chrome Mobile iOS"]:
-        print("Blocking browser.")
         return False
     else:
-        print("Allowing browser.")
         return True

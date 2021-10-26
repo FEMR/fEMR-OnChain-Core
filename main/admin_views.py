@@ -590,20 +590,16 @@ def message_of_the_day_view(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(
                 Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
-            print("Loading form.")
             m = MessageOfTheDay.load()
             form = MOTDForm()
             if request.method == "GET":
-                print("GET")
                 form = MOTDForm(instance=m)
                 form.initial['text'] = m.text
                 form.initial['start_date'] = m.start_date
                 form.initial['end_date'] = m.end_date
             elif request.method == "POST":
-                print("Post fires.")
                 form = MOTDForm(request.POST, instance=m)
                 if form.is_valid():
-                    print("Form is valid.")
                     m.text = request.POST['text']
                     m.start_date = request.POST['start_date']
                     m.end_date = request.POST['end_date']
@@ -623,10 +619,6 @@ def message_of_the_day_view(request):
                                     m.text),
                                 os.environ.get('DEFAULT_FROM_EMAIL'),
                                 [u.email])
-                else:
-                    print(form.is_valid())
-                    print(form.errors)
-            print(form.initial)
             return render(request, 'admin/motd.html', {'form': form, 'page_name': "MotD"})
         else:
             return redirect('main:permission_denied')

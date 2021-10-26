@@ -258,10 +258,8 @@ def cal_key(fk):
     result = None
     while result is None:
         if present_keys:
-            print("Adding.")
             result = max(present_keys) + 1
         else:
-            print("No key.")
             result = 1
     return result
 

@@ -8,14 +8,19 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import MultipleObjectsReturned
 from django.db import IntegrityError, DataError
+from django.db.models.query_utils import Q
 from django.shortcuts import redirect, render
 from django.utils import timezone
+from silk.profiling.profiler import silk_profile
+from axes.utils import reset
 
 from main.background_tasks import reset_sessions, run_encounter_close, check_browser
+from main.femr_admin_views import get_client_ip
 from main.forms import RegisterForm, LoginForm
-from main.models import UserSession, fEMRUser
+from main.models import AuditEntry, UserSession, fEMRUser
 
 
+@silk_profile('registration')
 def register(request):
     """
     Allows new user registration.
@@ -58,6 +63,7 @@ def register(request):
     return render(request, "auth/register.html", {'form': form, 'error': error})
 
 
+@silk_profile('thank-you-for-registering')
 def thank_you_for_registering(request):
     """
     Registration success response.
@@ -68,6 +74,7 @@ def thank_you_for_registering(request):
     return render(request, 'auth/thank_you_for_registering.html')
 
 
+@silk_profile('all_locked')
 def all_locked(request):
     """
     Response for cases where a page requires an authenticated user with elevated privileges.
@@ -78,6 +85,7 @@ def all_locked(request):
     return render(request, 'auth/all_locked.html')
 
 
+@silk_profile('not-logged-in')
 def not_logged_in(request):
     """
     Response for cases where a page requires an authenticated user with elevated privileges.
@@ -88,6 +96,7 @@ def not_logged_in(request):
     return render(request, 'auth/not_logged_in.html')
 
 
+@silk_profile('please-register')
 def please_register(request):
     """
     Response for cases where a page requires any general authenticated user.
@@ -98,6 +107,7 @@ def please_register(request):
     return render(request, 'auth/please_register.html')
 
 
+@silk_profile('permission-denied')
 def permission_denied(request):
     """
     Response on pages that require higher privileges than the requesting user holds.
@@ -108,6 +118,7 @@ def permission_denied(request):
     return render(request, 'auth/permission_denied.html')
 
 
+@silk_profile('login_view')
 def login_view(request):
     """
     Handles authenticating existing users.
@@ -166,6 +177,10 @@ def login_view(request):
                 else:
                     return redirect('required_change_password')
             else:
+                ip = get_client_ip(request)
+                AuditEntry.objects.create(action='user_logged_in_failed',
+                                          ip=ip,
+                                          username=request.POST['username'])
                 if 'username' in request.COOKIES:
                     form = LoginForm(
                         initial={'username': request.COOKIES['username']})
@@ -192,6 +207,7 @@ def login_view(request):
         return render(request, 'auth/login.html', {'form': form})
 
 
+@silk_profile('logout-view')
 def logout_view(request):
     """
     Handles logout.
@@ -211,6 +227,7 @@ def logout_view(request):
     return response
 
 
+@silk_profile('change-password')
 def change_password(request):
     """
     Handle requests to change passwords for the AUTH_USER model.
@@ -241,6 +258,7 @@ def change_password(request):
         return redirect('main:not_logged_in')
 
 
+@silk_profile("required-change-password")
 def required_change_password(request):
     """
     Handle requests to change passwords for the AUTH_USER model.
@@ -266,5 +284,16 @@ def required_change_password(request):
                       {'user': request.user,
                        'form': form,
                        'error_message': error})
+    else:
+        return redirect('main:not_logged_in')
+
+
+def reset_lockouts(request, username=None):
+    if request.user.is_authenticated:
+        if request.user.groups.filter(
+                Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
+            if username is not None:
+                reset(username=username)
+        return redirect(request.META.get('HTTP_REFERER', '/'))
     else:
         return redirect('main:not_logged_in')

@@ -29,7 +29,6 @@ def patient_edit_form_view(request, id=None):
             return redirect('main:home')
         error = ""
         m = get_object_or_404(Patient, pk=id)
-        print(m.campaign_key)
         campaign_key = m.campaign_key
         encounters = PatientEncounter.objects.filter(patient=m)
         if request.method == 'POST':
@@ -37,12 +36,10 @@ def patient_edit_form_view(request, id=None):
                                instance=m)
             if form.is_valid():
                 t = form.save()
-                print(m.campaign_key)
                 t.campaign_key = campaign_key
                 t.campaign.add(Campaign.objects.get(
                     name=request.session['campaign']))
                 t.save()
-                print(t.campaign_key)
                 DatabaseChangeLog.objects.create(action="Edit", model="Patient", instance=str(t),
                                                  ip=get_client_ip(request), username=request.user.username,
                                                  campaign=Campaign.objects.get(name=request.session['campaign']))
@@ -84,11 +81,9 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         aux_form = AuxiliaryPatientEncounterForm()
         vitals_form = VitalsForm(unit=units)
         if request.method == 'POST':
-            print("POST received.")
             form = PatientEncounterForm(request.POST or None,
                                         instance=m, unit=units)
             if form.is_valid():
-                print("Form is valid.")
                 encounter = form.save(commit=False)
                 form.save_m2m()
                 encounter.patient = p
@@ -105,13 +100,10 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 if 'submit_encounter' in request.POST:
                     return render(request, 'data/encounter_submitted.html')
                 elif 'submit_refer' in request.POST:
-                    print("Submit Refer")
                     kwargs = {"id": patient_id}
                     return redirect('main:referral_form_view', **kwargs)
                 else:
                     return render(request, 'data/encounter_submitted.html')
-            else:
-                print(form.errors)
         else:
             DatabaseChangeLog.objects.create(action="View", model="Patient", instance=str(m),
                                              ip=get_client_ip(request), username=request.user.username,
@@ -123,12 +115,12 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     try:
                         field.widget.attrs['readonly'] = True
                     except Exception as e:
-                        print(e)
+                        pass
                 for field in vitals_form:
                     try:
                         field.widget.attrs['readonly'] = True
                     except Exception as e:
-                        print(e)
+                        pass
             if units == 'i':
                 form.initial = {
                     'body_mass_index': m.body_mass_index,
@@ -390,7 +382,6 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
         else:
             diagnosis_form = PatientDiagnosisForm()
         if request.method == 'POST':
-            print(request.POST)
             aux_form = AuxiliaryPatientEncounterForm(request.POST)
             if aux_form.is_valid():
                 m.procedure = request.POST['procedure']
@@ -466,7 +457,6 @@ def history_view(request, patient_id=None, encounter_id=None):
         t = Treatment.objects.filter(encounter=m)
         aux_form = HistoryPatientEncounterForm(instance=m)
         if request.method == 'POST':
-            print(request.POST)
             aux_form = HistoryPatientEncounterForm(request.POST)
             if aux_form.is_valid():
                 m.medical_history = request.POST['medical_history']
@@ -597,7 +587,6 @@ def upload_photo_view(request, patient_id=None, encounter_id=None):
         t = Treatment.objects.filter(encounter=m)
         aux_form = PhotoForm()
         if request.method == 'POST':
-            print(request.POST)
             aux_form = PhotoForm(request.POST, request.FILES)
             if aux_form.is_valid():
                 ph = aux_form.save()
@@ -648,7 +637,6 @@ def edit_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
             if aux_form.is_valid():
                 ph = aux_form.save()
                 try:
-                    print(str(ph.photo.url))
                     ph.save()
                 except ValueError:
                     ph.delete()

@@ -107,7 +107,7 @@ def forgot_username(request):
                 [user.email]
             )
         except ObjectDoesNotExist:
-            print("Email not sending - {}.".format(request.POST['email']))
+            pass
         return render(request, 'data/username_sent.html')
     else:
         form = ForgotUsernameForm()

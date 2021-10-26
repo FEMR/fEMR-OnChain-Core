@@ -28,7 +28,7 @@ from .api_views import UserViewSet, GroupViewSet, PatientViewSet, PatientEncount
     InventoryViewSet, InventoryEntryViewSet, ManufacturerViewSet, InventoryFormViewSet, InventoryCategoryViewSet, \
     TreatmentViewSet, PatientDiagnosisViewSet, VitalsViewSet, HistoryOfPresentIllnessViewSet, PhotoViewSet, TestViewSet, \
     MedicationViewSet, DiagnosisViewSet, AdministrationScheduleViewSet, ChiefComplaintViewSet, OrganizationViewSet
-from .auth_views import all_locked, not_logged_in, login_view, logout_view, permission_denied
+from .auth_views import all_locked, not_logged_in, login_view, logout_view, permission_denied, reset_lockouts
 from .autocomplete_views import DiagnosisAutocomplete, EthnicityAutocomplete, MedicationAutocomplete, \
     ChiefComplaintAutocomplete, AdministrationScheduleAutocomplete, RaceAutocomplete, StateAutocomplete, \
     TestAutocomplete
@@ -186,6 +186,7 @@ urlpatterns = [
          lock_campaign_view, name='lock_campaign_view'),
     path(r'unlock_campaign_view/<int:id>',
          unlock_campaign_view, name='unlock_campaign_view'),
+    path(r'reset_lockouts/<str:username>', reset_lockouts, name='reset_lockouts'),
 
     # Audit Log Management
     url(r'^get_audit_logs_view/$', get_audit_logs_view, name='get_audit_logs_view'),

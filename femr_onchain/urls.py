@@ -19,6 +19,7 @@ urlpatterns = [
     path('', include('main.urls', namespace='main')),
     path('appMR/', include('appMR.urls', namespace='appMR')),
     path('messages/', include('clinic_messages.urls', namespace='clinic_messages')),
+    path('silk/', include('silk.urls', namespace='silk')),
 
     url(r'session_security/', include('session_security.urls')),
 
