@@ -77,7 +77,7 @@
             {% endif %}
             <!--suppress HtmlUnknownTag -->
             <div class="dropdown-divider"></div>
-            {% if request.user|has_group:"Admin" %}
+            {% if request.user|has_admin_group %}
             <li class="nav-item dropdown">
                 <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
                    href="#" id="navbarDropdownOne" role="button">

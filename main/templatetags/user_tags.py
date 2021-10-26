@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 # Core Django imports
 from django import template
+from django.db.models.query_utils import Q
 
 from main.models import Campaign, fEMRUser
 
@@ -57,3 +58,8 @@ def campaign_active(campaign_name: str) -> bool:
 @register.filter('has_any_group')
 def has_any_group(user: fEMRUser) -> bool:
     return user.groups.all()
+
+
+@register.filter('has_admin_group')
+def has_admin_group(user: fEMRUser) -> bool:
+    return user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists()
