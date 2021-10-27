@@ -3,7 +3,7 @@ Django==3.2.8
 amazon.ion==0.5.0
 asgiref==3.4.1
 astroid==2.8.3
-autopep8==1.5.7
+autopep8==1.6.0
 boto3==1.18.65
 botocore==1.21.65
 certifi==2021.10.8
@@ -42,7 +42,7 @@ psycopg2-binary==2.9.1
 pycodestyle==2.8.0
 # pylibmc==1.6.1
 pylint==2.11.1
-pyparsing==3.0.1
+pyparsing==3.0.2
 pyqldb==3.0.0
 python-dateutil==2.8.2
 python-stdnum==1.17
