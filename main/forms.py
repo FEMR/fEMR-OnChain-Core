@@ -664,6 +664,14 @@ class PhotoForm(ModelForm):
     class Meta:
         model = Photo
         fields = '__all__'
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        photo = cleaned_data.get('photo', None)
+        imaging_link = cleaned_data.get('imaging_link', None)
+
+        if photo is None and imaging_link is None:
+            raise ValidationError("Either photo or imaging link must be filled out.")
 
 
 class HistoryOfPresentIllnessForm(ModelForm):
