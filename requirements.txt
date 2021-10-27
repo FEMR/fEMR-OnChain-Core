@@ -30,7 +30,7 @@ django-storages==1.12.2
 django-timezone-utils==0.13
 django-user-agents==0.4.0
 djangorestframework==3.12.4
-docutils==0.17.1
+docutils==0.18
 dparse==0.5.1
 drf-yasg==1.20.0
 gprof2dot==2021.2.21
@@ -53,7 +53,7 @@ psycopg2-binary==2.9.1
 pycodestyle==2.8.0
 Pygments==2.10.0
 pylint==2.11.1
-pyparsing==3.0.1
+pyparsing==3.0.2
 pyqldb==3.0.0
 python-dateutil==2.8.2
 python-stdnum==1.17
