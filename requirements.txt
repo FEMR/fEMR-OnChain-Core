@@ -28,7 +28,7 @@ django-storages==1.12.2
 django-timezone-utils==0.13
 django-user-agents==0.4.0
 djangorestframework==3.12.4
-docutils==0.17.1
+docutils==0.18
 dparse==0.5.1
 idna==3.3
 drf-yasg==1.20.0
@@ -42,7 +42,7 @@ psycopg2-binary==2.9.1
 pycodestyle==2.8.0
 # pylibmc==1.6.1
 pylint==2.11.1
-pyparsing==2.4.7
+pyparsing==3.0.2
 pyqldb==3.0.0
 python-dateutil==2.8.2
 python-stdnum==1.17
@@ -52,7 +52,7 @@ pytz==2021.3
 requests==2.26.0
 s3transfer==0.5.0
 safety==1.10.3
-setuptools==58.2.0
+setuptools==58.3.0
 six==1.16.0
 six==1.16.0
 sqlparse==0.4.2
