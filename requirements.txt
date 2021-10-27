@@ -1,7 +1,7 @@
 amazon.ion==0.5.0
 asgiref==3.4.1
 astroid==2.8.3
-autopep8==1.5.7
+autopep8==1.6.0
 boto3==1.18.65
 botocore==1.21.65
 certifi==2021.10.8
@@ -53,7 +53,7 @@ psycopg2-binary==2.9.1
 pycodestyle==2.8.0
 Pygments==2.10.0
 pylint==2.11.1
-pyparsing==2.4.7
+pyparsing==3.0.1
 pyqldb==3.0.0
 python-dateutil==2.8.2
 python-stdnum==1.17
@@ -65,6 +65,7 @@ ruamel.yaml.clib==0.2.6
 s3transfer==0.5.0
 safety==1.10.3
 simplejson==3.17.5
+setuptools==58.3.0
 six==1.16.0
 sqlparse==0.4.2
 toml==0.10.2
