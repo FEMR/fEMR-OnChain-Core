@@ -18,14 +18,18 @@ def user_logged_in_callback(sender, request, user, **kwargs):
         campaign = Campaign.objects.get(name=name)
     else:
         campaign = None
-    AuditEntry.objects.create(action='user_logged_in', ip=ip, username=user.username, campaign=campaign)
+    AuditEntry.objects.create(
+        action="user_logged_in", ip=ip, username=user.username, campaign=campaign
+    )
 
 
 @receiver(user_logged_out)
 def user_logged_out_callback(sender, request, user, **kwargs):
     ip = get_client_ip(request)
-    campaign = Campaign.objects.get(name=request.session['campaign'])
-    AuditEntry.objects.create(action='user_logged_out', ip=ip, username=user.username, campaign=campaign)
+    campaign = Campaign.objects.get(name=request.session["campaign"])
+    AuditEntry.objects.create(
+        action="user_logged_out", ip=ip, username=user.username, campaign=campaign
+    )
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

@@ -7,41 +7,55 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('main', '0001_initial'),
+        ("main", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='organization',
-            name='address1',
-            field=models.CharField(blank=True, max_length=1024, null=True, verbose_name='Address line 1'),
+            model_name="organization",
+            name="address1",
+            field=models.CharField(
+                blank=True, max_length=1024, null=True, verbose_name="Address line 1"
+            ),
         ),
         migrations.AddField(
-            model_name='organization',
-            name='address2',
-            field=models.CharField(blank=True, max_length=1024, null=True, verbose_name='Address line 2'),
+            model_name="organization",
+            name="address2",
+            field=models.CharField(
+                blank=True, max_length=1024, null=True, verbose_name="Address line 2"
+            ),
         ),
         migrations.AddField(
-            model_name='organization',
-            name='city',
-            field=models.CharField(blank=True, max_length=1024, null=True, verbose_name='City'),
+            model_name="organization",
+            name="city",
+            field=models.CharField(
+                blank=True, max_length=1024, null=True, verbose_name="City"
+            ),
         ),
         migrations.AddField(
-            model_name='organization',
-            name='contract_start_date',
+            model_name="organization",
+            name="contract_start_date",
             field=models.DateField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='organization',
-            name='state',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
-                                    to='main.state'),
+            model_name="organization",
+            name="state",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="main.state",
+            ),
         ),
         migrations.AddField(
-            model_name='organization',
-            name='zip_code',
-            field=models.CharField(blank=True, max_length=12, null=True,
-                                   validators=[django.core.validators.MinLengthValidator(5)],
-                                   verbose_name='ZIP / Postal code'),
+            model_name="organization",
+            name="zip_code",
+            field=models.CharField(
+                blank=True,
+                max_length=12,
+                null=True,
+                validators=[django.core.validators.MinLengthValidator(5)],
+                verbose_name="ZIP / Postal code",
+            ),
         ),
     ]

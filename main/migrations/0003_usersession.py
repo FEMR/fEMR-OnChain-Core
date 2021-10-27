@@ -7,17 +7,37 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('sessions', '0001_initial'),
-        ('main', '0002_auto_20211007_1254'),
+        ("sessions", "0001_initial"),
+        ("main", "0002_auto_20211007_1254"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='UserSession',
+            name="UserSession",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('session', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='sessions.session')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "session",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="sessions.session",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

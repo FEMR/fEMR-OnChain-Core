@@ -25,7 +25,7 @@ class Command(BaseCommand):
         """
         if not Instance.objects.filter(name="Test").exists():
             instance = Instance.objects.create(name="Test")
-            if os.environ.get('QLDB_ENABLED') == "TRUE":
+            if os.environ.get("QLDB_ENABLED") == "TRUE":
                 create_tables()
         else:
             instance = Instance.objects.get(name="Test")
@@ -34,26 +34,38 @@ class Command(BaseCommand):
         else:
             campaign = Campaign.objects.get(name="Test")
         if not fEMRUser.objects.filter(username="admin").exists():
-            superuser = fEMRUser.objects.create_superuser("admin", "admin@admin.com", "OnChain-Admin")
+            superuser = fEMRUser.objects.create_superuser(
+                "admin", "admin@admin.com", "OnChain-Admin"
+            )
             superuser.first_name = "Admin"
             superuser.last_name = "User"
             superuser.campaigns.add(campaign)
-            superuser.user_permissions.add(Permission.objects.get(name='Can add state'))
-            superuser.user_permissions.add(Permission.objects.get(name='Can add diagnosis'))
-            superuser.user_permissions.add(Permission.objects.get(name='Can add chief complaint'))
-            superuser.user_permissions.add(Permission.objects.get(name='Can add medication'))
+            superuser.user_permissions.add(Permission.objects.get(name="Can add state"))
+            superuser.user_permissions.add(
+                Permission.objects.get(name="Can add diagnosis")
+            )
+            superuser.user_permissions.add(
+                Permission.objects.get(name="Can add chief complaint")
+            )
+            superuser.user_permissions.add(
+                Permission.objects.get(name="Can add medication")
+            )
             superuser.save()
-            Group.objects.get(name='Admin').user_set.add(superuser)
-            Group.objects.get(name='fEMR Admin').user_set.add(superuser)
-            Group.objects.get(name='Organization Admin').user_set.add(superuser)
-            Group.objects.get(name='Clinician').user_set.add(superuser)
-            Group.objects.get(name='Operation Admin').user_set.add(superuser)
-            Group.objects.get(name='Campaign Manager').user_set.add(superuser)
+            Group.objects.get(name="Admin").user_set.add(superuser)
+            Group.objects.get(name="fEMR Admin").user_set.add(superuser)
+            Group.objects.get(name="Organization Admin").user_set.add(superuser)
+            Group.objects.get(name="Clinician").user_set.add(superuser)
+            Group.objects.get(name="Operation Admin").user_set.add(superuser)
+            Group.objects.get(name="Campaign Manager").user_set.add(superuser)
             instance.main_contact = superuser
             instance.save()
         else:
             for x in fEMRUser.objects.all():
-                x.user_permissions.add(Permission.objects.get(name='Can add state'))
-                x.user_permissions.add(Permission.objects.get(name='Can add diagnosis'))
-                x.user_permissions.add(Permission.objects.get(name='Can add chief complaint'))
-                x.user_permissions.add(Permission.objects.get(name='Can add medication'))
+                x.user_permissions.add(Permission.objects.get(name="Can add state"))
+                x.user_permissions.add(Permission.objects.get(name="Can add diagnosis"))
+                x.user_permissions.add(
+                    Permission.objects.get(name="Can add chief complaint")
+                )
+                x.user_permissions.add(
+                    Permission.objects.get(name="Can add medication")
+                )

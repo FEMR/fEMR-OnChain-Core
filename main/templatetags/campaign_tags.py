@@ -8,7 +8,7 @@ from main.models import Campaign
 register = template.Library()
 
 
-@register.filter('is_selected')
+@register.filter("is_selected")
 def is_selected(campaign: Campaign, selected: str) -> bool:
     """
     Given a campaign and a campaign name, check if they match.

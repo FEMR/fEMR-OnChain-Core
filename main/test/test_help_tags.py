@@ -3,7 +3,7 @@ from main.templatetags.help_tags import is_help_off
 
 def test_is_help_off_true():
     session = {
-        'tags_off': True,
+        "tags_off": True,
     }
     assert is_help_off(session)
 

@@ -5,31 +5,34 @@ from main.models import Campaign, Instance
 
 def organization_admin_home_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name='Organization Admin').exists():
-            org = Campaign.objects.get(name=request.session['campaign']).instance.organization
+        if request.user.groups.filter(name="Organization Admin").exists():
+            org = Campaign.objects.get(
+                name=request.session["campaign"]
+            ).instance.organization
             instances = list()
             campaigns = list()
             try:
-                instances = Instance.objects.filter(
-                    active=True
-                ).filter(
+                instances = Instance.objects.filter(active=True).filter(
                     admins=request.user
                 )
-                campaigns = Campaign.objects.filter(
-                    active=True
-                ).filter(
+                campaigns = Campaign.objects.filter(active=True).filter(
                     admins=request.user
                 )
             except Instance.DoesNotExist:
                 pass
             except Campaign.DoesNotExist:
                 pass
-            return render(request, 'organization_admin/home.html',
-                          {'user': request.user,
-                           'instances': instances,
-                           'campaigns': campaigns,
-                           'page_name': 'Organization: {0}'.format(org.name)})
+            return render(
+                request,
+                "organization_admin/home.html",
+                {
+                    "user": request.user,
+                    "instances": instances,
+                    "campaigns": campaigns,
+                    "page_name": "Organization: {0}".format(org.name),
+                },
+            )
         else:
-            return redirect('main:permission_denied')
+            return redirect("main:permission_denied")
     else:
-        return redirect('main:not_logged_in')
+        return redirect("main:not_logged_in")

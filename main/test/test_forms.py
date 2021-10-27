@@ -4,7 +4,7 @@ from main.forms import ChiefComplaintForm
 
 
 def test_chief_complaint_form():
-    chief_complaint = baker.make('main.ChiefComplaint')
+    chief_complaint = baker.make("main.ChiefComplaint")
     form = ChiefComplaintForm(instance=chief_complaint)
-    assert 'text' in form.fields
-    assert 'active' in form.fields
+    assert "text" in form.fields
+    assert "active" in form.fields

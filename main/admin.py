@@ -4,16 +4,35 @@ Registers main fEMR-OnChain data model types to the backend administrative syste
 from django.contrib import admin
 
 from .forms import PatientEncounterForm, TreatmentForm
-from .models import Ethnicity, MessageOfTheDay, Patient, Contact, PatientDiagnosis, Race, UserSession, fEMRUser, \
-    PatientEncounter, \
-    AuditEntry, UnitsSetting, DatabaseChangeLog, Campaign, Instance, Vitals, \
-    Treatment, Medication, ChiefComplaint, Diagnosis, Photo
+from .models import (
+    Ethnicity,
+    MessageOfTheDay,
+    Patient,
+    Contact,
+    PatientDiagnosis,
+    Race,
+    UserSession,
+    fEMRUser,
+    PatientEncounter,
+    AuditEntry,
+    UnitsSetting,
+    DatabaseChangeLog,
+    Campaign,
+    Instance,
+    Vitals,
+    Treatment,
+    Medication,
+    ChiefComplaint,
+    Diagnosis,
+    Photo,
+)
 
 
 class TreatmentAdmin(admin.ModelAdmin):
     """
     Register a TreatmentForm as accessible in the Admin site.
     """
+
     form = TreatmentForm
 
 
@@ -21,6 +40,7 @@ class PatientEncounterAdmin(admin.ModelAdmin):
     """
     Register a PatientEncounterForm as accessible in the Admin site.
     """
+
     form = PatientEncounterForm
 
 

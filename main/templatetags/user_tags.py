@@ -20,7 +20,7 @@ from main.models import Campaign, fEMRUser
 register = template.Library()
 
 
-@register.filter('has_group')
+@register.filter("has_group")
 def has_group(user: fEMRUser, group_name: str) -> bool:
     """
     Given group_name, return whether user is a member of that group.
@@ -28,11 +28,11 @@ def has_group(user: fEMRUser, group_name: str) -> bool:
     :param group_name:
     :return:
     """
-    groups = user.groups.all().values_list('name', flat=True)
+    groups = user.groups.all().values_list("name", flat=True)
     return True if group_name in groups else False
 
 
-@register.filter('has_campaign')
+@register.filter("has_campaign")
 def has_campaign(user: fEMRUser, campaign_name: str) -> bool:
     """
     Given a campaign name, return whether user is a member of that campaign.
@@ -45,7 +45,7 @@ def has_campaign(user: fEMRUser, campaign_name: str) -> bool:
     return True if campaign in campaign_list else False
 
 
-@register.filter('campaign_active')
+@register.filter("campaign_active")
 def campaign_active(campaign_name: str) -> bool:
     """
     Return whether the given campaign_name refers to an active campaign.
@@ -55,11 +55,15 @@ def campaign_active(campaign_name: str) -> bool:
     return Campaign.objects.get(name=campaign_name).active
 
 
-@register.filter('has_any_group')
+@register.filter("has_any_group")
 def has_any_group(user: fEMRUser) -> bool:
     return user.groups.all()
 
 
-@register.filter('has_admin_group')
+@register.filter("has_admin_group")
 def has_admin_group(user: fEMRUser) -> bool:
-    return user.groups.filter(Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists()
+    return user.groups.filter(
+        Q(name="Campaign Manager")
+        | Q(name="Organization Admin")
+        | Q(name="Operation Admin")
+    ).exists()

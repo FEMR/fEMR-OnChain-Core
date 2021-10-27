@@ -20,7 +20,7 @@ from main.forms import RegisterForm, LoginForm
 from main.models import AuditEntry, UserSession, fEMRUser
 
 
-@silk_profile('registration')
+@silk_profile("registration")
 def register(request):
     """
     Allows new user registration.
@@ -29,27 +29,26 @@ def register(request):
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
-        return redirect('/main')
+        return redirect("/main")
     if request.method == "POST":
         form = RegisterForm(request.POST)
-        error = ''
+        error = ""
         if form.is_valid():
             try:
                 try:
-                    existing_email = User.objects.get(
-                        email=form.cleaned_data['email'])
+                    existing_email = User.objects.get(email=form.cleaned_data["email"])
                 except User.DoesNotExist:
                     existing_email = False
                 if existing_email:
                     raise MultipleObjectsReturned
                 u = User()
-                u.email = form.cleaned_data['email']
-                u.username = form.cleaned_data['username']
-                u.set_password(form.cleaned_data['password'])
-                u.first_name = form.cleaned_data['first']
-                u.last_name = form.cleaned_data['last']
+                u.email = form.cleaned_data["email"]
+                u.username = form.cleaned_data["username"]
+                u.set_password(form.cleaned_data["password"])
+                u.first_name = form.cleaned_data["first"]
+                u.last_name = form.cleaned_data["last"]
                 login(request, u)
-                return redirect('/thanks')
+                return redirect("/thanks")
             except IntegrityError:
                 error = "An account already exists using that username."
             except MultipleObjectsReturned:
@@ -58,12 +57,12 @@ def register(request):
                 error = str(e)
         form = RegisterForm()
     else:
-        error = ''
+        error = ""
         form = RegisterForm()
-    return render(request, "auth/register.html", {'form': form, 'error': error})
+    return render(request, "auth/register.html", {"form": form, "error": error})
 
 
-@silk_profile('thank-you-for-registering')
+@silk_profile("thank-you-for-registering")
 def thank_you_for_registering(request):
     """
     Registration success response.
@@ -71,10 +70,10 @@ def thank_you_for_registering(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    return render(request, 'auth/thank_you_for_registering.html')
+    return render(request, "auth/thank_you_for_registering.html")
 
 
-@silk_profile('all_locked')
+@silk_profile("all_locked")
 def all_locked(request):
     """
     Response for cases where a page requires an authenticated user with elevated privileges.
@@ -82,10 +81,10 @@ def all_locked(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    return render(request, 'auth/all_locked.html')
+    return render(request, "auth/all_locked.html")
 
 
-@silk_profile('not-logged-in')
+@silk_profile("not-logged-in")
 def not_logged_in(request):
     """
     Response for cases where a page requires an authenticated user with elevated privileges.
@@ -93,10 +92,10 @@ def not_logged_in(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    return render(request, 'auth/not_logged_in.html')
+    return render(request, "auth/not_logged_in.html")
 
 
-@silk_profile('please-register')
+@silk_profile("please-register")
 def please_register(request):
     """
     Response for cases where a page requires any general authenticated user.
@@ -104,10 +103,10 @@ def please_register(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    return render(request, 'auth/please_register.html')
+    return render(request, "auth/please_register.html")
 
 
-@silk_profile('permission-denied')
+@silk_profile("permission-denied")
 def permission_denied(request):
     """
     Response on pages that require higher privileges than the requesting user holds.
@@ -115,10 +114,10 @@ def permission_denied(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    return render(request, 'auth/permission_denied.html')
+    return render(request, "auth/permission_denied.html")
 
 
-@silk_profile('login_view')
+@silk_profile("login_view")
 def login_view(request):
     """
     Handles authenticating existing users.
@@ -127,86 +126,90 @@ def login_view(request):
     :return: HTTPResponse.
     """
     if not check_browser(request):
-        return render(request, 'data/stop.html')
+        return render(request, "data/stop.html")
     reset_sessions()
     if request.user.is_authenticated:
-        return redirect('main:home')
-    if request.method == 'POST':
+        return redirect("main:home")
+    if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-            user = authenticate(request=request,
-                                username=request.POST['username'],
-                                password=request.POST['password'])
+            user = authenticate(
+                request=request,
+                username=request.POST["username"],
+                password=request.POST["password"],
+            )
             if user is not None:
                 login(request, user)
                 if UserSession.objects.filter(user=request.user).exists():
                     form = LoginForm()
                     logout(request)
-                    return render(request,
-                                  'auth/login.html',
-                                  {
-                                      'error_message': "This user is logged in elsewhere, or the last session wasn't "
-                                                       "ended correctly. Either log out of your last session, "
-                                                       "or wait for that session to end in one minute.",
-                                      'form': form})
-                is_admin = request.user.groups.filter(
-                    name='fEMR Admin').exists()
-                if len(user.campaigns.all()) == 1 and not user.campaigns.all()[0].active:
+                    return render(
+                        request,
+                        "auth/login.html",
+                        {
+                            "error_message": "This user is logged in elsewhere, or the last session wasn't "
+                            "ended correctly. Either log out of your last session, "
+                            "or wait for that session to end in one minute.",
+                            "form": form,
+                        },
+                    )
+                is_admin = request.user.groups.filter(name="fEMR Admin").exists()
+                if (
+                    len(user.campaigns.all()) == 1
+                    and not user.campaigns.all()[0].active
+                ):
                     if not is_admin:
-                        return redirect('main:all_locked')
+                        return redirect("main:all_locked")
                     else:
-                        request.session['campaign'] = "RECOVERY MODE"
-                        if 'remember_me' in request.POST:
-                            response = redirect('main:home')
-                            response.set_cookie(
-                                'username', request.POST['username'])
+                        request.session["campaign"] = "RECOVERY MODE"
+                        if "remember_me" in request.POST:
+                            response = redirect("main:home")
+                            response.set_cookie("username", request.POST["username"])
                             return response
                         else:
-                            return redirect('main:home')
+                            return redirect("main:home")
                 if (timezone.now() - user.password_reset_last).days >= 90:
-                    return redirect('required_change_password')
+                    return redirect("required_change_password")
                 elif not user.change_password:
-                    if 'remember_me' in request.POST:
-                        response = redirect('main:home')
-                        response.set_cookie(
-                            'username', request.POST['username'])
+                    if "remember_me" in request.POST:
+                        response = redirect("main:home")
+                        response.set_cookie("username", request.POST["username"])
                         return response
                     else:
-                        return redirect('main:home')
+                        return redirect("main:home")
                 else:
-                    return redirect('required_change_password')
+                    return redirect("required_change_password")
             else:
                 ip = get_client_ip(request)
-                AuditEntry.objects.create(action='user_login_failed',
-                                          ip=ip,
-                                          username=request.POST['username'])
-                if 'username' in request.COOKIES:
-                    form = LoginForm(
-                        initial={'username': request.COOKIES['username']})
+                AuditEntry.objects.create(
+                    action="user_login_failed", ip=ip, username=request.POST["username"]
+                )
+                if "username" in request.COOKIES:
+                    form = LoginForm(initial={"username": request.COOKIES["username"]})
                 else:
                     form = LoginForm()
                 try:
-                    u = fEMRUser.objects.get(username=request.POST['username'])
+                    u = fEMRUser.objects.get(username=request.POST["username"])
                     if u.is_active:
                         error_message = "Invalid username or password."
                     else:
                         error_message = "Your account has been locked. Please contact your administrator."
                 except fEMRUser.DoesNotExist:
                     error_message = "Invalid username or password."
-                return render(request,
-                              'auth/login.html',
-                              {'error_message': error_message,
-                               'form': form})
+                return render(
+                    request,
+                    "auth/login.html",
+                    {"error_message": error_message, "form": form},
+                )
     else:
-        if 'username' in request.COOKIES:
-            form = LoginForm(
-                initial={'username': request.COOKIES['username']})
+        if "username" in request.COOKIES:
+            form = LoginForm(initial={"username": request.COOKIES["username"]})
         else:
             form = LoginForm()
-        return render(request, 'auth/login.html', {'form': form})
+        return render(request, "auth/login.html", {"form": form})
 
 
-@silk_profile('logout-view')
+@silk_profile("logout-view")
 def logout_view(request):
     """
     Handles logout.
@@ -217,16 +220,16 @@ def logout_view(request):
     if not isinstance(request.user, AnonymousUser):
         UserSession.objects.filter(user=request.user).delete()
     logout(request)
-    if 'campaign' in request.session:
-        del request.session['campaign']
+    if "campaign" in request.session:
+        del request.session["campaign"]
     form = LoginForm()
-    response = render(request, 'auth/login.html', {'form': form})
-    if 'username' in request.COOKIES:
-        response.delete_cookie('username')
+    response = render(request, "auth/login.html", {"form": form})
+    if "username" in request.COOKIES:
+        response.delete_cookie("username")
     return response
 
 
-@silk_profile('change-password')
+@silk_profile("change-password")
 def change_password(request):
     """
     Handle requests to change passwords for the AUTH_USER model.
@@ -234,9 +237,9 @@ def change_password(request):
     :param request: Django request object. Provided by the URLS config.
     :return: Renders the change_password page as an HttpResponse.
     """
-    error = ''
+    error = ""
     if request.user.is_authenticated:
-        if request.method == 'POST':
+        if request.method == "POST":
             form = PasswordChangeForm(request.user, request.POST)
             if form.is_valid():
                 user = form.save()
@@ -244,17 +247,18 @@ def change_password(request):
                 user.change_password = False
                 user.password_reset_last = timezone.now()
                 user.save()
-                return redirect('main:index')
+                return redirect("main:index")
             else:
-                error = 'Something went wrong.'
+                error = "Something went wrong."
         else:
             form = PasswordChangeForm(request.user)
-        return render(request, 'auth/change_password.html',
-                      {'user': request.user,
-                       'form': form,
-                       'error_message': error})
+        return render(
+            request,
+            "auth/change_password.html",
+            {"user": request.user, "form": form, "error_message": error},
+        )
     else:
-        return redirect('main:not_logged_in')
+        return redirect("main:not_logged_in")
 
 
 @silk_profile("required-change-password")
@@ -265,34 +269,38 @@ def required_change_password(request):
     :param request: Django request object. Provided by the URLS config.
     :return: Renders the change_password page as an HttpResponse.
     """
-    error = ''
+    error = ""
     if request.user.is_authenticated:
-        if request.method == 'POST':
+        if request.method == "POST":
             form = PasswordChangeForm(request.user, request.POST)
             if form.is_valid():
                 user = form.save()
                 update_session_auth_hash(request, user)
                 user.change_password = False
                 user.save()
-                return redirect('main:index')
+                return redirect("main:index")
             else:
-                error = 'Something went wrong.'
+                error = "Something went wrong."
         else:
             form = PasswordChangeForm(request.user)
-        return render(request, 'auth/required_change_password.html',
-                      {'user': request.user,
-                       'form': form,
-                       'error_message': error})
+        return render(
+            request,
+            "auth/required_change_password.html",
+            {"user": request.user, "form": form, "error_message": error},
+        )
     else:
-        return redirect('main:not_logged_in')
+        return redirect("main:not_logged_in")
 
 
 def reset_lockouts(request, username=None):
     if request.user.is_authenticated:
         if request.user.groups.filter(
-                Q(name='Campaign Manager') | Q(name='Organization Admin') | Q(name='Operation Admin')).exists():
+            Q(name="Campaign Manager")
+            | Q(name="Organization Admin")
+            | Q(name="Operation Admin")
+        ).exists():
             if username is not None:
                 reset(username=username)
-        return redirect(request.META.get('HTTP_REFERER', '/'))
+        return redirect(request.META.get("HTTP_REFERER", "/"))
     else:
-        return redirect('main:not_logged_in')
+        return redirect("main:not_logged_in")

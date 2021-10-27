@@ -7,18 +7,18 @@ from django.core.management.base import BaseCommand
 from main.models import Ethnicity, Race
 
 R_OPTIONS = [
-    'Native American or Native Alaskan',
-    'Asian',
-    'Black, African American',
-    'Hispanic or Latinx',
-    'Mixed Race',
-    'White',
-    'Nondisclosed',
+    "Native American or Native Alaskan",
+    "Asian",
+    "Black, African American",
+    "Hispanic or Latinx",
+    "Mixed Race",
+    "White",
+    "Nondisclosed",
 ]
 E_OPTIONS = [
-    'Hispanic or Latinx',
-    'Not Hispanic or Latinx',
-    'Nondisclosed',
+    "Hispanic or Latinx",
+    "Not Hispanic or Latinx",
+    "Nondisclosed",
 ]
 
 

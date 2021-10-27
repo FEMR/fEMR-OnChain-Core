@@ -6,12 +6,7 @@ from django.core.management.base import BaseCommand
 
 from main.models import InventoryForm
 
-OPTIONS = [
-    'liquid',
-    'tablets',
-    'cream',
-    'supply'
-]
+OPTIONS = ["liquid", "tablets", "cream", "supply"]
 
 
 class Command(BaseCommand):

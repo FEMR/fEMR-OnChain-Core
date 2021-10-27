@@ -1,7 +1,14 @@
 from model_bakery import baker
 
-from main.models import Race, Ethnicity, get_nondisclosed_race, get_nondisclosed_ethnicity, State, Organization, \
-    get_test_org
+from main.models import (
+    Race,
+    Ethnicity,
+    get_nondisclosed_race,
+    get_nondisclosed_ethnicity,
+    State,
+    Organization,
+    get_test_org,
+)
 
 
 def test_get_nondisclosed_race():
@@ -30,7 +37,7 @@ def test_state():
 
 
 def test_contact():
-    s = baker.make('main.Contact')
+    s = baker.make("main.Contact")
     assert str(s) == "{0} {1}".format(s.first_name, s.last_name)
 
 

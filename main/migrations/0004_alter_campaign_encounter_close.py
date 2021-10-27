@@ -5,13 +5,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('main', '0003_usersession'),
+        ("main", "0003_usersession"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='campaign',
-            name='encounter_close',
+            model_name="campaign",
+            name="encounter_close",
             field=models.PositiveIntegerField(default=30),
         ),
     ]

@@ -27,36 +27,43 @@ def patient_delete_view(request, id=None):
         if request.method == "POST":
             try:
                 p = get_object_or_404(Patient, pk=id)
-                this_campaign = Campaign.objects.get(
-                    name=request.session['campaign'])
+                this_campaign = Campaign.objects.get(name=request.session["campaign"])
                 contact = this_campaign.instance.main_contact
-                DatabaseChangeLog.objects.create(action="Delete", model="Patient", instance=str(p),
-                                                 ip=get_client_ip(request), username=request.user.username,
-                                                 campaign=this_campaign)
+                DatabaseChangeLog.objects.create(
+                    action="Delete",
+                    model="Patient",
+                    instance=str(p),
+                    ip=get_client_ip(request),
+                    username=request.user.username,
+                    campaign=this_campaign,
+                )
                 message_content = """{0} has deleted a patient record for the fEMR On-Chain deployment to {1} from fEMR On-Chain on {2}.
 To view audit logs, visit the Admin tab in fEMR On-Chain.""".format(
-                    request.user, this_campaign, timezone.now())
+                    request.user, this_campaign, timezone.now()
+                )
                 Message.objects.create(
                     sender=request.user,
                     recipient=contact,
                     subject="WARNING! PATIENT DELETED",
-                    content=message_content
+                    content=message_content,
                 )
                 send_mail(
                     "WARNING! PATIENT DELETED",
                     "{0}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(
-                        message_content),
-                    os.environ.get('DEFAULT_FROM_EMAIL'),
-                    [contact.email])
+                        message_content
+                    ),
+                    os.environ.get("DEFAULT_FROM_EMAIL"),
+                    [contact.email],
+                )
                 p.delete()
             except ObjectDoesNotExist:
                 pass
-            return render(request, 'data/patient_deleted_success.html')
+            return render(request, "data/patient_deleted_success.html")
         else:
             p = get_object_or_404(Patient, pk=id)
-            return render(request, 'data/delete.html', {'patient': p})
+            return render(request, "data/delete.html", {"patient": p})
     else:
-        return redirect('main:not_logged_in')
+        return redirect("main:not_logged_in")
 
 
 def delete_chief_complaint(request, id=None, patient_id=None, encounter_id=None):
@@ -73,8 +80,8 @@ def delete_chief_complaint(request, id=None, patient_id=None, encounter_id=None)
         p.active = False
         p.save()
         if encounter_id is not None:
-            return redirect('main:chief_complaint_list_view', patient_id, encounter_id)
+            return redirect("main:chief_complaint_list_view", patient_id, encounter_id)
         else:
-            return redirect('main:chief_complaint_list_view', patient_id)
+            return redirect("main:chief_complaint_list_view", patient_id)
     else:
-        return redirect('main:not_logged_in')
+        return redirect("main:not_logged_in")

@@ -8,7 +8,8 @@ class MainConfig(django.apps.AppConfig):
     """
     App Configuration Object
     """
-    name = 'main'
+
+    name = "main"
 
     def ready(self):
         import main.signals

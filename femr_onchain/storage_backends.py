@@ -11,5 +11,5 @@ class MediaStorage(S3Boto3Storage):
     def path(self, name):
         pass
 
-    location = 'media'
+    location = "media"
     files_overwrite = False

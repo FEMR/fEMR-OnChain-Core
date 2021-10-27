@@ -1,11 +1,20 @@
 from dal import autocomplete
 from silk.profiling.profiler import silk_profile
 
-from .models import Ethnicity, Medication, ChiefComplaint, Diagnosis, AdministrationSchedule, Race, State, Test
+from .models import (
+    Ethnicity,
+    Medication,
+    ChiefComplaint,
+    Diagnosis,
+    AdministrationSchedule,
+    Race,
+    State,
+    Test,
+)
 
 
 class DiagnosisAutocomplete(autocomplete.Select2QuerySetView):
-    @silk_profile('diagnosis-autocomplete')
+    @silk_profile("diagnosis-autocomplete")
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return Diagnosis.objects.none()
@@ -19,7 +28,7 @@ class DiagnosisAutocomplete(autocomplete.Select2QuerySetView):
 
 
 class ChiefComplaintAutocomplete(autocomplete.Select2QuerySetView):
-    @silk_profile('chief-complaint-autocomplete')
+    @silk_profile("chief-complaint-autocomplete")
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return ChiefComplaint.objects.none()

@@ -6,7 +6,7 @@ import os
 from pyqldb.driver.qldb_driver import QldbDriver
 
 try:
-    LEDGER_NAME = os.environ['qldb_name']
+    LEDGER_NAME = os.environ["qldb_name"]
 except KeyError:
     LEDGER_NAME = "fEMR-OnChain-Test"
 
@@ -14,16 +14,16 @@ except KeyError:
 # noinspection PyTypeChecker
 def create_tables():
     def create_patient_table(transaction_executor):
-        statement = 'CREATE TABLE Patient'
+        statement = "CREATE TABLE Patient"
         cursor = transaction_executor.execute_statement(statement)
         return len(list(cursor))
 
     def create_patient_encounter_table(transaction_executor):
-        statement = 'CREATE TABLE PatientEncounter'
+        statement = "CREATE TABLE PatientEncounter"
         cursor = transaction_executor.execute_statement(statement)
         return len(list(cursor))
 
-    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name='us-west-2')
+    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
     qldb_driver.execute_lambda(lambda x: create_patient_table(x))
     qldb_driver.execute_lambda(lambda x: create_patient_encounter_table(x))
 
@@ -38,12 +38,11 @@ def create_new_patient(patient: dict):
         """
         Internal function handling insertion of new patients.
         """
-        transaction_executor.execute_statement(
-            "INSERT INTO Patient ?", p)
+        transaction_executor.execute_statement("INSERT INTO Patient ?", p)
 
     patient["action"] = "INSERT"
     patient["date_of_birth"] = str(patient["date_of_birth"])
-    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name='us-west-2')
+    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
     qldb_driver.execute_lambda(lambda x: insert_documents(x, patient))
 
 
@@ -57,12 +56,11 @@ def update_patient(patient: dict):
         """
         Internal function for updating a patient record.
         """
-        transaction_executor.execute_statement(
-            "INSERT INTO Patient ?", p)
+        transaction_executor.execute_statement("INSERT INTO Patient ?", p)
 
     patient["action"] = "UPDATE"
     patient["date_of_birth"] = str(patient["date_of_birth"])
-    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name='us-west-2')
+    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
     qldb_driver.execute_lambda(lambda x: update_documents(x, patient))
 
 
@@ -76,11 +74,10 @@ def get_all_patients():
         """
         Internal function used to retrieve all Patient data.
         """
-        cursor = transaction_executor.execute_statement(
-            "SELECT * FROM Patient")
+        cursor = transaction_executor.execute_statement("SELECT * FROM Patient")
         return cursor
 
-    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name='us-west-2')
+    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
     qldb_driver.execute_lambda(lambda x: read_documents(x))
 
 
@@ -94,25 +91,21 @@ def create_new_patient_encounter(patient_encounter: dict):
         """
         Internal function handling insertion of new patients.
         """
-        transaction_executor.execute_statement(
-            "INSERT INTO PatientEncounter ?", p)
+        transaction_executor.execute_statement("INSERT INTO PatientEncounter ?", p)
 
     patient_encounter["action"] = "INSERT"
-    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name='us-west-2')
-    qldb_driver.execute_lambda(
-        lambda x: insert_documents(x, patient_encounter))
+    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
+    qldb_driver.execute_lambda(lambda x: insert_documents(x, patient_encounter))
 
 
 # noinspection PyTypeChecker
 def update_patient_encounter(patient_encounter: dict):
     def insert_documents(transaction_executor, p: dict):
-        transaction_executor.execute_statement(
-            "INSERT INTO PatientEncounter ?", p)
+        transaction_executor.execute_statement("INSERT INTO PatientEncounter ?", p)
 
     patient_encounter["action"] = "UPDATE"
-    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name='us-west-2')
-    qldb_driver.execute_lambda(
-        lambda x: insert_documents(x, patient_encounter))
+    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
+    qldb_driver.execute_lambda(lambda x: insert_documents(x, patient_encounter))
 
 
 # noinspection PyTypeChecker
@@ -126,8 +119,9 @@ def get_all_patient_encounters():
         Internal function used to retrieve all Patient data.
         """
         cursor = transaction_executor.execute_statement(
-            "SELECT * FROM PatientEncounter")
+            "SELECT * FROM PatientEncounter"
+        )
         return cursor
 
-    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name='us-west-2')
+    qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
     qldb_driver.execute_lambda(lambda x: read_documents(x))
