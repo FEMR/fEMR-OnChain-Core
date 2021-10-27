@@ -32,9 +32,11 @@ source/_autosummary
 cover/
 source/appMR.migrations.rst
 source/appMR.rst
+source/appMR.test.rst
 source/appMR.tests.rst
 source/clinic_messages.migrations.rst
 source/clinic_messages.rst
+source/clinic_messages.test.rst
 source/clinic_messages.tests.rst
 source/main.csvio.rst
 source/main.management.commands.rst
@@ -42,5 +44,6 @@ source/main.management.rst
 source/main.migrations.rst
 source/main.rst
 source/main.templatetags.rst
+source/main.test.rst
 source/main.tests.rst
 source/modules.rst
