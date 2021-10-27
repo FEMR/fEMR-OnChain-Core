@@ -9,23 +9,13 @@ from main.models import UserSession, Campaign, AuditEntry
 
 
 @receiver(user_logged_in)
-def remove_other_sessions(sender, user, request, **kwargs):
+def user_logged_in_callback(sender, request, user, **kwargs):
     Session.objects.filter(usersession__user=user).delete()
     request.session.save()
     UserSession.objects.get_or_create(
         user=user,
         session_id=request.session.session_key
     )
-
-
-@receiver(user_logged_out)
-def remove_session_on_logout(sender, user, request, **kwargs):
-    Session.objects.filter(usersession__user=user).delete()
-    UserSession.objects.filter(user=user).delete()
-
-
-@receiver(user_logged_in)
-def user_logged_in_callback(sender, request, user, **kwargs):
     from main.femr_admin_views import get_client_ip
     ip = get_client_ip(request)
     campaign_list = request.user.campaigns.filter(active=True)
@@ -41,6 +31,8 @@ def user_logged_in_callback(sender, request, user, **kwargs):
 @receiver(user_logged_out)
 def user_logged_out_callback(sender, request, user, **kwargs):
     from main.femr_admin_views import get_client_ip
+    Session.objects.filter(usersession__user=user).delete()
+    UserSession.objects.filter(user=user).delete()
     ip = get_client_ip(request)
     try:
         campaign_list = request.user.campaigns.filter(active=True)
