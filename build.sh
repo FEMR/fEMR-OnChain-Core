@@ -20,7 +20,6 @@ function all() {
   migrate
   static
   run_tests
-  documents
   pushd ./main/static/main/js || exit
   npm install
   popd || exit
