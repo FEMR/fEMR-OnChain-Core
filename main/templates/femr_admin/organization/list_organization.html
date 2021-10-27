@@ -10,7 +10,6 @@
             <tr>
                 <th scope="col"></th>
                 <th scope="col">Name</th>
-                <th scope="col">Organization</th>
                 <th scope="col"></th>
             </tr>
             </thead>
@@ -19,7 +18,6 @@
             <tr>
                 <th scope="row">{{ o.id }}</th>
                 <td>{{ o.name }}</td>
-                <td>{{ o.organization }}</td>
                 <td><a href="{% url 'main:edit_organization' id=o.id %}">Edit</a></td>
             </tr>
             {% endfor %}

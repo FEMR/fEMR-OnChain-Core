@@ -372,7 +372,8 @@ def edit_organization_view(request, id=None):
                 form = OrganizationForm(instance=instance)
                 return render(request, 'femr_admin/organization/edit_organization.html',
                               {'form': form, 'contact_form': contact_form, 'edit_contact_form': edit_contact_form,
-                               'page_name': 'Edit Organization', 'contact_id': contact.id, 'instance_id': id})
+                               'page_name': 'Edit Organization',
+                               'contact_id': contact.id if contact is not None else None, 'instance_id': id})
         else:
             return redirect('main:permission_denied')
     else:
