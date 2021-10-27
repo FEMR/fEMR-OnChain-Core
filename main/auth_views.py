@@ -128,7 +128,6 @@ def login_view(request):
     """
     if not check_browser(request):
         return render(request, 'data/stop.html')
-    run_encounter_close()
     reset_sessions()
     if request.user.is_authenticated:
         return redirect('main:home')
@@ -178,7 +177,7 @@ def login_view(request):
                     return redirect('required_change_password')
             else:
                 ip = get_client_ip(request)
-                AuditEntry.objects.create(action='user_logged_in_failed',
+                AuditEntry.objects.create(action='user_login_failed',
                                           ip=ip,
                                           username=request.POST['username'])
                 if 'username' in request.COOKIES:
@@ -215,11 +214,11 @@ def logout_view(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    if 'campaign' in request.session:
-        del request.session['campaign']
     if not isinstance(request.user, AnonymousUser):
         UserSession.objects.filter(user=request.user).delete()
     logout(request)
+    if 'campaign' in request.session:
+        del request.session['campaign']
     form = LoginForm()
     response = render(request, 'auth/login.html', {'form': form})
     if 'username' in request.COOKIES:

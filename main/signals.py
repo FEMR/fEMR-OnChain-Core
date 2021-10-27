@@ -4,19 +4,13 @@ from django.contrib.sessions.models import Session
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from main.femr_admin_views import get_client_ip
 
 from main.models import UserSession, Campaign, AuditEntry
 
 
 @receiver(user_logged_in)
 def user_logged_in_callback(sender, request, user, **kwargs):
-    Session.objects.filter(usersession__user=user).delete()
-    request.session.save()
-    UserSession.objects.get_or_create(
-        user=user,
-        session_id=request.session.session_key
-    )
-    from main.femr_admin_views import get_client_ip
     ip = get_client_ip(request)
     campaign_list = request.user.campaigns.filter(active=True)
     if len(campaign_list) != 0:
@@ -24,27 +18,14 @@ def user_logged_in_callback(sender, request, user, **kwargs):
         campaign = Campaign.objects.get(name=name)
     else:
         campaign = None
-    AuditEntry.objects.create(action='user_logged_in',
-                              ip=ip, username=user.username, campaign=campaign)
+    AuditEntry.objects.create(action='user_logged_in', ip=ip, username=user.username, campaign=campaign)
 
 
 @receiver(user_logged_out)
 def user_logged_out_callback(sender, request, user, **kwargs):
-    from main.femr_admin_views import get_client_ip
-    Session.objects.filter(usersession__user=user).delete()
-    UserSession.objects.filter(user=user).delete()
     ip = get_client_ip(request)
-    try:
-        campaign_list = request.user.campaigns.filter(active=True)
-        if len(campaign_list) != 0:
-            name = campaign_list[0].name
-            campaign = Campaign.objects.get(name=name)
-        else:
-            campaign = None
-        AuditEntry.objects.create(action='user_logged_out',
-                                  ip=ip, username=user.username, campaign=campaign)
-    except AttributeError:
-        pass
+    campaign = Campaign.objects.get(name=request.session['campaign'])
+    AuditEntry.objects.create(action='user_logged_out', ip=ip, username=user.username, campaign=campaign)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

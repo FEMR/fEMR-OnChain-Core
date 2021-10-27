@@ -3,10 +3,12 @@ View functions for top-level locations.
 All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
+from os import name
 import pytz
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from main.background_tasks import run_encounter_close
 from silk.profiling.profiler import silk_profile
 from django.utils import timezone
 
@@ -34,6 +36,7 @@ def home(request):
     :return: An HttpResponse, rendering the home page.
     """
     if request.user.is_authenticated:
+        run_encounter_close(Campaign.objects.get(name=request.session['campaign']))
         motd = MessageOfTheDay.load()
         if motd.start_date is not None or motd.end_date is not None:
             if motd.start_date < timezone.now().date() < motd.end_date:

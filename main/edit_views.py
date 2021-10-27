@@ -7,6 +7,7 @@ import math
 import os
 
 from django.shortcuts import render, redirect, get_object_or_404
+from silk.profiling.profiler import silk_profile
 
 from main.femr_admin_views import get_client_ip
 from main.qldb_interface import update_patient, update_patient_encounter
@@ -60,6 +61,7 @@ def patient_edit_form_view(request, id=None):
         return redirect('/not_logged_in')
 
 
+@silk_profile('encounter-edit-form-view')
 def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
     """
     Used to edit Encounter objects.
@@ -569,6 +571,7 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
         return redirect('/not_logged_in')
 
 
+@silk_profile('upload-photo-view')
 def upload_photo_view(request, patient_id=None, encounter_id=None):
     """
 

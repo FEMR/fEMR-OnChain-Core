@@ -83,7 +83,6 @@ MIDDLEWARE = [
     'main.middleware.CampaignActivityCheckMiddleware',
     'main.middleware.ClinicMessageMiddleware',
     'main.middleware.CheckForSessionInvalidatedMiddleware',
-    'main.middleware.HandleErrorMiddleware',
     'django_user_agents.middleware.UserAgentMiddleware',
 ]
 
@@ -250,7 +249,7 @@ AXES_RESET_ON_SUCCESS = True
 AXES_ENABLE_ADMIN_SITE = True
 AXES_COOLOFF_TIME = timedelta(minutes=15)
 AXES_ONLY_USER_FAILURES = True
-AXES_LOCKOUT_TEMPLATE = 'main/auth/lockout.html'
+AXES_LOCKOUT_TEMPLATE = 'auth/lockout.html'
 
 SESSION_COOKIE_AGE = 900
 SESSION_SECURITY_EXPIRE_AFTER = 900

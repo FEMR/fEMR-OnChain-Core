@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, redirect, render
+from silk.profiling.profiler import silk_profile
 
 from main.forms import CampaignForm, EthnicityForm, InstanceForm, OrganizationForm, RaceForm, fEMRAdminUserForm, \
     fEMRAdminUserUpdateForm
@@ -352,6 +353,7 @@ def list_organization_view(request):
         return redirect('main:not_logged_in')
 
 
+@silk_profile('edit-organization-view')
 def edit_organization_view(request, id=None):
     if request.user.is_authenticated:
         if request.user.groups.filter(name='fEMR Admin').exists():
