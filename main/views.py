@@ -7,6 +7,7 @@ import pytz
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from silk.profiling.profiler import silk_profile
 from django.utils import timezone
 
 from main.forms import ForgotUsernameForm
@@ -24,16 +25,14 @@ def index(request):
     return redirect('main:login_view')
 
 
+@silk_profile('home')
 def home(request):
     """
-    The landing page for the authenticated administrative user.
+    The landing page for the authenticated user.
 
     :param request: Django Request object.
     :return: An HttpResponse, rendering the home page.
     """
-    for x in Photo.objects.all():
-        if not x.photo.name:
-            x.delete()
     if request.user.is_authenticated:
         motd = MessageOfTheDay.load()
         if motd.start_date is not None or motd.end_date is not None:
