@@ -3,12 +3,11 @@ URL configurations for the fEMR OnChain module.
 """
 from django.conf.urls import url, include
 from django.urls import path
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
 from rest_framework import routers
 from rest_framework.authtoken import views as rest_framework_views
-
-from rest_framework import permissions
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
 
 from main.admin_views import (
     add_user_to_campaign,

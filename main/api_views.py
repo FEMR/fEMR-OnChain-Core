@@ -218,12 +218,14 @@ class InventoryViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsAPIAllowed]
 
 
+# noinspection PyUnresolvedReferences
 class UnitsSettingViewSet(viewsets.ModelViewSet):
     queryset = UnitsSetting.objects.all()
     serializer_class = UnitsSettingSerializer
     permission_classes = [permissions.IsAuthenticated, IsAPIAllowed]
 
 
+# noinspection PyUnresolvedReferences
 class MessageOfTheDayViewSet(viewsets.ModelViewSet):
     queryset = MessageOfTheDay.objects.all()
     serializer_class = MessageOfTheDaySerializer

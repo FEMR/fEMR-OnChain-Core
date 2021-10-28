@@ -6,4 +6,4 @@ def test_round_temp():
 
 
 def test_round_none():
-    assert temp_round(None) == None
+    assert temp_round(None) is None

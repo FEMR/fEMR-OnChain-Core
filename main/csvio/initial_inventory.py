@@ -13,7 +13,7 @@ from main.models import (
 
 class InitialInventoryHandler(object):
     def __init__(self) -> None:
-        super().__init__()
+        super(InitialInventoryHandler, self).__init__()
 
     def read(self, upload, campaign):
         return self.__import(upload, campaign)
@@ -21,7 +21,8 @@ class InitialInventoryHandler(object):
     def write(self, response, formulary):
         return self.__export(response, formulary)
 
-    def __export(self, response, formulary):
+    @staticmethod
+    def __export(response, formulary):
         writer = csv.writer(response)
         writer.writerow(
             [
@@ -56,7 +57,8 @@ class InitialInventoryHandler(object):
             )
         return response
 
-    def __import(self, upload, campaign):
+    @staticmethod
+    def __import(upload, campaign):
         csvfile = requests.get(upload.document.url).content
         reader = csv.reader(csvfile, delimiter=",")
         next(reader)

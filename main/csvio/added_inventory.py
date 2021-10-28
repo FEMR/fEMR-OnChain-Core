@@ -20,7 +20,7 @@ class AddedInventoryHandler(object):
     """
 
     def __init__(self) -> None:
-        super().__init__()
+        super(AddedInventoryHandler, self).__init__()
 
     def read(self, upload, campaign):
         """
@@ -40,7 +40,8 @@ class AddedInventoryHandler(object):
         """
         return self.__export(response, formulary)
 
-    def __export(self, response, formulary):
+    @staticmethod
+    def __export(response, formulary):
         writer = csv.writer(response)
         writer.writerow(
             [
@@ -75,7 +76,8 @@ class AddedInventoryHandler(object):
             )
         return response
 
-    def __import(self, upload, campaign):
+    @staticmethod
+    def __import(upload, campaign):
         csvfile = requests.get(upload.document.url).content
         reader = csv.reader(csvfile, delimiter=",")
         next(reader)

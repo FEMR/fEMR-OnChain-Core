@@ -4,6 +4,7 @@ import os
 import sys
 
 
+# noinspection PyCompatibility
 def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "femr_onchain.settings")
     try:

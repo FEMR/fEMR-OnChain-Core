@@ -1,5 +1,6 @@
 from django.test.client import Client
 from model_bakery import baker
+
 from main.models import fEMRUser
 
 
@@ -14,7 +15,7 @@ def test_login_view():
     u.delete()
 
 
-def test_logout_no_campaigns():
+def test_logout_with_campaigns():
     u = fEMRUser.objects.create_user(username="test", password="testingpassword", email="logintestinguseremail@email.com")
     u.change_password = False
     c = baker.make('main.Campaign')
@@ -25,7 +26,7 @@ def test_logout_no_campaigns():
     campaign_list = u.campaigns.filter(active=True)
     assert len(campaign_list) != 0
     client = Client()
-    response = client.post('/login_view/', {'username': 'test', 'password': 'testingpassword'})
+    client.post('/login_view/', {'username': 'test', 'password': 'testingpassword'})
     response = client.post('/logout/')
     assert response.status_code == 302
     assert response.url == "/login_view/"
@@ -54,7 +55,7 @@ def test_required_password_change():
     u.delete()
 
 
-def test_login_view():
+def test_login_view_with_remember_me():
     u = fEMRUser.objects.create_user(username="test", password="testingpassword", email="logintestinguseremail@email.com")
     u.change_password = False
     u.save()

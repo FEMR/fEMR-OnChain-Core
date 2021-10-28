@@ -1,12 +1,11 @@
 from django.conf import settings
 from django.contrib.auth import user_logged_in, user_logged_out
-from django.contrib.sessions.models import Session
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
-from main.femr_admin_views import get_client_ip
 
-from main.models import UserSession, Campaign, AuditEntry
+from main.femr_admin_views import get_client_ip
+from main.models import Campaign, AuditEntry
 
 
 @receiver(user_logged_in)
@@ -51,4 +50,5 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     :param kwargs: Should be empty.
     """
     if created:
+        # noinspection PyUnresolvedReferences
         Token.objects.create(user=instance)

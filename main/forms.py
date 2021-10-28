@@ -49,7 +49,7 @@ from .models import (
 
 class ChiefComplaintForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ChiefComplaintForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
     class Meta:
@@ -66,7 +66,7 @@ class ChiefComplaintForm(ModelForm):
 
 class DiagnosisForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(DiagnosisForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
     class Meta:
@@ -81,7 +81,7 @@ class DiagnosisForm(ModelForm):
 
 class PatientDiagnosisForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(PatientDiagnosisForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -104,7 +104,7 @@ class PatientDiagnosisForm(ModelForm):
 
 class MedicationForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(MedicationForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -120,7 +120,7 @@ class MedicationForm(ModelForm):
 
 class TreatmentForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(TreatmentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Div(
@@ -395,7 +395,7 @@ class PatientEncounterForm(ModelForm):
 
 class AuxiliaryPatientEncounterForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(AuxiliaryPatientEncounterForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -416,7 +416,7 @@ class AuxiliaryPatientEncounterForm(ModelForm):
 
 class HistoryPatientEncounterForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(HistoryPatientEncounterForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -547,7 +547,7 @@ class UserForm(UserCreationForm):
     )
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(UserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
     class Meta:
@@ -569,7 +569,7 @@ class fEMRAdminUserForm(UserCreationForm):
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(fEMRAdminUserForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
     class Meta:
@@ -604,7 +604,7 @@ class UserUpdateForm(UserChangeForm):
     )
 
     def __init__(self, user, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.fields["campaigns"].queryset = filter_campaigns_for_instances(user)
 
@@ -628,7 +628,7 @@ class fEMRAdminUserUpdateForm(UserChangeForm):
     password = None
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(fEMRAdminUserUpdateForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
     class Meta:
@@ -642,7 +642,7 @@ class AdminPasswordForm(UserCreationForm):
     """
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(AdminPasswordForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
     class Meta:
@@ -709,7 +709,7 @@ class ForgotUsernameForm(Form):
 
 class PhotoForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(PhotoForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -718,7 +718,7 @@ class PhotoForm(ModelForm):
         fields = "__all__"
 
     def clean(self):
-        cleaned_data = super().clean()
+        cleaned_data = super(PhotoForm, self).clean()
         photo = cleaned_data.get("photo", None)
         imaging_link = cleaned_data.get("imaging_link", None)
 
@@ -728,7 +728,7 @@ class PhotoForm(ModelForm):
 
 class HistoryOfPresentIllnessForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(HistoryOfPresentIllnessForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -744,7 +744,7 @@ class HistoryOfPresentIllnessForm(ModelForm):
 
 class MOTDForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(MOTDForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Div(
@@ -795,7 +795,7 @@ class MOTDForm(ModelForm):
 
 class InventoryEntryForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(InventoryEntryForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -806,7 +806,7 @@ class InventoryEntryForm(ModelForm):
 
 class AddSupplyForm(Form):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(AddSupplyForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -815,7 +815,7 @@ class AddSupplyForm(Form):
 
 class RemoveSupplyForm(Form):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(RemoveSupplyForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -824,7 +824,7 @@ class RemoveSupplyForm(Form):
 
 class CSVUploadForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(CSVUploadForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 

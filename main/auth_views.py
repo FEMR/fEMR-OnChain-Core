@@ -3,6 +3,7 @@ View functions geared toward user authentication.
 All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
+from axes.utils import reset
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import AnonymousUser, User
@@ -12,9 +13,8 @@ from django.db.models.query_utils import Q
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from silk.profiling.profiler import silk_profile
-from axes.utils import reset
 
-from main.background_tasks import reset_sessions, run_encounter_close, check_browser
+from main.background_tasks import reset_sessions, check_browser
 from main.femr_admin_views import get_client_ip
 from main.forms import RegisterForm, LoginForm
 from main.models import AuditEntry, UserSession, fEMRUser

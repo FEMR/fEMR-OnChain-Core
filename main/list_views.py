@@ -13,8 +13,8 @@ from django.db.models import Q
 from django.http.response import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from silk.profiling.profiler import silk_profile
 from pytz import timezone as pytz_timezone
+from silk.profiling.profiler import silk_profile
 
 from .models import (
     ChiefComplaint,

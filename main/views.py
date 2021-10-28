@@ -3,17 +3,16 @@ View functions for top-level locations.
 All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
-from os import name
 import pytz
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from main.background_tasks import run_encounter_close
-from silk.profiling.profiler import silk_profile
 from django.utils import timezone
+from silk.profiling.profiler import silk_profile
 
+from main.background_tasks import run_encounter_close
 from main.forms import ForgotUsernameForm
-from main.models import Campaign, MessageOfTheDay, Photo, fEMRUser
+from main.models import Campaign, MessageOfTheDay, fEMRUser
 
 
 # noinspection PyUnusedLocal

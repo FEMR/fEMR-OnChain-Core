@@ -1,4 +1,6 @@
 .idea/
+env/
+.vs/
 venv/
 **/__pycache__/**
 docs/build

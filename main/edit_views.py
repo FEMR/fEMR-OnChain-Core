@@ -164,12 +164,12 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                 for field in form:
                     try:
                         field.widget.attrs["readonly"] = True
-                    except Exception as e:
+                    except Exception:
                         pass
                 for field in vitals_form:
                     try:
                         field.widget.attrs["readonly"] = True
-                    except Exception as e:
+                    except Exception:
                         pass
             if units == "i":
                 form.initial = {

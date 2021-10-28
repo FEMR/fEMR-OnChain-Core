@@ -5,15 +5,15 @@ import itertools
 import operator
 import os
 from datetime import datetime, timedelta
-from django.contrib.auth.models import Permission
 
-from clinic_messages.models import Message
+from django.contrib.auth.models import Permission
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.db.models.query_utils import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
+from clinic_messages.models import Message
 from main.femr_admin_views import get_client_ip
 from .forms import (
     MOTDForm,

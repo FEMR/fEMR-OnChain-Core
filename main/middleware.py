@@ -55,7 +55,7 @@ class CampaignActivityCheckMiddleware:
                         active=True
                     )[0].name
                     return self.get_response(request)
-                except Exception as e:
+                except Exception:
                     logout(request)
                     form = LoginForm()
                     return render(
@@ -131,7 +131,7 @@ class CheckForSessionInvalidatedMiddleware:
             try:
                 request.user.logged_in_user.session_key = request.session.session_key
                 request.user.logged_in_user.save()
-            except Exception as e:
+            except Exception:
                 UserSession.objects.get_or_create(user=request.user)
 
         return self.get_response(request)

@@ -1,4 +1,4 @@
-from main.management.commands.adminoptions import Command, OPTIONS
+from main.management.commands.adminoptions import Command
 
 
 def test_command():
