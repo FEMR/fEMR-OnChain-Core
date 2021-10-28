@@ -26,10 +26,17 @@ def user_logged_in_callback(sender, request, user, **kwargs):
 @receiver(user_logged_out)
 def user_logged_out_callback(sender, request, user, **kwargs):
     ip = get_client_ip(request)
-    campaign = Campaign.objects.get(name=request.session["campaign"])
-    AuditEntry.objects.create(
-        action="user_logged_out", ip=ip, username=user.username, campaign=campaign
-    )
+    try:
+        campaign_list = request.user.campaigns.filter(active=True)
+        if len(campaign_list) != 0:
+            name = campaign_list[0].name
+            campaign = Campaign.objects.get(name=name)
+        else:
+            campaign = None
+        AuditEntry.objects.create(action='user_logged_out',
+                                  ip=ip, username=user.username, campaign=campaign)
+    except AttributeError:
+        pass
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

@@ -47,6 +47,7 @@ def check_browser(request) -> bool:
         "Firefox",
         "Firefox Mobile",
         "Chrome Mobile iOS",
+        "Other",
     ]:
         return False
     else:
