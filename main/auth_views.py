@@ -300,6 +300,6 @@ def reset_lockouts(request, username=None):
         ).exists():
             if username is not None:
                 reset(username=username)
-        return redirect(request.META.get("HTTP_REFERER", "/"))
+        return render(request, "admin/user_reset_success.html", {'username': username})
     else:
         return redirect("main:not_logged_in")

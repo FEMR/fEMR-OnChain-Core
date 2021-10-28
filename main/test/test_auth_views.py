@@ -10,9 +10,9 @@ def test_login_view():
     u.save()
     client = Client()
     response = client.post('/login_view/', {'username': 'test', 'password': 'testingpassword'})
+    u.delete()
     assert response.status_code == 302
     assert response.url == "/home/"
-    u.delete()
 
 
 def test_logout_with_campaigns():
@@ -28,9 +28,9 @@ def test_logout_with_campaigns():
     client = Client()
     client.post('/login_view/', {'username': 'test', 'password': 'testingpassword'})
     response = client.post('/logout/')
+    u.delete()
     assert response.status_code == 302
     assert response.url == "/login_view/"
-    u.delete()
 
 
 def test_logout_no_campaigns():
@@ -39,9 +39,9 @@ def test_logout_no_campaigns():
     u.save()
     client = Client()
     response = client.post('/logout/')
+    u.delete()
     assert response.status_code == 302
     assert response.url == "/login_view/"
-    u.delete()
 
 
 def test_required_password_change():
@@ -50,9 +50,9 @@ def test_required_password_change():
     u.save()
     client = Client()
     response = client.post('/login_view/', {'username': 'test2', 'password': 'testingpassword'})
+    u.delete()
     assert response.status_code == 302
     assert response.url == "/required_change_password/"
-    u.delete()
 
 
 def test_login_view_with_remember_me():
@@ -61,7 +61,7 @@ def test_login_view_with_remember_me():
     u.save()
     client = Client()
     response = client.post('/login_view/', {'username': 'test', 'password': 'testingpassword', 'remember_me': True})
+    u.delete()
     assert response.status_code == 302
     assert response.url == "/home/"
     assert response.client.cookies['username'].value == 'test'
-    u.delete()
