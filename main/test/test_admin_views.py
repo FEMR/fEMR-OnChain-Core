@@ -27,18 +27,28 @@ def test_admin_home_redirect_anonymous_user():
 
 
 def test_campaign_manager_account_reset():
-    u = fEMRUser.objects.create_user(username="test", password="testingpassword", email="logintestinguseremail@email.com")
-    v = fEMRUser.objects.create_user(username="test2", password="testingpassword", email="logintestinguseremail2@email.com")
+    u = fEMRUser.objects.create_user(
+        username="test",
+        password="testingpassword",
+        email="logintestinguseremail@email.com",
+    )
+    v = fEMRUser.objects.create_user(
+        username="test2",
+        password="testingpassword",
+        email="logintestinguseremail2@email.com",
+    )
     u.change_password = False
     Group.objects.get_or_create(name="fEMR Admin")[0].user_set.add(u)
-    c = baker.make('main.Campaign')
+    c = baker.make("main.Campaign")
     c.active = True
     c.save()
     u.campaigns.add(c)
     u.save()
     client = Client()
-    response = client.post('/login_view/', {'username': 'test', 'password': 'testingpassword'})
-    response = client.get(reverse('main:reset_lockouts', kwargs={'username': 'test2'}))
+    response = client.post(
+        "/login_view/", {"username": "test", "password": "testingpassword"}
+    )
+    response = client.get(reverse("main:reset_lockouts", kwargs={"username": "test2"}))
     print(response.content)
     u.delete()
     v.delete()

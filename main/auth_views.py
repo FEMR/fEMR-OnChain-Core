@@ -222,7 +222,7 @@ def logout_view(request):
     logout(request)
     if "campaign" in request.session:
         del request.session["campaign"]
-    response = redirect('main:login_view')
+    response = redirect("main:login_view")
     if "username" in request.COOKIES:
         response.delete_cookie("username")
     return response
@@ -300,6 +300,6 @@ def reset_lockouts(request, username=None):
         ).exists():
             if username is not None:
                 reset(username=username)
-        return render(request, "admin/user_reset_success.html", {'username': username})
+        return render(request, "admin/user_reset_success.html", {"username": username})
     else:
         return redirect("main:not_logged_in")

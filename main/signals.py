@@ -32,8 +32,9 @@ def user_logged_out_callback(sender, request, user, **kwargs):
             campaign = Campaign.objects.get(name=name)
         else:
             campaign = None
-        AuditEntry.objects.create(action='user_logged_out',
-                                  ip=ip, username=user.username, campaign=campaign)
+        AuditEntry.objects.create(
+            action="user_logged_out", ip=ip, username=user.username, campaign=campaign
+        )
     except AttributeError:
         pass
 
