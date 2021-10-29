@@ -39,8 +39,8 @@ def run_user_deactivate():
     """
     now = timezone.now()
     d = now - timedelta(days=30)
-    for user in fEMRUser.objects.filter(active=True):
-        if user.last_login < d:
+    for user in fEMRUser.objects.filter(is_active=True):
+        if user.last_login is not None and user.last_login < d:
             send_mail(
                 "Message from fEMR OnChain",
                 "We noticed you haven't logged in to fEMR OnChain in "

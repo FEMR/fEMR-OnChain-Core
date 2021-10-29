@@ -16,7 +16,12 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from silk.profiling.profiler import silk_profile
 
-from main.background_tasks import check_admin_permission, reset_sessions, check_browser, run_user_deactivate
+from main.background_tasks import (
+    check_admin_permission,
+    reset_sessions,
+    check_browser,
+    run_user_deactivate,
+)
 from main.femr_admin_views import get_client_ip
 from main.forms import RegisterForm, LoginForm
 from main.models import AuditEntry, UserSession, fEMRUser
