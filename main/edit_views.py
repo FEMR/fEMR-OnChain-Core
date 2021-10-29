@@ -1,6 +1,7 @@
 """
 Handles template rendering and logic for editing web forms.
-All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
+All views, except auth views and the index view, should be considered
+to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
 import math
@@ -8,6 +9,7 @@ import os
 
 from django.shortcuts import render, redirect, get_object_or_404
 from silk.profiling.profiler import silk_profile
+from .serializers import PatientEncounterSerializer
 
 from main.femr_admin_views import get_client_ip
 from main.qldb_interface import update_patient, update_patient_encounter
@@ -36,6 +38,7 @@ from .models import (
 )
 
 
+@silk_profile("patient-edit-form-view")
 def patient_edit_form_view(request, id=None):
     """
     Used to edit Patient objects.
@@ -139,8 +142,6 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     campaign=Campaign.objects.get(name=request.session["campaign"]),
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    from .serializers import PatientEncounterSerializer
-
                     encounter_data = PatientEncounterSerializer(encounter).data
                     update_patient_encounter(encounter_data)
                 if "submit_encounter" in request.POST:
@@ -253,6 +254,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
         return redirect("/not_logged_in")
 
 
+@silk_profile("new-diagnosis-view")
 def new_diagnosis_view(request, patient_id=None, encounter_id=None):
     """
     Used to edit Encounter objects.
@@ -272,7 +274,9 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
         t = Treatment.objects.filter(encounter=m)
         treatment_form = TreatmentForm()
         aux_form = AuxiliaryPatientEncounterForm(instance=m)
-        querysets = list(PatientDiagnosis.objects.filter(encounter=m))
+        patient_diagnoses = querysets = list(
+            PatientDiagnosis.objects.filter(encounter=m)
+        )
         if len(querysets) > 0:
             q = querysets.pop().diagnosis.all()
             for x in querysets:
@@ -280,7 +284,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
             treatment_form.fields["diagnosis"].queryset = q
         else:
             treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
-        d = PatientDiagnosis.objects.filter(encounter=m)
+        d = patient_diagnoses
         if len(d) > 0:
             diagnosis_form = PatientDiagnosisForm(instance=d[0])
         else:
@@ -295,7 +299,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
                 diagnosis.encounter = m
                 diagnosis.save()
                 diagnosis_form.save_m2m()
-                querysets = list(PatientDiagnosis.objects.filter(encounter=m))
+                querysets = patient_diagnoses
                 if len(querysets) > 0:
                     q = querysets.pop().diagnosis.all()
                     for x in querysets:
@@ -314,8 +318,6 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
                     campaign=Campaign.objects.get(name=request.session["campaign"]),
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    from .serializers import PatientEncounterSerializer
-
                     encounter_data = PatientEncounterSerializer(m).data
                     update_patient_encounter(encounter_data)
         form = PatientEncounterForm(instance=m, unit=units)
@@ -372,6 +374,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
         return redirect("/not_logged_in")
 
 
+@silk_profile("new-treatment-view")
 def new_treatment_view(request, patient_id=None, encounter_id=None):
     """
     Used to edit Encounter objects.
@@ -391,7 +394,9 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
         t = Treatment.objects.filter(encounter=m)
         treatment_form = TreatmentForm()
         aux_form = AuxiliaryPatientEncounterForm(instance=m)
-        querysets = list(PatientDiagnosis.objects.filter(encounter=m))
+        patient_diagnoses = querysets = list(
+            PatientDiagnosis.objects.filter(encounter=m)
+        )
         if len(querysets) > 0:
             q = querysets.pop().diagnosis.all()
             for x in querysets:
@@ -399,7 +404,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
             treatment_form.fields["diagnosis"].queryset = q
         else:
             treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
-        d = PatientDiagnosis.objects.filter(encounter=m)
+        d = patient_diagnoses
         if len(d) > 0:
             diagnosis_form = PatientDiagnosisForm(instance=d[0])
         else:
@@ -413,7 +418,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
                 treatment.save()
                 treatment_form.save_m2m()
                 treatment_form = TreatmentForm()
-                querysets = list(PatientDiagnosis.objects.filter(encounter=m))
+                querysets = list(patient_diagnoses)
                 if len(querysets) > 0:
                     q = querysets.pop().diagnosis.all()
                     for x in querysets:
@@ -432,8 +437,6 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
                     campaign=Campaign.objects.get(name=request.session["campaign"]),
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    from .serializers import PatientEncounterSerializer
-
                     encounter_data = PatientEncounterSerializer(m).data
                     update_patient_encounter(encounter_data)
         form = PatientEncounterForm(instance=m, unit=units)
@@ -489,6 +492,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
         return redirect("/not_logged_in")
 
 
+@silk_profile("aux-form-view")
 def aux_form_view(request, patient_id=None, encounter_id=None):
     """
     Used to edit Encounter objects.
@@ -546,8 +550,6 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
                     campaign=Campaign.objects.get(name=request.session["campaign"]),
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    from .serializers import PatientEncounterSerializer
-
                     encounter_data = PatientEncounterSerializer(m).data
                     update_patient_encounter(encounter_data)
                 return render(request, "data/encounter_submitted.html")
@@ -602,6 +604,7 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
         return redirect("/not_logged_in")
 
 
+@silk_profile("history-view")
 def history_view(request, patient_id=None, encounter_id=None):
     """
 
@@ -692,6 +695,7 @@ def history_view(request, patient_id=None, encounter_id=None):
         return redirect("/not_logged_in")
 
 
+@silk_profile("new-vitals-view")
 def new_vitals_view(request, patient_id=None, encounter_id=None):
     """
     Used to edit Encounter objects.
@@ -724,8 +728,6 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
                     campaign=Campaign.objects.get(name=request.session["campaign"]),
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    from .serializers import PatientEncounterSerializer
-
                     encounter_data = PatientEncounterSerializer(m).data
                     update_patient_encounter(encounter_data)
         form = PatientEncounterForm(instance=m, unit=units)
@@ -841,6 +843,7 @@ def upload_photo_view(request, patient_id=None, encounter_id=None):
         return redirect("/not_logged_in")
 
 
+@silk_profile("edit-profile-view")
 def edit_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
     """
 
@@ -876,8 +879,6 @@ def edit_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
                     campaign=Campaign.objects.get(name=request.session["campaign"]),
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    from .serializers import PatientEncounterSerializer
-
                     encounter_data = PatientEncounterSerializer(m).data
                     update_patient_encounter(encounter_data)
                 vitals_form = VitalsForm(unit=units)
@@ -920,6 +921,7 @@ def edit_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
         return redirect("/not_logged_in")
 
 
+@silk_profile("delete-photo-view")
 def delete_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
     """
     Used to edit Encounter objects.
@@ -966,6 +968,7 @@ def delete_photo_view(request, patient_id=None, encounter_id=None, photo_id=None
         return redirect("/not_logged_in")
 
 
+@silk_profile("hpi-view")
 def hpi_view(request, patient_id=None, encounter_id=None):
     """
 
@@ -1019,6 +1022,7 @@ def hpi_view(request, patient_id=None, encounter_id=None):
         return redirect("/not_logged_in")
 
 
+@silk_profile("submit-hpi-view")
 def submit_hpi_view(request, patient_id=None, encounter_id=None, hpi_id=None):
     """
 
@@ -1047,8 +1051,6 @@ def submit_hpi_view(request, patient_id=None, encounter_id=None, hpi_id=None):
                     campaign=Campaign.objects.get(name=request.session["campaign"]),
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    from .serializers import PatientEncounterSerializer
-
                     encounter_data = PatientEncounterSerializer(m).data
                     update_patient_encounter(encounter_data)
         return redirect(
@@ -1076,23 +1078,24 @@ def patient_medical(request, id=None):
         return redirect("/not_logged_in")
 
 
+@silk_profile("patient-export-view")
 def patient_export_view(request, id=None):
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
             return redirect("main:home")
         m = get_object_or_404(Patient, pk=id)
         encounters = PatientEncounter.objects.filter(patient=m).order_by("-timestamp")
-        prescriptions = dict()
-        diagnoses = dict()
+        prescriptions = {}
+        diagnoses = {}
         for x in encounters:
             try:
                 diagnoses[x] = list(
                     PatientDiagnosis.objects.get(encounter=x).diagnosis.all()
                 )
             except PatientDiagnosis.DoesNotExist:
-                diagnoses[x] = list()
+                diagnoses[x] = []
             prescriptions[x] = list(Treatment.objects.filter(encounter=x))
-        vitals_dictionary = dict()
+        vitals_dictionary = {}
         for x in encounters:
             vitals_dictionary[x] = list(Vitals.objects.filter(encounter=x))
         if request.method == "GET":

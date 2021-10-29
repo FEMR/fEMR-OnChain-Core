@@ -2,6 +2,7 @@
 Non-view functions used to carry out background processes.
 """
 from datetime import timedelta
+from django.db.models.query_utils import Q
 
 from django.utils import timezone
 from silk.profiling.profiler import silk_profile
@@ -12,7 +13,8 @@ from main.models import Campaign, Patient, PatientEncounter, UserSession
 @silk_profile("run-encounter-close")
 def run_encounter_close(campaign: Campaign):
     """
-    When triggered, this function will search for expired PatientEncounter objects and set them as inactive.
+    When triggered, this function will search for expired PatientEncounter
+    objects and set them as inactive.
     """
     now = timezone.now()
 
@@ -49,6 +51,16 @@ def check_browser(request) -> bool:
         "Chrome Mobile iOS",
         "Other",
     ]:
-        return False
+        retval = False
     else:
-        return True
+        retval = True
+    return retval
+
+
+def check_admin_permission(user):
+    return user.groups.filter(
+        Q(name="fEMR Admin")
+        | Q(name="Campaign Manager")
+        | Q(name="Organization Admin")
+        | Q(name="Operation Admin")
+    ).exists()

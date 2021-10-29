@@ -149,12 +149,13 @@ from .small_forms_views import (
 )
 from .views import forgot_username, index, home, healthcheck, help_messages_off
 
+# pylint: disable=C0103
 app_name = "main"
 
 schema_view = get_schema_view(
     openapi.Info(
         title="fEMR OnChain API",
-        default_version="v1.4.4",
+        default_version="v1.4.5",
         description="API endpoints providing an interface with the fEMR OnChain application.",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="info@teamfemr.org"),
@@ -338,6 +339,7 @@ urlpatterns = [
         unlock_campaign_view,
         name="unlock_campaign_view",
     ),
+    path(r"reset_lockouts", reset_lockouts, name="reset_lockouts"),
     path(r"reset_lockouts/<str:username>", reset_lockouts, name="reset_lockouts"),
     # Audit Log Management
     url(r"^get_audit_logs_view/$", get_audit_logs_view, name="get_audit_logs_view"),

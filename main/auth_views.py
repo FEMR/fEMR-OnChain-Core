@@ -1,6 +1,9 @@
 """
 View functions geared toward user authentication.
-All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
+
+All views, except auth views and the index view,
+should be considered to check for a valid and authenticated user.
+
 If one is not found, they will direct to the appropriate error page.
 """
 from axes.utils import reset
@@ -9,12 +12,11 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import MultipleObjectsReturned
 from django.db import IntegrityError, DataError
-from django.db.models.query_utils import Q
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from silk.profiling.profiler import silk_profile
 
-from main.background_tasks import reset_sessions, check_browser
+from main.background_tasks import check_admin_permission, reset_sessions, check_browser
 from main.femr_admin_views import get_client_ip
 from main.forms import RegisterForm, LoginForm
 from main.models import AuditEntry, UserSession, fEMRUser
@@ -30,7 +32,7 @@ def register(request):
     """
     if request.user.is_authenticated:
         return redirect("/main")
-    if request.method == "POST":
+    elif request.method == "POST":
         form = RegisterForm(request.POST)
         error = ""
         if form.is_valid():
@@ -48,24 +50,27 @@ def register(request):
                 u.first_name = form.cleaned_data["first"]
                 u.last_name = form.cleaned_data["last"]
                 login(request, u)
-                return redirect("/thanks")
+                return_response = redirect("/thanks")
             except IntegrityError:
                 error = "An account already exists using that username."
             except MultipleObjectsReturned:
                 error = "An account already exists with that email address."
             except DataError as e:
                 error = str(e)
-        form = RegisterForm()
+        return_response = render(
+            request, "auth/register.html", {"form": RegisterForm(), "error": error}
+        )
     else:
-        error = ""
-        form = RegisterForm()
-    return render(request, "auth/register.html", {"form": form, "error": error})
+        return_response = render(
+            request, "auth/register.html", {"form": RegisterForm(), "error": ""}
+        )
+    return return_response
 
 
 @silk_profile("thank-you-for-registering")
 def thank_you_for_registering(request):
     """
-    Registration success response.
+    Registration success return_response.
 
     :param request: Django Request object.
     :return: HTTPResponse.
@@ -147,7 +152,8 @@ def login_view(request):
                         request,
                         "auth/login.html",
                         {
-                            "error_message": "This user is logged in elsewhere, or the last session wasn't "
+                            "error_message": "This user is logged in elsewhere, "
+                            "or the last session wasn't "
                             "ended correctly. Either log out of your last session, "
                             "or wait for that session to end in one minute.",
                             "form": form,
@@ -163,18 +169,20 @@ def login_view(request):
                     else:
                         request.session["campaign"] = "RECOVERY MODE"
                         if "remember_me" in request.POST:
-                            response = redirect("main:home")
-                            response.set_cookie("username", request.POST["username"])
-                            return response
+                            return_response = redirect("main:home")
+                            return_response.set_cookie(
+                                "username", request.POST["username"]
+                            )
+                            return return_response
                         else:
                             return redirect("main:home")
                 if (timezone.now() - user.password_reset_last).days >= 90:
                     return redirect("required_change_password")
                 elif not user.change_password:
                     if "remember_me" in request.POST:
-                        response = redirect("main:home")
-                        response.set_cookie("username", request.POST["username"])
-                        return response
+                        return_response = redirect("main:home")
+                        return_response.set_cookie("username", request.POST["username"])
+                        return return_response
                     else:
                         return redirect("main:home")
                 else:
@@ -193,7 +201,8 @@ def login_view(request):
                     if u.is_active:
                         error_message = "Invalid username or password."
                     else:
-                        error_message = "Your account has been locked. Please contact your administrator."
+                        error_message = "Your account has been locked. "
+                        "Please contact your administrator."
                 except fEMRUser.DoesNotExist:
                     error_message = "Invalid username or password."
                 return render(
@@ -222,10 +231,10 @@ def logout_view(request):
     logout(request)
     if "campaign" in request.session:
         del request.session["campaign"]
-    response = redirect("main:login_view")
+    return_response = redirect("main:login_view")
     if "username" in request.COOKIES:
-        response.delete_cookie("username")
-    return response
+        return_response.delete_cookie("username")
+    return return_response
 
 
 @silk_profile("change-password")
@@ -234,7 +243,7 @@ def change_password(request):
     Handle requests to change passwords for the AUTH_USER model.
 
     :param request: Django request object. Provided by the URLS config.
-    :return: Renders the change_password page as an HttpResponse.
+    :return: Renders the change_password page as an HTTPResponse.
     """
     error = ""
     if request.user.is_authenticated:
@@ -266,7 +275,7 @@ def required_change_password(request):
     Handle requests to change passwords for the AUTH_USER model.
 
     :param request: Django request object. Provided by the URLS config.
-    :return: Renders the change_password page as an HttpResponse.
+    :return: Renders the change_password page as an HTTPResponse.
     """
     error = ""
     if request.user.is_authenticated:
@@ -293,13 +302,16 @@ def required_change_password(request):
 
 def reset_lockouts(request, username=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             if username is not None:
                 reset(username=username)
-        return render(request, "admin/user_reset_success.html", {"username": username})
+                return_response = render(
+                    request, "admin/user_reset_success.html", {"username": username}
+                )
+            else:
+                return_response = render(request, "admin/user_reset_no_success.html")
+        else:
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response

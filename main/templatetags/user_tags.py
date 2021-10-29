@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 # Core Django imports
 from django import template
-from django.db.models.query_utils import Q
+from main.background_tasks import check_admin_permission
 
 from main.models import Campaign, fEMRUser
 
@@ -29,7 +29,7 @@ def has_group(user: fEMRUser, group_name: str) -> bool:
     :return:
     """
     groups = user.groups.all().values_list("name", flat=True)
-    return True if group_name in groups else False
+    return group_name in groups
 
 
 @register.filter("has_campaign")
@@ -42,7 +42,7 @@ def has_campaign(user: fEMRUser, campaign_name: str) -> bool:
     """
     campaign = Campaign.objects.get(name=campaign_name)
     campaign_list = user.campaigns.all()
-    return True if campaign in campaign_list else False
+    return campaign in campaign_list
 
 
 @register.filter("campaign_active")
@@ -62,8 +62,4 @@ def has_any_group(user: fEMRUser) -> bool:
 
 @register.filter("has_admin_group")
 def has_admin_group(user: fEMRUser) -> bool:
-    return user.groups.filter(
-        Q(name="Campaign Manager")
-        | Q(name="Organization Admin")
-        | Q(name="Operation Admin")
-    ).exists()
+    return check_admin_permission(user)

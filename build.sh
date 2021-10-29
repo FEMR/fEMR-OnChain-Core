@@ -96,7 +96,20 @@ function shell() {
   python3 manage.py shell
 }
 
+function check() {
+  # We're going to ignore E1101, since Django exposes members to Model classes
+  # that PyLint can't see.
+  clear && \
+   black . && \
+   ./build.sh test && \
+   pylint main appMR clinic_messages --disable=E1101,W0613,R0903
+}
+
 case "$1" in
+
+check)
+  check
+  ;;
 
 doc)
   documents
@@ -127,6 +140,7 @@ setup)
   ;;
 
 init-all-run)
+  check
   all
   setup
   run
@@ -134,11 +148,13 @@ init-all-run)
 
 
 all-run)
+  check
   all
   run
   ;;
 
 all)
+  check
   all
   ;;
 

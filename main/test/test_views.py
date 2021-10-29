@@ -6,5 +6,5 @@ from main.views import healthcheck
 def test_healthcheck():
     factory = RequestFactory()
     request = factory.get("/healthcheck")
-    response = healthcheck(request)
-    assert response.status_code, 200
+    return_response = healthcheck(request)
+    assert return_response.status_code, 200

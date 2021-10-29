@@ -1,6 +1,9 @@
 """
 Handles template rendering and logic for web forms.
-All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
+
+All views, except auth views and the index view, should be considered to
+check for a valid and authenticated user.
+
 If one is not found, they will direct to the appropriate error page.
 """
 import math
@@ -66,7 +69,7 @@ def patient_form_view(request):
                     return render(
                         request,
                         "data/patient_submitted.html",
-                        {"patient": t, "encounters": list()},
+                        {"patient": t, "encounters": []},
                     )
                 else:
                     return render(request, "data/patient_not_submitted.html")
@@ -106,7 +109,10 @@ def patient_form_view(request):
                 "match_list": match,
                 "form": form,
                 "page_name": "New Patient",
-                "page_tip": "Complete form with patient demographics as instructed. Any box with an asterisk (*) is required. Shared contact information would be if two patients have a household phone or email that they share, for example.",
+                "page_tip": "Complete form with patient demographics as instructed. "
+                "Any box with an asterisk (*) is required. "
+                "Shared contact information would be if two patients have a "
+                "household phone or email that they share, for example.",
             },
         )
     else:
@@ -248,15 +254,15 @@ def patient_encounter_form_view(request, id=None):
                 "vitals_form": vitals_form,
                 "diagnosis_form": diagnosis_form,
                 "treatment_form": treatment_form,
-                "page_name": "New Encounter for {} {} {}".format(
-                    p.first_name, p.last_name, suffix
-                ),
+                "page_name": f"New Encounter for {p.first_name} {p.last_name} {suffix}",
                 "birth_sex": p.sex_assigned_at_birth,
                 "patient_id": id,
                 "units": units,
                 "telehealth": telehealth,
                 "encounter_open": encounter_open,
-                "page_tip": "Complete form with patient vitals as instructed. Any box with an asterisk (*) is required. For max efficiency, use 'tab' to navigate through this page.",
+                "page_tip": "Complete form with patient vitals as instructed. "
+                "Any box with an asterisk (*) is required. "
+                "For max efficiency, use 'tab' to navigate through this page.",
             },
         )
     else:
@@ -266,17 +272,17 @@ def patient_encounter_form_view(request, id=None):
 def referral_form_view(request, id=None):
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
-            return redirect("main:home")
-        if request.method == "POST":
+            return_response = redirect("main:home")
+        elif request.method == "POST":
             patient = Patient.objects.get(pk=id)
             patient.campaign.add(Campaign.objects.get(pk=request.POST["campaign"]))
             patient.save()
             update_patient_encounter(
                 {"patient": patient.id, "campaign": request.POST["campaign"]}
             )
-            return redirect("main:patient_list_view")
-        if request.method == "GET":
-            return render(
+            return_response = redirect("main:patient_list_view")
+        elif request.method == "GET":
+            return_response = render(
                 request,
                 "forms/referral.html",
                 {
@@ -290,4 +296,5 @@ def referral_form_view(request, id=None):
                 },
             )
     else:
-        return redirect("/not_logged_in")
+        return_response = redirect("/not_logged_in")
+    return return_response

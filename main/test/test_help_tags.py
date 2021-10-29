@@ -9,5 +9,5 @@ def test_is_help_off_true():
 
 
 def test_is_help_off_false():
-    session = dict()
+    session = {}
     assert not is_help_off(session)

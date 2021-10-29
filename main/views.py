@@ -1,6 +1,7 @@
 """
 View functions for top-level locations.
-All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
+All views, except auth views and the index view, should be considered to check for a
+valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
 import pytz
@@ -8,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.core.mail import send_mail
 from silk.profiling.profiler import silk_profile
 
 from main.background_tasks import run_encounter_close
@@ -35,7 +37,9 @@ def home(request):
     :return: An HttpResponse, rendering the home page.
     """
     if request.user.is_authenticated:
-        run_encounter_close(Campaign.objects.get(name=request.session["campaign"]))
+        campaign_list = request.user.campaigns.filter(active=True)
+        campaign = campaign_list.get(name=request.session["campaign"])
+        run_encounter_close(campaign)
         motd = MessageOfTheDay.load()
         if motd.start_date is not None or motd.end_date is not None:
             if motd.start_date < timezone.now().date() < motd.end_date:
@@ -44,19 +48,20 @@ def home(request):
                 motd_final = ""
         else:
             motd_final = ""
-        return render(
+        return_response = render(
             request,
             "data/home.html",
             {
                 "user": request.user,
                 "page_name": "Home",
-                "campaigns": request.user.campaigns.filter(active=True),
+                "campaigns": campaign_list,
                 "motd": motd_final,
                 "selected_campaign": request.session["campaign"],
             },
         )
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def library(request):
@@ -68,9 +73,10 @@ def library(request):
     :return: An HttpResponse, rendering the library page.
     """
     if request.user.is_authenticated:
-        return render(request, "data/library.html", {"user": request.user})
+        return_response = render(request, "data/library.html", {"user": request.user})
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 # noinspection PyUnusedLocal
@@ -89,10 +95,10 @@ def set_timezone(request):
                 request.session["django_timezone"] = request.POST["timezone"]
                 campaign.timezone = request.POST["timezone"]
                 campaign.save()
-                return redirect("main:index")
+                return_response = redirect("main:index")
             else:
                 selected_time_zone = campaign.timezone
-                return render(
+                return_response = render(
                     request,
                     "data/timezone.html",
                     {
@@ -101,32 +107,37 @@ def set_timezone(request):
                     },
                 )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def forgot_username(request):
     if request.method == "POST":
         try:
             user = fEMRUser.objects.get(email__iexact=request.POST["email"])
-            from django.core.mail import send_mail
 
             # noinspection LongLine
             send_mail(
                 "Username Recovery",
-                "Someone recently requested a username reminder from fEMR On-Chain. If this was you, your username is:\n\n\n {}\n\n\n If it wasn't you, you can safely ignore this email.\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(
-                    user.username
-                ),
+                f"Someone recently requested a username reminder from fEMR On-Chain. "
+                "If this was you, your username is:\n\n\n {user.username}\n\n\n "
+                "If it wasn't you, you "
+                "can safely ignore this email.\n\n\nTHIS IS AN AUTOMATED MESSAGE "
+                "FROM fEMR ON-CHAIN. "
+                "PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO "
+                "fEMR ON-CHAIN TO REPLY.",
                 "noreply@teamfemr.org",
                 [user.email],
             )
         except ObjectDoesNotExist:
             pass
-        return render(request, "data/username_sent.html")
+        return_response = render(request, "data/username_sent.html")
     else:
         form = ForgotUsernameForm()
-        return render(request, "data/forgot_username.html", {"form": form})
+        return_response = render(request, "data/forgot_username.html", {"form": form})
+    return return_response
 
 
 def help_messages_off(request):
@@ -134,6 +145,7 @@ def help_messages_off(request):
         request.session["tags_off"] = (
             None if request.session.get("tags_off", None) else True
         )
-        return redirect(request.META.get("HTTP_REFERER", "/"))
+        return_response = redirect(request.META.get("HTTP_REFERER", "/"))
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response

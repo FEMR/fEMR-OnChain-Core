@@ -14,8 +14,8 @@ def operation_admin_home_view(request):
                     admins=request.user
                 )
             except Instance.DoesNotExist:
-                active_instances = list()
-            return render(
+                active_instances = []
+            return_response = render(
                 request,
                 "operation_admin/home.html",
                 {
@@ -25,6 +25,7 @@ def operation_admin_home_view(request):
                 },
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response

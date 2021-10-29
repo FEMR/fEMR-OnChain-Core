@@ -10,23 +10,29 @@ from main.models import fEMRUser
 def test_admin_home_redirect():
     factory = RequestFactory()
     request = factory.get("/superuser_home")
-    request.user = fEMRUser.objects.get(pk=1)
+    u = fEMRUser.objects.create_user(
+        username="test",
+        password="testingpassword",
+        email="logintestinguseremail@email.com",
+    )
+    request.user = u
     Group.objects.get_or_create(name="Campaign Manager")[0].user_set.remove(
         request.user
     )
-    response = admin_home(request)
-    assert response.status_code == 302
+    return_response = admin_home(request)
+    assert return_response.status_code == 302
+    u.delete()
 
 
 def test_admin_home_redirect_anonymous_user():
     factory = RequestFactory()
     request = factory.get("/superuser_home")
     request.user = AnonymousUser()
-    response = admin_home(request)
-    assert response.status_code == 302
+    return_response = admin_home(request)
+    assert return_response.status_code == 302
 
 
-def test_campaign_manager_account_reset():
+def test_permission_denied_account_reset():
     u = fEMRUser.objects.create_user(
         username="test",
         password="testingpassword",
@@ -45,12 +51,92 @@ def test_campaign_manager_account_reset():
     u.campaigns.add(c)
     u.save()
     client = Client()
-    response = client.post(
+    return_response = client.post(
         "/login_view/", {"username": "test", "password": "testingpassword"}
     )
-    response = client.get(reverse("main:reset_lockouts", kwargs={"username": "test2"}))
-    print(response.content)
+    return_response = client.get(
+        reverse("main:reset_lockouts", kwargs={"username": "test2"})
+    )
+    print(return_response.url)
     u.delete()
     v.delete()
-    assert response.status_code == 200
-    assert "test2\\'s account has been reset successfully." in str(response.content)
+    c.delete()
+    assert return_response.status_code == 302
+    assert return_response.url == "/permission_denied/"
+
+
+def test_success_account_reset():
+    u = fEMRUser.objects.create_user(
+        username="test",
+        password="testingpassword",
+        email="logintestinguseremail@email.com",
+    )
+    v = fEMRUser.objects.create_user(
+        username="test2",
+        password="testingpassword",
+        email="logintestinguseremail2@email.com",
+    )
+    u.change_password = False
+    Group.objects.get_or_create(name="fEMR Admin")[0].user_set.add(u)
+    c = baker.make("main.Campaign")
+    c.active = True
+    c.save()
+    u.campaigns.add(c)
+    u.save()
+    client = Client()
+    return_response = client.post(
+        "/login_view/", {"username": "test", "password": "testingpassword"}
+    )
+    return_response = client.get(
+        reverse("main:reset_lockouts", kwargs={"username": "test2"})
+    )
+    u.delete()
+    v.delete()
+    c.delete()
+    assert return_response.status_code == 200
+    print(return_response.content)
+    assert "test2\\'s account has been reset successfully." in str(
+        return_response.content
+    )
+
+
+def test_no_success_account_reset():
+    u = fEMRUser.objects.create_user(
+        username="test",
+        password="testingpassword",
+        email="logintestinguseremail@email.com",
+    )
+    v = fEMRUser.objects.create_user(
+        username="test2",
+        password="testingpassword",
+        email="logintestinguseremail2@email.com",
+    )
+    u.change_password = False
+    Group.objects.get_or_create(name="fEMR Admin")[0].user_set.add(u)
+    c = baker.make("main.Campaign")
+    c.active = True
+    c.save()
+    u.campaigns.add(c)
+    u.save()
+    client = Client()
+    return_response = client.post(
+        "/login_view/", {"username": "test", "password": "testingpassword"}
+    )
+    return_response = client.get(reverse("main:reset_lockouts"))
+    u.delete()
+    v.delete()
+    c.delete()
+    assert return_response.status_code == 200
+    assert (
+        "In your ticket, let us know that you saw the error at user_reset_no_success."
+        in str(return_response.content)
+    )
+
+
+def test_permission_denied_account_reset():
+    client = Client()
+    return_response = client.get(
+        reverse("main:reset_lockouts", kwargs={"username": "test2"})
+    )
+    assert return_response.status_code == 302
+    assert return_response.url == "/not_logged_in/"

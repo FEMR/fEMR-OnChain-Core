@@ -42,8 +42,11 @@ def user_logged_out_callback(sender, request, user, **kwargs):
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     """
-    A general-purpose, commonly-used function generating authentication tokens for the RESTful API.
-    Like any other view, this is never called directly and should be handled by the URL conf for djangorestframework.
+    A general-purpose, commonly-used function generating
+    authentication tokens for the RESTful API.
+
+    Like any other view, this is never called directly and
+    should be handled by the URL conf for djangorestframework.
 
     :param sender: Origin of the request.
     :param instance: The user to generate a Token for.

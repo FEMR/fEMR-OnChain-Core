@@ -2,7 +2,7 @@ from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
 
 
-class NewPasswordValidator(object):
+class NewPasswordValidator:
     @staticmethod
     def validate(password, user=None):
         if check_password(password, user.password):
