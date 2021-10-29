@@ -13,7 +13,8 @@ from main.models import Campaign, AuditEntry, fEMRUser
 
 
 @receiver(user_locked_out)
-def user_locked_out_callback(sender, request, user, **kwargs):
+def user_locked_out_callback(sender, request, **kwargs):
+    user = fEMRUser.objects.get(username=kwargs["username"])
     campaigns = user.campaigns.all()
     campaign_manager = campaigns[0] if len(campaigns) != 0 else None
     if campaign_manager:
