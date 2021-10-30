@@ -1,12 +1,15 @@
 import os
 from django.conf import settings
 from django.contrib.auth import user_logged_in, user_logged_out
+from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from axes.signals import user_locked_out
 from clinic_messages.models import Message
+from appMR.signals import ticket_activity
+from appMR.models import SupportTicket
 
 from main.femr_admin_views import get_client_ip
 from main.models import Campaign, AuditEntry, fEMRUser
@@ -24,7 +27,7 @@ def user_locked_out_callback(sender, request, **kwargs):
             "is locked out of fEMR OnChain. You can wait 15 minutes "
             "and they'll unlock automatically, or else you can "
             "unlock them manually through the Campaign Manager tab.",
-            sender=fEMRUser.objecs.get(username="admin"),
+            sender=fEMRUser.objects.get(username="admin"),
             recipient=campaign_manager,
         )
         send_mail(
@@ -84,3 +87,16 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         # noinspection PyUnresolvedReferences
         Token.objects.create(user=instance)
+
+
+@receiver(ticket_activity)
+def handle_ticket_activity(sender, ticket, **kwargs):
+    ticket = SupportTicket.objects.get(pk=ticket)
+    for user in Group.objects.get(name="Developer").user_set.all():
+        Message.objects.create(
+            subject="Ticket Update",
+            content=f"This message is to let you know that an update was posted to ticket {ticket.id}. "
+            "Use the Let Us Know link to view the new information.",
+            sender=fEMRUser.objects.get(username="admin"),
+            recipient=user,
+        )

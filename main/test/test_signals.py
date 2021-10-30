@@ -1,5 +1,9 @@
+from django.contrib.auth.models import Group
 from django.test.client import Client
+from clinic_messages.models import Message
 from main.models import fEMRUser
+from model_bakery import baker
+from axes.utils import reset
 
 
 def test_axes_lockout_signal_view():
@@ -25,8 +29,43 @@ def test_axes_lockout_signal_view():
         "/login_view/", {"username": "test", "password": "testinglockout"}
     )
     u.delete()
+    reset(username="test")
     assert return_response.status_code == 403
     assert (
         "Too many access attempts. Try again in 15 minutes or contact your Campaign Manager."
         in str(return_response.content)
     )
+
+
+def test_handle_ticket_activity():
+    u = fEMRUser.objects.create_user(
+        username="test",
+        password="testingpassword",
+        email="logintestinguseremail@email.com",
+    )
+    a = fEMRUser.objects.create_user(
+        username="admin",
+        password="testingpassword",
+        email="tickettestingadminuseremail@email.com",
+    )
+    u.change_password = False
+    u.campaigns.add(baker.make("main.Campaign"))
+    u.save()
+    g = Group.objects.get_or_create(name="Developer")[0]
+    g.user_set.add(u)
+    client = Client()
+    return_response = client.post(
+        "/login_view/", {"username": "test", "password": "testingpassword"}
+    )
+    assert return_response.status_code == 302
+    assert return_response.url == "/home/"
+    messages = len(Message.objects.filter(recipient=u))
+    return_response = client.post(
+        "/appMR/new/", {"title": "Test Ticket", "description": "Test Description."}
+    )
+    messages_after = len(Message.objects.filter(recipient=u))
+    u.delete()
+    g.delete()
+    a.delete()
+    assert return_response.status_code == 200
+    assert messages + 1 == messages_after
