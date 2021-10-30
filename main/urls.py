@@ -32,7 +32,11 @@ from main.admin_views import (
     update_user_view,
     update_user_password_view,
 )
-from main.delete_views import delete_chief_complaint, patient_delete_view
+from main.delete_views import (
+    delete_chief_complaint,
+    delete_treatment_view,
+    patient_delete_view,
+)
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
 from main.formulary_management import (
     add_supply_view,
@@ -212,6 +216,11 @@ urlpatterns = [
     ),
     path(
         r"patient_delete_view/<int:id>", patient_delete_view, name="patient_delete_view"
+    ),
+    path(
+        r"delete_treatment_view/<int:treatment_id>",
+        delete_treatment_view,
+        name="delete_treatment_view",
     ),
     path(
         r"delete_chief_complaint/<int:id>/<int:patient_id>",

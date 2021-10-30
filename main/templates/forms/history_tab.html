@@ -189,6 +189,10 @@
                                 {{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
                         <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
                     </div>
+                    <div>
+                        <a href="{% url 'main:delete_treatment_view' treatment_id=t.id %}" id="treatment_delete_{{ t.id }}"
+                            onclick="return confirm('Are you sure you want to delete this prescribed treatment?');">Delete</a>
+                    </div>
                 </div>
                 <hr/>
                 {% endfor %}

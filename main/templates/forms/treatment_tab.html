@@ -102,8 +102,6 @@
                         tr:nth-child(even) {
                             background-color: #dddddd;
                         }
-
-
                     </style>
                     <table>
                         <tr>
@@ -188,11 +186,16 @@
                         <div class=""><b>Prescriber |</b></div>
                         <div class="">
                             <a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">
-                                {{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>
+                                {{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a>
+                        </div>
                         <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
                     </div>
+                    <div>
+                        <a href="{% url 'main:delete_treatment_view' treatment_id=t.id %}" id="treatment_delete_{{ t.id }}"
+                            onclick="return confirm('Are you sure you want to delete this prescribed treatment?');">Delete</a>
+                    </div>
                 </div>
-                <hr/>
+                <hr />
                 {% endfor %}
             </div>
         </div>
@@ -200,45 +203,44 @@
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a class="nav-link"
-                       href="{% url 'main:encounter_edit_form_view' patient.id encounter_id %}">Medical</a>
+                        href="{% url 'main:encounter_edit_form_view' patient.id encounter_id %}">Medical</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'main:hpi_view' patient.id encounter_id %}">HPI & Assessment
                         <button class="btn btn-link" data-content="History of Present Illness" data-toggle="popover"
-                                data-trigger="hover"><i class="fa fa-question-circle"></i></button>
+                            data-trigger="hover"><i class="fa fa-question-circle"></i></button>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a aria-current="page" class="nav-link active"
-                       href="{% url 'main:new_diagnosis_view' patient.id encounter_id %}">Treatment</a>
+                        href="{% url 'main:new_diagnosis_view' patient.id encounter_id %}">Treatment</a>
                 </li>
                 <li class="nav-item">
                     <a aria-current="page" class="nav-link"
-                       href="{% url 'main:history_view' patient.id encounter_id %}">PMH
+                        href="{% url 'main:history_view' patient.id encounter_id %}">PMH
                         <button class="btn btn-link" data-content="Past Medical History" data-toggle="popover"
-                                data-trigger="hover"><i
-                                class="fa fa-question-circle"></i></button>
+                            data-trigger="hover"><i class="fa fa-question-circle"></i></button>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a aria-current="page" class="nav-link"
-                       href="{% url 'main:upload_photo_view' patient.id encounter_id %}">Photo/Imaging</a>
+                        href="{% url 'main:upload_photo_view' patient.id encounter_id %}">Photo/Imaging</a>
                 </li>
             </ul>
             <div class="row bg-light">
                 <form action="{% url 'main:new_diagnosis_view' patient.id encounter_id %}" method="post"
-                      onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+                    onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
                     <h2>Diagnoses</h2>
                     {% crispy diagnosis_form %}
                 </form>
                 <form action="{% url 'main:new_treatment_view' patient.id encounter_id %}" method="post"
-                      onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+                    onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
                     <h2>Prescriptions</h2>
                     {% crispy treatment_form %}
                 </form>
             </div>
             <form action="{% url 'main:notes_view' patient.id encounter_id %}" method="post"
-                  onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
+                onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
                 {% crispy aux_form %}
             </form>
         </div>
@@ -249,58 +251,58 @@
 {{ form.media }}
 
 <script>
-        let treatmentForm = document.querySelectorAll(".treatment-form")
-        let container = document.querySelector("#form-container")
-        let addButton = document.querySelector("#add-form")
-        let totalForms = document.querySelector("#id_form-TOTAL_FORMS")
+    let treatmentForm = document.querySelectorAll(".treatment-form")
+    let container = document.querySelector("#form-container")
+    let addButton = document.querySelector("#add-form")
+    let totalForms = document.querySelector("#id_form-TOTAL_FORMS")
 
-        let formNum = treatmentForm.length - 1
-        addButton.addEventListener('click', addForm)
+    let formNum = treatmentForm.length - 1
+    addButton.addEventListener('click', addForm)
 
-        function addForm(e) {
-            e.preventDefault()
+    function addForm(e) {
+        e.preventDefault()
 
-            let newForm = treatmentForm[0].cloneNode(true)
-            let formRegex = RegExp(`form-(\\d){1}-`, 'g')
+        let newForm = treatmentForm[0].cloneNode(true)
+        let formRegex = RegExp(`form-(\\d){1}-`, 'g')
 
-            formNum++
-            newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`)
-            container.insertBefore(newForm, addButton)
+        formNum++
+        newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`)
+        container.insertBefore(newForm, addButton)
 
-            totalForms.setAttribute('value', `${formNum + 1}`)
-        }
+        totalForms.setAttribute('value', `${formNum + 1}`)
+    }
 
 
 </script>
 
 <script>
-        var modal = document.getElementById("modal_popup");
+    var modal = document.getElementById("modal_popup");
 
-        var btn = document.getElementById("vitals_modal_button");
+    var btn = document.getElementById("vitals_modal_button");
 
-        var span = document.getElementsByClassName("close")[0];
+    var span = document.getElementsByClassName("close")[0];
 
-        btn.onclick = function () {
-            modal.style.display = "block";
-        }
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
 
-        span.onclick = function () {
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
             modal.style.display = "none";
         }
-
-        window.onclick = function (event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
+    }
 
 
 </script>
 
 <script>
-        $(document).on("keydown", ":input:not(textarea)", function (event) {
-            return event.key != "Enter";
-        });
+    $(document).on("keydown", ":input:not(textarea)", function (event) {
+        return event.key != "Enter";
+    });
 
 
 </script>
