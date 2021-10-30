@@ -3,6 +3,7 @@ Non-view functions used to carry out background processes.
 """
 import os
 from datetime import timedelta
+from django.contrib.auth.models import Group
 from django.db.models.query_utils import Q
 
 from django.utils import timezone
@@ -91,3 +92,14 @@ def check_admin_permission(user):
         | Q(name="Organization Admin")
         | Q(name="Operation Admin")
     ).exists()
+
+
+@silk_profile("reassign-admin-groups")
+def reassign_admin_groups(user):
+    if user.groups.filter(name="Admin").exists():
+        user.groups.add(Group.objects.get(name="Campaign Manager"))
+        user.groups.remove(Group.objects.get(name="Admin"))
+    if Group.objects.filter(name="Admin").exists():
+        admin_group = Group.objects.get(name="Admin")
+        if len(admin_group.user_set.all()) == 0:
+            admin_group.delete()
