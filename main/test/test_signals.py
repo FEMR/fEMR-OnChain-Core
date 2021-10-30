@@ -2,7 +2,8 @@ from django.test.client import Client
 from main.models import fEMRUser
 
 
-def test_login_view():
+def test_axes_lockout_signal_view():
+    fEMRUser.objects.all().delete()
     u = fEMRUser.objects.create_user(
         username="test",
         password="testingpassword",
