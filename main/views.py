@@ -38,8 +38,9 @@ def home(request):
     """
     if request.user.is_authenticated:
         campaign_list = request.user.campaigns.filter(active=True)
-        campaign = campaign_list.get(name=request.session["campaign"])
-        run_encounter_close(campaign)
+        if len(campaign_list) != 0 and request.session["campaign"] != "RECOVERY MODE":
+            campaign = campaign_list.get(name=request.session["campaign"])
+            run_encounter_close(campaign)
         motd = MessageOfTheDay.load()
         if motd.start_date is not None or motd.end_date is not None:
             if motd.start_date < timezone.now().date() < motd.end_date:
@@ -117,7 +118,6 @@ def forgot_username(request):
     if request.method == "POST":
         try:
             user = fEMRUser.objects.get(email__iexact=request.POST["email"])
-
             # noinspection LongLine
             send_mail(
                 "Username Recovery",

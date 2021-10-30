@@ -278,7 +278,7 @@ class PatientForm(ModelForm):
                     "placeholder": "dd/mm/yyyy",
                 }
             ),
-            "state": autocomplete.ModelSelect2Multiple(url="main:state-autocomplete"),
+            "state": autocomplete.ModelSelect2(url="main:state-autocomplete"),
         }
 
 

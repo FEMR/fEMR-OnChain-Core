@@ -50,13 +50,13 @@ def last_timestamp(patient):
 
 
 @register.filter("mask_social")
-def mask_social(patient):
-    if patient is None:
+def mask_social(social):
+    if social is None:
         retval = ""
-    if len(patient) == 4:
-        retval = f"***-**-{patient}"
+    elif len(social) == 4:
+        retval = f"***-**-{social}"
     else:
-        retval = f"***-**-{patient[7:11]}"
+        retval = f"***-**-{social[7:11]}"
     return retval
 
 
