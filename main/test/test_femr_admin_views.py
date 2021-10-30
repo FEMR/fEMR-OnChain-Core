@@ -6,6 +6,7 @@ from main.models import fEMRUser
 
 
 def test_edit_organization_when_contact_null():
+    fEMRUser.objects.all().delete()
     u = fEMRUser.objects.create_user(
         username="test",
         password="testingpassword",

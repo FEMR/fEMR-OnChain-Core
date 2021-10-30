@@ -13,7 +13,7 @@ from django.utils import timezone
 
 from clinic_messages.models import Message
 from main.femr_admin_views import get_client_ip
-from .models import Campaign, ChiefComplaint, DatabaseChangeLog, Patient
+from .models import Campaign, ChiefComplaint, DatabaseChangeLog, Patient, Treatment
 
 
 def patient_delete_view(request, id=None):
@@ -88,6 +88,16 @@ def delete_chief_complaint(request, id=None, patient_id=None, encounter_id=None)
             )
         else:
             return_response = redirect("main:chief_complaint_list_view", patient_id)
+    else:
+        return_response = redirect("main:not_logged_in")
+    return return_response
+
+
+def delete_treatment_view(request, treatment_id=None):
+    if request.user.is_authenticated:
+        p = get_object_or_404(Treatment, pk=treatment_id)
+        p.delete()
+        return_response = redirect(request.META.get("HTTP_REFERER", "/"))
     else:
         return_response = redirect("main:not_logged_in")
     return return_response
