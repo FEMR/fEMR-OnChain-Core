@@ -9,7 +9,14 @@ from django.utils import timezone
 from silk.profiling.profiler import silk_profile
 from django.core.mail import send_mail
 
-from main.models import Campaign, Patient, PatientEncounter, UserSession, fEMRUser
+from main.models import (
+    Campaign,
+    Patient,
+    PatientEncounter,
+    UserSession,
+    cal_key,
+    fEMRUser,
+)
 
 
 @silk_profile("run-encounter-close")
@@ -85,9 +92,31 @@ def check_browser(request) -> bool:
 
 @silk_profile("check-admin-permission")
 def check_admin_permission(user):
+    """
+    Given a user, check whether that user is a member of an
+    administrative group. The current admin groups are
+    fEMR Admin, Campaign Manager, Organization Admin, and
+    Operation Admin.
+
+    :param user: A user to check for permissions.
+    :return: Whether the user is in an administrative group.
+    """
     return user.groups.filter(
         Q(name="fEMR Admin")
         | Q(name="Campaign Manager")
         | Q(name="Organization Admin")
         | Q(name="Operation Admin")
     ).exists()
+
+
+@silk_profile("assign-broken-patients")
+def assign_broken_patient():
+    """
+    Skim the database for patients with a campaign_key of
+    None and make sure they get a correct key.
+
+    :return: None
+    """
+    for patient in Patient.objects.filter(campaign_key=None):
+        patient.campaign_key = cal_key(patient.id)
+        patient.save()
