@@ -536,7 +536,7 @@ class UserForm(UserCreationForm):
 
     groups = ModelMultipleChoiceField(
         queryset=Group.objects.exclude(name="fEMR Admin").exclude(name="Manager"),
-        required=False,
+        required=True,
     )
 
     def __init__(self, *args, **kwargs):
@@ -561,6 +561,11 @@ class fEMRAdminUserForm(UserCreationForm):
     """
     Data entry form - fEMRUser
     """
+
+    groups = ModelMultipleChoiceField(
+        queryset=Group.objects.all(),
+        required=True,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -594,7 +599,7 @@ class UserUpdateForm(UserChangeForm):
     password = None
     groups = ModelMultipleChoiceField(
         queryset=Group.objects.exclude(name="fEMR Admin").exclude(name="Manager"),
-        required=False,
+        required=True,
     )
 
     def __init__(self, user, *args, **kwargs):
@@ -621,6 +626,10 @@ class fEMRAdminUserUpdateForm(UserChangeForm):
     """
 
     password = None
+    groups = ModelMultipleChoiceField(
+        queryset=Group.objects.all(),
+        required=True,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
