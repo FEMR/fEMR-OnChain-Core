@@ -1,5 +1,6 @@
 {% load static %}
 {% load patient_tags %}
+{% load encounter_tags %}
 <html>
 
 <head>
@@ -258,7 +259,9 @@
             <h5>{{ encounter.timestamp }}</h5>
             <div class="row">
                 <div class="form-group col-md-4">
-                    {% for vitals in vitals_dictionary.encounter %}
+                    {% for encoun, vitals_list in vitals_dictionary.items %}
+                    {% if encoun == encounter %}
+                    {% for vitals in vitals_list %}
                     <div class="row">
                         <div>
                             <div>
@@ -364,6 +367,8 @@
                                 </div>
                             </div>
                         </div>
+                        {% endfor %}
+                        {% endif %}
                         {% endfor %}
                     </div>
                     <div class="form-group col-md-4">
@@ -604,18 +609,24 @@
                 <div><h3>Diagnoses and Treatment</h3></div>
                 <div>
                     <h4>All Diagnoses</h4>
-                    {% for d in diagnoses.encounter %}
-                    {{ d }},
+                    {% for key, value in diagnoses.items %}
+                    {% if key == encounter %}
+                    {% for item in value %}
+                    {{ item }},
+                    {% endfor %}
+                    {% endif %}
                     {% endfor %}
                 </div>
                 <div>
                     <h4>Prescriptions</h4>
-                    {% for t in prescriptions %}
+                    {% for e, scripts in prescriptions.items %}
+                    {% if e == encounter %}
+                    {% for t in scripts %}
                     <div>
                         <div class="row"><b>{{ t.timestamp }}</b></div>
                         <div class="row">
                             <div class=""><b>Medication |</b></div>
-                            <div class="">{{ t.medication }}</div>
+                            <div class="">{{ t|get_medications }}</div>
                         </div>
                         <div class="row">
                             <div class=""><b>Administration Schedule |</b></div>
@@ -636,6 +647,8 @@
                         </div>
                     </div>
                     <hr/>
+                    {% endfor %}
+                    {% endif %}
                     {% endfor %}
                 </div>
             </div>
