@@ -32,7 +32,11 @@ from main.admin_views import (
     update_user_view,
     update_user_password_view,
 )
-from main.delete_views import delete_chief_complaint, patient_delete_view
+from main.delete_views import (
+    delete_chief_complaint,
+    delete_treatment_view,
+    patient_delete_view,
+)
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
 from main.formulary_management import (
     add_supply_view,
@@ -149,12 +153,13 @@ from .small_forms_views import (
 )
 from .views import forgot_username, index, home, healthcheck, help_messages_off
 
+# pylint: disable=C0103
 app_name = "main"
 
 schema_view = get_schema_view(
     openapi.Info(
         title="fEMR OnChain API",
-        default_version="v1.4.4",
+        default_version="v1.4.5",
         description="API endpoints providing an interface with the fEMR OnChain application.",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="info@teamfemr.org"),
@@ -211,6 +216,11 @@ urlpatterns = [
     ),
     path(
         r"patient_delete_view/<int:id>", patient_delete_view, name="patient_delete_view"
+    ),
+    path(
+        r"delete_treatment_view/<int:treatment_id>",
+        delete_treatment_view,
+        name="delete_treatment_view",
     ),
     path(
         r"delete_chief_complaint/<int:id>/<int:patient_id>",
@@ -338,6 +348,7 @@ urlpatterns = [
         unlock_campaign_view,
         name="unlock_campaign_view",
     ),
+    path(r"reset_lockouts", reset_lockouts, name="reset_lockouts"),
     path(r"reset_lockouts/<str:username>", reset_lockouts, name="reset_lockouts"),
     # Audit Log Management
     url(r"^get_audit_logs_view/$", get_audit_logs_view, name="get_audit_logs_view"),

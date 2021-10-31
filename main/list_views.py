@@ -1,6 +1,9 @@
 """
 View functions handling displaying data models as sortable, filterable lists.
-All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
+
+All views, except auth views and the index view, should be considered
+to check for a valid and authenticated user.
+
 If one is not found, they will direct to the appropriate error page.
 """
 import csv
@@ -64,7 +67,7 @@ def patient_list_view(request):
                 )
             )
         except ObjectDoesNotExist:
-            data = list()
+            data = []
         return render(
             request,
             "list/patient.html",
@@ -72,7 +75,9 @@ def patient_list_view(request):
                 "user": request.user,
                 "list_view": sorted(data, reverse=True, key=get_latest_timestamp),
                 "page_name": "Manager",
-                "page_tip": "This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.",
+                "page_tip": "This provides an overview of all patients in a campaign "
+                "or location seen that day, week, month, etc. "
+                "Campaign is listed at the top of the page.",
             },
         )
     else:
@@ -155,12 +160,12 @@ def patient_csv_export_view(request):
                 | Q(city__icontains="test")
             )
         except ObjectDoesNotExist:
-            data = list()
+            data = []
         id = 1
         time_zone = Campaign.objects.get(name=request.session["campaign"]).timezone
         campaign_time_zone = pytz_timezone(time_zone)
         campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
-        patient_rows = list()
+        patient_rows = []
         max_treatments = 0
         for patient in data:
             for encounter in PatientEncounter.objects.filter(patient=patient):
@@ -425,7 +430,7 @@ def filter_patient_list_view(request):
                         )
                     )
                 except ValueError:
-                    data = list()
+                    data = []
                 selected = 4
             elif request.GET["filter_list"] == "5":
                 try:
@@ -457,7 +462,7 @@ def filter_patient_list_view(request):
                         )
                     )
                 except ValueError:
-                    data = list()
+                    data = []
                 selected = 5
             elif request.GET["filter_list"] == "6":
                 try:
@@ -465,12 +470,12 @@ def filter_patient_list_view(request):
                         campaign=Campaign.objects.get(name=request.session["campaign"])
                     )
                 except ValueError:
-                    data = list()
+                    data = []
                 selected = 6
             else:
-                data = list()
+                data = []
         except ObjectDoesNotExist:
-            data = list()
+            data = []
         return render(
             request,
             "list/patient.html",
@@ -482,7 +487,9 @@ def filter_patient_list_view(request):
                 "filter_day": request.GET["date_filter_day"],
                 "filter_start": request.GET["date_filter_start"],
                 "filter_end": request.GET["date_filter_end"],
-                "page_tip": "This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.",
+                "page_tip": "This provides an overview of all patients in a campaign or "
+                "location seen that day, week, month, etc. "
+                "Campaign is listed at the top of the page.",
             },
         )
     else:
@@ -529,14 +536,16 @@ def search_patient_list_view(request):
                     )
                 )
         except ObjectDoesNotExist:
-            data = list()
+            data = []
         return render(
             request,
             "list/patient.html",
             {
                 "user": request.user,
                 "list_view": sorted(data, reverse=True, key=get_latest_timestamp),
-                "page_tip": "This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.",
+                "page_tip": "This provides an overview of all patients in a campaign or "
+                "location seen that day, week, month, etc. "
+                "Campaign is listed at the top of the page.",
             },
         )
     else:

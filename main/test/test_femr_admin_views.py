@@ -6,6 +6,7 @@ from main.models import fEMRUser
 
 
 def test_edit_organization_when_contact_null():
+    fEMRUser.objects.all().delete()
     u = fEMRUser.objects.create_user(
         username="test",
         password="testingpassword",
@@ -19,12 +20,13 @@ def test_edit_organization_when_contact_null():
     u.campaigns.add(c)
     u.save()
     client = Client()
-    response = client.post(
+    return_response = client.post(
         "/login_view/", {"username": "test", "password": "testingpassword"}
     )
     o = baker.make("main.Organization")
-    response = client.get("/edit_organization/{0}".format(o.id))
-    assert response.status_code == 200
-    assert "contact_edit_form_div" not in str(response.content)
-    assert "contact_edit_form_activate" not in str(response.content)
+    return_response = client.get("/edit_organization/{0}".format(o.id))
+    assert return_response.status_code == 200
+    assert "contact_edit_form_div" not in str(return_response.content)
+    assert "contact_edit_form_activate" not in str(return_response.content)
     u.delete()
+    c.delete()

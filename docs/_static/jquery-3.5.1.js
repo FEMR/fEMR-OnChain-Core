@@ -9170,7 +9170,7 @@ function ajaxHandleResponses( s, jqXHR, responses ) {
 		if ( finalDataType !== dataTypes[ 0 ] ) {
 			dataTypes.unshift( finalDataType );
 		}
-		return responses[ finalDataType ];
+		return return_responses[ finalDataType ];
 	}
 }
 
@@ -9202,7 +9202,7 @@ function ajaxConvert( s, response, jqXHR, isSuccess ) {
 
 		// Apply the dataFilter if provided
 		if ( !prev && isSuccess && s.dataFilter ) {
-			response = s.dataFilter( response, s.dataType );
+			return_response = s.dataFilter( response, s.dataType );
 		}
 
 		prev = current;
@@ -9254,10 +9254,10 @@ function ajaxConvert( s, response, jqXHR, isSuccess ) {
 
 					// Unless errors are allowed to bubble, catch and return them
 					if ( conv && s.throws ) {
-						response = conv( response );
+						return_response = conv( response );
 					} else {
 						try {
-							response = conv( response );
+							return_response = conv( response );
 						} catch ( e ) {
 							return {
 								state: "parsererror",
@@ -9724,7 +9724,7 @@ jQuery.extend( {
 
 			// Get response data
 			if ( responses ) {
-				response = ajaxHandleResponses( s, jqXHR, responses );
+				return_response = ajaxHandleResponses( s, jqXHR, responses );
 			}
 
 			// Use a noop converter for missing script
@@ -9733,7 +9733,7 @@ jQuery.extend( {
 			}
 
 			// Convert no matter what (that way responseXXX fields are always set)
-			response = ajaxConvert( s, response, jqXHR, isSuccess );
+			return_response = ajaxConvert( s, response, jqXHR, isSuccess );
 
 			// If successful, handle type chaining
 			if ( isSuccess ) {
@@ -9760,9 +9760,9 @@ jQuery.extend( {
 
 				// If we have data, let's convert it
 				} else {
-					statusText = response.state;
-					success = response.data;
-					error = response.error;
+					statusText = return_response.state;
+					success = return_response.data;
+					error = return_response.error;
 					isSuccess = !error;
 				}
 			} else {
@@ -10231,7 +10231,7 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 			if ( !responseContainer ) {
 				jQuery.error( callbackName + " was not called" );
 			}
-			return responseContainer[ 0 ];
+			return return_responseContainer[ 0 ];
 		};
 
 		// Force json dataType
@@ -10383,7 +10383,7 @@ jQuery.fn.load = function( url, params, callback ) {
 		} ).done( function( responseText ) {
 
 			// Save response for use in complete callback
-			response = arguments;
+			return_response = arguments;
 
 			self.html( selector ?
 

@@ -16,6 +16,7 @@ import sys
 import django
 
 sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("../venv/lib/python3.8/site-packages"))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "femr_onchain.settings")
 django.setup()
 
@@ -26,7 +27,7 @@ copyright = "2021, Team fEMR"
 author = "Team fEMR"
 
 # The full version, including alpha/beta/rc tags
-release = "v1.4.4"
+release = "v1.4.5"
 
 # -- General configuration ---------------------------------------------------
 

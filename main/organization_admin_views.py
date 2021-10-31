@@ -9,8 +9,8 @@ def organization_admin_home_view(request):
             org = Campaign.objects.get(
                 name=request.session["campaign"]
             ).instance.organization
-            instances = list()
-            campaigns = list()
+            instances = []
+            campaigns = []
             try:
                 instances = Instance.objects.filter(active=True).filter(
                     admins=request.user
@@ -22,17 +22,18 @@ def organization_admin_home_view(request):
                 pass
             except Campaign.DoesNotExist:
                 pass
-            return render(
+            return_response = render(
                 request,
                 "organization_admin/home.html",
                 {
                     "user": request.user,
                     "instances": instances,
                     "campaigns": campaigns,
-                    "page_name": "Organization: {0}".format(org.name),
+                    "page_name": f"Organization: {org.name}",
                 },
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response

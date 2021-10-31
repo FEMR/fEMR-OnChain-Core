@@ -1,6 +1,6 @@
-from django.db.models.query_utils import Q
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
+from main.background_tasks import check_admin_permission
 
 from main.csvio.added_inventory import AddedInventoryHandler
 from main.csvio.initial_inventory import InitialInventoryHandler
@@ -15,55 +15,47 @@ from main.models import Campaign, InventoryEntry
 
 def formulary_home_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             campaign = Campaign.objects.get(name=request.session["campaign"])
             formulary = campaign.inventory.entries.all().order_by("medication")
-            return render(
+            return_response = render(
                 request,
                 "formulary/home.html",
                 {"page_name": "Inventory", "list_view": formulary},
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def add_supply_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             if request.method == "GET":
                 form = InventoryEntryForm()
             else:
                 form = InventoryEntryForm(request.POST)
                 t = form.save()
                 t.save()
-            return render(request, "formulary/add_supply.html", {"form": form})
+            return_response = render(
+                request, "formulary/add_supply.html", {"form": form}
+            )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def edit_add_supply_view(request, id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             inventory_entry = InventoryEntry.objects.get(pk=id)
             if request.method == "GET":
                 form = AddSupplyForm()
-                return render(
+                return_response = render(
                     request,
                     "formulary/edit_add_supply.html",
                     {
@@ -78,9 +70,9 @@ def edit_add_supply_view(request, id=None):
                     inventory_entry.initial_quantity += int(request.POST["quantity"])
                     inventory_entry.quantity += int(request.POST["quantity"])
                     inventory_entry.save()
-                    return redirect("main:formulary_home_view")
+                    return_response = redirect("main:formulary_home_view")
                 else:
-                    return render(
+                    return_response = render(
                         request,
                         "formulary/edit_add_supply.html",
                         {
@@ -90,22 +82,19 @@ def edit_add_supply_view(request, id=None):
                         },
                     )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def edit_sub_supply_view(request, id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             inventory_entry = InventoryEntry.objects.get(pk=id)
             if request.method == "GET":
                 form = RemoveSupplyForm()
-                return render(
+                return_response = render(
                     request,
                     "formulary/edit_sub_supply.html",
                     {
@@ -128,9 +117,9 @@ def edit_sub_supply_view(request, id=None):
                         inventory_entry.initial_quantity = 0
                         inventory_entry.quantity = 0
                     inventory_entry.save()
-                    return redirect("main:formulary_home_view")
+                    return_response = redirect("main:formulary_home_view")
                 else:
-                    return render(
+                    return_response = render(
                         request,
                         "formulary/edit_add_supply.html",
                         {
@@ -140,34 +129,28 @@ def edit_sub_supply_view(request, id=None):
                         },
                     )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def csv_handler_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
-            return render(
+        if check_admin_permission(request.user):
+            return_response = render(
                 request, "formulary/csv_handler.html", {"form": CSVUploadForm()}
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def csv_import_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             campaign = Campaign.objects.get(name=request.session["campaign"])
             form = CSVUploadForm(request.POST, request.FILES)
             result = ""
@@ -181,39 +164,37 @@ def csv_import_view(request):
                     AddedInventoryHandler().read(upload, campaign)
                 upload.document.delete()
                 upload.delete()
-                return render(
+                return_response = render(
                     request,
                     "formulary/csv_import.html",
                     {"result": "Formulary uploaded successfully."},
                 )
             else:
-                return render(
+                return_response = render(
                     request,
                     "formulary/csv_handler.html",
                     {"form": form, "result": result},
                 )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def csv_export_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             campaign = Campaign.objects.get(name=request.session["campaign"])
             formulary = campaign.inventory.entries.all().order_by("medication")
-            response = HttpResponse(
+            return_response = HttpResponse(
                 content_type="text/csv",
                 headers={"Content-Disposition": 'attachment; filename="formulary.csv"'},
             )
             handler = InitialInventoryHandler()
-            return handler.write(response, formulary)
+            return_response = handler.write(return_response, formulary)
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response

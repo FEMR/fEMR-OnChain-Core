@@ -14,5 +14,5 @@ class URLTestCase(TestCase):
         Double-checks that the index page responds by correctly redirecting to Login.
         """
         c = Client()
-        response = c.get("/")
-        self.assertEqual(response.status_code, 302)
+        return_response = c.get("/")
+        self.assertEqual(return_response.status_code, 302)

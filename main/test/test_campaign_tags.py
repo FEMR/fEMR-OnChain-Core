@@ -7,9 +7,11 @@ def test_is_selected():
     c = baker.make("main.Campaign")
     s = c.name
     assert is_selected(c, s)
+    c.delete()
 
 
 def test_is_not_selected():
     c = baker.make("main.Campaign")
     s = "Test"
     assert not is_selected(c, s)
+    c.delete()

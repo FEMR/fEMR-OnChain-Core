@@ -486,12 +486,12 @@ def edit_organization_view(request, id=None):
                         username=request.user.username,
                         campaign=Campaign.objects.get(name=request.session["campaign"]),
                     )
-                    return render(
+                    return_response = render(
                         request, "femr_admin/confirm/organization_submitted.html"
                     )
             else:
                 form = OrganizationForm(instance=instance)
-                return render(
+                return_response = render(
                     request,
                     "femr_admin/organization/edit_organization.html",
                     {
@@ -504,9 +504,10 @@ def edit_organization_view(request, id=None):
                     },
                 )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def new_organization_view(request):

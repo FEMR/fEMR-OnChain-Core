@@ -50,13 +50,14 @@ def last_timestamp(patient):
 
 
 @register.filter("mask_social")
-def mask_social(patient):
-    if patient is None:
-        return ""
-    if len(patient) == 4:
-        return "***-**-{}".format(patient)
+def mask_social(social):
+    if social is None:
+        retval = ""
+    elif len(social) == 4:
+        retval = f"***-**-{social}"
     else:
-        return "***-**-{}".format(patient[7:11])
+        retval = f"***-**-{social[7:11]}"
+    return retval
 
 
 @register.filter("get_chief_complaint")
@@ -65,51 +66,52 @@ def get_chief_complaint(encounter):
 
 
 @register.filter("imperial_primary_height")
-def imperial_primary_height(m):
+def imperial_primary_height(item):
     return math.floor(
-        ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) // 12
+        ((item.body_height_primary * 100 + item.body_height_secondary) / 2.54) // 12
     )
 
 
 @register.filter("imperial_secondary_height")
-def imperial_secondary_height(m):
+def imperial_secondary_height(item):
     return round(
-        ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54) % 12, 2
+        ((item.body_height_primary * 100 + item.body_height_secondary) / 2.54) % 12, 2
     )
 
 
 @register.filter("imperial_weight")
-def imperial_weight(m):
-    return round(m.body_weight * 2.2046, 2)
+def imperial_weight(item):
+    return round(item.body_weight * 2.2046, 2)
 
 
 @register.filter("imperial_temperature")
-def imperial_temperature(m):
-    if m.body_temperature is not None:
-        return round((m.body_temperature * 9 / 5) + 32, 2)
-    else:
-        return None
+def imperial_temperature(item):
+    return (
+        round((item.body_temperature * 9 / 5) + 32, 2)
+        if item.body_temperature is not None
+        else None
+    )
 
 
 @register.filter("complaint_as_string")
-def complaint_as_string(m):
+def complaint_as_string(item):
     result = ""
-    for x in list(m.all()):
-        result += str(x) + ", "
+    for element in list(item.all()):
+        result += str(element) + ", "
     return result
 
 
 @register.filter("get_campaign_info")
-def get_campaign_info(m):
+def get_campaign_info(item):
     result = ""
-    for x in list(m.campaign.all()):
-        result += str(x) + ", "
+    for element in list(item.campaign.all()):
+        result += str(element) + ", "
     return result
 
 
 @register.filter("get_medications")
 def get_medications(t):
     result = ""
-    for x in list(t.medication.all()):
-        result += str(x)
+    for element in list(t.medication.all()):
+        result += str(element)
     return result

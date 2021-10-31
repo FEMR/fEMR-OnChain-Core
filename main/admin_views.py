@@ -14,6 +14,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
 from clinic_messages.models import Message
+from main.background_tasks import check_admin_permission
 from main.femr_admin_views import get_client_ip
 from .forms import (
     MOTDForm,
@@ -34,30 +35,20 @@ def admin_home(request):
     :return: An HttpResponse, rendering the home page.
     """
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
-            return render(
+        if check_admin_permission(request.user):
+            return_response = render(
                 request, "admin/home.html", {"user": request.user, "page_name": "Admin"}
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
-# -------------------------------------------------------------------------------------------------------
-# User control views
-# -------------------------------------------------------------------------------------------------------
 def list_users_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             try:
                 active_users = Campaign.objects.get(
                     name=request.session["campaign"]
@@ -66,9 +57,9 @@ def list_users_view(request):
                     name=request.session["campaign"]
                 ).femruser_set.filter(is_active=False)
             except ObjectDoesNotExist:
-                active_users = list()
-                inactive_users = list()
-            return render(
+                active_users = []
+                inactive_users = []
+            return_response = render(
                 request,
                 "admin/user_list.html",
                 {
@@ -79,66 +70,57 @@ def list_users_view(request):
                 },
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def filter_users_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             try:
                 data = Campaign.objects.get(
                     name=request.session["campaign"]
                 ).femruser_set.filter(is_active=True)
             except ObjectDoesNotExist:
                 data = ""
-            return render(
+            return_response = render(
                 request,
                 "admin/user_list.html",
                 {"user": request.user, "list_view": data, "page_name": "Clinic Users"},
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def search_users_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             try:
                 data = Campaign.objects.get(
                     name=request.session["campaign"]
                 ).femruser_set.filter(is_active=True)
             except ObjectDoesNotExist:
                 data = ""
-            return render(
+            return_response = render(
                 request,
                 "admin/user_list.html",
                 {"user": request.user, "list_view": data, "page_name": "Clinic Users"},
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def create_user_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             error = ""
             if request.method == "GET":
                 form = (
@@ -146,7 +128,7 @@ def create_user_view(request):
                     if request.user.groups.filter(name="fEMR Admin").exists()
                     else UserForm()
                 )
-                return render(
+                return_response = render(
                     request,
                     "admin/user_create_form.html",
                     {"error": error, "form": form},
@@ -185,18 +167,19 @@ def create_user_view(request):
                         username=request.user.username,
                         campaign=Campaign.objects.get(name=request.session["campaign"]),
                     )
-                    return render(request, "admin/user_edit_confirmed.html")
+                    return_response = render(request, "admin/user_edit_confirmed.html")
                 else:
                     error = "Form is invalid."
-                return render(
+                return_response = render(
                     request,
                     "admin/user_create_form.html",
                     {"error": error, "form": form},
                 )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def update_user_view(request, id=None):
@@ -220,7 +203,7 @@ def update_user_view(request, id=None):
                     username=request.user.username,
                     campaign=Campaign.objects.get(name=request.session["campaign"]),
                 )
-                return render(request, "admin/user_edit_confirmed.html")
+                return_response = render(request, "admin/user_edit_confirmed.html")
             else:
                 error = "Form is invalid."
         else:
@@ -229,13 +212,14 @@ def update_user_view(request, id=None):
                 if request.user.groups.filter(name="fEMR Admin").exists()
                 else UserUpdateForm(request.user, instance=m)
             )
-        return render(
+        return_response = render(
             request,
             "admin/user_edit_form.html",
             {"error": error, "form": form, "user_id": id, "page_name": "Editing User"},
         )
     else:
-        return redirect("/not_logged_in")
+        return_response = redirect("/not_logged_in")
+    return return_response
 
 
 def update_user_password_view(request, id=None):
@@ -257,12 +241,12 @@ def update_user_password_view(request, id=None):
                     username=request.user.username,
                     campaign=Campaign.objects.get(name=request.session["campaign"]),
                 )
-                return render(request, "admin/user_edit_confirmed.html")
+                return_response = render(request, "admin/user_edit_confirmed.html")
             else:
                 error = "Form is invalid."
         else:
             form = AdminPasswordForm(instance=m)
-        return render(
+        return_response = render(
             request,
             "admin/user_password_edit_form.html",
             {
@@ -273,53 +257,41 @@ def update_user_password_view(request, id=None):
             },
         )
     else:
-        return redirect("/not_logged_in")
+        return_response = redirect("/not_logged_in")
+    return return_response
 
 
 def lock_user_view(request, id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             m = get_object_or_404(fEMRUser, pk=id)
             m.is_active = False
             m.save()
-            return redirect("main:list_users_view")
+            return_response = redirect("main:list_users_view")
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def unlock_user_view(request, id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             m = get_object_or_404(fEMRUser, pk=id)
             m.is_active = True
             m.save()
-            return redirect("main:list_users_view")
+            return_response = redirect("main:list_users_view")
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
-# -------------------------------------------------------------------------------------------------------
-# Audit Log Control Views
-# -------------------------------------------------------------------------------------------------------
 def get_audit_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             try:
                 data = AuditEntry.objects.filter(
                     Q(campaign=Campaign.objects.get(name=request.session["campaign"]))
@@ -327,7 +299,7 @@ def get_audit_logs_view(request):
                 ).order_by("-timestamp")
             except ObjectDoesNotExist:
                 data = ""
-            return render(
+            return_response = render(
                 request,
                 "admin/audit_log_list.html",
                 {
@@ -338,18 +310,15 @@ def get_audit_logs_view(request):
                 },
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def filter_audit_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             selected = 1
             try:
                 if request.GET["filter_list"] == "1":
@@ -504,7 +473,7 @@ def filter_audit_logs_view(request):
                             )
                         )
                     except ValueError:
-                        data = list()
+                        data = []
                     selected = 4
                 elif request.GET["filter_list"] == "5":
                     try:
@@ -547,7 +516,7 @@ def filter_audit_logs_view(request):
                             )
                         )
                     except ValueError:
-                        data = list()
+                        data = []
                     selected = 5
                 elif request.GET["filter_list"] == "6":
                     try:
@@ -557,14 +526,14 @@ def filter_audit_logs_view(request):
                             )
                         ).order_by("-timestamp")
                     except ValueError:
-                        data = list()
+                        data = []
                     selected = 6
                 else:
-                    data = list()
+                    data = []
             except ObjectDoesNotExist:
-                data = list()
+                data = []
             data = sorted(data, key=operator.attrgetter("timestamp"), reverse=True)
-            return render(
+            return_response = render(
                 request,
                 "admin/audit_log_list.html",
                 {
@@ -578,18 +547,15 @@ def filter_audit_logs_view(request):
                 },
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def search_audit_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             try:
                 data = AuditEntry.objects.filter(
                     Q(campaign=Campaign.objects.get(name=request.session["campaign"]))
@@ -597,25 +563,22 @@ def search_audit_logs_view(request):
                 )
             except ObjectDoesNotExist:
                 data = ""
-            return render(
+            return_response = render(
                 request,
                 "admin/audit_log_list.html",
                 {"user": request.user, "list_view": data, "page_name": "Login Log"},
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def export_audit_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
-            return render(
+        if check_admin_permission(request.user):
+            return_response = render(
                 request,
                 "export/audit_logfile.html",
                 {
@@ -625,21 +588,15 @@ def export_audit_logs_view(request):
                 },
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
-# -------------------------------------------------------------------------------------------------------
-# Database Log Control Views
-# -------------------------------------------------------------------------------------------------------
 def get_database_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             try:
                 excludemodels = ["Campaign", "Instance"]
                 data = (
@@ -650,8 +607,8 @@ def get_database_logs_view(request):
                     .order_by("-timestamp")
                 )
             except ObjectDoesNotExist:
-                data = list()
-            return render(
+                data = []
+            return_response = render(
                 request,
                 "admin/database_log_list.html",
                 {
@@ -662,18 +619,15 @@ def get_database_logs_view(request):
                 },
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def filter_database_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             selected = 1
             excludemodels = ["Campaign", "Instance"]
             try:
@@ -816,7 +770,7 @@ def filter_database_logs_view(request):
                             )
                         )
                     except ValueError:
-                        data = list()
+                        data = []
                     selected = 4
                 elif request.GET["filter_list"] == "5":
                     try:
@@ -858,7 +812,7 @@ def filter_database_logs_view(request):
                             )
                         )
                     except ValueError:
-                        data = list()
+                        data = []
                     selected = 5
                 elif request.GET["filter_list"] == "6":
                     try:
@@ -870,14 +824,14 @@ def filter_database_logs_view(request):
                             )
                         )
                     except ValueError:
-                        data = list()
+                        data = []
                     selected = 6
                 else:
-                    data = list()
+                    data = []
             except ObjectDoesNotExist:
-                data = list()
+                data = []
             data = sorted(data, key=operator.attrgetter("timestamp"), reverse=True)
-            return render(
+            return_response = render(
                 request,
                 "admin/database_log_list.html",
                 {
@@ -891,18 +845,15 @@ def filter_database_logs_view(request):
                 },
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def search_database_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             try:
                 excludemodels = ["Campaign", "Instance"]
                 data = DatabaseChangeLog.objects.exclude(
@@ -912,7 +863,7 @@ def search_database_logs_view(request):
                 )
             except ObjectDoesNotExist:
                 data = ""
-            return render(
+            return_response = render(
                 request,
                 "admin/database_log_list.html",
                 {
@@ -922,20 +873,17 @@ def search_database_logs_view(request):
                 },
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def export_database_logs_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             excludemodels = ["Campaign", "Instance"]
-            return render(
+            return_response = render(
                 request,
                 "export/data_logfile.html",
                 {
@@ -947,71 +895,63 @@ def export_database_logs_view(request):
                 },
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def add_users_to_campaign(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
-            return render(
+        if check_admin_permission(request.user):
+            return_response = render(
                 request,
                 "admin/add_users_to_campaign.html",
                 {"users": __retrieve_needed_users(request)},
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def add_user_to_campaign(request, user_id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             user = fEMRUser.objects.get(pk=user_id)
             user.campaigns.add(Campaign.objects.get(name=request.session["campaign"]))
             user.save()
-            return render(
+            return_response = render(
                 request,
                 "admin/add_users_to_campaign.html",
                 {"users": __retrieve_needed_users(request)},
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def cut_user_from_campaign(request, user_id=None):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             user = fEMRUser.objects.get(pk=user_id)
             user.campaigns.remove(
                 Campaign.objects.get(name=request.session["campaign"])
             )
             user.save()
-            return render(
+            return_response = render(
                 request,
                 "admin/add_users_to_campaign.html",
                 {"users": __retrieve_needed_users(request)},
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def __retrieve_needed_users(request):
@@ -1025,11 +965,7 @@ def __retrieve_needed_users(request):
 
 def message_of_the_day_view(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(
-            Q(name="Campaign Manager")
-            | Q(name="Organization Admin")
-            | Q(name="Operation Admin")
-        ).exists():
+        if check_admin_permission(request.user):
             m = MessageOfTheDay.load()
             form = MOTDForm()
             if request.method == "GET":
@@ -1054,17 +990,17 @@ def message_of_the_day_view(request):
                         if os.environ.get("EMAIL_HOST") != "":
                             send_mail(
                                 "fEMR On-Chain",
-                                "{0}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO "
-                                "THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(
-                                    m.text
-                                ),
+                                "f{m.text}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. "
+                                "PLEASE DO NOT REPLY TO "
+                                "THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.",
                                 os.environ.get("DEFAULT_FROM_EMAIL"),
                                 [u.email],
                             )
-            return render(
+            return_response = render(
                 request, "admin/motd.html", {"form": form, "page_name": "MotD"}
             )
         else:
-            return redirect("main:permission_denied")
+            return_response = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response

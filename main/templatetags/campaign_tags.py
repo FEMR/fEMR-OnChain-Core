@@ -16,4 +16,4 @@ def is_selected(campaign: Campaign, selected: str) -> bool:
     :param selected:
     :return:
     """
-    return True if campaign.name == selected else False
+    return campaign.name == selected

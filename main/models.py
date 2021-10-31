@@ -85,7 +85,7 @@ class Contact(models.Model):
     phone_number = models.CharField(max_length=30, unique=True)
 
     def __str__(self):
-        return "{0} {1}".format(self.first_name, self.last_name)
+        return f"{self.first_name} {self.last_name}"
 
 
 class Organization(models.Model):
@@ -117,7 +117,7 @@ class Organization(models.Model):
     admins = models.ManyToManyField("fEMRUser", related_name="organization_admins")
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 def get_test_org():
@@ -140,7 +140,7 @@ class Instance(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     class Meta:
         verbose_name = "Operation"
@@ -174,7 +174,7 @@ class Campaign(models.Model):
     ethnicity_options = models.ManyToManyField(Ethnicity)
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class SingletonModel(models.Model):
@@ -183,7 +183,7 @@ class SingletonModel(models.Model):
 
     def save(self, *args, **kwargs):
         self.pk = 1
-        super(SingletonModel, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         pass
@@ -446,10 +446,10 @@ class PatientEncounter(models.Model):
 
     def save(self, *args, **kwargs):
         self.timestamp = timezone.now()
-        super(PatientEncounter, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def save_no_timestamp(self, *args, **kwargs):
-        super(PatientEncounter, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         """
@@ -540,7 +540,7 @@ class fEMRUser(AbstractUser):
     )
 
     def __str__(self):
-        return "{} {}".format(self.first_name, self.last_name)
+        return f"{self.first_name} {self.last_name}"
 
 
 class PatientDiagnosis(models.Model):
@@ -617,7 +617,7 @@ class InventoryEntry(models.Model):
     timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return "{0} {1}".format(self.medication, self.strength)
+        return f"{self.medication} {self.strength}"
 
 
 class Inventory(models.Model):
@@ -629,7 +629,7 @@ class UnitsSetting(SingletonModel):
 
 
 class MessageOfTheDay(SingletonModel):
-    text = models.CharField(max_length=255)
+    text = models.CharField(max_length=2048)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
 
@@ -644,9 +644,7 @@ class AuditEntry(models.Model):
     )
 
     def __str__(self):
-        return "{0} - {1} - {2} - {3} - {4}".format(
-            self.action, self.username, self.ip, self.timestamp, self.campaign
-        )
+        return f"{self.action} - {self.username} - {self.ip} - {self.timestamp} - {self.campaign}"
 
 
 class DatabaseChangeLog(models.Model):
@@ -659,14 +657,7 @@ class DatabaseChangeLog(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{0} {1} {2} - by {3} at {4}, {5}".format(
-            self.action,
-            self.model,
-            self.instance,
-            self.ip,
-            self.username,
-            self.timestamp,
-        )
+        return f"{self.action} {self.model} {self.instance} - by {self.ip} at {self.username}, {self.timestamp}"
 
 
 class CSVUploadDocument(models.Model):

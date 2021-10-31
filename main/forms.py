@@ -49,7 +49,7 @@ from .models import (
 
 class ChiefComplaintForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(ChiefComplaintForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
 
     class Meta:
@@ -66,7 +66,7 @@ class ChiefComplaintForm(ModelForm):
 
 class DiagnosisForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(DiagnosisForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
 
     class Meta:
@@ -81,7 +81,7 @@ class DiagnosisForm(ModelForm):
 
 class PatientDiagnosisForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(PatientDiagnosisForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -104,7 +104,7 @@ class PatientDiagnosisForm(ModelForm):
 
 class MedicationForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(MedicationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -120,7 +120,7 @@ class MedicationForm(ModelForm):
 
 class TreatmentForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(TreatmentForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Div(
@@ -188,12 +188,9 @@ class PatientForm(ModelForm):
     """
 
     def __init__(self, *args, **kwargs):
-        super(PatientForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["date_of_birth"].widget.attrs["max"] = "9999-12-31"
         self.fields["date_of_birth"].widget.attrs["maxlength"] = "6"
-        self.fields["date_of_birth"].widget.attrs[
-            "pattern"
-        ] = "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$"
         self.fields["phone_number"].widget.attrs["required"] = False
         self.fields["email_address"].widget.attrs["required"] = False
         self.fields["race"].widget.attrs["required"] = True
@@ -278,11 +275,10 @@ class PatientForm(ModelForm):
         widgets = {
             "date_of_birth": DateInputOverride(
                 attrs={
-                    "pattern": "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$",
                     "placeholder": "dd/mm/yyyy",
                 }
             ),
-            "state": autocomplete.ModelSelect2Multiple(url="main:state-autocomplete"),
+            "state": autocomplete.ModelSelect2(url="main:state-autocomplete"),
         }
 
 
@@ -293,15 +289,12 @@ class PatientEncounterForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.unit = kwargs.pop("unit", None)
-        super(PatientEncounterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["body_height_primary"].widget.attrs["min"] = 0
         self.fields["body_height_primary"].widget.attrs["max"] = 10
         self.fields["body_height_secondary"].widget.attrs["min"] = 0
         self.fields["body_height_secondary"].widget.attrs["step"] = 0.01
         self.fields["body_height_secondary"].widget.attrs["maxlength"] = 4
-        self.fields["body_height_secondary"].widget.attrs[
-            "pattern"
-        ] = "^[0-9]{0,2}[\.]{0,1}[0-9]{0,2}$"
         self.fields["body_height_secondary"].widget.attrs["value"] = 0.00
         self.fields["body_mass_index"].widget.attrs["step"] = 0.1
         self.fields["bmi_percentile"].widget.attrs["min"] = 0
@@ -340,7 +333,7 @@ class PatientEncounterForm(ModelForm):
         return self.cleaned_data["body_mass_index"]
 
     def save(self, commit=True):
-        m = super(PatientEncounterForm, self).save(commit=False)
+        m = super().save(commit=False)
         if self.unit == "i":
             if (
                 m.body_height_primary is not None
@@ -395,7 +388,7 @@ class PatientEncounterForm(ModelForm):
 
 class AuxiliaryPatientEncounterForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(AuxiliaryPatientEncounterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -416,7 +409,7 @@ class AuxiliaryPatientEncounterForm(ModelForm):
 
 class HistoryPatientEncounterForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(HistoryPatientEncounterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -446,7 +439,7 @@ class VitalsForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.unit = kwargs.pop("unit", None)
-        super(VitalsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.fields["diastolic_blood_pressure"].widget.attrs["min"] = 0
         self.fields["systolic_blood_pressure"].widget.attrs["min"] = 0
@@ -515,7 +508,7 @@ class VitalsForm(ModelForm):
         )
 
     def save(self, commit=True):
-        m = super(VitalsForm, self).save(commit=False)
+        m = super().save(commit=False)
         if self.unit == "i" and m.body_temperature is not None:
             m.body_temperature = round((m.body_temperature - 32) * (5 / 9), 2)
         if commit:
@@ -547,7 +540,7 @@ class UserForm(UserCreationForm):
     )
 
     def __init__(self, *args, **kwargs):
-        super(UserForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
 
     class Meta:
@@ -563,13 +556,14 @@ class UserForm(UserCreationForm):
         ]
 
 
+# pylint: disable=C0103
 class fEMRAdminUserForm(UserCreationForm):
     """
     Data entry form - fEMRUser
     """
 
     def __init__(self, *args, **kwargs):
-        super(fEMRAdminUserForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
 
     class Meta:
@@ -604,7 +598,7 @@ class UserUpdateForm(UserChangeForm):
     )
 
     def __init__(self, user, *args, **kwargs):
-        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.fields["campaigns"].queryset = filter_campaigns_for_instances(user)
 
@@ -620,6 +614,7 @@ class UserUpdateForm(UserChangeForm):
         ]
 
 
+# pylint: disable=C0103
 class fEMRAdminUserUpdateForm(UserChangeForm):
     """
     Data entry form - fEMRUser
@@ -628,7 +623,7 @@ class fEMRAdminUserUpdateForm(UserChangeForm):
     password = None
 
     def __init__(self, *args, **kwargs):
-        super(fEMRAdminUserUpdateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
 
     class Meta:
@@ -642,7 +637,7 @@ class AdminPasswordForm(UserCreationForm):
     """
 
     def __init__(self, *args, **kwargs):
-        super(AdminPasswordForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
 
     class Meta:
@@ -709,7 +704,7 @@ class ForgotUsernameForm(Form):
 
 class PhotoForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(PhotoForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -718,7 +713,7 @@ class PhotoForm(ModelForm):
         fields = "__all__"
 
     def clean(self):
-        cleaned_data = super(PhotoForm, self).clean()
+        cleaned_data = super().clean()
         photo = cleaned_data.get("photo", None)
         imaging_link = cleaned_data.get("imaging_link", None)
 
@@ -728,7 +723,7 @@ class PhotoForm(ModelForm):
 
 class HistoryOfPresentIllnessForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(HistoryOfPresentIllnessForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -744,7 +739,7 @@ class HistoryOfPresentIllnessForm(ModelForm):
 
 class MOTDForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(MOTDForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Div(
@@ -780,13 +775,11 @@ class MOTDForm(ModelForm):
             "text": Textarea(attrs={"rows": 6, "cols": 80}),
             "start_date": DateInputOverride(
                 attrs={
-                    "pattern": "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$",
                     "placeholder": "dd/mm/yyyy",
                 }
             ),
             "end_date": DateInputOverride(
                 attrs={
-                    "pattern": "^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$",
                     "placeholder": "dd/mm/yyyy",
                 }
             ),
@@ -795,7 +788,7 @@ class MOTDForm(ModelForm):
 
 class InventoryEntryForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(InventoryEntryForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -806,7 +799,7 @@ class InventoryEntryForm(ModelForm):
 
 class AddSupplyForm(Form):
     def __init__(self, *args, **kwargs):
-        super(AddSupplyForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -815,7 +808,7 @@ class AddSupplyForm(Form):
 
 class RemoveSupplyForm(Form):
     def __init__(self, *args, **kwargs):
-        super(RemoveSupplyForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 
@@ -824,7 +817,7 @@ class RemoveSupplyForm(Form):
 
 class CSVUploadForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        super(CSVUploadForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
 

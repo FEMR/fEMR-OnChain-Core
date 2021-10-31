@@ -1,6 +1,7 @@
 """
 View functions handling displaying data models as sortable, filterable lists.
-All views, except auth views and the index view, should be considered to check for a valid and authenticated user.
+All views, except auth views and the index view, should be considered to check
+for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
 import os
@@ -12,7 +13,7 @@ from django.utils import timezone
 
 from clinic_messages.models import Message
 from main.femr_admin_views import get_client_ip
-from .models import Campaign, ChiefComplaint, DatabaseChangeLog, Patient
+from .models import Campaign, ChiefComplaint, DatabaseChangeLog, Patient, Treatment
 
 
 def patient_delete_view(request, id=None):
@@ -37,9 +38,10 @@ def patient_delete_view(request, id=None):
                     username=request.user.username,
                     campaign=this_campaign,
                 )
-                message_content = """{0} has deleted a patient record for the fEMR On-Chain deployment to {1} from fEMR On-Chain on {2}.
-To view audit logs, visit the Admin tab in fEMR On-Chain.""".format(
-                    request.user, this_campaign, timezone.now()
+                message_content = (
+                    f"{request.user} has deleted a patient record for the fEMR On-Chain "
+                    f"deployment to {this_campaign} from fEMR On-Chain on {timezone.now()}. "
+                    "To view audit logs, visit the Admin tab in fEMR On-Chain."
                 )
                 Message.objects.create(
                     sender=request.user,
@@ -49,21 +51,22 @@ To view audit logs, visit the Admin tab in fEMR On-Chain.""".format(
                 )
                 send_mail(
                     "WARNING! PATIENT DELETED",
-                    "{0}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.".format(
-                        message_content
-                    ),
+                    f"{message_content}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. "
+                    "PLEASE DO NOT REPLY TO THIS EMAIL. "
+                    "PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.",
                     os.environ.get("DEFAULT_FROM_EMAIL"),
                     [contact.email],
                 )
                 p.delete()
             except ObjectDoesNotExist:
                 pass
-            return render(request, "data/patient_deleted_success.html")
+            return_response = render(request, "data/patient_deleted_success.html")
         else:
             p = get_object_or_404(Patient, pk=id)
-            return render(request, "data/delete.html", {"patient": p})
+            return_response = render(request, "data/delete.html", {"patient": p})
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
 
 
 def delete_chief_complaint(request, id=None, patient_id=None, encounter_id=None):
@@ -80,8 +83,21 @@ def delete_chief_complaint(request, id=None, patient_id=None, encounter_id=None)
         p.active = False
         p.save()
         if encounter_id is not None:
-            return redirect("main:chief_complaint_list_view", patient_id, encounter_id)
+            return_response = redirect(
+                "main:chief_complaint_list_view", patient_id, encounter_id
+            )
         else:
-            return redirect("main:chief_complaint_list_view", patient_id)
+            return_response = redirect("main:chief_complaint_list_view", patient_id)
     else:
-        return redirect("main:not_logged_in")
+        return_response = redirect("main:not_logged_in")
+    return return_response
+
+
+def delete_treatment_view(request, treatment_id=None):
+    if request.user.is_authenticated:
+        p = get_object_or_404(Treatment, pk=treatment_id)
+        p.delete()
+        return_response = redirect(request.META.get("HTTP_REFERER", "/"))
+    else:
+        return_response = redirect("main:not_logged_in")
+    return return_response
