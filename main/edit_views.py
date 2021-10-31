@@ -6,6 +6,7 @@ If one is not found, they will direct to the appropriate error page.
 """
 import math
 import os
+from pprint import pprint
 
 from django.shortcuts import render, redirect, get_object_or_404
 from silk.profiling.profiler import silk_profile
@@ -1087,17 +1088,21 @@ def patient_export_view(request, id=None):
         encounters = PatientEncounter.objects.filter(patient=m).order_by("-timestamp")
         prescriptions = {}
         diagnoses = {}
+        vitals_dictionary = {}
         for x in encounters:
             try:
-                diagnoses[x] = list(
-                    PatientDiagnosis.objects.get(encounter=x).diagnosis.all()
+                diagnoses[x] = sum(
+                    [
+                        list(queryset.diagnosis.all())
+                        for queryset in PatientDiagnosis.objects.filter(encounter=x)
+                    ],
+                    [],
                 )
             except PatientDiagnosis.DoesNotExist:
                 diagnoses[x] = []
             prescriptions[x] = list(Treatment.objects.filter(encounter=x))
-        vitals_dictionary = {}
-        for x in encounters:
             vitals_dictionary[x] = list(Vitals.objects.filter(encounter=x))
+        pprint(vitals_dictionary)
         if request.method == "GET":
             return render(
                 request,
