@@ -72,6 +72,7 @@ class CampaignActivityCheckMiddleware:
             return_response = self.__campaign_is_none(request)
             campaign = None
         else:
+            return_response = self.get_response(request)
             campaign = Campaign.objects.get(name=campaign_name)
         if campaign and not campaign.active:
             return_response = self.__campaign_not_active(request)
