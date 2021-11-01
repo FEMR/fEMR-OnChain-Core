@@ -3,12 +3,13 @@ Non-view functions used to carry out background processes.
 """
 import os
 from datetime import timedelta
+
 from django.contrib.auth.models import Group
 from django.db.models.query_utils import Q
-
 from django.utils import timezone
-from silk.profiling.profiler import silk_profile
 from django.core.mail import send_mail
+
+from silk.profiling.profiler import silk_profile
 
 from main.models import (
     Campaign,
@@ -29,14 +30,14 @@ def run_encounter_close(campaign: Campaign):
     now = timezone.now()
 
     close_time = campaign.encounter_close
-    d = now - timedelta(days=close_time)
+    delta = now - timedelta(days=close_time)
     patients = Patient.objects.filter(campaign=campaign)
-    for p in patients:
-        encounters = PatientEncounter.objects.filter(patient=p)
-        for e in encounters:
-            if e.timestamp < d:
-                e.active = False
-                e.save_no_timestamp()
+    for patient in patients:
+        encounters = PatientEncounter.objects.filter(patient=patient)
+        for encounter in encounters:
+            if encounter.timestamp < delta:
+                encounter.active = False
+                encounter.save_no_timestamp()
 
 
 @silk_profile("run-user-deactivate")
@@ -46,9 +47,9 @@ def run_user_deactivate():
     then let them know in an email.
     """
     now = timezone.now()
-    d = now - timedelta(days=30)
+    delta = now - timedelta(days=30)
     for user in fEMRUser.objects.filter(is_active=True):
-        if user.last_login is not None and user.last_login < d:
+        if user.last_login is not None and user.last_login < delta:
             send_mail(
                 "Message from fEMR OnChain",
                 "We noticed you haven't logged in to fEMR OnChain in "
@@ -67,13 +68,13 @@ def run_user_deactivate():
 def reset_sessions() -> None:
     """
     Empty out sessions older than 1 minute.
-    :return:
+    :return: None.
     """
     now = timezone.now()
-    d = now - timedelta(minutes=1)
-    for x in UserSession.objects.all():
-        if x.timestamp < d:
-            x.delete()
+    delta = now - timedelta(minutes=1)
+    for session in UserSession.objects.all():
+        if session.timestamp < delta:
+            session.delete()
 
 
 @silk_profile("check-browser")

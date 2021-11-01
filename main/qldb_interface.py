@@ -24,7 +24,9 @@ def create_tables():
         return len(list(cursor))
 
     qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
+    # pylint: disable=W0108
     qldb_driver.execute_lambda(lambda x: create_patient_table(x))
+    # pylint: disable=W0108
     qldb_driver.execute_lambda(lambda x: create_patient_encounter_table(x))
 
 
@@ -34,15 +36,16 @@ def create_new_patient(patient: dict):
     Create a new, blank patient record.
     """
 
-    def insert_documents(transaction_executor, p: dict):
+    def insert_documents(transaction_executor, payload: dict):
         """
         Internal function handling insertion of new patients.
         """
-        transaction_executor.execute_statement("INSERT INTO Patient ?", p)
+        transaction_executor.execute_statement("INSERT INTO Patient ?", payload)
 
     patient["action"] = "INSERT"
     patient["date_of_birth"] = str(patient["date_of_birth"])
     qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
+    # pylint: disable=W0108
     qldb_driver.execute_lambda(lambda x: insert_documents(x, patient))
 
 
@@ -52,15 +55,16 @@ def update_patient(patient: dict):
     Update a patient with the provided dataset.
     """
 
-    def update_documents(transaction_executor, p: dict):
+    def update_documents(transaction_executor, payload: dict):
         """
         Internal function for updating a patient record.
         """
-        transaction_executor.execute_statement("INSERT INTO Patient ?", p)
+        transaction_executor.execute_statement("INSERT INTO Patient ?", payload)
 
     patient["action"] = "UPDATE"
     patient["date_of_birth"] = str(patient["date_of_birth"])
     qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
+    # pylint: disable=W0108
     qldb_driver.execute_lambda(lambda x: update_documents(x, patient))
 
 
@@ -78,6 +82,7 @@ def get_all_patients():
         return cursor
 
     qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
+    # pylint: disable=W0108
     qldb_driver.execute_lambda(lambda x: read_documents(x))
 
 
@@ -87,24 +92,30 @@ def create_new_patient_encounter(patient_encounter: dict):
     Create a new, blank patient record.
     """
 
-    def insert_documents(transaction_executor, p: dict):
+    def insert_documents(transaction_executor, payload: dict):
         """
         Internal function handling insertion of new patients.
         """
-        transaction_executor.execute_statement("INSERT INTO PatientEncounter ?", p)
+        transaction_executor.execute_statement(
+            "INSERT INTO PatientEncounter ?", payload
+        )
 
     patient_encounter["action"] = "INSERT"
     qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
+    # pylint: disable=W0108
     qldb_driver.execute_lambda(lambda x: insert_documents(x, patient_encounter))
 
 
 # noinspection PyTypeChecker
 def update_patient_encounter(patient_encounter: dict):
-    def insert_documents(transaction_executor, p: dict):
-        transaction_executor.execute_statement("INSERT INTO PatientEncounter ?", p)
+    def insert_documents(transaction_executor, payload: dict):
+        transaction_executor.execute_statement(
+            "INSERT INTO PatientEncounter ?", payload
+        )
 
     patient_encounter["action"] = "UPDATE"
     qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
+    # pylint: disable=W0108
     qldb_driver.execute_lambda(lambda x: insert_documents(x, patient_encounter))
 
 
@@ -124,4 +135,5 @@ def get_all_patient_encounters():
         return cursor
 
     qldb_driver = QldbDriver(ledger_name=LEDGER_NAME, region_name="us-west-2")
+    # pylint: disable=W0108
     qldb_driver.execute_lambda(lambda x: read_documents(x))

@@ -41,7 +41,7 @@ def user_locked_out_callback(sender, request, **kwargs):
 
 @receiver(user_logged_in)
 def user_logged_in_callback(sender, request, user, **kwargs):
-    ip = get_client_ip(request)
+    ip_address = get_client_ip(request)
     campaign_list = request.user.campaigns.filter(active=True)
     if len(campaign_list) != 0:
         name = campaign_list[0].name
@@ -49,13 +49,16 @@ def user_logged_in_callback(sender, request, user, **kwargs):
     else:
         campaign = None
     AuditEntry.objects.create(
-        action="user_logged_in", ip=ip, username=user.username, campaign=campaign
+        action="user_logged_in",
+        ip=ip_address,
+        username=user.username,
+        campaign=campaign,
     )
 
 
 @receiver(user_logged_out)
 def user_logged_out_callback(sender, request, user, **kwargs):
-    ip = get_client_ip(request)
+    ip_address = get_client_ip(request)
     try:
         campaign_list = request.user.campaigns.filter(active=True)
         if len(campaign_list) != 0:
@@ -64,7 +67,10 @@ def user_logged_out_callback(sender, request, user, **kwargs):
         else:
             campaign = None
         AuditEntry.objects.create(
-            action="user_logged_out", ip=ip, username=user.username, campaign=campaign
+            action="user_logged_out",
+            ip=ip_address,
+            username=user.username,
+            campaign=campaign,
         )
     except AttributeError:
         pass
@@ -95,7 +101,8 @@ def handle_ticket_activity(sender, ticket, **kwargs):
     for user in Group.objects.get(name="Developer").user_set.all():
         Message.objects.create(
             subject="Ticket Update",
-            content=f"This message is to let you know that an update was posted to ticket {ticket.id}. "
+            content="This message is to let you know that an"
+            f"update was posted to ticket {ticket.id}. "
             "Use the Let Us Know link to view the new information.",
             sender=fEMRUser.objects.get(username="admin"),
             recipient=user,

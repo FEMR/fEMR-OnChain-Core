@@ -247,10 +247,14 @@ class PatientForm(ModelForm):
             pass
         else:
             if "shared_phone_number" not in self.data.keys():
-                p = Patient.objects.filter(
+                patient_list = Patient.objects.filter(
                     phone_number=self.cleaned_data["phone_number"]
                 )
-                if p.exists() and len(p) != 1 and self.instance not in p:
+                if (
+                    patient_list.exists()
+                    and len(patient_list) != 1
+                    and self.instance not in patient_list
+                ):
                     raise ValidationError("This phone number has already been used.")
         return self.cleaned_data["phone_number"]
 
@@ -258,8 +262,14 @@ class PatientForm(ModelForm):
         if self.cleaned_data["email_address"] is None:
             pass
         elif "shared_email_address" not in self.data.keys():
-            p = Patient.objects.filter(email_address=self.cleaned_data["email_address"])
-            if p.exists() and len(p) != 1 and self.instance not in p:
+            patient_list = Patient.objects.filter(
+                email_address=self.cleaned_data["email_address"]
+            )
+            if (
+                patient_list.exists()
+                and len(patient_list) != 1
+                and self.instance not in patient_list
+            ):
                 raise ValidationError("This email address has already been used.")
         return self.cleaned_data["email_address"]
 
@@ -337,25 +347,28 @@ class PatientEncounterForm(ModelForm):
         return self.cleaned_data["body_mass_index"]
 
     def save(self, commit=True):
-        m = super().save(commit=False)
+        item = super().save(commit=False)
         if self.unit == "i":
             if (
-                m.body_height_primary is not None
-                and m.body_height_secondary is not None
+                item.body_height_primary is not None
+                and item.body_height_secondary is not None
             ):
-                tmp = m.body_height_primary
-                m.body_height_primary = math.floor(
-                    (((m.body_height_primary * 12) + m.body_height_secondary) * 2.54)
+                tmp = item.body_height_primary
+                item.body_height_primary = math.floor(
+                    (
+                        ((item.body_height_primary * 12) + item.body_height_secondary)
+                        * 2.54
+                    )
                     // 100
                 )
-                m.body_height_secondary = (
-                    ((tmp * 12) + m.body_height_secondary) * 2.54
+                item.body_height_secondary = (
+                    ((tmp * 12) + item.body_height_secondary) * 2.54
                 ) % 100
-            if m.body_weight is not None:
-                m.body_weight /= 2.2046
+            if item.body_weight is not None:
+                item.body_weight /= 2.2046
         if commit:
-            m.save()
-        return m
+            item.save()
+        return item
 
     class Meta:
         """
@@ -518,12 +531,12 @@ class VitalsForm(ModelForm):
         )
 
     def save(self, commit=True):
-        m = super().save(commit=False)
-        if self.unit == "i" and m.body_temperature is not None:
-            m.body_temperature = round((m.body_temperature - 32) * (5 / 9), 2)
+        item = super().save(commit=False)
+        if self.unit == "i" and item.body_temperature is not None:
+            item.body_temperature = round((item.body_temperature - 32) * (5 / 9), 2)
         if commit:
-            m.save()
-        return m
+            item.save()
+        return item
 
     class Meta:
         """

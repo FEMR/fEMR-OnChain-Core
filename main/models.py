@@ -182,6 +182,7 @@ class SingletonModel(models.Model):
         abstract = True
 
     def save(self, *args, **kwargs):
+        # pylint: disable=C0103
         self.pk = 1
         super().save(*args, **kwargs)
 
@@ -190,7 +191,7 @@ class SingletonModel(models.Model):
 
     @classmethod
     def load(cls):
-        obj, created = cls.objects.get_or_create(pk=1)
+        obj, _ = cls.objects.get_or_create(pk=1)
         return obj
 
 
@@ -285,7 +286,7 @@ class Patient(models.Model):
         return str(self.first_name) + " " + str(self.last_name) + " " + suffix
 
 
-def cal_key(fk):
+def cal_key(campaign):
     # I know, this function is super obnoxious.
     # I promise, dear reader, if I didn't have to do this I wouldn't.
     # I should just be able to sort this list and spit out the first element, right?
@@ -295,7 +296,7 @@ def cal_key(fk):
     # I don't know what to tell you, it worked before on my machine.
     # This is a couple of workarounds smashed together just in case sorting goes weird again.
     present_keys = (
-        Patient.objects.filter(campaign=fk)
+        Patient.objects.filter(campaign=campaign)
         .order_by("-campaign_key")
         .values_list("campaign_key", flat=True)
     )
@@ -526,6 +527,7 @@ class Vitals(models.Model):
         )
 
 
+# pylint: disable=C0103
 class fEMRUser(AbstractUser):
     """
     Inherits from Django's AbstractUser, adding fEMR-OnChain-relevant fields to the objects.
@@ -657,6 +659,7 @@ class DatabaseChangeLog(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
 
     def __str__(self):
+        # pylint: disable=C0301
         return f"{self.action} {self.model} {self.instance} - by {self.ip} at {self.username}, {self.timestamp}"
 
 

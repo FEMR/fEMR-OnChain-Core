@@ -102,7 +102,7 @@ function check() {
   clear && \
    black . && \
    ./build.sh test && \
-   pylint main appMR clinic_messages --disable=E1101,W0613,R0903
+   pylint main appMR clinic_messages --disable=E1101,W0613,R0903,C0301
 }
 
 case "$1" in

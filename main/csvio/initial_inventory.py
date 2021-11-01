@@ -5,9 +5,6 @@ from main.csvio import add_to_inventory
 
 
 class InitialInventoryHandler:
-    def __init__(self) -> None:
-        super().__init__()
-
     def read(self, upload, campaign):
         return self.__import(upload, campaign)
 
@@ -32,20 +29,20 @@ class InitialInventoryHandler:
                 "Manufacturer",
             ]
         )
-        for x in formulary:
+        for item in formulary:
             writer.write(
                 [
-                    x.category,
-                    x.medication,
-                    x.form,
-                    x.strength,
-                    x.count,
-                    x.quantity,
-                    x.initial_quantity,
-                    x.item_number,
-                    x.box_number,
-                    x.expiration_date,
-                    x.manufacturer,
+                    item.category,
+                    item.medication,
+                    item.form,
+                    item.strength,
+                    item.count,
+                    item.quantity,
+                    item.initial_quantity,
+                    item.item_number,
+                    item.box_number,
+                    item.expiration_date,
+                    item.manufacturer,
                 ]
             )
         return response

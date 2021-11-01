@@ -110,8 +110,8 @@ def get_campaign_info(item):
 
 
 @register.filter("get_medications")
-def get_medications(t):
+def get_medications(treatment):
     result = ""
-    for element in list(t.medication.all()):
+    for element in list(treatment.medication.all()):
         result += str(element)
     return result

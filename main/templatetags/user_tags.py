@@ -22,24 +22,12 @@ register = template.Library()
 
 @register.filter("has_group")
 def has_group(user: fEMRUser, group_name: str) -> bool:
-    """
-    Given group_name, return whether user is a member of that group.
-    :param user:
-    :param group_name:
-    :return:
-    """
     groups = user.groups.all().values_list("name", flat=True)
     return group_name in groups
 
 
 @register.filter("has_campaign")
 def has_campaign(user: fEMRUser, campaign_name: str) -> bool:
-    """
-    Given a campaign name, return whether user is a member of that campaign.
-    :param user:
-    :param campaign_name:
-    :return:
-    """
     campaign = Campaign.objects.get(name=campaign_name)
     campaign_list = user.campaigns.all()
     return campaign in campaign_list
@@ -47,11 +35,7 @@ def has_campaign(user: fEMRUser, campaign_name: str) -> bool:
 
 @register.filter("campaign_active")
 def campaign_active(campaign_name: str) -> bool:
-    """
-    Return whether the given campaign_name refers to an active campaign.
-    :param campaign_name:
-    :return:
-    """
+
     return Campaign.objects.get(name=campaign_name).active
 
 

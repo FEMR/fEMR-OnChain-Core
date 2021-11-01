@@ -124,8 +124,8 @@ def forgot_username(request):
             # noinspection LongLine
             send_mail(
                 "Username Recovery",
-                f"Someone recently requested a username reminder from fEMR On-Chain. "
-                "If this was you, your username is:\n\n\n {user.username}\n\n\n "
+                "Someone recently requested a username reminder from fEMR On-Chain. "
+                f"If this was you, your username is:\n\n\n {user.username}\n\n\n "
                 "If it wasn't you, you "
                 "can safely ignore this email.\n\n\nTHIS IS AN AUTOMATED MESSAGE "
                 "FROM fEMR ON-CHAIN. "

@@ -12,5 +12,5 @@ class MainConfig(django.apps.AppConfig):
     name = "main"
 
     def ready(self):
-        # pylint: disable=W0611
+        # pylint: disable=W0611,C0415
         import main.signals
