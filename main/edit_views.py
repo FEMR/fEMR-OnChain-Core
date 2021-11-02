@@ -6,10 +6,10 @@ If one is not found, they will direct to the appropriate error page.
 """
 import math
 import os
-from pprint import pprint
 
 from django.shortcuts import render, redirect, get_object_or_404
 from silk.profiling.profiler import silk_profile
+
 from .serializers import PatientEncounterSerializer
 
 from main.femr_admin_views import get_client_ip
@@ -52,6 +52,7 @@ def patient_edit_form_view(request, id=None):
         if request.session["campaign"] == "RECOVERY MODE":
             return redirect("main:home")
         error = ""
+        campaign = Campaign.objects.get(name=request.session["campaign"])
         m = get_object_or_404(Patient, pk=id)
         campaign_key = m.campaign_key
         encounters = PatientEncounter.objects.filter(patient=m)
@@ -60,7 +61,7 @@ def patient_edit_form_view(request, id=None):
             if form.is_valid():
                 t = form.save()
                 t.campaign_key = campaign_key
-                t.campaign.add(Campaign.objects.get(name=request.session["campaign"]))
+                t.campaign.add(campaign)
                 t.save()
                 DatabaseChangeLog.objects.create(
                     action="Edit",
@@ -68,7 +69,7 @@ def patient_edit_form_view(request, id=None):
                     instance=str(t),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=campaign,
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
                     update_patient(form.cleaned_data)
@@ -86,7 +87,7 @@ def patient_edit_form_view(request, id=None):
                 instance=str(m),
                 ip=get_client_ip(request),
                 username=request.user.username,
-                campaign=Campaign.objects.get(name=request.session["campaign"]),
+                campaign=campaign,
             )
             form = PatientForm(instance=m)
         return render(
@@ -268,7 +269,8 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
             return redirect("main:home")
-        units = Campaign.objects.get(name=request.session["campaign"]).units
+        campaign = Campaign.objects.get(name=request.session["campaign"])
+        units = campaign.units
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
@@ -316,7 +318,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
                     instance=str(m),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=campaign,
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
                     encounter_data = PatientEncounterSerializer(m).data
@@ -388,7 +390,8 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
             return redirect("main:home")
-        units = Campaign.objects.get(name=request.session["campaign"]).units
+        campaign = Campaign.objects.get(name=request.session["campaign"])
+        units = campaign.units
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
@@ -435,7 +438,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
                     instance=str(m),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=campaign,
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
                     encounter_data = PatientEncounterSerializer(m).data
@@ -506,7 +509,8 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
             return redirect("main:home")
-        units = Campaign.objects.get(name=request.session["campaign"]).units
+        campaign = Campaign.objects.get(name=request.session["campaign"])
+        units = campaign.units
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
@@ -548,7 +552,7 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
                     instance=str(m),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=campaign,
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
                     encounter_data = PatientEncounterSerializer(m).data
@@ -617,7 +621,8 @@ def history_view(request, patient_id=None, encounter_id=None):
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
             return redirect("main:home")
-        units = Campaign.objects.get(name=request.session["campaign"]).units
+        campaign = Campaign.objects.get(name=request.session["campaign"])
+        units = campaign.units
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
@@ -637,7 +642,7 @@ def history_view(request, patient_id=None, encounter_id=None):
                     instance=str(m),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=campaign,
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
                     from .serializers import PatientEncounterSerializer
@@ -709,7 +714,8 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
             return redirect("main:home")
-        units = Campaign.objects.get(name=request.session["campaign"]).units
+        campaign = Campaign.objects.get(name=request.session["campaign"])
+        units = campaign.units
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
@@ -726,7 +732,7 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
                     instance=str(m),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=campaign,
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
                     encounter_data = PatientEncounterSerializer(m).data
@@ -792,7 +798,8 @@ def upload_photo_view(request, patient_id=None, encounter_id=None):
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
             return redirect("main:home")
-        units = Campaign.objects.get(name=request.session["campaign"]).units
+        campaign = Campaign.objects.get(name=request.session["campaign"])
+        units = campaign.units
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
@@ -812,7 +819,7 @@ def upload_photo_view(request, patient_id=None, encounter_id=None):
                     instance=str(m),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=campaign,
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
                     from .serializers import PatientEncounterSerializer
@@ -857,7 +864,8 @@ def edit_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
             return redirect("main:home")
-        units = Campaign.objects.get(name=request.session["campaign"]).units
+        campaign = Campaign.objects.get(name=request.session["campaign"])
+        units = campaign.units
         m = get_object_or_404(PatientEncounter, pk=encounter_id)
         p = get_object_or_404(Patient, pk=patient_id)
         v = Vitals.objects.filter(encounter=m)
@@ -877,7 +885,7 @@ def edit_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
                     instance=str(ph),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=campaign,
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
                     encounter_data = PatientEncounterSerializer(m).data
@@ -1102,7 +1110,6 @@ def patient_export_view(request, id=None):
                 diagnoses[x] = []
             prescriptions[x] = list(Treatment.objects.filter(encounter=x))
             vitals_dictionary[x] = list(Vitals.objects.filter(encounter=x))
-        pprint(vitals_dictionary)
         if request.method == "GET":
             return render(
                 request,
