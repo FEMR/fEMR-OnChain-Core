@@ -418,13 +418,13 @@ class PatientEncounter(models.Model):
         max_length=500, null=True, blank=True
     )
 
-    procedure = models.CharField(max_length=500, null=True, blank=True)
-    pharmacy_notes = models.CharField(max_length=500, null=True, blank=True)
+    procedure = models.CharField(max_length=1000, null=True, blank=True)
+    pharmacy_notes = models.CharField(max_length=1000, null=True, blank=True)
 
-    medical_history = models.CharField(max_length=500, null=True, blank=True)
-    social_history = models.CharField(max_length=500, null=True, blank=True)
-    current_medications = models.CharField(max_length=500, null=True, blank=True)
-    family_history = models.CharField(max_length=500, null=True, blank=True)
+    medical_history = models.CharField(max_length=1000, null=True, blank=True)
+    social_history = models.CharField(max_length=1000, null=True, blank=True)
+    current_medications = models.CharField(max_length=1000, null=True, blank=True)
+    family_history = models.CharField(max_length=1000, null=True, blank=True)
 
     photos = models.ManyToManyField(Photo, blank=True)
 

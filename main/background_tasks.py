@@ -41,12 +41,11 @@ def run_encounter_close(campaign: Campaign):
 
 
 @silk_profile("run-user-deactivate")
-def run_user_deactivate():
+def run_user_deactivate(now=timezone.now()):
     """
     Mark any users who haven't logged in in a month as inactive,
     then let them know in an email.
     """
-    now = timezone.now()
     delta = now - timedelta(days=30)
     for user in fEMRUser.objects.filter(is_active=True):
         if user.last_login is not None and user.last_login < delta:
@@ -61,7 +60,8 @@ def run_user_deactivate():
                 os.environ.get("DEFAULT_FROM_EMAIL"),
                 [user.email],
             )
-            user.active = False
+            user.is_active = False
+            user.save()
 
 
 @silk_profile("reset-sessions")

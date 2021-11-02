@@ -9,6 +9,8 @@ import os
 from django.shortcuts import render, redirect, get_object_or_404
 from silk.profiling.profiler import silk_profile
 
+from .serializers import PatientEncounterSerializer
+
 from main.serializers import PatientEncounterSerializer
 from main.femr_admin_views import get_client_ip
 from main.qldb_interface import update_patient, update_patient_encounter

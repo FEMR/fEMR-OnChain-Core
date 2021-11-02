@@ -4,6 +4,7 @@ Application-wide functions for interfacing with AWS QLDB.
 import os
 
 from pyqldb.driver.qldb_driver import QldbDriver
+from silk.profiling.profiler import silk_profile
 
 try:
     LEDGER_NAME = os.environ["qldb_name"]
@@ -12,6 +13,7 @@ except KeyError:
 
 
 # noinspection PyTypeChecker
+@silk_profile("create-tables")
 def create_tables():
     def create_patient_table(transaction_executor):
         statement = "CREATE TABLE Patient"
@@ -31,6 +33,7 @@ def create_tables():
 
 
 # noinspection PyTypeChecker
+@silk_profile("create-new-patient")
 def create_new_patient(patient: dict):
     """
     Create a new, blank patient record.
@@ -50,6 +53,7 @@ def create_new_patient(patient: dict):
 
 
 # noinspection PyTypeChecker
+@silk_profile("update-patient")
 def update_patient(patient: dict):
     """
     Update a patient with the provided dataset.
@@ -69,6 +73,7 @@ def update_patient(patient: dict):
 
 
 # noinspection PyTypeChecker
+@silk_profile("get-all-patients")
 def get_all_patients():
     """
     Retrieve all patient data
@@ -87,6 +92,7 @@ def get_all_patients():
 
 
 # noinspection PyTypeChecker
+@silk_profile("create-new-patient-encounter")
 def create_new_patient_encounter(patient_encounter: dict):
     """
     Create a new, blank patient record.
@@ -107,6 +113,7 @@ def create_new_patient_encounter(patient_encounter: dict):
 
 
 # noinspection PyTypeChecker
+@silk_profile("update-patient-encounter")
 def update_patient_encounter(patient_encounter: dict):
     def insert_documents(transaction_executor, payload: dict):
         transaction_executor.execute_statement(
@@ -120,6 +127,7 @@ def update_patient_encounter(patient_encounter: dict):
 
 
 # noinspection PyTypeChecker
+@silk_profile("get-all-patient-encounters")
 def get_all_patient_encounters():
     """
     Retrieve all patient data
