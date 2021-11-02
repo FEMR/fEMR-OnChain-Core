@@ -13,6 +13,8 @@ from django.db.models.query_utils import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
+from axes.utils import reset
+
 from clinic_messages.models import Message
 from main.background_tasks import check_admin_permission
 from main.femr_admin_views import get_client_ip
@@ -279,6 +281,7 @@ def unlock_user_view(request, id=None):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
             m = get_object_or_404(fEMRUser, pk=id)
+            reset(username=m.username)
             m.is_active = True
             m.save()
             return_response = redirect("main:list_users_view")

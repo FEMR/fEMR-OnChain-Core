@@ -1,6 +1,10 @@
+from datetime import timedelta
+from axes.utils import reset
 from django.test.client import Client
+from django.utils.timezone import now
 from model_bakery import baker
 from clinic_messages.models import Message
+from main.background_tasks import run_user_deactivate
 from main.models import fEMRUser
 
 
@@ -66,3 +70,26 @@ def test_axes_lockout_sends_message():
     u.delete()
     v.delete()
     a.delete()
+
+
+def test_run_user_deactivate():
+    u = fEMRUser.objects.create_user(
+        username="test",
+        password="testingpassword",
+        email="logintestinguseremail@email.com",
+    )
+    u.change_password = False
+    u.save()
+    reset(username="test")
+    client = Client()
+    r = client.post("/login_view/", {"username": "test", "password": "testingpassword"})
+    print(r.url)
+    assert r.status_code == 302
+    assert r.url == "/home/"
+    assert u.is_active
+    n = now() + timedelta(days=35)
+    run_user_deactivate(n)
+    u = fEMRUser.objects.get(username="test")
+    print(u.last_login)
+    assert not u.is_active
+    u.delete()

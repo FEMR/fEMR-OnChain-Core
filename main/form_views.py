@@ -63,7 +63,7 @@ def patient_form_view(request):
                     instance=str(t),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=c,
                 )
                 if t.id != "" and t.id is not None:
                     return render(
@@ -131,12 +131,13 @@ def patient_encounter_form_view(request, id=None):
         p = Patient.objects.get(pk=id)
         if request.session["campaign"] == "RECOVERY MODE":
             return redirect("main:home")
-        telehealth = Campaign.objects.get(name=request.session["campaign"]).telehealth
+        campaign = Campaign.objects.get(name=request.session["campaign"])
+        telehealth = campaign.telehealth
         treatment_form = TreatmentForm()
         diagnosis_form = DiagnosisForm()
         if request.method == "POST":
             encounter_open = False
-            units = Campaign.objects.get(name=request.session["campaign"]).units
+            units = campaign.units
             form = PatientEncounterForm(request.POST, unit=units, prefix="form")
             vitals_form = VitalsForm(request.POST, unit=units, prefix="vitals_form")
             if form.is_valid() and vitals_form.is_valid():
@@ -162,7 +163,7 @@ def patient_encounter_form_view(request, id=None):
                     instance=str(encounter),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=campaign,
                 )
                 DatabaseChangeLog.objects.create(
                     action="Create",
@@ -170,7 +171,7 @@ def patient_encounter_form_view(request, id=None):
                     instance=str(encounter),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=campaign,
                 )
                 if "submit_encounter" in request.POST:
                     return render(request, "data/encounter_submitted.html")
@@ -183,7 +184,7 @@ def patient_encounter_form_view(request, id=None):
             encounter_open = (
                 len(PatientEncounter.objects.filter(patient=p).filter(active=True)) > 0
             )
-            units = Campaign.objects.get(name=request.session["campaign"]).units
+            units = campaign.units
             form = PatientEncounterForm(unit=units, prefix="form")
             vitals_form = VitalsForm(unit=units, prefix="vitals_form")
             try:
