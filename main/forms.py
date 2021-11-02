@@ -553,6 +553,7 @@ class UserForm(UserCreationForm):
             "password1",
             "password2",
             "groups",
+            "campaigns",
         ]
 
 
