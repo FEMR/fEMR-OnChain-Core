@@ -5,6 +5,8 @@
 
 The fastest way to get a running version of fEMR OnChain is to install Docker, then to run `docker compose up`.
 
+Before contributing, check our [CONTRIBUTING.md](CONTRIBUTING.md) file to ensure you're following our workflow.
+
 ## Documentation
 Documentation is rebuilt periodically and hosted at https://femr.github.io/fEMR-OnChain-Core/
 
