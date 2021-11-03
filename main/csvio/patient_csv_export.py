@@ -14,7 +14,8 @@ from main.models import Campaign, Patient, PatientEncounter, Treatment, Vitals
 
 # pylint: disable=R0914
 def run_patient_csv_export(request):
-    units = Campaign.objects.get(name=request.session["campaign"]).units
+    campaign = Campaign.objects.get(name=request.session["campaign"])
+    units = campaign.units
     resp = HttpResponse(content_type="text/csv")
     resp["Content-Disposition"] = 'attachment; filename="patient_export.csv"'
     writer = csv.writer(resp)
@@ -45,9 +46,7 @@ def run_patient_csv_export(request):
         "Family History",
     ]
     try:
-        data = Patient.objects.filter(
-            campaign=Campaign.objects.get(name=request.session["campaign"])
-        ).exclude(
+        data = Patient.objects.filter(campaign=campaign).exclude(
             Q(first_name__icontains="test")
             | Q(last_name__icontains="test")
             | Q(middle_name__icontains="test")
@@ -56,9 +55,7 @@ def run_patient_csv_export(request):
     except ObjectDoesNotExist:
         data = []
     export_id = 1
-    campaign_time_zone = pytz_timezone(
-        Campaign.objects.get(name=request.session["campaign"]).timezone
-    )
+    campaign_time_zone = pytz_timezone(campaign.timezone)
     campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
     patient_rows = []
     max_treatments = 0

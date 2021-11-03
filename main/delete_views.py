@@ -128,21 +128,17 @@ def delete_photo_view(request, patient_id=None, encounter_id=None, photo_id=None
             units = Campaign.objects.get(name=request.session["campaign"]).units
             encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
             patient = get_object_or_404(Patient, pk=patient_id)
-            vitals = Vitals.objects.filter(encounter=encounter)
-            treatments = Treatment.objects.filter(encounter=encounter)
             photo = Photo.objects.get(pk=photo_id)
             photo.delete()
-            aux_form = PhotoForm()
-            vitals_form = VitalsForm(unit=units)
             suffix = patient.get_suffix_display() if patient.suffix is not None else ""
             return_response = render(
                 request,
                 "forms/photos_tab.html",
                 {
-                    "aux_form": aux_form,
-                    "vitals": vitals,
-                    "treatments": treatments,
-                    "vitals_form": vitals_form,
+                    "aux_form": PhotoForm(),
+                    "vitals": Vitals.objects.filter(encounter=encounter),
+                    "treatments": Treatment.objects.filter(encounter=encounter),
+                    "vitals_form": VitalsForm(unit=units),
                     "page_name": f"Edit Encounter for {patient.first_name}, {patient.last_name}, {suffix}",
                     "encounter": encounter,
                     "birth_sex": patient.sex_assigned_at_birth,

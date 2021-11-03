@@ -9,8 +9,6 @@ import os
 from django.shortcuts import render, redirect, get_object_or_404
 from silk.profiling.profiler import silk_profile
 
-from .serializers import PatientEncounterSerializer
-
 from main.serializers import PatientEncounterSerializer
 from main.femr_admin_views import get_client_ip
 from main.qldb_interface import update_patient, update_patient_encounter
@@ -286,13 +284,15 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
         if request.session["campaign"] == "RECOVERY MODE":
             return_response = redirect("main:home")
         else:
-            new_diagnosis_view_body(request, patient_id, encounter_id)
+            return_response = __new_diagnosis_view_body(
+                request, patient_id, encounter_id
+            )
     else:
         return_response = redirect("/not_logged_in")
     return return_response
 
 
-def new_diagnosis_view_body(request, patient_id, encounter_id):
+def __new_diagnosis_view_body(request, patient_id, encounter_id):
     units = Campaign.objects.get(name=request.session["campaign"]).units
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
@@ -313,9 +313,7 @@ def new_diagnosis_view_body(request, patient_id, encounter_id):
     else:
         diagnosis_form = PatientDiagnosisForm()
     if request.method == "POST":
-        diagnosis_form = new_diagnosis_view_post(
-            request, encounter, treatment_form, patient_diagnoses, diagnosis_set
-        )
+        diagnosis_form = new_diagnosis_view_post(request, encounter, diagnosis_set)
     form = PatientEncounterForm(instance=encounter, unit=units)
     if units == "i":
         new_diagnosis_imperial(form, encounter)
@@ -343,9 +341,7 @@ def new_diagnosis_view_body(request, patient_id, encounter_id):
     )
 
 
-def new_diagnosis_view_post(
-    request, encounter, treatment_form, patient_diagnoses, diagnosis_set
-):
+def new_diagnosis_view_post(request, encounter, diagnosis_set):
     if len(diagnosis_set) > 0:
         diagnosis_form = PatientDiagnosisForm(request.POST, instance=diagnosis_set[0])
     else:
@@ -355,14 +351,6 @@ def new_diagnosis_view_post(
         diagnosis.encounter = encounter
         diagnosis.save()
         diagnosis_form.save_m2m()
-        querysets = patient_diagnoses
-        if len(querysets) > 0:
-            item = querysets.pop().diagnosis.all()
-            for query_item in querysets:
-                item.union(query_item.diagnosis.all())
-            treatment_form.fields["diagnosis"].queryset = item
-        else:
-            treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
         DatabaseChangeLog.objects.create(
             action="Edit",
             model="PatientEncounter",
@@ -391,7 +379,9 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
         if request.session["campaign"] == "RECOVERY MODE":
             return_response = redirect("main:home")
         else:
-            __new_treatment_view_body(request, patient_id, encounter_id)
+            return_response = __new_treatment_view_body(
+                request, patient_id, encounter_id
+            )
     else:
         return_response = redirect("/not_logged_in")
     return return_response
@@ -418,7 +408,7 @@ def __new_treatment_view_body(request, patient_id, encounter_id):
     else:
         diagnosis_form = PatientDiagnosisForm()
     if request.method == "POST":
-        treatment_form = treatment_view_post(request, encounter, patient_diagnoses)
+        treatment_form = __treatment_view_post(request, encounter)
     form = PatientEncounterForm(instance=encounter, unit=units)
     if units == "i":
         new_treatment_imperial(form, encounter)
@@ -445,7 +435,7 @@ def __new_treatment_view_body(request, patient_id, encounter_id):
     )
 
 
-def treatment_view_post(request, encounter, patient_diagnoses):
+def __treatment_view_post(request, encounter):
     treatment_form = TreatmentForm(request.POST)
     if treatment_form.is_valid():
         treatment = treatment_form.save(commit=False)
@@ -454,14 +444,6 @@ def treatment_view_post(request, encounter, patient_diagnoses):
         treatment.save()
         treatment_form.save_m2m()
         treatment_form = TreatmentForm()
-        querysets = list(patient_diagnoses)
-        if len(querysets) > 0:
-            item = querysets.pop().diagnosis.all()
-            for query_item in querysets:
-                item.union(query_item.diagnosis.all())
-            treatment_form.fields["diagnosis"].queryset = item
-        else:
-            treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
         DatabaseChangeLog.objects.create(
             action="Edit",
             model="PatientEncounter",

@@ -136,6 +136,7 @@ def permission_denied(request):
     return render(request, "auth/permission_denied.html")
 
 
+@silk_profile("login-view-post-success")
 def __login_view_post_success(request, user):
     login(request, user)
     if UserSession.objects.filter(user=request.user).exists():
@@ -176,6 +177,7 @@ def __login_view_post_success(request, user):
     return return_response
 
 
+@silk_profile("login-view-post-failure")
 def __login_view_post_failure(request):
     ip_address = get_client_ip(request)
     AuditEntry.objects.create(

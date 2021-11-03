@@ -86,8 +86,6 @@ def __edit_photo_view_post(request, patient_id, encounter_id, photo_id):
     units = Campaign.objects.get(name=request.session["campaign"]).units
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
-    vitals = Vitals.objects.filter(encounter=encounter)
-    treatments = Treatment.objects.filter(encounter=encounter)
     photo = Photo.objects.get(pk=photo_id)
     aux_form = PhotoForm(request.POST, request.FILES, instance=photo)
     if aux_form.is_valid():
@@ -114,8 +112,8 @@ def __edit_photo_view_post(request, patient_id, encounter_id, photo_id):
         "forms/photos_tab.html",
         {
             "aux_form": aux_form,
-            "vitals": vitals,
-            "treatments": treatments,
+            "vitals": Vitals.objects.filter(encounter=encounter),
+            "treatments": Treatment.objects.filter(encounter=encounter),
             "vitals_form": vitals_form,
             "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
             "encounter": encounter,

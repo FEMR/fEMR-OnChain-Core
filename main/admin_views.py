@@ -18,7 +18,7 @@ from axes.utils import reset
 from clinic_messages.models import Message
 from main.background_tasks import check_admin_permission
 from main.femr_admin_views import get_client_ip
-from .forms import (
+from main.forms import (
     MOTDForm,
     UserForm,
     UserUpdateForm,
@@ -26,7 +26,13 @@ from .forms import (
     fEMRAdminUserForm,
     fEMRAdminUserUpdateForm,
 )
-from .models import MessageOfTheDay, fEMRUser, AuditEntry, DatabaseChangeLog, Campaign
+from main.models import (
+    MessageOfTheDay,
+    fEMRUser,
+    AuditEntry,
+    DatabaseChangeLog,
+    Campaign,
+)
 
 
 def admin_home(request):
@@ -330,30 +336,18 @@ def get_audit_logs_view(request):
 def __filter_audit_logs_process(request):
     try:
         logs = AuditEntry.objects.all()
+        campaign = Campaign.objects.get(name=request.session["campaign"])
         if request.GET["filter_list"] == "1":
             now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
             now = now.astimezone(timezone.get_current_timezone())
-            data = (
-                logs.filter(timestamp__date=now)
-                .order_by("-timestamp")
-                .filter(
-                    Q(campaign=Campaign.objects.get(name=request.session["campaign"]))
-                    | Q(action="user_login_failed")
-                )
-            )
             data = set(
                 list(
                     itertools.chain(
-                        data,
                         logs.filter(timestamp__date=now)
-                        .filter(
-                            Q(
-                                campaign=Campaign.objects.get(
-                                    name=request.session["campaign"]
-                                )
-                            )
-                            | Q(action="user_login_failed")
-                        )
+                        .order_by("-timestamp")
+                        .filter(Q(campaign=campaign) | Q(action="user_login_failed")),
+                        logs.filter(timestamp__date=now)
+                        .filter(Q(campaign=campaign) | Q(action="user_login_failed"))
                         .order_by("-timestamp"),
                     )
                 )
@@ -362,30 +356,19 @@ def __filter_audit_logs_process(request):
         elif request.GET["filter_list"] == "2":
             timestamp_from = timezone.now() - timedelta(days=7)
             timestamp_to = timezone.now()
-            data = (
-                logs.filter(timestamp__gte=timestamp_from, timestamp__lt=timestamp_to)
-                .filter(
-                    Q(campaign=Campaign.objects.get(name=request.session["campaign"]))
-                    | Q(action="user_login_failed")
-                )
-                .order_by("-timestamp")
-            )
             data = set(
                 list(
                     itertools.chain(
-                        data,
+                        logs.filter(
+                            timestamp__gte=timestamp_from, timestamp__lt=timestamp_to
+                        )
+                        .filter(Q(campaign=campaign) | Q(action="user_login_failed"))
+                        .order_by("-timestamp"),
                         logs.filter(
                             timestamp__gte=timestamp_from,
                             timestamp__lt=timestamp_to,
                         )
-                        .filter(
-                            Q(
-                                campaign=Campaign.objects.get(
-                                    name=request.session["campaign"]
-                                )
-                            )
-                            | Q(action="user_login_failed")
-                        )
+                        .filter(Q(campaign=campaign) | Q(action="user_login_failed"))
                         .order_by("-timestamp"),
                     )
                 )
@@ -394,30 +377,19 @@ def __filter_audit_logs_process(request):
         elif request.GET["filter_list"] == "3":
             timestamp_from = timezone.now() - timedelta(days=30)
             timestamp_to = timezone.now()
-            data = (
-                logs.filter(timestamp__gte=timestamp_from, timestamp__lt=timestamp_to)
-                .filter(
-                    Q(campaign=Campaign.objects.get(name=request.session["campaign"]))
-                    | Q(action="user_login_failed")
-                )
-                .order_by("-timestamp")
-            )
             data = set(
                 list(
                     itertools.chain(
-                        data,
+                        logs.filter(
+                            timestamp__gte=timestamp_from, timestamp__lt=timestamp_to
+                        )
+                        .filter(Q(campaign=campaign) | Q(action="user_login_failed"))
+                        .order_by("-timestamp"),
                         logs.filter(
                             timestamp__gte=timestamp_from,
                             timestamp__lt=timestamp_to,
                         )
-                        .filter(
-                            Q(
-                                campaign=Campaign.objects.get(
-                                    name=request.session["campaign"]
-                                )
-                            )
-                            | Q(action="user_login_failed")
-                        )
+                        .filter(Q(campaign=campaign) | Q(action="user_login_failed"))
                         .order_by("-timestamp"),
                     )
                 )
@@ -431,34 +403,22 @@ def __filter_audit_logs_process(request):
                 timestamp_to = datetime.strptime(
                     request.GET["date_filter_day"], "%Y-%m-%d"
                 ).replace(hour=23, minute=59, second=59, microsecond=0)
-                data = (
-                    logs.filter(
-                        timestamp__gte=timestamp_from,
-                        timestamp__lt=timestamp_to,
-                    )
-                    .filter(
-                        Q(
-                            campaign=Campaign.objects.get(
-                                name=request.session["campaign"]
-                            )
-                        )
-                        | Q(action="user_login_failed")
-                    )
-                    .order_by("-timestamp")
-                )
                 data = set(
                     list(
                         itertools.chain(
-                            data,
                             logs.filter(
                                 timestamp__gte=timestamp_from,
                                 timestamp__lt=timestamp_to,
                             )
                             .filter(
-                                campaign=Campaign.objects.get(
-                                    name=request.session["campaign"]
-                                )
+                                Q(campaign=campaign) | Q(action="user_login_failed")
                             )
+                            .order_by("-timestamp"),
+                            logs.filter(
+                                timestamp__gte=timestamp_from,
+                                timestamp__lt=timestamp_to,
+                            )
+                            .filter(campaign=campaign)
                             .order_by("-timestamp"),
                         )
                     )
@@ -474,34 +434,22 @@ def __filter_audit_logs_process(request):
                 timestamp_to = datetime.strptime(
                     request.GET["date_filter_end"], "%Y-%m-%d"
                 ) + timedelta(days=1)
-                data = (
-                    logs.filter(
-                        timestamp__gte=timestamp_from,
-                        timestamp__lt=timestamp_to,
-                    )
-                    .filter(
-                        Q(
-                            campaign=Campaign.objects.get(
-                                name=request.session["campaign"]
-                            )
-                        )
-                        | Q(action="user_login_failed")
-                    )
-                    .order_by("-timestamp")
-                )
                 data = set(
                     list(
                         itertools.chain(
-                            data,
                             logs.filter(
                                 timestamp__gte=timestamp_from,
                                 timestamp__lt=timestamp_to,
                             )
                             .filter(
-                                campaign=Campaign.objects.get(
-                                    name=request.session["campaign"]
-                                )
+                                Q(campaign=campaign) | Q(action="user_login_failed")
                             )
+                            .order_by("-timestamp"),
+                            logs.filter(
+                                timestamp__gte=timestamp_from,
+                                timestamp__lt=timestamp_to,
+                            )
+                            .filter(campaign=campaign)
                             .order_by("-timestamp"),
                         )
                     )
@@ -511,9 +459,7 @@ def __filter_audit_logs_process(request):
             selected = 5
         elif request.GET["filter_list"] == "6":
             try:
-                data = logs.filter(
-                    campaign=Campaign.objects.get(name=request.session["campaign"])
-                ).order_by("-timestamp")
+                data = logs.filter(campaign=campaign).order_by("-timestamp")
             except ValueError:
                 data = []
             selected = 6
@@ -627,15 +573,16 @@ def __filter_database_logs_check(request):
         if request.GET["filter_list"] == "1":
             now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
             now = now.astimezone(timezone.get_current_timezone())
-            data = (
-                logs.exclude(model__in=excludemodels)
-                .filter(timestamp__date=now)
-                .filter(campaign=Campaign.objects.get(name=request.session["campaign"]))
-            )
             data = set(
                 list(
                     itertools.chain(
-                        data,
+                        logs.exclude(model__in=excludemodels)
+                        .filter(timestamp__date=now)
+                        .filter(
+                            campaign=Campaign.objects.get(
+                                name=request.session["campaign"]
+                            )
+                        ),
                         logs.exclude(model__in=excludemodels)
                         .filter(timestamp__date=now)
                         .filter(
@@ -649,15 +596,18 @@ def __filter_database_logs_check(request):
         elif request.GET["filter_list"] == "2":
             timestamp_from = timezone.now() - timedelta(days=7)
             timestamp_to = timezone.now()
-            data = (
-                logs.exclude(model__in=excludemodels)
-                .filter(timestamp__gte=timestamp_from, timestamp__lt=timestamp_to)
-                .filter(campaign=Campaign.objects.get(name=request.session["campaign"]))
-            )
             data = set(
                 list(
                     itertools.chain(
-                        data,
+                        logs.exclude(model__in=excludemodels)
+                        .filter(
+                            timestamp__gte=timestamp_from, timestamp__lt=timestamp_to
+                        )
+                        .filter(
+                            campaign=Campaign.objects.get(
+                                name=request.session["campaign"]
+                            )
+                        ),
                         logs.exclude(model__in=excludemodels)
                         .filter(
                             timestamp__gte=timestamp_from,
@@ -674,15 +624,18 @@ def __filter_database_logs_check(request):
         elif request.GET["filter_list"] == "3":
             timestamp_from = timezone.now() - timedelta(days=30)
             timestamp_to = timezone.now()
-            data = (
-                logs.exclude(model__in=excludemodels)
-                .filter(timestamp__gte=timestamp_from, timestamp__lt=timestamp_to)
-                .filter(campaign=Campaign.objects.get(name=request.session["campaign"]))
-            )
             data = set(
                 list(
                     itertools.chain(
-                        data,
+                        logs.exclude(model__in=excludemodels)
+                        .filter(
+                            timestamp__gte=timestamp_from, timestamp__lt=timestamp_to
+                        )
+                        .filter(
+                            campaign=Campaign.objects.get(
+                                name=request.session["campaign"]
+                            )
+                        ),
                         logs.exclude(model__in=excludemodels)
                         .filter(
                             timestamp__gte=timestamp_from,
@@ -704,20 +657,19 @@ def __filter_database_logs_check(request):
                 timestamp_to = datetime.strptime(
                     request.GET["date_filter_day"], "%Y-%m-%d"
                 ).replace(hour=23, minute=59, second=59, microsecond=0)
-                data = (
-                    logs.exclude(model__in=excludemodels)
-                    .filter(
-                        timestamp__gte=timestamp_from,
-                        timestamp__lt=timestamp_to,
-                    )
-                    .filter(
-                        campaign=Campaign.objects.get(name=request.session["campaign"])
-                    )
-                )
                 data = set(
                     list(
                         itertools.chain(
-                            data,
+                            logs.exclude(model__in=excludemodels)
+                            .filter(
+                                timestamp__gte=timestamp_from,
+                                timestamp__lt=timestamp_to,
+                            )
+                            .filter(
+                                campaign=Campaign.objects.get(
+                                    name=request.session["campaign"]
+                                )
+                            ),
                             logs.exclude(model__in=excludemodels)
                             .filter(
                                 timestamp__gte=timestamp_from,
@@ -741,20 +693,19 @@ def __filter_database_logs_check(request):
                 timestamp_to = datetime.strptime(
                     request.GET["date_filter_end"], "%Y-%m-%d"
                 ) + timedelta(days=1)
-                data = (
-                    logs.exclude(model__in=excludemodels)
-                    .filter(
-                        timestamp__gte=timestamp_from,
-                        timestamp__lt=timestamp_to,
-                    )
-                    .filter(
-                        campaign=Campaign.objects.get(name=request.session["campaign"])
-                    )
-                )
                 data = set(
                     list(
                         itertools.chain(
-                            data,
+                            logs.exclude(model__in=excludemodels)
+                            .filter(
+                                timestamp__gte=timestamp_from,
+                                timestamp__lt=timestamp_to,
+                            )
+                            .filter(
+                                campaign=Campaign.objects.get(
+                                    name=request.session["campaign"]
+                                )
+                            ),
                             logs.exclude(model__in=excludemodels)
                             .filter(
                                 timestamp__gte=timestamp_from,

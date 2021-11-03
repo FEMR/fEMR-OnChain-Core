@@ -14,7 +14,6 @@ from main.models import Campaign, AuditEntry, fEMRUser
 
 @receiver(user_logged_in)
 def user_logged_in_callback(sender, request, user, **kwargs):
-    ip_address = get_client_ip(request)
     campaign_list = request.user.campaigns.filter(active=True)
     if len(campaign_list) != 0:
         name = campaign_list[0].name
@@ -23,7 +22,7 @@ def user_logged_in_callback(sender, request, user, **kwargs):
         campaign = None
     AuditEntry.objects.create(
         action="user_logged_in",
-        ip=ip_address,
+        ip=get_client_ip(request),
         username=user.username,
         campaign=campaign,
     )
@@ -31,7 +30,6 @@ def user_logged_in_callback(sender, request, user, **kwargs):
 
 @receiver(user_logged_out)
 def user_logged_out_callback(sender, request, user, **kwargs):
-    ip_address = get_client_ip(request)
     try:
         campaign_list = request.user.campaigns.filter(active=True)
         if len(campaign_list) != 0:
@@ -41,7 +39,7 @@ def user_logged_out_callback(sender, request, user, **kwargs):
             campaign = None
         AuditEntry.objects.create(
             action="user_logged_out",
-            ip=ip_address,
+            ip=get_client_ip(request),
             username=user.username,
             campaign=campaign,
         )
@@ -74,9 +72,7 @@ def handle_ticket_activity(sender, ticket, **kwargs):
     for user in Group.objects.get(name="Developer").user_set.all():
         Message.objects.create(
             subject="Ticket Update",
-            content="This message is to let you know that an"
-            f"update was posted to ticket {ticket.id}. "
-            "Use the Let Us Know link to view the new information.",
+            content=f"This message is to let you know that an update was posted to ticket {ticket.id}. Use the Let Us Know link to view the new information.",
             sender=fEMRUser.objects.get(username="admin"),
             recipient=user,
         )
