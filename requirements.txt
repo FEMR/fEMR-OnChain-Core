@@ -4,7 +4,7 @@ astroid==2.8.4
 autopep8==1.6.0
 black==21.9b0
 boto3==1.19.4
-botocore==1.22.4
+botocore==1.22.9
 certifi==2021.10.8
 chardet==4.0.0
 charset-normalizer==2.0.7
@@ -39,7 +39,7 @@ gprof2dot==2021.2.21
 idna==3.3
 inflection==0.5.1
 ionhash==1.2.1
-isort==5.9.3
+isort==5.10.0
 itypes==1.2.0
 Jinja2==3.0.2
 jmespath==0.10.0
@@ -58,7 +58,7 @@ pycodestyle==2.8.0
 pyflakes==2.4.0
 Pygments==2.10.0
 pylint==2.11.1
-pyparsing==3.0.2
+pyparsing==3.0.4
 pyqldb==3.0.0
 python-dateutil==2.8.2
 python-stdnum==1.17
@@ -82,4 +82,4 @@ uritemplate==4.1.1
 urllib3==1.26.7
 user-agents==2.2.0
 whitenoise==5.3.0
-wrapt==1.12.1
+wrapt==1.13.3
