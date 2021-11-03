@@ -39,7 +39,7 @@ gprof2dot==2021.2.21
 idna==3.3
 inflection==0.5.1
 ionhash==1.2.1
-isort==5.9.3
+isort==5.10.0
 itypes==1.2.0
 Jinja2==3.0.2
 jmespath==0.10.0
