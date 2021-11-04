@@ -287,14 +287,16 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
             treatment_form.fields["diagnosis"].queryset = q
         else:
             treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
-        d = patient_diagnoses
-        if len(d) > 0:
+        d = PatientDiagnosis.objects.filter(encounter=m)
+        if len(querysets) > 0:
             diagnosis_form = PatientDiagnosisForm(instance=d[0])
         else:
             diagnosis_form = PatientDiagnosisForm()
         if request.method == "POST":
             if len(d) > 0:
-                diagnosis_form = PatientDiagnosisForm(request.POST, instance=d[0])
+                diagnosis_form = PatientDiagnosisForm(
+                    request.POST, instance=d[0]
+                )
             else:
                 diagnosis_form = PatientDiagnosisForm(request.POST)
             if diagnosis_form.is_valid():
