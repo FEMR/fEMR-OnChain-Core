@@ -6,38 +6,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0006_alter_messageoftheday_text'),
+        ("main", "0006_alter_messageoftheday_text"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='patientencounter',
-            name='current_medications',
+            model_name="patientencounter",
+            name="current_medications",
             field=models.CharField(blank=True, max_length=1000, null=True),
         ),
         migrations.AlterField(
-            model_name='patientencounter',
-            name='family_history',
+            model_name="patientencounter",
+            name="family_history",
             field=models.CharField(blank=True, max_length=1000, null=True),
         ),
         migrations.AlterField(
-            model_name='patientencounter',
-            name='medical_history',
+            model_name="patientencounter",
+            name="medical_history",
             field=models.CharField(blank=True, max_length=1000, null=True),
         ),
         migrations.AlterField(
-            model_name='patientencounter',
-            name='pharmacy_notes',
+            model_name="patientencounter",
+            name="pharmacy_notes",
             field=models.CharField(blank=True, max_length=1000, null=True),
         ),
         migrations.AlterField(
-            model_name='patientencounter',
-            name='procedure',
+            model_name="patientencounter",
+            name="procedure",
             field=models.CharField(blank=True, max_length=1000, null=True),
         ),
         migrations.AlterField(
-            model_name='patientencounter',
-            name='social_history',
+            model_name="patientencounter",
+            name="social_history",
             field=models.CharField(blank=True, max_length=1000, null=True),
         ),
     ]
