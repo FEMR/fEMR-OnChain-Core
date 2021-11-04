@@ -4,7 +4,7 @@ Defines a createadmin command extending manage.py.
 
 from django.core.management.base import BaseCommand
 
-from main.models import Ethnicity, Race
+from main.models import Campaign, Ethnicity, Race
 
 R_OPTIONS = [
     "Native American or Native Alaskan",
@@ -35,10 +35,14 @@ class Command(BaseCommand):
         @param options:
         @return:
         """
+        campaign = Campaign.objects.get(name="Test")
         for option in R_OPTIONS:
             if not Race.objects.filter(name=option).exists():
-                Race.objects.create(name=option)
+                r = Race.objects.create(name=option)
+                campaign.race_options.add(r)
 
         for option in E_OPTIONS:
             if not Ethnicity.objects.filter(name=option).exists():
-                Ethnicity.objects.create(name=option)
+                e = Ethnicity.objects.create(name=option)
+                campaign.ethnicity_options.add(e)
+        campaign.save()
