@@ -294,9 +294,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
             diagnosis_form = PatientDiagnosisForm()
         if request.method == "POST":
             if len(d) > 0:
-                diagnosis_form = PatientDiagnosisForm(
-                    request.POST, instance=d[0]
-                )
+                diagnosis_form = PatientDiagnosisForm(request.POST, instance=d[0])
             else:
                 diagnosis_form = PatientDiagnosisForm(request.POST)
             if diagnosis_form.is_valid():
