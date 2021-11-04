@@ -143,12 +143,13 @@ def create_user_view(request):
                 )
                 if form.is_valid():
                     t = form.save()
-                    if request.user.groups.filter(name="fEMR Admin").exists():
-                        for x in request.POST.getlist("campaigns"):
-                            t.campaigns.add(Campaign.objects.get(pk=(int(x))))
-                    if request.user.groups.filter(name="fEMR Admin").exists():
-                        for x in request.POST.getlist("groups"):
-                            t.groups.add(x)
+                    form.save_m2m()
+                    # if request.user.groups.filter(name="fEMR Admin").exists():
+                    #     for x in request.POST.getlist("campaigns"):
+                    #         t.campaigns.add(Campaign.objects.get(pk=(int(x))))
+                    # if request.user.groups.filter(name="fEMR Admin").exists():
+                    #     for x in request.POST.getlist("groups"):
+                    #         t.groups.add(x)
                     t.created_by = request.user
                     t.user_permissions.add(Permission.objects.get(name="Can add state"))
                     t.user_permissions.add(
@@ -196,6 +197,7 @@ def update_user_view(request, id=None):
             )
             if form.is_valid():
                 t = form.save()
+                form.save_m2m()
                 t.save()
                 DatabaseChangeLog.objects.create(
                     action="Edit",

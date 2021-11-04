@@ -133,6 +133,31 @@ def test_no_success_account_reset():
     )
 
 
+def test_campaigns_option_on_admin_user_create():
+    u = fEMRUser.objects.create_user(
+        username="test",
+        password="testingpassword",
+        email="logintestinguseremail@email.com",
+    )
+    u.change_password = False
+    Group.objects.get_or_create(name="Campaign Manager")[0].user_set.add(u)
+    c = baker.make("main.Campaign")
+    c.active = True
+    c.save()
+    u.campaigns.add(c)
+    u.save()
+    client = Client()
+    return_response = client.post(
+        "/login_view/", {"username": "test", "password": "testingpassword"}
+    )
+    return_response = client.get("/create_user_view/")
+    print(return_response)
+    u.delete()
+    c.delete()
+    assert return_response.status_code == 200
+    assert "Campaigns" in str(return_response.content)
+
+
 def test_permission_denied_account_reset():
     client = Client()
     return_response = client.get(
