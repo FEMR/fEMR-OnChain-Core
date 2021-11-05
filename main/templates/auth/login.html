@@ -12,6 +12,7 @@
     {% csrf_token %}
     {{ form|crispy }}
     <button class="btn btn-lg btn-primary btn-block mb-2" type="submit">Log in</button>
+    <div>Please note, usernames and passwords are case-sensitive.</div>
     <a href="{% url 'main:forgot_username' %}">Forgot username</a><br/>
     <a href="{% url 'password_reset' %}">Forgot password</a>
 </form>
