@@ -411,7 +411,7 @@ class PatientEncounter(models.Model):
     alcohol = models.BooleanField(default=False)
 
     chief_complaint = models.ManyToManyField(ChiefComplaint, blank=True)
-    patient_history = models.CharField(max_length=500, null=True, blank=True)
+    patient_history = models.CharField(max_length=1000, null=True, blank=True)
 
     community_health_worker_notes = models.CharField(
         max_length=500, null=True, blank=True
