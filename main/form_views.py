@@ -174,12 +174,18 @@ def patient_encounter_form_view(request, id=None):
                     campaign=campaign,
                 )
                 if "submit_encounter" in request.POST:
-                    return render(request, "data/encounter_submitted.html")
+                    return render(request, "data/encounter_submitted.html", {
+                        'patient_id': id,
+                        'encounter_id': encounter.id
+                    })
                 elif "submit_refer" in request.POST:
                     kwargs = {"id": id}
                     return redirect("main:referral_form_view", **kwargs)
                 else:
-                    return render(request, "data/encounter_submitted.html")
+                    return render(request, "data/encounter_submitted.html", {
+                        'patient_id': id,
+                        'encounter_id': encounter.id
+                    })
         else:
             encounter_open = (
                 len(PatientEncounter.objects.filter(patient=p).filter(active=True)) > 0

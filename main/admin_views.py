@@ -144,12 +144,6 @@ def create_user_view(request):
                 if form.is_valid():
                     t = form.save()
                     form.save_m2m()
-                    # if request.user.groups.filter(name="fEMR Admin").exists():
-                    #     for x in request.POST.getlist("campaigns"):
-                    #         t.campaigns.add(Campaign.objects.get(pk=(int(x))))
-                    # if request.user.groups.filter(name="fEMR Admin").exists():
-                    #     for x in request.POST.getlist("groups"):
-                    #         t.groups.add(x)
                     t.created_by = request.user
                     t.user_permissions.add(Permission.objects.get(name="Can add state"))
                     t.user_permissions.add(
@@ -172,12 +166,11 @@ def create_user_view(request):
                     )
                     return_response = render(request, "admin/user_edit_confirmed.html")
                 else:
-                    error = "Form is invalid."
-                return_response = render(
-                    request,
-                    "admin/user_create_form.html",
-                    {"error": error, "form": form},
-                )
+                    return_response = render(
+                        request,
+                        "admin/user_create_form.html",
+                        {"error": "Form is invalid.", "form": form},
+                    )
         else:
             return_response = redirect("main:permission_denied")
     else:
