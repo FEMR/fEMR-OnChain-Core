@@ -190,7 +190,7 @@ def update_user_view(request, id=None):
             )
             if form.is_valid():
                 t = form.save()
-                form.save_m2m()
+                # form.save_m2m()
                 t.save()
                 DatabaseChangeLog.objects.create(
                     action="Edit",
