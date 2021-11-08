@@ -381,8 +381,8 @@ class PatientEncounterForm(ModelForm):
             "chief_complaint": autocomplete.ModelSelect2Multiple(
                 url="main:chief-complaint-autocomplete"
             ),
-            "patient_history": Textarea(attrs={"rows": 4, "cols": 40}),
-            "community_health_worker_notes": Textarea(attrs={"rows": 4, "cols": 40}),
+            "patient_history": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 40}),
+            "community_health_worker_notes": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 40}),
         }
 
 
@@ -402,8 +402,8 @@ class AuxiliaryPatientEncounterForm(ModelForm):
             "procedure": "Procedure/Counseling",
         }
         widgets = {
-            "procedure": Textarea(attrs={"rows": 4, "cols": 40}),
-            "pharmacy_notes": Textarea(attrs={"rows": 4, "cols": 40}),
+            "procedure": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 40}),
+            "pharmacy_notes": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 40}),
         }
 
 
@@ -425,10 +425,10 @@ class HistoryPatientEncounterForm(ModelForm):
             "medical_history": "Medical/Surgical history",
         }
         widgets = {
-            "medical_history": Textarea(attrs={"rows": 4, "cols": 80}),
-            "social_history": Textarea(attrs={"rows": 4, "cols": 80}),
-            "current_medications": Textarea(attrs={"rows": 4, "cols": 80}),
-            "family_history": Textarea(attrs={"rows": 4, "cols": 80}),
+            "medical_history": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 80}),
+            "social_history": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 80}),
+            "current_medications": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 80}),
+            "family_history": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 80}),
         }
 
 

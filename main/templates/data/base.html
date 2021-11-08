@@ -36,6 +36,9 @@
         .select2-container .select2-selection--single {
             height: 38px !important;
         }
+        textarea {
+            overflow: hidden;
+        }
     </style>
 </head>
 
@@ -170,7 +173,13 @@
             $('[data-toggle="popover"]').popover();
         });
         $(document).click(sessionSecurity.activity());
-
+        $('textarea').on('input', function (){
+            $(this)
+                .width(50)
+                .height(50)
+                .width(this.scrollWidth)
+                .height(this.scrollHeight);
+        });
     </script>
     <!-- <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script> -->
     <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script> -->
