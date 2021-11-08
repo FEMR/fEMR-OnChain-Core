@@ -382,7 +382,9 @@ class PatientEncounterForm(ModelForm):
                 url="main:chief-complaint-autocomplete"
             ),
             "patient_history": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 40}),
-            "community_health_worker_notes": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 40}),
+            "community_health_worker_notes": Textarea(
+                attrs={"wrap": "off", "rows": 4, "cols": 40}
+            ),
         }
 
 
@@ -427,7 +429,9 @@ class HistoryPatientEncounterForm(ModelForm):
         widgets = {
             "medical_history": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 80}),
             "social_history": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 80}),
-            "current_medications": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 80}),
+            "current_medications": Textarea(
+                attrs={"wrap": "off", "rows": 4, "cols": 80}
+            ),
             "family_history": Textarea(attrs={"wrap": "off", "rows": 4, "cols": 80}),
         }
 
