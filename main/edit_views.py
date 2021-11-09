@@ -147,12 +147,18 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     encounter_data = PatientEncounterSerializer(encounter).data
                     update_patient_encounter(encounter_data)
                 if "submit_encounter" in request.POST:
-                    return render(request, "data/encounter_submitted.html")
+                    return render(request, "data/encounter_submitted.html", {
+                        'patient_id': patient_id,
+                        'encounter_id': encounter_id
+                    })
                 elif "submit_refer" in request.POST:
                     kwargs = {"id": patient_id}
                     return redirect("main:referral_form_view", **kwargs)
                 else:
-                    return render(request, "data/encounter_submitted.html")
+                    return render(request, "data/encounter_submitted.html", {
+                        'patient_id': patient_id,
+                        'encounter_id': encounter_id
+                    })
         else:
             DatabaseChangeLog.objects.create(
                 action="View",
@@ -557,7 +563,10 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
                     encounter_data = PatientEncounterSerializer(m).data
                     update_patient_encounter(encounter_data)
-                return render(request, "data/encounter_submitted.html")
+                return render(request, "data/encounter_submitted.html", {
+                        'patient_id': patient_id,
+                        'encounter_id': encounter_id
+                    })
         form = PatientEncounterForm(instance=m, unit=units)
         vitals_form = VitalsForm(unit=units)
         if units == "i":
@@ -649,7 +658,10 @@ def history_view(request, patient_id=None, encounter_id=None):
 
                     encounter_data = PatientEncounterSerializer(m).data
                     update_patient_encounter(encounter_data)
-                    return render(request, "data/encounter_submitted.html")
+                    return render(request, "data/encounter_submitted.html", {
+                        'patient_id': patient_id,
+                        'encounter_id': encounter_id
+                    })
         form = PatientEncounterForm(instance=m, unit=units)
         vitals_form = VitalsForm(unit=units)
         if units == "i":
