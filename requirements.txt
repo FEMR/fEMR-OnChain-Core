@@ -41,7 +41,7 @@ inflection==0.5.1
 ionhash==1.2.1
 isort==5.10.1
 itypes==1.2.0
-Jinja2==3.0.2
+Jinja2==3.0.3
 jmespath==0.10.0
 lazy-object-proxy==1.6.0
 MarkupSafe==2.0.1
