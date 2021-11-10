@@ -15,7 +15,7 @@ coreschema==0.0.4
 coverage==6.1.1
 Django==3.2.9
 django-autocomplete-light==3.8.2
-django-axes==5.26.0
+django-axes==5.27.0
 django-background-tasks==1.2.5
 django-compat==1.0.15
 django-crispy-forms==1.13.0
