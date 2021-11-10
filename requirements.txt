@@ -39,7 +39,7 @@ gprof2dot==2021.2.21
 idna==3.3
 inflection==0.5.1
 ionhash==1.2.1
-isort==5.10.0
+isort==5.10.1
 itypes==1.2.0
 Jinja2==3.0.2
 jmespath==0.10.0
@@ -58,7 +58,7 @@ pycodestyle==2.8.0
 pyflakes==2.4.0
 Pygments==2.10.0
 pylint==2.11.1
-pyparsing==3.0.4
+pyparsing==3.0.5
 pyqldb==3.0.0
 python-dateutil==2.8.2
 python-stdnum==1.17
