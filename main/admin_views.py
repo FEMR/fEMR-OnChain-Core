@@ -181,6 +181,9 @@ def create_user_view(request):
                 return_response = __create_user_view_get(request)
             if request.method == "POST":
                 return_response = __create_user_view_post(request)
+        else:
+            return_response = redirect("main:permission_denied")
+    else:
         return_response = redirect("main:not_logged_in")
     return return_response
 
@@ -197,7 +200,6 @@ def update_user_view(request, user_id=None):
             )
             if form.is_valid():
                 item = form.save()
-                form.save_m2m()
                 item.save()
                 DatabaseChangeLog.objects.create(
                     action="Edit",

@@ -6,6 +6,8 @@ If one is not found, they will direct to the appropriate error page.
 """
 import os
 
+from pprint import pprint
+
 from django.shortcuts import render, redirect, get_object_or_404
 from silk.profiling.profiler import silk_profile
 

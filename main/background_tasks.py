@@ -81,6 +81,7 @@ def reset_sessions() -> None:
 
 @silk_profile("check-browser")
 def check_browser(request) -> bool:
+    print(request.user_agent.browser.family)
     if request.user_agent.browser.family not in [
         "Chrome",
         "Firefox",

@@ -412,7 +412,7 @@ class PatientEncounter(models.Model):
     alcohol = models.BooleanField(default=False)
 
     chief_complaint = models.ManyToManyField(ChiefComplaint, blank=True)
-    patient_history = models.CharField(max_length=500, null=True, blank=True)
+    patient_history = models.CharField(max_length=1000, null=True, blank=True)
 
     community_health_worker_notes = models.CharField(
         max_length=500, null=True, blank=True
@@ -474,8 +474,8 @@ class HistoryOfPresentIllness(models.Model):
     radiation = models.CharField(max_length=50, null=True, blank=True)
     severity = models.CharField(max_length=50, null=True, blank=True)
     time_of_day = models.CharField(max_length=50, null=True, blank=True)
-    narrative = models.CharField(max_length=50, null=True, blank=True)
-    physical_examination = models.CharField(max_length=255, null=True, blank=True)
+    narrative = models.CharField(max_length=4000, null=True, blank=True)
+    physical_examination = models.CharField(max_length=4000, null=True, blank=True)
 
     tests_ordered = models.ManyToManyField(Test, blank=True)
 
@@ -644,6 +644,7 @@ class AuditEntry(models.Model):
     campaign = models.ForeignKey(
         Campaign, on_delete=models.CASCADE, blank=True, null=True
     )
+    browser_user_agent = models.CharField(max_length=256, null=True)
 
     def __str__(self):
         return f"{self.action} - {self.username} - {self.ip} - {self.timestamp} - {self.campaign}"
