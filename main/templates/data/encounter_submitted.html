@@ -2,5 +2,6 @@
 {% block content %}
 <div>
     <div>The patient encounter record has been submitted.</div>
+    <div><a class="btn btn-primary" href="{% url 'main:encounter_edit_form_view' patient_id encounter_id %}">View Encounter</a></div>
 </div>
 {% endblock %}

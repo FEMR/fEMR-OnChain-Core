@@ -41,6 +41,7 @@ def change_campaign(request):
                     ip=get_client_ip(request),
                     username=request.user.username,
                     campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    browser_user_agent=request.user_agent.browser.family
                 )
             return redirect("main:home")
         else:

@@ -7,6 +7,8 @@ If one is not found, they will direct to the appropriate error page.
 import math
 import os
 
+from pprint import pprint
+
 from django.shortcuts import render, redirect, get_object_or_404
 from silk.profiling.profiler import silk_profile
 
@@ -147,12 +149,20 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
                     encounter_data = PatientEncounterSerializer(encounter).data
                     update_patient_encounter(encounter_data)
                 if "submit_encounter" in request.POST:
-                    return render(request, "data/encounter_submitted.html")
+                    return render(
+                        request,
+                        "data/encounter_submitted.html",
+                        {"patient_id": patient_id, "encounter_id": encounter_id},
+                    )
                 elif "submit_refer" in request.POST:
                     kwargs = {"id": patient_id}
                     return redirect("main:referral_form_view", **kwargs)
                 else:
-                    return render(request, "data/encounter_submitted.html")
+                    return render(
+                        request,
+                        "data/encounter_submitted.html",
+                        {"patient_id": patient_id, "encounter_id": encounter_id},
+                    )
         else:
             DatabaseChangeLog.objects.create(
                 action="View",
@@ -277,9 +287,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
         t = Treatment.objects.filter(encounter=m)
         treatment_form = TreatmentForm()
         aux_form = AuxiliaryPatientEncounterForm(instance=m)
-        patient_diagnoses = querysets = list(
-            PatientDiagnosis.objects.filter(encounter=m)
-        )
+        querysets = list(PatientDiagnosis.objects.filter(encounter=m))
         if len(querysets) > 0:
             q = querysets.pop().diagnosis.all()
             for x in querysets:
@@ -294,17 +302,18 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
             diagnosis_form = PatientDiagnosisForm()
         if request.method == "POST":
             if len(d) > 0:
-                diagnosis_form = PatientDiagnosisForm(
-                    request.POST, instance=d[0]
-                )
+                diagnosis_form = PatientDiagnosisForm(request.POST, instance=d[0])
             else:
                 diagnosis_form = PatientDiagnosisForm(request.POST)
             if diagnosis_form.is_valid():
+                if len(d) > 1:
+                    PatientDiagnosis.objects.exclude(pk=d[0].id).delete()
                 diagnosis = diagnosis_form.save(commit=False)
                 diagnosis.encounter = m
                 diagnosis.save()
                 diagnosis_form.save_m2m()
-                querysets = patient_diagnoses
+                querysets = list(PatientDiagnosis.objects.filter(encounter=m))
+                pprint(querysets)
                 if len(querysets) > 0:
                     q = querysets.pop().diagnosis.all()
                     for x in querysets:
@@ -559,7 +568,11 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
                     encounter_data = PatientEncounterSerializer(m).data
                     update_patient_encounter(encounter_data)
-                return render(request, "data/encounter_submitted.html")
+                return render(
+                    request,
+                    "data/encounter_submitted.html",
+                    {"patient_id": patient_id, "encounter_id": encounter_id},
+                )
         form = PatientEncounterForm(instance=m, unit=units)
         vitals_form = VitalsForm(unit=units)
         if units == "i":
@@ -651,7 +664,11 @@ def history_view(request, patient_id=None, encounter_id=None):
 
                     encounter_data = PatientEncounterSerializer(m).data
                     update_patient_encounter(encounter_data)
-                    return render(request, "data/encounter_submitted.html")
+                    return render(
+                        request,
+                        "data/encounter_submitted.html",
+                        {"patient_id": patient_id, "encounter_id": encounter_id},
+                    )
         form = PatientEncounterForm(instance=m, unit=units)
         vitals_form = VitalsForm(unit=units)
         if units == "i":

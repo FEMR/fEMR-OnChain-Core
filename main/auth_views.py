@@ -196,7 +196,8 @@ def login_view(request):
             else:
                 ip = get_client_ip(request)
                 AuditEntry.objects.create(
-                    action="user_login_failed", ip=ip, username=request.POST["username"]
+                    action="user_login_failed", ip=ip, username=request.POST["username"],
+                    browser_user_agent=request.user_agent.browser.family
                 )
                 if "username" in request.COOKIES:
                     form = LoginForm(initial={"username": request.COOKIES["username"]})

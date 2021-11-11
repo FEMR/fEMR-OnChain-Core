@@ -758,6 +758,8 @@ class HistoryOfPresentIllnessForm(ModelForm):
             "tests_ordered": autocomplete.ModelSelect2Multiple(
                 url="main:test-autocomplete"
             ),
+            "narrative": Textarea(attrs={"rows": 4, "cols": 40}),
+            "physical_examination": Textarea(attrs={"rows": 4, "cols": 40}),
         }
 
 
