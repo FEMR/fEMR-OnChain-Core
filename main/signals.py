@@ -18,7 +18,11 @@ def user_logged_in_callback(sender, request, user, **kwargs):
     else:
         campaign = None
     AuditEntry.objects.create(
-        action="user_logged_in", ip=ip, username=user.username, campaign=campaign, browser_user_agent=request.user_agent.browser.family
+        action="user_logged_in",
+        ip=ip,
+        username=user.username,
+        campaign=campaign,
+        browser_user_agent=request.user_agent.browser.family,
     )
 
 
@@ -33,7 +37,11 @@ def user_logged_out_callback(sender, request, user, **kwargs):
         else:
             campaign = None
         AuditEntry.objects.create(
-            action="user_logged_out", ip=ip, username=user.username, campaign=campaign, browser_user_agent=request.user_agent.browser.family
+            action="user_logged_out",
+            ip=ip,
+            username=user.username,
+            campaign=campaign,
+            browser_user_agent=request.user_agent.browser.family,
         )
     except AttributeError:
         pass
