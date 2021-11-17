@@ -76,7 +76,7 @@ sqlparse==0.4.2
 toml==0.10.2
 tomli==1.2.2
 typed-ast==1.4.3
-typing-extensions==3.10.0.2
+typing-extensions==4.0.0
 ua-parser==0.10.0
 uritemplate==4.1.1
 urllib3==1.26.7
