@@ -12,7 +12,7 @@ click==8.0.3
 colorama==0.4.4
 coreapi==2.3.3
 coreschema==0.0.4
-coverage==6.1.1
+coverage==6.1.2
 Django==3.2.9
 django-autocomplete-light==3.8.2
 django-axes==5.27.0
@@ -58,7 +58,7 @@ pycodestyle==2.8.0
 pyflakes==2.4.0
 Pygments==2.10.0
 pylint==2.11.1
-pyparsing==3.0.5
+pyparsing==3.0.6
 pyqldb==3.0.0
 python-dateutil==2.8.2
 python-stdnum==1.17
