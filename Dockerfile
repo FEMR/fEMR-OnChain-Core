@@ -12,6 +12,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
     apt-get install nodejs -y
 RUN pip install sphinx
+RUN apt-get update && apt-get install -y dos2unix
 
 COPY requirements.txt /opt/app/requirements.txt
 WORKDIR /opt/app
@@ -21,5 +22,6 @@ EXPOSE 8081
 
 ARG FOO
 COPY . /opt/app
+RUN find /opt/app -type f -exec dos2unix {} \;
 
 ENTRYPOINT [ "/opt/app/build.sh", "init-all-run" ]
