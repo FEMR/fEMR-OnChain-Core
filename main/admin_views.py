@@ -263,7 +263,7 @@ def update_user_password_view(request, user_id=None):
             {
                 "error": error,
                 "form": form,
-                "user_id": id,
+                "user_id": user_id,
                 "page_name": "Editing User Password",
             },
         )

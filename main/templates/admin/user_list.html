@@ -30,11 +30,11 @@
                 <td>Unlock Account</td>
                 {% endif %}
                 {% else %}
-                <td><a href="{% url 'main:update_user_view' id=o.id %}"> Update</a></td>
+                <td><a href="{% url 'main:update_user_view' user_id=o.id %}"> Update</a></td>
                 {% if o.is_active %}
-                <td><a href="{% url 'main:lock_user_view' id=o.id %}">Lock Account</a></td>
+                <td><a href="{% url 'main:lock_user_view' user_id=o.id %}">Lock Account</a></td>
                 {% else %}
-                <td><a href="{% url 'main:unlock_user_view' id=o.id %}">Unlock Account</a></td>
+                <td><a href="{% url 'main:unlock_user_view' user_id=o.id %}">Unlock Account</a></td>
                 {% endif %}
                 {% endif %}
                 <td><a href="{% url 'main:reset_lockouts' username=o.username %}">Reset Login Attempts</a></td>

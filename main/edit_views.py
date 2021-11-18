@@ -212,12 +212,12 @@ def __encounter_edit_form_post(request, patient_id, encounter_id):
             encounter_data = PatientEncounterSerializer(encounter).data
             update_patient_encounter(encounter_data)
         if "submit_encounter" in request.POST:
-            return_response = render(request, "data/encounter_submitted.html")
+            return_response = render(request, "data/encounter_submitted.html", {'patient_id': patient_id, 'encounter_id': encounter_id})
         elif "submit_refer" in request.POST:
             kwargs = {"id": patient_id}
             return_response = redirect("main:referral_form_view", **kwargs)
         else:
-            return_response = render(request, "data/encounter_submitted.html")
+            return_response = render(request, "data/encounter_submitted.html", {'patient_id': patient_id, 'encounter_id': encounter_id})
     else:
         form.initial["timestamp"] = encounter.timestamp
         encounter_active = encounter.active
