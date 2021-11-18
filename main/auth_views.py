@@ -165,7 +165,7 @@ def __login_view_post_success(request, user):
             else:
                 return_response = redirect("main:home")
     elif (timezone.now() - user.password_reset_last).days >= 90:
-        return redirect("required_change_password")
+        return_response = redirect("required_change_password")
     elif not user.change_password:
         if "remember_me" in request.POST:
             return_response = redirect("main:home")
@@ -316,7 +316,7 @@ def required_change_password(request):
                 update_session_auth_hash(request, user)
                 user.change_password = False
                 user.save()
-                return_response = redirect("main:index")
+                return_response = redirect("main:home")
             else:
                 return_response = render(
                     request,

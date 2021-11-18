@@ -862,7 +862,7 @@ def patient_medical(request, patient_id=None):
             encounter = encounters[0]
             return_response = redirect(
                 "main:encounter_edit_form_view",
-                patient_id=id,
+                patient_id=patient_id,
                 encounter_id=encounter.pk,
             )
         else:
