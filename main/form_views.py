@@ -225,7 +225,7 @@ def __patient_encounter_form_get(request, patient):
             "treatment_form": treatment_form,
             "page_name": f"New Encounter for {patient.first_name} {patient.last_name} {suffix}",
             "birth_sex": patient.sex_assigned_at_birth,
-            "patient_id": id,
+            "patient_id": patient.id,
             "units": units,
             "telehealth": telehealth,
             "encounter_open": encounter_open,
@@ -294,7 +294,7 @@ def __patient_encounter_form_post(request, patient):
                 "treatment_form": treatment_form,
                 "page_name": f"New Encounter for {patient.first_name} {patient.last_name} {suffix}",
                 "birth_sex": patient.sex_assigned_at_birth,
-                "patient_id": id,
+                "patient_id": patient.id,
                 "units": units,
                 "telehealth": telehealth,
                 "encounter_open": encounter_open,
@@ -345,7 +345,7 @@ def referral_form_view(request, patient_id=None):
                 request,
                 "forms/referral.html",
                 {
-                    "patient_id": id,
+                    "patient_id": patient_id,
                     "page_name": "Campaign Referral",
                     "campaigns": Campaign.objects.filter(
                         instance=Campaign.objects.get(

@@ -76,11 +76,11 @@
     <tr>
         <td>{{ o.campaign_key }}</td>
         <td>{{ o|open_encounters }}</td>
-        <td><a href="{% url 'main:patient_edit_form_view' id=o.id %}">{{ o.first_name }}
+        <td><a href="{% url 'main:patient_edit_form_view' patient_id=o.id %}">{{ o.first_name }}
              {{ o|has_middle_name }} {{ o.last_name }} {{ o|has_suffix }}</a></td>
         <td>{{ o|last_timestamp }}</td>
         <td>{{ o|get_campaign_info }}</td>
-        <td><a href="{% url 'main:patient_medical' id=o.id %}">Medical</a></td>
+        <td><a href="{% url 'main:patient_medical' patient_id=o.id %}">Medical</a></td>
     </tr>
     {% endfor %}
     </tbody>
