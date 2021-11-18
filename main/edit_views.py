@@ -6,8 +6,6 @@ If one is not found, they will direct to the appropriate error page.
 """
 import os
 
-from pprint import pprint
-
 from django.shortcuts import render, redirect, get_object_or_404
 from silk.profiling.profiler import silk_profile
 
@@ -869,7 +867,7 @@ def patient_medical(request, patient_id=None):
             )
         else:
             return_response = redirect(
-                "main:patient_encounter_form_view", id=patient_id
+                "main:patient_encounter_form_view", patient_id=patient_id
             )
     else:
         return_response = redirect("/not_logged_in")

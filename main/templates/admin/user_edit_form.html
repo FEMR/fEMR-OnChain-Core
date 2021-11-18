@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 {% load crispy_forms_tags %}
-<form action="{% url 'main:update_user_view' id=user_id %}" method="post"
+<form action="{% url 'main:update_user_view' user_id=user_id %}" method="post"
       onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
     {% csrf_token %}
     <div class="container">
