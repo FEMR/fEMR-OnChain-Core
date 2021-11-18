@@ -61,11 +61,11 @@
                 <th scope="row">{{ o.id }}</th>
                 <td>{{ o.first_name }}</td>
                 <td>{{o.last_name }}</td>
-                <td><a href="{% url 'main:update_user_view' id=o.id %}"> Update</a></td>
+                <td><a href="{% url 'main:update_user_view' user_id=o.id %}"> Update</a></td>
                 {% if o.is_active %}
-                <td><a href="{% url 'main:lock_user_view' id=o.id %}">Lock Account</a></td>
+                <td><a href="{% url 'main:lock_user_view' user_id=o.id %}">Lock Account</a></td>
                 {% else %}
-                <td><a href="{% url 'main:unlock_user_view' id=o.id %}">Unlock Account</a></td>
+                <td><a href="{% url 'main:unlock_user_view' user_id=o.id %}">Unlock Account</a></td>
                 {% endif %}
             </tr>
             {% endfor %}
