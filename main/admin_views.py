@@ -884,7 +884,7 @@ def __message_of_the_day_form_processor(request, message):
             if os.environ.get("EMAIL_HOST") != "":
                 send_mail(
                     "fEMR On-Chain",
-                    "f{message.text}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN. "
+                    f"{message.text}\n\n\nTHIS IS AN AUTOMATED MESSAGE FROM fEMR ON-CHAIN."
                     "PLEASE DO NOT REPLY TO "
                     "THIS EMAIL. PLEASE LOG IN TO fEMR ON-CHAIN TO REPLY.",
                     os.environ.get("DEFAULT_FROM_EMAIL"),
