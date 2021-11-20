@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
 from django.utils import timezone
 from silk.profiling.profiler import silk_profile
 
@@ -60,12 +61,16 @@ def patient_list_view(request):
             )
         except ObjectDoesNotExist:
             data = []
+        data = sorted(data, reverse=True, key=get_latest_timestamp)
+        paginator = Paginator(data, 25)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
         return_response = render(
             request,
             "list/patient.html",
             {
                 "user": request.user,
-                "list_view": sorted(data, reverse=True, key=get_latest_timestamp),
+                "page_obj": page_obj,
                 "page_name": "Manager",
                 # pylint: disable=C0301
                 "page_tip": "This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.",
@@ -234,13 +239,17 @@ def filter_patient_list_view(request):
     """
     if request.user.is_authenticated:
         data = __run_patient_list_filter(request)
+        data = sorted(data, reverse=True, key=get_latest_timestamp)
+        paginator = Paginator(data, 25)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
         return_response = render(
             request,
             "list/patient.html",
             {
                 "user": request.user,
-                "list_view": sorted(data, reverse=True, key=get_latest_timestamp),
                 "page_name": "Manager",
+                "page_obj": page_obj,
                 "selected": int(request.GET["filter_list"]),
                 "filter_day": request.GET["date_filter_day"],
                 "filter_start": request.GET["date_filter_start"],
@@ -290,12 +299,16 @@ def search_patient_list_view(request):
                 )
         except ObjectDoesNotExist:
             data = []
+        data = sorted(data, reverse=True, key=get_latest_timestamp)
+        paginator = Paginator(data, 25)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
         return_response = render(
             request,
             "list/patient.html",
             {
                 "user": request.user,
-                "list_view": sorted(data, reverse=True, key=get_latest_timestamp),
+                "page_obj": page_obj,
                 # pylint: disable=C0301
                 "page_tip": "This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.",
             },

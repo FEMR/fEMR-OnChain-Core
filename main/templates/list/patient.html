@@ -3,87 +3,104 @@
 {% load static %}
 {% load patient_tags %}
 <form action="{% url 'main:filter_patient_list_view' %}" class="form-inline my-2 my-lg-0" method="get"
-      onsubmit="return check_dates();">
-    <select aria-label="Filter" class="form-control" id="filter_list" name="filter_list">
-        {% if selected == 1 %}
-        <option selected value="1">Seen Today</option>
-        {% else %}
-        <option value="1">Seen Today</option>
-        {% endif %}
-        {% if selected == 2 %}
-        <option selected value="2">Seen in Last Week</option>
-        {% else %}
-        <option value="2">Seen in Last Week</option>
-        {% endif %}
-        {% if selected == 3 %}
-        <option selected value="3">Seen in Last 30 Days</option>
-        {% else %}
-        <option value="3">Seen in Last 30 Days</option>
-        {% endif %}
-        {% if selected == 4 %}
-        <option selected value="4">Seen on</option>
-        {% else %}
-        <option value="4">Seen on</option>
-        {% endif %}
-        {% if selected == 5 %}
-        <option selected value="5">Seen between</option>
-        {% else %}
-        <option value="5">Seen between</option>
-        {% endif %}
-        {% if selected == 6 %}
-        <option selected value="6">All</option>
-        {% else %}
-        <option value="6">All</option>
-        {% endif %}
-    </select>
-    {% if selected == 4 %}
-    <input class="form-control" data-content="A date is required." data-placement="top" data-toggle="popover"
-           data-trigger="focus" id="date_filter_day" name="date_filter_day" type="date" value="{{ filter_day }}"/>
-    {% else %}
-    <input class="form-control" data-content="A date is required." data-placement="top" data-toggle="popover"
-           data-trigger="focus" id="date_filter_day" name="date_filter_day"
-           style="visibility: hidden; display: none;" type="date" value="{{ filter_day }}"/>
-    {% endif %}
-    {% if selected == 5 %}
-    <input class="form-control" data-content="A date is required." data-placement="top" data-toggle="popover"
-           data-trigger="focus" id="date_filter_start" name="date_filter_start" type="date"
-           value="{{ filter_start }}"/>
-    <input class="form-control" data-content="A date is required." data-placement="top" data-toggle="popover"
-           data-trigger="focus" id="date_filter_end" name="date_filter_end" type="date" value="{{ filter_end }}"/>
-    {% else %}
-    <input class="form-control" data-content="A date is required." data-placement="top" data-toggle="popover"
-           data-trigger="focus" id="date_filter_start" name="date_filter_start"
-           style="visibility: hidden; display: none;" type="date" value="{{ filter_start }}"/>
-    <input class="form-control" data-content="A date is required." data-placement="top" data-toggle="popover"
-           data-trigger="focus" id="date_filter_end" name="date_filter_end"
-           style="visibility: hidden; display: none;" type="date" value="{{ filter_end }}"/>
-    {% endif %}
-    <button class="btn btn-primary" id="filter_apply_button" type="submit">Apply</button>
+       onsubmit="return check_dates();">
+       <select aria-label="Filter" class="form-control" id="filter_list" name="filter_list">
+              {% if selected == 1 %}
+              <option selected value="1">Seen Today</option>
+              {% else %}
+              <option value="1">Seen Today</option>
+              {% endif %}
+              {% if selected == 2 %}
+              <option selected value="2">Seen in Last Week</option>
+              {% else %}
+              <option value="2">Seen in Last Week</option>
+              {% endif %}
+              {% if selected == 3 %}
+              <option selected value="3">Seen in Last 30 Days</option>
+              {% else %}
+              <option value="3">Seen in Last 30 Days</option>
+              {% endif %}
+              {% if selected == 4 %}
+              <option selected value="4">Seen on</option>
+              {% else %}
+              <option value="4">Seen on</option>
+              {% endif %}
+              {% if selected == 5 %}
+              <option selected value="5">Seen between</option>
+              {% else %}
+              <option value="5">Seen between</option>
+              {% endif %}
+              {% if selected == 6 %}
+              <option selected value="6">All</option>
+              {% else %}
+              <option value="6">All</option>
+              {% endif %}
+       </select>
+       {% if selected == 4 %}
+       <input class="form-control" data-content="A date is required." data-placement="top" data-toggle="popover"
+              data-trigger="focus" id="date_filter_day" name="date_filter_day" type="date" value="{{ filter_day }}" />
+       {% else %}
+       <input class="form-control" data-content="A date is required." data-placement="top" data-toggle="popover"
+              data-trigger="focus" id="date_filter_day" name="date_filter_day"
+              style="visibility: hidden; display: none;" type="date" value="{{ filter_day }}" />
+       {% endif %}
+       {% if selected == 5 %}
+       <input class="form-control" data-content="A date is required." data-placement="top" data-toggle="popover"
+              data-trigger="focus" id="date_filter_start" name="date_filter_start" type="date"
+              value="{{ filter_start }}" />
+       <input class="form-control" data-content="A date is required." data-placement="top" data-toggle="popover"
+              data-trigger="focus" id="date_filter_end" name="date_filter_end" type="date" value="{{ filter_end }}" />
+       {% else %}
+       <input class="form-control" data-content="A date is required." data-placement="top" data-toggle="popover"
+              data-trigger="focus" id="date_filter_start" name="date_filter_start"
+              style="visibility: hidden; display: none;" type="date" value="{{ filter_start }}" />
+       <input class="form-control" data-content="A date is required." data-placement="top" data-toggle="popover"
+              data-trigger="focus" id="date_filter_end" name="date_filter_end"
+              style="visibility: hidden; display: none;" type="date" value="{{ filter_end }}" />
+       {% endif %}
+       <button class="btn btn-primary" id="filter_apply_button" type="submit">Apply</button>
 </form>
 <table class="table">
-    <thead>
-    <tr>
-        <th scope="col">Patient ID</th>
-        <th scope="col">Open Encounter</th>
-        <th scope="col">Name</th>
-        <th scope="col">Date Last Seen</th>
-        <th scope="col">Campaign</th>
-        <th scope="col"></th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for o in list_view %}
-    <tr>
-        <td>{{ o.campaign_key }}</td>
-        <td>{{ o|open_encounters }}</td>
-        <td><a href="{% url 'main:patient_edit_form_view' patient_id=o.id %}">{{ o.first_name }}
-             {{ o|has_middle_name }} {{ o.last_name }} {{ o|has_suffix }}</a></td>
-        <td>{{ o|last_timestamp }}</td>
-        <td>{{ o|get_campaign_info }}</td>
-        <td><a href="{% url 'main:patient_medical' patient_id=o.id %}">Medical</a></td>
-    </tr>
-    {% endfor %}
-    </tbody>
+       <thead>
+              <tr>
+                     <th scope="col">Patient ID</th>
+                     <th scope="col">Open Encounter</th>
+                     <th scope="col">Name</th>
+                     <th scope="col">Date Last Seen</th>
+                     <th scope="col">Campaign</th>
+                     <th scope="col"></th>
+              </tr>
+       </thead>
+       <tbody>
+              {% for o in page_obj %}
+              <tr>
+                     <td>{{ o.campaign_key }}</td>
+                     <td>{{ o|open_encounters }}</td>
+                     <td><a href="{% url 'main:patient_edit_form_view' patient_id=o.id %}">{{ o.first_name }}
+                                   {{ o|has_middle_name }} {{ o.last_name }} {{ o|has_suffix }}</a></td>
+                     <td>{{ o|last_timestamp }}</td>
+                     <td>{{ o|get_campaign_info }}</td>
+                     <td><a href="{% url 'main:patient_medical' patient_id=o.id %}">Medical</a></td>
+              </tr>
+              {% endfor %}
+       </tbody>
+       <div class="pagination">
+              <span class="step-links">
+                     {% if page_obj.has_previous %}
+                     <a href="?page=1">&laquo; first</a>
+                     <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                     {% endif %}
+
+                     <span class="current">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                     </span>
+
+                     {% if page_obj.has_next %}
+                     <a href="?page={{ page_obj.next_page_number }}">next</a>
+                     <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                     {% endif %}
+              </span>
+       </div>
 </table>
 <script src="{% static 'main/js/filters.js' %}"></script>
 <script src="{% static 'main/js/date_filter_check.js' %}"></script>
