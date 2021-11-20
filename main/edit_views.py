@@ -154,10 +154,14 @@ def __encounter_edit_form_get(request, patient_id, encounter_id):
                 field.widget.attrs["readonly"] = True
             except KeyError:
                 pass
+            except AttributeError:
+                pass
         for field in vitals_form:
             try:
                 field.widget.attrs["readonly"] = True
             except KeyError:
+                pass
+            except AttributeError:
                 pass
     if units == "i":
         encounter_update_form_initial_imperial(form, encounter)
