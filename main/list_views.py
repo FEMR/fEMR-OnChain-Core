@@ -96,11 +96,10 @@ def patient_csv_export_view(request):
 def __run_patient_list_filter_one(request, campaign):
     now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
     now = now.astimezone(timezone.get_current_timezone())
-    data = (
-        Patient.objects.filter(campaign=campaign)
-        .filter(Q(patientencounter__timestamp__date=now) | Q(timestamp__date=now))
-        .distinct()
-    )
+    data = Patient.objects.filter(
+        Q(campaign=campaign)
+        & (Q(patientencounter__timestamp__date=now) | Q(timestamp__date=now))
+    ).distinct()
     return data
 
 
@@ -108,9 +107,9 @@ def __run_patient_list_filter_one(request, campaign):
 def __run_patient_list_filter_two(request, campaign):
     timestamp_from = timezone.now() - timedelta(days=7)
     timestamp_to = timezone.now()
-    data = (
-        Patient.objects.filter(campaign=campaign)
-        .filter(
+    data = Patient.objects.filter(
+        Q(campaign=campaign)
+        & (
             Q(
                 patientencounter__timestamp__gte=timestamp_from,
                 patientencounter__timestamp__lt=timestamp_to,
@@ -120,8 +119,7 @@ def __run_patient_list_filter_two(request, campaign):
                 timestamp__lt=timestamp_to,
             )
         )
-        .distinct()
-    )
+    ).distinct()
     return data
 
 
@@ -129,9 +127,9 @@ def __run_patient_list_filter_two(request, campaign):
 def __run_patient_list_filter_three(request, campaign):
     timestamp_from = timezone.now() - timedelta(days=30)
     timestamp_to = timezone.now()
-    data = (
-        Patient.objects.filter(campaign=campaign)
-        .filter(
+    data = Patient.objects.filter(
+        Q(campaign=campaign)
+        & (
             Q(
                 patientencounter__timestamp__gte=timestamp_from,
                 patientencounter__timestamp__lt=timestamp_to,
@@ -141,8 +139,7 @@ def __run_patient_list_filter_three(request, campaign):
                 timestamp__lt=timestamp_to,
             )
         )
-        .distinct()
-    )
+    ).distinct()
     return data
 
 
@@ -155,9 +152,9 @@ def __run_patient_list_filter_four(request, campaign):
         timestamp_to = datetime.strptime(
             request.GET["date_filter_day"], "%Y-%m-%d"
         ).replace(hour=23, minute=59, second=59, microsecond=0)
-        data = (
-            Patient.objects.filter(campaign=campaign)
-            .filter(
+        data = Patient.objects.filter(
+            Q(campaign=campaign)
+            & (
                 Q(
                     patientencounter__timestamp__gte=timestamp_from,
                     patientencounter__timestamp__lt=timestamp_to,
@@ -167,8 +164,7 @@ def __run_patient_list_filter_four(request, campaign):
                     timestamp__lt=timestamp_to,
                 )
             )
-            .distinct()
-        )
+        ).distinct()
     except ValueError:
         data = []
     return data
@@ -181,9 +177,9 @@ def __run_patient_list_filter_five(request, campaign):
         timestamp_to = datetime.strptime(
             request.GET["date_filter_end"], "%Y-%m-%d"
         ) + timedelta(days=1)
-        data = (
-            Patient.objects.filter(campaign=campaign)
-            .filter(
+        data = Patient.objects.filter(
+            Q(campaign=campaign)
+            & (
                 Q(
                     patientencounter__timestamp__gte=timestamp_from,
                     patientencounter__timestamp__lt=timestamp_to,
@@ -191,10 +187,9 @@ def __run_patient_list_filter_five(request, campaign):
                 | Q(
                     timestamp__gte=timestamp_from,
                     timestamp__lt=timestamp_to,
-                ),
-            )
-            .distinct()
-        )
+                )
+            ),
+        ).distinct()
     except ValueError:
         data = []
     return data

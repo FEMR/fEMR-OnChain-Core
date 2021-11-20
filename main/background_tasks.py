@@ -31,13 +31,14 @@ def run_encounter_close(campaign: Campaign):
 
     close_time = campaign.encounter_close
     delta = now - timedelta(days=close_time)
+
     patients = Patient.objects.filter(campaign=campaign)
-    for patient in patients:
-        encounters = patient.patientencounter_set.filter(active=True)
-        for encounter in encounters:
-            if encounter.timestamp < delta:
-                encounter.active = False
-                encounter.save_no_timestamp()
+    encounters = PatientEncounter.objects.filter(
+        Q(patient__in=patients) & Q(active=True) & Q(timestamp__lt=delta)
+    )
+    for encounter in encounters:
+        encounter.active = False
+        encounter.save_no_timestamp()
 
 
 @silk_profile("run-user-deactivate")
