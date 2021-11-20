@@ -359,6 +359,8 @@ def new_diagnosis_view_post(request, encounter, diagnosis_set):
     else:
         diagnosis_form = PatientDiagnosisForm(request.POST)
     if diagnosis_form.is_valid():
+        if len(diagnosis_set) > 1:
+            PatientDiagnosis.objects.exclude(pk=diagnosis_set[0].id).delete()
         diagnosis = diagnosis_form.save(commit=False)
         diagnosis.encounter = encounter
         diagnosis.save()
