@@ -129,9 +129,10 @@ def assign_broken_patient():
 
 @silk_profile("reassign-admin-groups")
 def reassign_admin_groups(user):
-    if user.groups.filter(name="Admin").exists():
-        user.groups.add(Group.objects.get(name="Campaign Manager"))
-        user.groups.remove(Group.objects.get(name="Admin"))
+    for u in fEMRUser.objects.all():
+        if u.groups.filter(name="Admin").exists():
+            u.groups.add(Group.objects.get(name="Campaign Manager"))
+            u.groups.remove(Group.objects.get(name="Admin"))
     if Group.objects.filter(name="Admin").exists():
         admin_group = Group.objects.get(name="Admin")
         if len(admin_group.user_set.all()) == 0:

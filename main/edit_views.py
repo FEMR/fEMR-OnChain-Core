@@ -212,12 +212,20 @@ def __encounter_edit_form_post(request, patient_id, encounter_id):
             encounter_data = PatientEncounterSerializer(encounter).data
             update_patient_encounter(encounter_data)
         if "submit_encounter" in request.POST:
-            return_response = render(request, "data/encounter_submitted.html", {'patient_id': patient_id, 'encounter_id': encounter_id})
+            return_response = render(
+                request,
+                "data/encounter_submitted.html",
+                {"patient_id": patient_id, "encounter_id": encounter_id},
+            )
         elif "submit_refer" in request.POST:
             kwargs = {"id": patient_id}
             return_response = redirect("main:referral_form_view", **kwargs)
         else:
-            return_response = render(request, "data/encounter_submitted.html", {'patient_id': patient_id, 'encounter_id': encounter_id})
+            return_response = render(
+                request,
+                "data/encounter_submitted.html",
+                {"patient_id": patient_id, "encounter_id": encounter_id},
+            )
     else:
         form.initial["timestamp"] = encounter.timestamp
         encounter_active = encounter.active
@@ -300,13 +308,6 @@ def __new_diagnosis_view_body(request, patient_id, encounter_id):
     patient_diagnoses = querysets = list(
         PatientDiagnosis.objects.filter(encounter=encounter)
     )
-    if len(querysets) > 0:
-        item = querysets.pop().diagnosis.all()
-        for query_item in querysets:
-            item.union(query_item.diagnosis.all())
-        treatment_form.fields["diagnosis"].queryset = item
-    else:
-        treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
     diagnosis_set = patient_diagnoses
     if len(diagnosis_set) > 0:
         diagnosis_form = PatientDiagnosisForm(instance=diagnosis_set[0])
@@ -318,6 +319,13 @@ def __new_diagnosis_view_body(request, patient_id, encounter_id):
     if units == "i":
         new_diagnosis_imperial(form, encounter)
     suffix = patient.get_suffix_display() if patient.suffix is not None else ""
+    if len(querysets) > 0:
+        item = querysets.pop().diagnosis.all()
+        for query_item in querysets:
+            item.union(query_item.diagnosis.all())
+        treatment_form.fields["diagnosis"].queryset = item
+    else:
+        treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
     return render(
         request,
         "forms/treatment_tab.html",

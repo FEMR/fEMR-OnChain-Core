@@ -90,107 +90,131 @@ def patient_csv_export_view(request):
     return return_response
 
 
+@silk_profile("--run-patient-list-filter-one")
+def __run_patient_list_filter_one(request, campaign):
+    now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
+    now = now.astimezone(timezone.get_current_timezone())
+    data = (
+        Patient.objects.filter(campaign=campaign)
+        .filter(Q(patientencounter__timestamp__date=now) | Q(timestamp__date=now))
+        .distinct()
+    )
+    return data
+
+
+@silk_profile("--run-patient-list-filter-two")
+def __run_patient_list_filter_two(request, campaign):
+    timestamp_from = timezone.now() - timedelta(days=7)
+    timestamp_to = timezone.now()
+    data = (
+        Patient.objects.filter(campaign=campaign)
+        .filter(
+            Q(
+                patientencounter__timestamp__gte=timestamp_from,
+                patientencounter__timestamp__lt=timestamp_to,
+            )
+            | Q(
+                timestamp__gte=timestamp_from,
+                timestamp__lt=timestamp_to,
+            )
+        )
+        .distinct()
+    )
+    return data
+
+
+@silk_profile("--run-patient-list-filter-three")
+def __run_patient_list_filter_three(request, campaign):
+    timestamp_from = timezone.now() - timedelta(days=30)
+    timestamp_to = timezone.now()
+    data = (
+        Patient.objects.filter(campaign=campaign)
+        .filter(
+            Q(
+                patientencounter__timestamp__gte=timestamp_from,
+                patientencounter__timestamp__lt=timestamp_to,
+            )
+            | Q(
+                timestamp__gte=timestamp_from,
+                timestamp__lt=timestamp_to,
+            )
+        )
+        .distinct()
+    )
+    return data
+
+
+@silk_profile("--run-patient-list-filter-four")
+def __run_patient_list_filter_four(request, campaign):
+    try:
+        timestamp_from = datetime.strptime(
+            request.GET["date_filter_day"], "%Y-%m-%d"
+        ).replace(hour=0, minute=0, second=0, microsecond=0)
+        timestamp_to = datetime.strptime(
+            request.GET["date_filter_day"], "%Y-%m-%d"
+        ).replace(hour=23, minute=59, second=59, microsecond=0)
+        data = (
+            Patient.objects.filter(campaign=campaign)
+            .filter(
+                Q(
+                    patientencounter__timestamp__gte=timestamp_from,
+                    patientencounter__timestamp__lt=timestamp_to,
+                )
+                | Q(
+                    timestamp__gte=timestamp_from,
+                    timestamp__lt=timestamp_to,
+                )
+            )
+            .distinct()
+        )
+    except ValueError:
+        data = []
+    return data
+
+
+@silk_profile("--run-patient-list-filter-five")
+def __run_patient_list_filter_five(request, campaign):
+    try:
+        timestamp_from = datetime.strptime(request.GET["date_filter_start"], "%Y-%m-%d")
+        timestamp_to = datetime.strptime(
+            request.GET["date_filter_end"], "%Y-%m-%d"
+        ) + timedelta(days=1)
+        data = (
+            Patient.objects.filter(campaign=campaign)
+            .filter(
+                Q(
+                    patientencounter__timestamp__gte=timestamp_from,
+                    patientencounter__timestamp__lt=timestamp_to,
+                )
+                | Q(
+                    timestamp__gte=timestamp_from,
+                    timestamp__lt=timestamp_to,
+                ),
+            )
+            .distinct()
+        )
+    except ValueError:
+        data = []
+    return data
+
+
 @silk_profile("--run-patient-list-filter")
 def __run_patient_list_filter(request):
     current_campaign = Campaign.objects.get(name=request.session["campaign"])
-    patients = Patient.objects.filter(campaign=current_campaign)
     try:
         if request.GET["filter_list"] == "1":
-            now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
-            now = now.astimezone(timezone.get_current_timezone())
-            data = set(
-                list(
-                    itertools.chain(
-                        patients.filter(patientencounter__timestamp__date=now),
-                        patients.filter(timestamp__date=now),
-                    )
-                )
-            )
+            data = __run_patient_list_filter_one(request, current_campaign)
         elif request.GET["filter_list"] == "2":
-            timestamp_from = timezone.now() - timedelta(days=7)
-            timestamp_to = timezone.now()
-            data = set(
-                list(
-                    itertools.chain(
-                        patients.filter(
-                            patientencounter__timestamp__gte=timestamp_from,
-                            patientencounter__timestamp__lt=timestamp_to,
-                        ),
-                        patients.filter(
-                            timestamp__gte=timestamp_from,
-                            timestamp__lt=timestamp_to,
-                        ),
-                    )
-                )
-            )
+            data = __run_patient_list_filter_two(request, current_campaign)
         elif request.GET["filter_list"] == "3":
-            timestamp_from = timezone.now() - timedelta(days=30)
-            timestamp_to = timezone.now()
-            data = set(
-                list(
-                    itertools.chain(
-                        patients.filter(
-                            patientencounter__timestamp__gte=timestamp_from,
-                            patientencounter__timestamp__lt=timestamp_to,
-                        ),
-                        patients.filter(
-                            timestamp__gte=timestamp_from,
-                            timestamp__lt=timestamp_to,
-                        ),
-                    )
-                )
-            )
+            data = __run_patient_list_filter_three(request, current_campaign)
         elif request.GET["filter_list"] == "4":
-            try:
-                timestamp_from = datetime.strptime(
-                    request.GET["date_filter_day"], "%Y-%m-%d"
-                ).replace(hour=0, minute=0, second=0, microsecond=0)
-                timestamp_to = datetime.strptime(
-                    request.GET["date_filter_day"], "%Y-%m-%d"
-                ).replace(hour=23, minute=59, second=59, microsecond=0)
-                data = set(
-                    list(
-                        itertools.chain(
-                            patients.filter(
-                                patientencounter__timestamp__gte=timestamp_from,
-                                patientencounter__timestamp__lt=timestamp_to,
-                            ),
-                            patients.filter(
-                                timestamp__gte=timestamp_from,
-                                timestamp__lt=timestamp_to,
-                            ),
-                        )
-                    )
-                )
-            except ValueError:
-                data = []
+            data = __run_patient_list_filter_four(request, current_campaign)
         elif request.GET["filter_list"] == "5":
-            try:
-                timestamp_from = datetime.strptime(
-                    request.GET["date_filter_start"], "%Y-%m-%d"
-                )
-                timestamp_to = datetime.strptime(
-                    request.GET["date_filter_end"], "%Y-%m-%d"
-                ) + timedelta(days=1)
-                data = set(
-                    list(
-                        itertools.chain(
-                            patients.filter(
-                                patientencounter__timestamp__gte=timestamp_from,
-                                patientencounter__timestamp__lt=timestamp_to,
-                            ),
-                            patients.filter(
-                                timestamp__gte=timestamp_from,
-                                timestamp__lt=timestamp_to,
-                            ),
-                        )
-                    )
-                )
-            except ValueError:
-                data = []
+            data = __run_patient_list_filter_five(request, current_campaign)
         elif request.GET["filter_list"] == "6":
             try:
-                data = patients
+                data = Patient.objects.filter(campaign=current_campaign)
             except ValueError:
                 data = []
         else:

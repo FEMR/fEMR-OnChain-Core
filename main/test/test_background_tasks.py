@@ -87,7 +87,7 @@ def test_reassign_admin_groups_multiple():
     v.groups.add(g)
     reassign_admin_groups(u)
     assert u.groups.filter(name="Campaign Manager").exists()
-    assert Group.objects.filter(name="Admin").exists()
+    assert not Group.objects.filter(name="Admin").exists()
     u.delete()
     v.delete()
     g.delete()

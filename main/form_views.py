@@ -276,12 +276,20 @@ def __patient_encounter_form_post(request, patient):
             campaign=Campaign.objects.get(name=request.session["campaign"]),
         )
         if "submit_encounter" in request.POST:
-            return_response = render(request, "data/encounter_submitted.html", {'patient_id': patient.id, 'encounter_id': encounter.id})
+            return_response = render(
+                request,
+                "data/encounter_submitted.html",
+                {"patient_id": patient.id, "encounter_id": encounter.id},
+            )
         elif "submit_refer" in request.POST:
             kwargs = {"id": id}
             return_response = redirect("main:referral_form_view", **kwargs)
         else:
-            return_response = render(request, "data/encounter_submitted.html", {'patient_id': patient.id, 'encounter_id': encounter.id})
+            return_response = render(
+                request,
+                "data/encounter_submitted.html",
+                {"patient_id": patient.id, "encounter_id": encounter.id},
+            )
     else:
         suffix = patient.get_suffix_display() if patient.suffix is not None else ""
         return_response = render(
