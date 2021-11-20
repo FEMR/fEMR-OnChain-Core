@@ -20,23 +20,20 @@ from main.csvio.patient_csv_export import run_patient_csv_export
 
 from .models import (
     ChiefComplaint,
-    PatientEncounter,
     Patient,
     Campaign,
 )
 
 
+@silk_profile("get-latest-timestamp")
 def get_latest_timestamp(patient):
     try:
-        return (
-            PatientEncounter.objects.filter(patient=patient)
-            .order_by("-timestamp")[0]
-            .timestamp
-        )
+        return patient.patientencounter_set.all().order_by("-timestamp")[0].timestamp
     except IndexError:
         return patient.timestamp
 
 
+@silk_profile("patient_list_view")
 def patient_list_view(request):
     """
     Administrative/Clinician list of patients entered into the system.
@@ -263,6 +260,7 @@ def filter_patient_list_view(request):
     return return_response
 
 
+@silk_profile("search-patient-list-view")
 def search_patient_list_view(request):
     """
     Runs a search of all patients, using a name entered on the List page.

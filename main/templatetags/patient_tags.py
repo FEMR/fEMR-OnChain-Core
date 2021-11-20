@@ -27,7 +27,8 @@ def has_suffix(patient):
 def open_encounters(patient):
     return (
         "Yes"
-        if len(PatientEncounter.objects.filter(patient=patient).filter(active=True)) > 0
+        if len(patient.patientencounter_set.filter(patient=patient).filter(active=True))
+        > 0
         else ""
     )
 
