@@ -245,7 +245,7 @@ def filter_patient_list_view(request):
         page_obj = paginator.get_page(page_number)
         return_response = render(
             request,
-            "list/patient.html",
+            "list/patient_filter.html",
             {
                 "user": request.user,
                 "page_name": "Manager",
@@ -305,10 +305,13 @@ def search_patient_list_view(request):
         page_obj = paginator.get_page(page_number)
         return_response = render(
             request,
-            "list/patient.html",
+            "list/patient_search.html",
             {
                 "user": request.user,
                 "page_obj": page_obj,
+                "name_search": request.GET.get("name_search")
+                if request.GET.get("name_search") is not None
+                else "",
                 # pylint: disable=C0301
                 "page_tip": "This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.",
             },
