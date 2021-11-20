@@ -19,9 +19,9 @@
     <tr>
         <td>{{ o.text }}</td>
         {% if new %}
-        <td><a href="{% url 'main:delete_chief_complaint' id=o.id patient_id=patient_id %}">Delete</a></td>
+        <td><a href="{% url 'main:delete_chief_complaint' chief_complaint_id=o.id patient_id=patient_id %}">Delete</a></td>
         {% else %}
-        <td><a href="{% url 'main:delete_chief_complaint' id=o.id patient_id=patient_id encounter_id=encounter_id %}">Delete</a>
+        <td><a href="{% url 'main:delete_chief_complaint' chief_complaint_id=o.id patient_id=patient_id encounter_id=encounter_id %}">Delete</a>
         </td>
         {% endif %}
     </tr>

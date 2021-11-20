@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from silk.profiling.profiler import silk_profile
 
-from main.background_tasks import run_encounter_close
+from main.background_tasks import check_admin_permission, run_encounter_close
 from main.background_tasks import reassign_admin_groups
 from main.forms import ForgotUsernameForm
 from main.models import Campaign, MessageOfTheDay, fEMRUser
@@ -92,7 +92,7 @@ def healthcheck(request):
 
 def set_timezone(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name="Admin").exists():
+        if check_admin_permission(request.user):
             campaign = Campaign.objects.get(name=request.session["campaign"])
             if request.method == "POST":
                 request.session["django_timezone"] = request.POST["timezone"]

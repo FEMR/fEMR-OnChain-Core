@@ -3,7 +3,7 @@ This file contains a single function which handles exporting
 patient records as CSV files.
 """
 import csv
-import datetime
+from datetime import datetime
 import math
 from pytz import timezone as pytz_timezone
 from django.core.exceptions import ObjectDoesNotExist

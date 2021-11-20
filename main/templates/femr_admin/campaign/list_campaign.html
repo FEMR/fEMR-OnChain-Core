@@ -21,11 +21,11 @@
                 <th scope="row">{{ o.id }}</th>
                 <td>{{ o.instance }}</td>
                 <td>{{ o.name }}</td>
-                <td><a href="{% url 'main:edit_campaign' id=o.id %}">Edit</a></td>
+                <td><a href="{% url 'main:edit_campaign' campaign_id=o.id %}">Edit</a></td>
                 {% if o.active %}
-                <td><a href="{% url 'main:lock_campaign_view' id=o.id %}">Lock Campaign</a></td>
+                <td><a href="{% url 'main:lock_campaign_view' campaign_id=o.id %}">Lock Campaign</a></td>
                 {% else %}
-                <td><a href="{% url 'main:unlock_campaign_view' id=o.id %}">Unlock Campaign</a></td>
+                <td><a href="{% url 'main:unlock_campaign_view' campaign_id=o.id %}">Unlock Campaign</a></td>
                 {% endif %}
             </tr>
             {% endfor %}
@@ -50,9 +50,9 @@
                 <td>{{ o.instance }}</td>
                 <td>{{ o.name }}</td>
                 {% if o.active %}
-                <td><a href="{% url 'main:lock_campaign_view' id=o.id %}">Lock Campaign</a></td>
+                <td><a href="{% url 'main:lock_campaign_view' campaign_id=o.id %}">Lock Campaign</a></td>
                 {% else %}
-                <td><a href="{% url 'main:unlock_campaign_view' id=o.id %}">Unlock Campaign</a></td>
+                <td><a href="{% url 'main:unlock_campaign_view' campaign_id=o.id %}">Unlock Campaign</a></td>
                 {% endif %}
             </tr>
             {% endfor %}

@@ -222,7 +222,7 @@ def __encounter_edit_form_post(request, patient_id, encounter_id):
                 {"patient_id": patient_id, "encounter_id": encounter_id},
             )
         elif "submit_refer" in request.POST:
-            kwargs = {"id": patient_id}
+            kwargs = {"patient_id": patient_id}
             return_response = redirect("main:referral_form_view", **kwargs)
         else:
             return_response = render(
@@ -309,10 +309,8 @@ def __new_diagnosis_view_body(request, patient_id, encounter_id):
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
     treatment_form = TreatmentForm()
-    patient_diagnoses = querysets = list(
-        PatientDiagnosis.objects.filter(encounter=encounter)
-    )
-    diagnosis_set = patient_diagnoses
+    querysets = PatientDiagnosis.objects.filter(encounter=encounter)
+    diagnosis_set = PatientDiagnosis.objects.filter(encounter=encounter)
     if len(diagnosis_set) > 0:
         diagnosis_form = PatientDiagnosisForm(instance=diagnosis_set[0])
     else:
@@ -324,7 +322,7 @@ def __new_diagnosis_view_body(request, patient_id, encounter_id):
         new_diagnosis_imperial(form, encounter)
     suffix = patient.get_suffix_display() if patient.suffix is not None else ""
     if len(querysets) > 0:
-        item = querysets.pop().diagnosis.all()
+        item = querysets[0].diagnosis.all()
         for query_item in querysets:
             item.union(query_item.diagnosis.all())
         treatment_form.fields["diagnosis"].queryset = item
@@ -650,7 +648,11 @@ def history_view(request, patient_id=None, encounter_id=None):
                     if os.environ.get("QLDB_ENABLED") == "TRUE":
                         encounter_data = PatientEncounterSerializer(encounter).data
                         update_patient_encounter(encounter_data)
-                    return_response = render(request, "data/encounter_submitted.html")
+                    return_response = render(
+                        request,
+                        "data/encounter_submitted.html",
+                        {"patient_id": patient_id, "encounter_id": encounter_id},
+                    )
                 else:
                     form = PatientEncounterForm(instance=encounter, unit=units)
                     vitals_form = VitalsForm(unit=units)
@@ -673,6 +675,7 @@ def history_view(request, patient_id=None, encounter_id=None):
                             "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
                             "encounter": encounter,
                             "birth_sex": patient.sex_assigned_at_birth,
+                            "patient_id": patient_id,
                             "encounter_id": encounter_id,
                             "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
                             "units": units,
