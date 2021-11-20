@@ -206,6 +206,7 @@ def __login_view_post_failure(request):
     )
 
 
+@silk_profile("--login-view-post")
 def __login_view_post(request):
     form = LoginForm(request.POST)
     if form.is_valid():
@@ -339,6 +340,7 @@ def required_change_password(request):
     return return_response
 
 
+@silk_profile("reset-lockouts")
 def reset_lockouts(request, username=None):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):

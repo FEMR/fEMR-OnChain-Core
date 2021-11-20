@@ -41,11 +41,7 @@ def has_middle_name(patient):
 @register.filter("last_timestamp")
 def last_timestamp(patient):
     try:
-        return (
-            PatientEncounter.objects.filter(patient=patient)
-            .order_by("-timestamp")[0]
-            .timestamp
-        )
+        return patient.patientencounter_set.order_by("-timestamp")[0].timestamp
     except IndexError:
         return patient.timestamp
 

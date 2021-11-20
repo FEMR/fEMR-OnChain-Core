@@ -33,9 +33,7 @@ def run_encounter_close(campaign: Campaign):
     delta = now - timedelta(days=close_time)
     patients = Patient.objects.filter(campaign=campaign)
     for patient in patients:
-        encounters = PatientEncounter.objects.filter(patient=patient).filter(
-            active=True
-        )
+        encounters = patient.patientencounter_set.filter(active=True)
         for encounter in encounters:
             if encounter.timestamp < delta:
                 encounter.active = False
