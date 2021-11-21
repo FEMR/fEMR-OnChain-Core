@@ -289,7 +289,7 @@ def lock_user_view(request, user_id=None):
 def unlock_user_view(request, user_id=None):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
-            user = get_object_or_404(fEMRUser, pk=id)
+            user = get_object_or_404(fEMRUser, pk=user_id)
             reset(username=user.username)
             user.is_active = True
             user.save()
