@@ -282,7 +282,7 @@ def __patient_encounter_form_post(request, patient):
                 {"patient_id": patient.id, "encounter_id": encounter.id},
             )
         elif "submit_refer" in request.POST:
-            kwargs = {"id": id}
+            kwargs = {"patient_id": id}
             return_response = redirect("main:referral_form_view", **kwargs)
         else:
             return_response = render(
@@ -344,9 +344,10 @@ def referral_form_view(request, patient_id=None):
             patient = Patient.objects.get(pk=patient_id)
             patient.campaign.add(Campaign.objects.get(pk=request.POST["campaign"]))
             patient.save()
-            update_patient_encounter(
-                {"patient": patient.id, "campaign": request.POST["campaign"]}
-            )
+            if os.environ.get("QLDB_ENABLED") == "TRUE":
+                update_patient_encounter(
+                    {"patient": patient.id, "campaign": request.POST["campaign"]}
+                )
             return_response = redirect("main:patient_list_view")
         elif request.method == "GET":
             return_response = render(

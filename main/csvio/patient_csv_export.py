@@ -45,22 +45,14 @@ def run_patient_csv_export(request):
         "Current Medications",
         "Family History",
     ]
-    try:
-        data = Patient.objects.filter(campaign=campaign).exclude(
-            Q(first_name__icontains="test")
-            | Q(last_name__icontains="test")
-            | Q(middle_name__icontains="test")
-            | Q(city__icontains="test")
-        )
-    except ObjectDoesNotExist:
-        data = []
+    data = Patient.objects.filter(campaign=campaign)
     export_id = 1
     campaign_time_zone = pytz_timezone(campaign.timezone)
     campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
     patient_rows = []
     max_treatments = 0
     for patient in data:
-        for encounter in PatientEncounter.objects.filter(patient=patient):
+        for encounter in patient.patientencounter_set.all():
             vital = Vitals.objects.filter(encounter=encounter)[0]
             row = [
                 export_id,
@@ -148,7 +140,7 @@ def run_patient_csv_export(request):
                 row.extend(
                     [
                         item.diagnosis,
-                        item.medication,
+                        str([str(x) for x in item.medication.all()]),
                         item.administration_schedule,
                         item.days,
                         item.prescriber,

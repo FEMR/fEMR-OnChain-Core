@@ -616,7 +616,11 @@ def __aux_form_is_valid(request, encounter, treatment_form):
     if os.environ.get("QLDB_ENABLED") == "TRUE":
         encounter_data = PatientEncounterSerializer(encounter).data
         update_patient_encounter(encounter_data)
-    return render(request, "data/encounter_submitted.html")
+    return render(
+        request,
+        "data/encounter_submitted.html",
+        {"patient_id": encounter.patient.id, "encounter_id": encounter.id},
+    )
 
 
 @silk_profile("history-view")
