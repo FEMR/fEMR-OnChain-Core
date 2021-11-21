@@ -140,7 +140,7 @@ def run_patient_csv_export(request):
                 row.extend(
                     [
                         item.diagnosis,
-                        str([str(x) for x in item.medication.all()]),
+                        ",".join([str(x) for x in item.medication.all()]),
                         item.administration_schedule,
                         item.days,
                         item.prescriber,
