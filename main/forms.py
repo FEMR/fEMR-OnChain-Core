@@ -768,9 +768,7 @@ class HistoryOfPresentIllnessForm(ModelForm):
         model = HistoryOfPresentIllness
         fields = "__all__"
         widgets = {
-            "tests_ordered": autocomplete.ModelSelect2Multiple(
-                url="main:test-autocomplete"
-            ),
+            "tests_ordered": Textarea(attrs={"rows": 4, "cols": 40}),
             "narrative": Textarea(attrs={"rows": 4, "cols": 40}),
             "physical_examination": Textarea(attrs={"rows": 4, "cols": 40}),
         }

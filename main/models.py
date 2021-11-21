@@ -477,7 +477,7 @@ class HistoryOfPresentIllness(models.Model):
     narrative = models.CharField(max_length=4000, null=True, blank=True)
     physical_examination = models.CharField(max_length=4000, null=True, blank=True)
 
-    tests_ordered = models.ManyToManyField(Test, blank=True)
+    tests_ordered = models.CharField(max_length=255, null=True, blank=True)
 
 
 class Vitals(models.Model):
