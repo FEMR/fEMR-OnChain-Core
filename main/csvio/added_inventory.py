@@ -12,25 +12,10 @@ class AddedInventoryHandler:
     Implements CSVHandler and adds inventory to supplies that already existed in the formulary.
     """
 
-    def __init__(self) -> None:
-        super().__init__()
-
     def read(self, upload, campaign):
-        """
-        Given an upload file and a campaign to upload to, execute a CSV import.
-        :param upload:
-        :param campaign:
-        :return:
-        """
         return self.__import(upload, campaign)
 
     def write(self, response, formulary):
-        """
-        Given an HTTPResponse and a formulary object, write out the formulary as a CSV file.
-        :param response:
-        :param formulary:
-        :return:
-        """
         return self.__export(response, formulary)
 
     @staticmethod
@@ -51,20 +36,20 @@ class AddedInventoryHandler:
                 "Manufacturer",
             ]
         )
-        for x in formulary:
+        for item in formulary:
             writer.write(
                 [
-                    x.category,
-                    x.medication,
-                    x.form,
-                    x.strength,
-                    x.count,
-                    x.quantity,
-                    x.initial_quantity,
-                    x.item_number,
-                    x.box_number,
-                    x.expiration_date,
-                    x.manufacturer,
+                    item.category,
+                    item.medication,
+                    item.form,
+                    item.strength,
+                    item.count,
+                    item.quantity,
+                    item.initial_quantity,
+                    item.item_number,
+                    item.box_number,
+                    item.expiration_date,
+                    item.manufacturer,
                 ]
             )
         return response

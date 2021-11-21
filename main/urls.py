@@ -36,6 +36,7 @@ from main.delete_views import (
     delete_chief_complaint,
     delete_treatment_view,
     patient_delete_view,
+    delete_photo_view,
 )
 from main.femr_admin_views import lock_instance_view, unlock_instance_view
 from main.formulary_management import (
@@ -49,6 +50,8 @@ from main.formulary_management import (
 )
 from main.operation_admin_views import operation_admin_home_view
 from main.organization_admin_views import organization_admin_home_view
+from main.patient_export import patient_export_view
+from main.photo_handler import edit_photo_view, upload_photo_view
 from main.views import set_timezone
 from .api_views import (
     UserViewSet,
@@ -99,19 +102,15 @@ from .autocomplete_views import (
 )
 from .edit_views import (
     aux_form_view,
-    delete_photo_view,
-    edit_photo_view,
     history_view,
     hpi_view,
     new_diagnosis_view,
     new_treatment_view,
     patient_edit_form_view,
     encounter_edit_form_view,
-    patient_export_view,
     patient_medical,
     new_vitals_view,
     submit_hpi_view,
-    upload_photo_view,
 )
 from .femr_admin_views import (
     edit_contact_view,
@@ -159,7 +158,7 @@ app_name = "main"
 schema_view = get_schema_view(
     openapi.Info(
         title="fEMR OnChain API",
-        default_version="v1.4.6",
+        default_version="v1.4.7",
         description="API endpoints providing an interface with the fEMR OnChain application.",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="info@teamfemr.org"),
@@ -210,12 +209,14 @@ urlpatterns = [
     url(r"^healthcheck/$", healthcheck, name="healthcheck"),
     url(r"^patient_form_view/$", patient_form_view, name="patient_form_view"),
     path(
-        r"patient_edit_form_view/<int:id>",
+        r"patient_edit_form_view/<int:patient_id>",
         patient_edit_form_view,
         name="patient_edit_form_view",
     ),
     path(
-        r"patient_delete_view/<int:id>", patient_delete_view, name="patient_delete_view"
+        r"patient_delete_view/<int:patient_id>",
+        patient_delete_view,
+        name="patient_delete_view",
     ),
     path(
         r"delete_treatment_view/<int:treatment_id>",
@@ -223,17 +224,17 @@ urlpatterns = [
         name="delete_treatment_view",
     ),
     path(
-        r"delete_chief_complaint/<int:id>/<int:patient_id>",
+        r"delete_chief_complaint/<int:chief_complaint_id>/<int:patient_id>",
         delete_chief_complaint,
         name="delete_chief_complaint",
     ),
     path(
-        r"delete_chief_complaint/<int:id>/<int:patient_id>/<int:encounter_id>",
+        r"delete_chief_complaint/<int:chief_complaint_id>/<int:patient_id>/<int:encounter_id>",
         delete_chief_complaint,
         name="delete_chief_complaint",
     ),
     path(
-        r"patient_encounter_form_view/<int:id>",
+        r"patient_encounter_form_view/<int:patient_id>",
         patient_encounter_form_view,
         name="patient_encounter_form_view",
     ),
@@ -288,8 +289,10 @@ urlpatterns = [
         delete_photo_view,
         name="delete_photo_view",
     ),
-    path(r"patient_medical/<int:id>", patient_medical, name="patient_medical"),
-    path(r"referral_form/<int:id>", referral_form_view, name="referral_form_view"),
+    path(r"patient_medical/<int:patient_id>", patient_medical, name="patient_medical"),
+    path(
+        r"referral_form/<int:patient_id>", referral_form_view, name="referral_form_view"
+    ),
     url(r"^patient_list_view/$", patient_list_view, name="patient_list_view"),
     path(
         r"chief_complaint_list_view/<int:patient_id>/<int:encounter_id>",
@@ -326,25 +329,33 @@ urlpatterns = [
     # User Management
     url(r"^list_users_view/$", list_users_view, name="list_users_view"),
     url(r"^create_user_view/$", create_user_view, name="create_user_view"),
-    path(r"update_user_view/<int:id>", update_user_view, name="update_user_view"),
+    path(r"update_user_view/<int:user_id>", update_user_view, name="update_user_view"),
     path(
-        r"update_user_password_view/<int:id>",
+        r"update_user_password_view/<int:user_id>",
         update_user_password_view,
         name="update_user_password_view",
     ),
-    path(r"lock_users_view/<int:id>", lock_user_view, name="lock_user_view"),
-    path(r"unlock_users_view/<int:id>", unlock_user_view, name="unlock_user_view"),
+    path(r"lock_users_view/<int:user_id>", lock_user_view, name="lock_user_view"),
+    path(r"unlock_users_view/<int:user_id>", unlock_user_view, name="unlock_user_view"),
     url(r"^filter_users_view/$", filter_users_view, name="filter_user_view"),
     url(r"^search_users_view/$", search_users_view, name="search_user_view"),
-    path(r"lock_instance_view/<int:id>", lock_instance_view, name="lock_instance_view"),
     path(
-        r"unlock_instance_view/<int:id>",
+        r"lock_instance_view/<int:instance_id>",
+        lock_instance_view,
+        name="lock_instance_view",
+    ),
+    path(
+        r"unlock_instance_view/<int:instance_id>",
         unlock_instance_view,
         name="unlock_instance_view",
     ),
-    path(r"lock_campaign_view/<int:id>", lock_campaign_view, name="lock_campaign_view"),
     path(
-        r"unlock_campaign_view/<int:id>",
+        r"lock_campaign_view/<int:campaign_id>",
+        lock_campaign_view,
+        name="lock_campaign_view",
+    ),
+    path(
+        r"unlock_campaign_view/<int:campaign_id>",
         unlock_campaign_view,
         name="unlock_campaign_view",
     ),
@@ -392,12 +403,12 @@ urlpatterns = [
     url(r"^formulary_home_view/$", formulary_home_view, name="formulary_home_view"),
     url(r"^add_supply_view/$", add_supply_view, name="add_supply_view"),
     path(
-        r"edit_add_supply_view/<int:id>",
+        r"edit_add_supply_view/<int:entry_id>",
         edit_add_supply_view,
         name="edit_add_supply_view",
     ),
     path(
-        r"edit_sub_supply_view/<int:id>",
+        r"edit_sub_supply_view/<int:entry_id>",
         edit_sub_supply_view,
         name="edit_sub_supply_view",
     ),
@@ -408,21 +419,25 @@ urlpatterns = [
     url(r"^femr_admin_home/$", femr_admin_home, name="femr_admin_home"),
     url(r"^change_campaign/$", change_campaign, name="change_campaign"),
     url(r"^list_campaign/$", list_campaign_view, name="list_campaign"),
-    path(r"edit_campaign/<int:id>", edit_campaign_view, name="edit_campaign"),
+    path(r"edit_campaign/<int:campaign_id>", edit_campaign_view, name="edit_campaign"),
     url(r"^new_campaign/$", new_campaign_view, name="new_campaign"),
     url(r"^list_instance/$", list_instance_view, name="list_instance"),
-    path(r"edit_instance/<int:id>", edit_instance_view, name="edit_instance"),
+    path(r"edit_instance/<int:instance_id>", edit_instance_view, name="edit_instance"),
     url(r"^new_instance/$", new_instance_view, name="new_instance"),
-    path(r"edit_contact/<int:id>", edit_contact_view, name="edit_contact"),
-    path(r"view_contact/<int:id>", view_contact_view, name="view_contact"),
+    path(r"edit_contact/<int:contact_id>", edit_contact_view, name="edit_contact"),
+    path(r"view_contact/<int:contact_id>", view_contact_view, name="view_contact"),
     url(r"^new_contact/$", new_contact_view, name="new_contact"),
-    path(r"patient_export/<int:id>", patient_export_view, name="patient_export"),
+    path(
+        r"patient_export/<int:patient_id>", patient_export_view, name="patient_export"
+    ),
     url(r"^new_race/$", new_race_view, name="new_race"),
     url(r"^new_ethnicity/$", new_ethnicity_view, name="new_ethnicity"),
     url(r"^list_organization/$", list_organization_view, name="list_organization"),
     url(r"^new_organization/$", new_organization_view, name="new_organization"),
     path(
-        r"edit_organization/<int:id>", edit_organization_view, name="edit_organization"
+        r"edit_organization/<int:organization_id>",
+        edit_organization_view,
+        name="edit_organization",
     ),
     # Operation Management
     path(

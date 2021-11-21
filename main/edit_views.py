@@ -4,30 +4,25 @@ All views, except auth views and the index view, should be considered
 to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
-import math
 import os
-
-from pprint import pprint
 
 from django.shortcuts import render, redirect, get_object_or_404
 from silk.profiling.profiler import silk_profile
 
-from .serializers import PatientEncounterSerializer
-
+from main.serializers import PatientEncounterSerializer
 from main.femr_admin_views import get_client_ip
 from main.qldb_interface import update_patient, update_patient_encounter
-from .forms import (
+from main.forms import (
     AuxiliaryPatientEncounterForm,
     HistoryOfPresentIllnessForm,
     HistoryPatientEncounterForm,
     PatientDiagnosisForm,
     PatientForm,
     PatientEncounterForm,
-    PhotoForm,
     TreatmentForm,
     VitalsForm,
 )
-from .models import (
+from main.models import (
     Campaign,
     Diagnosis,
     HistoryOfPresentIllness,
@@ -35,14 +30,84 @@ from .models import (
     PatientDiagnosis,
     PatientEncounter,
     DatabaseChangeLog,
-    Photo,
     Vitals,
     Treatment,
 )
+from main.unit_converters import (
+    aux_form_imperial,
+    encounter_update_form_initial_imperial,
+    history_view_imperial,
+    new_diagnosis_imperial,
+    new_treatment_imperial,
+    new_vitals_imperial,
+)
+
+
+@silk_profile("patient-edit-form-get")
+def __patient_edit_form_get(request, patient_id, patient, encounters):
+    DatabaseChangeLog.objects.create(
+        action="View",
+        model="Patient",
+        instance=str(patient),
+        ip=get_client_ip(request),
+        username=request.user.username,
+        campaign=Campaign.objects.get(name=request.session["campaign"]),
+    )
+    form = PatientForm(instance=patient)
+    return render(
+        request,
+        "forms/patient.html",
+        {
+            "error": "",
+            "patient_id": patient_id,
+            "encounters": encounters,
+            "form": form,
+            "page_name": "Returning Patient",
+        },
+    )
+
+
+@silk_profile("patient-edit-form-post")
+def __patient_edit_form_post(request, patient_id, patient, encounters):
+    form = PatientForm(request.POST or None, instance=patient)
+    campaign_key = patient.campaign_key
+    if form.is_valid():
+        patient = form.save()
+        patient.campaign_key = campaign_key
+        patient.campaign.add(Campaign.objects.get(name=request.session["campaign"]))
+        patient.save()
+        DatabaseChangeLog.objects.create(
+            action="Edit",
+            model="Patient",
+            instance=str(patient),
+            ip=get_client_ip(request),
+            username=request.user.username,
+            campaign=Campaign.objects.get(name=request.session["campaign"]),
+        )
+        if os.environ.get("QLDB_ENABLED") == "TRUE":
+            update_patient(form.cleaned_data)
+        return_response = render(
+            request,
+            "data/patient_submitted.html",
+            {"patient": patient, "encounters": encounters},
+        )
+    else:
+        return_response = render(
+            request,
+            "forms/patient.html",
+            {
+                "error": "Form is invalid.",
+                "patient_id": patient_id,
+                "encounters": encounters,
+                "form": form,
+                "page_name": "Returning Patient",
+            },
+        )
+    return return_response
 
 
 @silk_profile("patient-edit-form-view")
-def patient_edit_form_view(request, id=None):
+def patient_edit_form_view(request, patient_id=None):
     """
     Used to edit Patient objects.
 
@@ -53,58 +118,142 @@ def patient_edit_form_view(request, id=None):
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
             return redirect("main:home")
-        error = ""
-        campaign = Campaign.objects.get(name=request.session["campaign"])
-        m = get_object_or_404(Patient, pk=id)
-        campaign_key = m.campaign_key
-        encounters = PatientEncounter.objects.filter(patient=m)
+        patient = get_object_or_404(Patient, pk=patient_id)
+        encounters = PatientEncounter.objects.filter(patient=patient)
         if request.method == "POST":
-            form = PatientForm(request.POST or None, instance=m)
-            if form.is_valid():
-                t = form.save()
-                t.campaign_key = campaign_key
-                t.campaign.add(campaign)
-                t.save()
-                DatabaseChangeLog.objects.create(
-                    action="Edit",
-                    model="Patient",
-                    instance=str(t),
-                    ip=get_client_ip(request),
-                    username=request.user.username,
-                    campaign=campaign,
-                )
-                if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    update_patient(form.cleaned_data)
-                return render(
-                    request,
-                    "data/patient_submitted.html",
-                    {"patient": t, "encounters": encounters},
-                )
-            else:
-                error = "Form is invalid."
-        else:
-            DatabaseChangeLog.objects.create(
-                action="View",
-                model="Patient",
-                instance=str(m),
-                ip=get_client_ip(request),
-                username=request.user.username,
-                campaign=campaign,
+            return_response = __patient_edit_form_post(
+                request, patient_id, patient, encounters
             )
-            form = PatientForm(instance=m)
-        return render(
+        else:
+            return_response = __patient_edit_form_get(
+                request, patient_id, patient, encounters
+            )
+    else:
+        return_response = redirect("/not_logged_in")
+    return return_response
+
+
+@silk_profile("encounter-edit-form-get")
+def __encounter_edit_form_get(request, patient_id, encounter_id):
+    encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
+    patient = get_object_or_404(Patient, pk=patient_id)
+    units = Campaign.objects.get(name=request.session["campaign"]).units
+    vitals_form = VitalsForm(unit=units)
+    DatabaseChangeLog.objects.create(
+        action="View",
+        model="Patient",
+        instance=str(encounter),
+        ip=get_client_ip(request),
+        username=request.user.username,
+        campaign=Campaign.objects.get(name=request.session["campaign"]),
+    )
+    form = PatientEncounterForm(instance=encounter, unit=units)
+    if not encounter.active:
+        for field in form:
+            try:
+                field.widget.attrs["readonly"] = True
+            except KeyError:
+                pass
+            except AttributeError:
+                pass
+        for field in vitals_form:
+            try:
+                field.widget.attrs["readonly"] = True
+            except KeyError:
+                pass
+            except AttributeError:
+                pass
+    if units == "i":
+        encounter_update_form_initial_imperial(form, encounter)
+    form.initial["timestamp"] = encounter.timestamp
+    encounter_active = encounter.active
+    suffix = patient.get_suffix_display() if patient.suffix is not None else ""
+    return render(
+        request,
+        "forms/edit_encounter.html",
+        {
+            "active": encounter_active,
+            "aux_form": AuxiliaryPatientEncounterForm(),
+            "form": form,
+            "vitals": Vitals.objects.filter(encounter=encounter),
+            "treatments": Treatment.objects.filter(encounter=encounter),
+            "vitals_form": vitals_form,
+            "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
+            "encounter": encounter,
+            "birth_sex": patient.sex_assigned_at_birth,
+            "encounter_id": encounter_id,
+            "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
+            "units": units,
+            "patient": patient,
+        },
+    )
+
+
+@silk_profile("encounter-edit-form-post")
+def __encounter_edit_form_post(request, patient_id, encounter_id):
+    encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
+    patient = get_object_or_404(Patient, pk=patient_id)
+    units = Campaign.objects.get(name=request.session["campaign"]).units
+    photos = list(encounter.photos.all())
+    treatments = Treatment.objects.filter(encounter=encounter)
+    form = PatientEncounterForm(request.POST or None, instance=encounter, unit=units)
+    if form.is_valid():
+        encounter = form.save(commit=False)
+        form.save_m2m()
+        encounter.patient = patient
+        encounter.active = True
+        encounter.photos.set(photos)
+        encounter.save()
+        DatabaseChangeLog.objects.create(
+            action="Edit",
+            model="PatientEncounter",
+            instance=str(encounter),
+            ip=get_client_ip(request),
+            username=request.user.username,
+            campaign=Campaign.objects.get(name=request.session["campaign"]),
+        )
+        if os.environ.get("QLDB_ENABLED") == "TRUE":
+            encounter_data = PatientEncounterSerializer(encounter).data
+            update_patient_encounter(encounter_data)
+        if "submit_encounter" in request.POST:
+            return_response = render(
+                request,
+                "data/encounter_submitted.html",
+                {"patient_id": patient_id, "encounter_id": encounter_id},
+            )
+        elif "submit_refer" in request.POST:
+            kwargs = {"patient_id": patient_id}
+            return_response = redirect("main:referral_form_view", **kwargs)
+        else:
+            return_response = render(
+                request,
+                "data/encounter_submitted.html",
+                {"patient_id": patient_id, "encounter_id": encounter_id},
+            )
+    else:
+        form.initial["timestamp"] = encounter.timestamp
+        encounter_active = encounter.active
+        suffix = patient.get_suffix_display() if patient.suffix is not None else ""
+        return_response = render(
             request,
-            "forms/patient.html",
+            "forms/edit_encounter.html",
             {
-                "error": error,
-                "patient_id": id,
-                "encounters": encounters,
+                "active": encounter_active,
+                "aux_form": AuxiliaryPatientEncounterForm(),
                 "form": form,
-                "page_name": "Returning Patient",
+                "vitals": Vitals.objects.filter(encounter=encounter),
+                "treatments": treatments,
+                "vitals_form": VitalsForm(unit=units),
+                "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
+                "encounter": encounter,
+                "birth_sex": patient.sex_assigned_at_birth,
+                "encounter_id": encounter_id,
+                "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
+                "units": units,
+                "patient": patient,
             },
         )
-    else:
-        return redirect("/not_logged_in")
+    return return_response
 
 
 @silk_profile("encounter-edit-form-view")
@@ -119,151 +268,18 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
     """
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
-            return redirect("main:home")
-        units = Campaign.objects.get(name=request.session["campaign"]).units
-        m = get_object_or_404(PatientEncounter, pk=encounter_id)
-        photos = list(m.photos.all())
-        p = get_object_or_404(Patient, pk=patient_id)
-        v = Vitals.objects.filter(encounter=m)
-        t = Treatment.objects.filter(encounter=m)
-        aux_form = AuxiliaryPatientEncounterForm()
-        vitals_form = VitalsForm(unit=units)
-        if request.method == "POST":
-            form = PatientEncounterForm(request.POST or None, instance=m, unit=units)
-            if form.is_valid():
-                encounter = form.save(commit=False)
-                form.save_m2m()
-                encounter.patient = p
-                encounter.active = True
-                encounter.photos.set(photos)
-                encounter.save()
-                DatabaseChangeLog.objects.create(
-                    action="Edit",
-                    model="PatientEncounter",
-                    instance=str(encounter),
-                    ip=get_client_ip(request),
-                    username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
-                )
-                if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    encounter_data = PatientEncounterSerializer(encounter).data
-                    update_patient_encounter(encounter_data)
-                if "submit_encounter" in request.POST:
-                    return render(
-                        request,
-                        "data/encounter_submitted.html",
-                        {"patient_id": patient_id, "encounter_id": encounter_id},
-                    )
-                elif "submit_refer" in request.POST:
-                    kwargs = {"id": patient_id}
-                    return redirect("main:referral_form_view", **kwargs)
-                else:
-                    return render(
-                        request,
-                        "data/encounter_submitted.html",
-                        {"patient_id": patient_id, "encounter_id": encounter_id},
-                    )
-        else:
-            DatabaseChangeLog.objects.create(
-                action="View",
-                model="Patient",
-                instance=str(m),
-                ip=get_client_ip(request),
-                username=request.user.username,
-                campaign=Campaign.objects.get(name=request.session["campaign"]),
+            return_response = redirect("main:home")
+        elif request.method == "POST":
+            return_response = __encounter_edit_form_post(
+                request, patient_id, encounter_id
             )
-            form = PatientEncounterForm(instance=m, unit=units)
-            if not m.active:
-                for field in form:
-                    try:
-                        field.widget.attrs["readonly"] = True
-                    except Exception:
-                        pass
-                for field in vitals_form:
-                    try:
-                        field.widget.attrs["readonly"] = True
-                    except Exception:
-                        pass
-            if units == "i":
-                form.initial = {
-                    "body_mass_index": m.body_mass_index,
-                    "smoking": m.smoking,
-                    "history_of_diabetes": m.history_of_diabetes,
-                    "history_of_hypertension": m.history_of_hypertension,
-                    "history_of_high_cholesterol": m.history_of_high_cholesterol,
-                    "alcohol": m.alcohol,
-                    "chief_complaint": [c.pk for c in m.chief_complaint.all()],
-                    "patient_history": m.patient_history,
-                    "community_health_worker_notes": m.community_health_worker_notes,
-                    "body_height_primary": math.floor(
-                        (
-                            (
-                                (
-                                    m.body_height_primary
-                                    if m.body_height_primary is not None
-                                    else 0
-                                )
-                                * 100
-                                + (
-                                    m.body_height_secondary
-                                    if m.body_height_secondary is not None
-                                    else 0
-                                )
-                            )
-                            / 2.54
-                        )
-                        // 12
-                    ),
-                    "body_height_secondary": round(
-                        (
-                            (
-                                (
-                                    m.body_height_primary
-                                    if m.body_height_primary is not None
-                                    else 0
-                                )
-                                * 100
-                                + (
-                                    m.body_height_secondary
-                                    if m.body_height_secondary is not None
-                                    else 0
-                                )
-                            )
-                            / 2.54
-                        )
-                        % 12,
-                        2,
-                    ),
-                    "body_weight": round(
-                        (m.body_weight if m.body_weight is not None else 0) * 2.2046, 2
-                    ),
-                }
-        form.initial["timestamp"] = m.timestamp
-        encounter_active = m.active
-        suffix = p.get_suffix_display() if p.suffix is not None else ""
-        return render(
-            request,
-            "forms/edit_encounter.html",
-            {
-                "active": encounter_active,
-                "aux_form": aux_form,
-                "form": form,
-                "vitals": v,
-                "treatments": t,
-                "vitals_form": vitals_form,
-                "page_name": "Edit Encounter for {} {} {}".format(
-                    p.first_name, p.last_name, suffix
-                ),
-                "encounter": m,
-                "birth_sex": p.sex_assigned_at_birth,
-                "encounter_id": encounter_id,
-                "patient_name": "{} {} {}".format(p.first_name, p.last_name, suffix),
-                "units": units,
-                "patient": p,
-            },
-        )
+        else:
+            return_response = __encounter_edit_form_get(
+                request, patient_id, encounter_id
+            )
     else:
-        return redirect("/not_logged_in")
+        return_response = redirect("/not_logged_in")
+    return return_response
 
 
 @silk_profile("new-diagnosis-view")
@@ -278,114 +294,87 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
     """
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
-            return redirect("main:home")
-        campaign = Campaign.objects.get(name=request.session["campaign"])
-        units = campaign.units
-        m = get_object_or_404(PatientEncounter, pk=encounter_id)
-        p = get_object_or_404(Patient, pk=patient_id)
-        v = Vitals.objects.filter(encounter=m)
-        t = Treatment.objects.filter(encounter=m)
-        treatment_form = TreatmentForm()
-        aux_form = AuxiliaryPatientEncounterForm(instance=m)
-        querysets = list(PatientDiagnosis.objects.filter(encounter=m))
-        if len(querysets) > 0:
-            q = querysets.pop().diagnosis.all()
-            for x in querysets:
-                q.union(x.diagnosis.all())
-            treatment_form.fields["diagnosis"].queryset = q
+            return_response = redirect("main:home")
         else:
-            treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
-        d = PatientDiagnosis.objects.filter(encounter=m)
-        if len(querysets) > 0:
-            diagnosis_form = PatientDiagnosisForm(instance=d[0])
-        else:
-            diagnosis_form = PatientDiagnosisForm()
-        if request.method == "POST":
-            if len(d) > 0:
-                diagnosis_form = PatientDiagnosisForm(request.POST, instance=d[0])
-            else:
-                diagnosis_form = PatientDiagnosisForm(request.POST)
-            if diagnosis_form.is_valid():
-                if len(d) > 1:
-                    PatientDiagnosis.objects.exclude(pk=d[0].id).delete()
-                diagnosis = diagnosis_form.save(commit=False)
-                diagnosis.encounter = m
-                diagnosis.save()
-                diagnosis_form.save_m2m()
-                querysets = list(PatientDiagnosis.objects.filter(encounter=m))
-                pprint(querysets)
-                if len(querysets) > 0:
-                    q = querysets.pop().diagnosis.all()
-                    for x in querysets:
-                        q.union(x.diagnosis.all())
-                    treatment_form.fields["diagnosis"].queryset = q
-                else:
-                    treatment_form.fields[
-                        "diagnosis"
-                    ].queryset = Diagnosis.objects.none()
-                DatabaseChangeLog.objects.create(
-                    action="Edit",
-                    model="PatientEncounter",
-                    instance=str(m),
-                    ip=get_client_ip(request),
-                    username=request.user.username,
-                    campaign=campaign,
-                )
-                if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    encounter_data = PatientEncounterSerializer(m).data
-                    update_patient_encounter(encounter_data)
-        form = PatientEncounterForm(instance=m, unit=units)
-        vitals_form = VitalsForm(unit=units)
-        if units == "i":
-            form.initial = {
-                "body_mass_index": m.body_mass_index,
-                "smoking": m.smoking,
-                "history_of_diabetes": m.history_of_diabetes,
-                "history_of_hypertension": m.history_of_hypertension,
-                "history_of_high_cholesterol": m.history_of_high_cholesterol,
-                "alcohol": m.alcohol,
-                "chief_complaint": [c.pk for c in m.chief_complaint.all()],
-                "patient_history": m.patient_history,
-                "community_health_worker_notes": m.community_health_worker_notes,
-                "body_height_primary": math.floor(
-                    ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54)
-                    // 12
-                ),
-                "body_height_secondary": round(
-                    ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54)
-                    % 12,
-                    2,
-                ),
-                "body_weight": round(
-                    m.body_weight if m.body_weight is not None else 0 * 2.2046, 2
-                ),
-            }
-        suffix = p.get_suffix_display() if p.suffix is not None else ""
-        return render(
-            request,
-            "forms/treatment_tab.html",
-            {
-                "active": m.active,
-                "aux_form": aux_form,
-                "form": form,
-                "vitals": v,
-                "treatments": t,
-                "vitals_form": vitals_form,
-                "diagnosis_form": diagnosis_form,
-                "treatment_form": treatment_form,
-                "page_name": "Edit Encounter for {} {} {}".format(
-                    p.first_name, p.last_name, suffix
-                ),
-                "encounter": m,
-                "birth_sex": p.sex_assigned_at_birth,
-                "encounter_id": encounter_id,
-                "patient_name": "{} {} {}".format(p.first_name, p.last_name, suffix),
-                "units": units,
-                "patient": p,
-            },
-        )
+            return_response = __new_diagnosis_view_body(
+                request, patient_id, encounter_id
+            )
     else:
-        return redirect("/not_logged_in")
+        return_response = redirect("/not_logged_in")
+    return return_response
+
+
+def __new_diagnosis_view_body(request, patient_id, encounter_id):
+    units = Campaign.objects.get(name=request.session["campaign"]).units
+    encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
+    patient = get_object_or_404(Patient, pk=patient_id)
+    treatment_form = TreatmentForm()
+    querysets = PatientDiagnosis.objects.filter(encounter=encounter)
+    diagnosis_set = PatientDiagnosis.objects.filter(encounter=encounter)
+    if len(diagnosis_set) > 0:
+        diagnosis_form = PatientDiagnosisForm(instance=diagnosis_set[0])
+    else:
+        diagnosis_form = PatientDiagnosisForm()
+    if request.method == "POST":
+        diagnosis_form = new_diagnosis_view_post(request, encounter, diagnosis_set)
+    form = PatientEncounterForm(instance=encounter, unit=units)
+    if units == "i":
+        new_diagnosis_imperial(form, encounter)
+    suffix = patient.get_suffix_display() if patient.suffix is not None else ""
+    if len(querysets) > 0:
+        item = querysets[0].diagnosis.all()
+        for query_item in querysets:
+            item.union(query_item.diagnosis.all())
+        treatment_form.fields["diagnosis"].queryset = item
+    else:
+        treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
+    return render(
+        request,
+        "forms/treatment_tab.html",
+        {
+            "active": encounter.active,
+            "aux_form": AuxiliaryPatientEncounterForm(instance=encounter),
+            "form": form,
+            "vitals": Vitals.objects.filter(encounter=encounter),
+            "treatments": Treatment.objects.filter(encounter=encounter),
+            "vitals_form": VitalsForm(unit=units),
+            "diagnosis_form": diagnosis_form,
+            "treatment_form": treatment_form,
+            "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
+            "encounter": encounter,
+            "birth_sex": patient.sex_assigned_at_birth,
+            "encounter_id": encounter_id,
+            "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
+            "units": units,
+            "patient": patient,
+        },
+    )
+
+
+def new_diagnosis_view_post(request, encounter, diagnosis_set):
+    if len(diagnosis_set) > 0:
+        diagnosis_form = PatientDiagnosisForm(request.POST, instance=diagnosis_set[0])
+    else:
+        diagnosis_form = PatientDiagnosisForm(request.POST)
+    if diagnosis_form.is_valid():
+        if len(diagnosis_set) > 1:
+            PatientDiagnosis.objects.exclude(pk=diagnosis_set[0].id).delete()
+        diagnosis = diagnosis_form.save(commit=False)
+        diagnosis.encounter = encounter
+        diagnosis.save()
+        diagnosis_form.save_m2m()
+        DatabaseChangeLog.objects.create(
+            action="Edit",
+            model="PatientEncounter",
+            instance=str(encounter),
+            ip=get_client_ip(request),
+            username=request.user.username,
+            campaign=Campaign.objects.get(name=request.session["campaign"]),
+        )
+        if os.environ.get("QLDB_ENABLED") == "TRUE":
+            encounter_data = PatientEncounterSerializer(encounter).data
+            update_patient_encounter(encounter_data)
+    return diagnosis_form
 
 
 @silk_profile("new-treatment-view")
@@ -400,111 +389,85 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
     """
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
-            return redirect("main:home")
-        campaign = Campaign.objects.get(name=request.session["campaign"])
-        units = campaign.units
-        m = get_object_or_404(PatientEncounter, pk=encounter_id)
-        p = get_object_or_404(Patient, pk=patient_id)
-        v = Vitals.objects.filter(encounter=m)
-        t = Treatment.objects.filter(encounter=m)
-        treatment_form = TreatmentForm()
-        aux_form = AuxiliaryPatientEncounterForm(instance=m)
-        patient_diagnoses = querysets = list(
-            PatientDiagnosis.objects.filter(encounter=m)
-        )
-        if len(querysets) > 0:
-            q = querysets.pop().diagnosis.all()
-            for x in querysets:
-                q.union(x.diagnosis.all())
-            treatment_form.fields["diagnosis"].queryset = q
+            return_response = redirect("main:home")
         else:
-            treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
-        d = patient_diagnoses
-        if len(d) > 0:
-            diagnosis_form = PatientDiagnosisForm(instance=d[0])
-        else:
-            diagnosis_form = PatientDiagnosisForm()
-        if request.method == "POST":
-            treatment_form = TreatmentForm(request.POST)
-            if treatment_form.is_valid():
-                treatment = treatment_form.save(commit=False)
-                treatment.encounter = m
-                treatment.prescriber = request.user
-                treatment.save()
-                treatment_form.save_m2m()
-                treatment_form = TreatmentForm()
-                querysets = list(patient_diagnoses)
-                if len(querysets) > 0:
-                    q = querysets.pop().diagnosis.all()
-                    for x in querysets:
-                        q.union(x.diagnosis.all())
-                    treatment_form.fields["diagnosis"].queryset = q
-                else:
-                    treatment_form.fields[
-                        "diagnosis"
-                    ].queryset = Diagnosis.objects.none()
-                DatabaseChangeLog.objects.create(
-                    action="Edit",
-                    model="PatientEncounter",
-                    instance=str(m),
-                    ip=get_client_ip(request),
-                    username=request.user.username,
-                    campaign=campaign,
-                )
-                if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    encounter_data = PatientEncounterSerializer(m).data
-                    update_patient_encounter(encounter_data)
-        form = PatientEncounterForm(instance=m, unit=units)
-        vitals_form = VitalsForm(unit=units)
-        if units == "i":
-            form.initial = {
-                "body_mass_index": m.body_mass_index,
-                "smoking": m.smoking,
-                "history_of_diabetes": m.history_of_diabetes,
-                "history_of_hypertension": m.history_of_hypertension,
-                "history_of_high_cholesterol": m.history_of_high_cholesterol,
-                "alcohol": m.alcohol,
-                "chief_complaint": [c.pk for c in m.chief_complaint.all()],
-                "patient_history": m.patient_history,
-                "community_health_worker_notes": m.community_health_worker_notes,
-                "body_height_primary": math.floor(
-                    ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54)
-                    // 12
-                ),
-                "body_height_secondary": round(
-                    ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54)
-                    % 12,
-                    2,
-                ),
-                "body_weight": round(m.body_weight * 2.2046, 2)
-                if m.body_weight is not None
-                else 0,
-            }
-        suffix = p.get_suffix_display() if p.suffix is not None else ""
-        return render(
-            request,
-            "forms/treatment_tab.html",
-            {
-                "form": form,
-                "aux_form": aux_form,
-                "vitals": v,
-                "treatments": t,
-                "vitals_form": vitals_form,
-                "diagnosis_form": diagnosis_form,
-                "treatment_form": treatment_form,
-                "page_name": "Edit Encounter for {} {} {}".format(
-                    p.first_name, p.last_name, suffix
-                ),
-                "encounter": m,
-                "birth_sex": p.sex_assigned_at_birth,
-                "encounter_id": encounter_id,
-                "patient_name": "{} {} {}".format(p.first_name, p.last_name, suffix),
-                "units": units,
-                "patient": p,
-            },
-        )
+            return_response = __new_treatment_view_body(
+                request, patient_id, encounter_id
+            )
     else:
-        return redirect("/not_logged_in")
+        return_response = redirect("/not_logged_in")
+    return return_response
+
+
+def __new_treatment_view_body(request, patient_id, encounter_id):
+    units = Campaign.objects.get(name=request.session["campaign"]).units
+    encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
+    patient = get_object_or_404(Patient, pk=patient_id)
+    treatment_form = TreatmentForm()
+    patient_diagnoses = querysets = list(
+        PatientDiagnosis.objects.filter(encounter=encounter)
+    )
+    if len(querysets) > 0:
+        item = querysets.pop().diagnosis.all()
+        for query_item in querysets:
+            item.union(query_item.diagnosis.all())
+        treatment_form.fields["diagnosis"].queryset = item
+    else:
+        treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
+    diagnosis_set = patient_diagnoses
+    if len(diagnosis_set) > 0:
+        diagnosis_form = PatientDiagnosisForm(instance=diagnosis_set[0])
+    else:
+        diagnosis_form = PatientDiagnosisForm()
+    if request.method == "POST":
+        treatment_form = __treatment_view_post(request, encounter)
+    form = PatientEncounterForm(instance=encounter, unit=units)
+    if units == "i":
+        new_treatment_imperial(form, encounter)
+    suffix = patient.get_suffix_display() if patient.suffix is not None else ""
+    return render(
+        request,
+        "forms/treatment_tab.html",
+        {
+            "form": form,
+            "aux_form": AuxiliaryPatientEncounterForm(instance=encounter),
+            "vitals": Vitals.objects.filter(encounter=encounter),
+            "treatments": Treatment.objects.filter(encounter=encounter),
+            "vitals_form": VitalsForm(unit=units),
+            "diagnosis_form": diagnosis_form,
+            "treatment_form": treatment_form,
+            "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
+            "encounter": encounter,
+            "birth_sex": patient.sex_assigned_at_birth,
+            "encounter_id": encounter_id,
+            "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
+            "units": units,
+            "patient": patient,
+        },
+    )
+
+
+def __treatment_view_post(request, encounter):
+    treatment_form = TreatmentForm(request.POST)
+    if treatment_form.is_valid():
+        treatment = treatment_form.save(commit=False)
+        treatment.encounter = encounter
+        treatment.prescriber = request.user
+        treatment.save()
+        treatment_form.save_m2m()
+        treatment_form = TreatmentForm()
+        DatabaseChangeLog.objects.create(
+            action="Edit",
+            model="PatientEncounter",
+            instance=str(encounter),
+            ip=get_client_ip(request),
+            username=request.user.username,
+            campaign=Campaign.objects.get(name=request.session["campaign"]),
+        )
+        if os.environ.get("QLDB_ENABLED") == "TRUE":
+            encounter_data = PatientEncounterSerializer(encounter).data
+            update_patient_encounter(encounter_data)
+    return treatment_form
 
 
 @silk_profile("aux-form-view")
@@ -519,205 +482,245 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
     """
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
-            return redirect("main:home")
-        campaign = Campaign.objects.get(name=request.session["campaign"])
-        units = campaign.units
-        m = get_object_or_404(PatientEncounter, pk=encounter_id)
-        p = get_object_or_404(Patient, pk=patient_id)
-        v = Vitals.objects.filter(encounter=m)
-        t = Treatment.objects.filter(encounter=m)
-        treatment_form = TreatmentForm()
-        aux_form = AuxiliaryPatientEncounterForm(instance=m)
-        querysets = list(PatientDiagnosis.objects.filter(encounter=m))
-        if len(querysets) > 0:
-            q = querysets.pop().diagnosis.all()
-            for x in querysets:
-                q.union(x.diagnosis.all())
-            treatment_form.fields["diagnosis"].queryset = q
+            return_response = redirect("main:home")
         else:
-            treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
-        d = PatientDiagnosis.objects.filter(encounter=m)
-        if len(d) > 0:
-            diagnosis_form = PatientDiagnosisForm(instance=d[0])
-        else:
-            diagnosis_form = PatientDiagnosisForm()
-        if request.method == "POST":
-            aux_form = AuxiliaryPatientEncounterForm(request.POST)
-            if aux_form.is_valid():
-                m.procedure = request.POST["procedure"]
-                m.pharmacy_notes = request.POST["pharmacy_notes"]
-                m.save()
-                querysets = list(PatientDiagnosis.objects.filter(encounter=m))
-                if len(querysets) > 0:
-                    q = querysets.pop().diagnosis.all()
-                    for x in querysets:
-                        q.union(x.diagnosis.all())
-                    treatment_form.fields["diagnosis"].queryset = q
-                else:
-                    treatment_form.fields[
-                        "diagnosis"
-                    ].queryset = Diagnosis.objects.none()
-                DatabaseChangeLog.objects.create(
-                    action="Edit",
-                    model="PatientEncounter",
-                    instance=str(m),
-                    ip=get_client_ip(request),
-                    username=request.user.username,
-                    campaign=campaign,
+            encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
+            patient = get_object_or_404(Patient, pk=patient_id)
+            treatment_form = TreatmentForm()
+            querysets = list(PatientDiagnosis.objects.filter(encounter=encounter))
+            if len(querysets) > 0:
+                item = querysets.pop().diagnosis.all()
+                for query_item in querysets:
+                    item.union(query_item.diagnosis.all())
+                treatment_form.fields["diagnosis"].queryset = item
+            else:
+                treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
+            diagnosis_set = PatientDiagnosis.objects.filter(encounter=encounter)
+            if len(diagnosis_set) > 0:
+                diagnosis_form = PatientDiagnosisForm(instance=diagnosis_set[0])
+            else:
+                diagnosis_form = PatientDiagnosisForm()
+            if request.method == "POST":
+                return_response = __aux_form_view_post(
+                    request, encounter_id, patient, treatment_form, diagnosis_form
                 )
-                if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    encounter_data = PatientEncounterSerializer(m).data
-                    update_patient_encounter(encounter_data)
-                return render(
+            else:
+                return_response = __aux_form_view_get(
                     request,
-                    "data/encounter_submitted.html",
-                    {"patient_id": patient_id, "encounter_id": encounter_id},
+                    encounter_id,
+                    patient,
+                    treatment_form,
+                    diagnosis_form,
                 )
-        form = PatientEncounterForm(instance=m, unit=units)
-        vitals_form = VitalsForm(unit=units)
-        if units == "i":
-            form.initial = {
-                "body_mass_index": m.body_mass_index,
-                "smoking": m.smoking,
-                "history_of_diabetes": m.history_of_diabetes,
-                "history_of_hypertension": m.history_of_hypertension,
-                "history_of_high_cholesterol": m.history_of_high_cholesterol,
-                "alcohol": m.alcohol,
-                "chief_complaint": [c.pk for c in m.chief_complaint.all()],
-                "patient_history": m.patient_history,
-                "community_health_worker_notes": m.community_health_worker_notes,
-                "body_height_primary": math.floor(
-                    ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54)
-                    // 12
-                ),
-                "body_height_secondary": round(
-                    ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54)
-                    % 12,
-                    2,
-                ),
-                "body_weight": round(m.body_weight * 2.2046, 2),
-            }
-        suffix = p.get_suffix_display() if p.suffix is not None else ""
-        return render(
-            request,
-            "forms/treatment_tab.html",
-            {
-                "form": form,
-                "aux_form": aux_form,
-                "vitals": v,
-                "treatments": t,
-                "vitals_form": vitals_form,
-                "diagnosis_form": diagnosis_form,
-                "treatment_form": treatment_form,
-                "page_name": "Edit Encounter for {} {} {}".format(
-                    p.first_name, p.last_name, suffix
-                ),
-                "encounter": m,
-                "birth_sex": p.sex_assigned_at_birth,
-                "encounter_id": encounter_id,
-                "patient_name": "{} {} {}".format(p.first_name, p.last_name, suffix),
-                "units": units,
-                "patient": p,
-            },
-        )
     else:
-        return redirect("/not_logged_in")
+        return_response = redirect("/not_logged_in")
+    return return_response
+
+
+def __aux_form_view_post(
+    request, encounter_id, patient, treatment_form, diagnosis_form
+):
+    encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
+    aux_form = AuxiliaryPatientEncounterForm(request.POST)
+    if aux_form.is_valid():
+        return_response = __aux_form_is_valid(request, encounter, treatment_form)
+    else:
+        return_response = __aux_form_invalid(
+            request,
+            encounter_id,
+            patient,
+            treatment_form,
+            diagnosis_form,
+        )
+    return return_response
+
+
+def __aux_form_view_get(request, encounter_id, patient, treatment_form, diagnosis_form):
+    encounter = PatientEncounter.objects.get(pk=encounter_id)
+    units = Campaign.objects.get(name=request.session["campaign"]).units
+    form = PatientEncounterForm(instance=encounter, unit=units)
+    if units == "i":
+        aux_form_imperial(form, encounter)
+    suffix = patient.get_suffix_display() if patient.suffix is not None else ""
+    return render(
+        request,
+        "forms/treatment_tab.html",
+        {
+            "form": form,
+            "aux_form": AuxiliaryPatientEncounterForm(instance=encounter),
+            "vitals": Vitals.objects.filter(encounter=encounter),
+            "treatments": Treatment.objects.filter(encounter=encounter),
+            "vitals_form": VitalsForm(unit=units),
+            "diagnosis_form": diagnosis_form,
+            "treatment_form": treatment_form,
+            "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
+            "encounter": encounter,
+            "birth_sex": patient.sex_assigned_at_birth,
+            "encounter_id": encounter_id,
+            "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
+            "units": units,
+            "patient": patient,
+        },
+    )
+
+
+def __aux_form_invalid(request, encounter_id, patient, treatment_form, diagnosis_form):
+    units = Campaign.objects.get(name=request.session["campaign"]).units
+    encounter = PatientEncounter.objects.get(pk=encounter_id)
+    form = PatientEncounterForm(instance=encounter, unit=units)
+    if units == "i":
+        aux_form_imperial(form, encounter)
+    suffix = patient.get_suffix_display() if patient.suffix is not None else ""
+    return render(
+        request,
+        "forms/treatment_tab.html",
+        {
+            "form": form,
+            "aux_form": AuxiliaryPatientEncounterForm(instance=encounter),
+            "vitals": Vitals.objects.filter(encounter=encounter),
+            "treatments": Treatment.objects.filter(encounter=encounter),
+            "vitals_form": VitalsForm(unit=units),
+            "diagnosis_form": diagnosis_form,
+            "treatment_form": treatment_form,
+            "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
+            "encounter": encounter,
+            "birth_sex": patient.sex_assigned_at_birth,
+            "encounter_id": encounter_id,
+            "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
+            "units": units,
+            "patient": patient,
+        },
+    )
+
+
+def __aux_form_is_valid(request, encounter, treatment_form):
+    encounter.procedure = request.POST["procedure"]
+    encounter.pharmacy_notes = request.POST["pharmacy_notes"]
+    encounter.save()
+    querysets = list(PatientDiagnosis.objects.filter(encounter=encounter))
+    if len(querysets) > 0:
+        item = querysets.pop().diagnosis.all()
+        for query_item in querysets:
+            item.union(query_item.diagnosis.all())
+        treatment_form.fields["diagnosis"].queryset = item
+    else:
+        treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
+    DatabaseChangeLog.objects.create(
+        action="Edit",
+        model="PatientEncounter",
+        instance=str(encounter),
+        ip=get_client_ip(request),
+        username=request.user.username,
+        campaign=Campaign.objects.get(name=request.session["campaign"]),
+    )
+    if os.environ.get("QLDB_ENABLED") == "TRUE":
+        encounter_data = PatientEncounterSerializer(encounter).data
+        update_patient_encounter(encounter_data)
+    return render(
+        request,
+        "data/encounter_submitted.html",
+        {"patient_id": encounter.patient.id, "encounter_id": encounter.id},
+    )
 
 
 @silk_profile("history-view")
 def history_view(request, patient_id=None, encounter_id=None):
-    """
-
-    :param request:
-    :param patient_id:
-    :param encounter_id:
-    :return:
-    """
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
-            return redirect("main:home")
-        campaign = Campaign.objects.get(name=request.session["campaign"])
-        units = campaign.units
-        m = get_object_or_404(PatientEncounter, pk=encounter_id)
-        p = get_object_or_404(Patient, pk=patient_id)
-        v = Vitals.objects.filter(encounter=m)
-        t = Treatment.objects.filter(encounter=m)
-        aux_form = HistoryPatientEncounterForm(instance=m)
-        if request.method == "POST":
-            aux_form = HistoryPatientEncounterForm(request.POST)
-            if aux_form.is_valid():
-                m.medical_history = request.POST["medical_history"]
-                m.social_history = request.POST["social_history"]
-                m.current_medications = request.POST["current_medications"]
-                m.family_history = request.POST["family_history"]
-                m.save()
-                DatabaseChangeLog.objects.create(
-                    action="Edit",
-                    model="PatientEncounter",
-                    instance=str(m),
-                    ip=get_client_ip(request),
-                    username=request.user.username,
-                    campaign=campaign,
-                )
-                if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    from .serializers import PatientEncounterSerializer
-
-                    encounter_data = PatientEncounterSerializer(m).data
-                    update_patient_encounter(encounter_data)
-                    return render(
+            return_response = redirect("main:home")
+        else:
+            units = Campaign.objects.get(name=request.session["campaign"]).units
+            encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
+            patient = get_object_or_404(Patient, pk=patient_id)
+            aux_form = HistoryPatientEncounterForm(instance=encounter)
+            if request.method == "POST":
+                aux_form = HistoryPatientEncounterForm(request.POST)
+                if aux_form.is_valid():
+                    encounter.medical_history = request.POST["medical_history"]
+                    encounter.social_history = request.POST["social_history"]
+                    encounter.current_medications = request.POST["current_medications"]
+                    encounter.family_history = request.POST["family_history"]
+                    encounter.save()
+                    DatabaseChangeLog.objects.create(
+                        action="Edit",
+                        model="PatientEncounter",
+                        instance=str(encounter),
+                        ip=get_client_ip(request),
+                        username=request.user.username,
+                        campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    )
+                    if os.environ.get("QLDB_ENABLED") == "TRUE":
+                        encounter_data = PatientEncounterSerializer(encounter).data
+                        update_patient_encounter(encounter_data)
+                    return_response = render(
                         request,
                         "data/encounter_submitted.html",
                         {"patient_id": patient_id, "encounter_id": encounter_id},
                     )
-        form = PatientEncounterForm(instance=m, unit=units)
-        vitals_form = VitalsForm(unit=units)
-        if units == "i":
-            form.initial = {
-                "body_mass_index": m.body_mass_index,
-                "smoking": m.smoking,
-                "history_of_diabetes": m.history_of_diabetes,
-                "history_of_hypertension": m.history_of_hypertension,
-                "history_of_high_cholesterol": m.history_of_high_cholesterol,
-                "alcohol": m.alcohol,
-                "chief_complaint": [c.pk for c in m.chief_complaint.all()],
-                "patient_history": m.patient_history,
-                "community_health_worker_notes": m.community_health_worker_notes,
-                "body_height_primary": math.floor(
-                    ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54)
-                    // 12
-                ),
-                "body_height_secondary": round(
-                    ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54)
-                    % 12,
-                    2,
-                ),
-                "body_weight": round(
-                    m.body_weight if m.body_weight is not None else 0 * 2.2046, 2
-                ),
-            }
-        suffix = p.get_suffix_display() if p.suffix is not None else ""
-        return render(
-            request,
-            "forms/history_tab.html",
-            {
-                "form": form,
-                "aux_form": aux_form,
-                "vitals": v,
-                "treatments": t,
-                "vitals_form": vitals_form,
-                "page_name": "Edit Encounter for {} {} {}".format(
-                    p.first_name, p.last_name, suffix
-                ),
-                "encounter": m,
-                "birth_sex": p.sex_assigned_at_birth,
-                "encounter_id": encounter_id,
-                "patient_name": "{} {} {}".format(p.first_name, p.last_name, suffix),
-                "units": units,
-                "patient": p,
-            },
-        )
+                else:
+                    form = PatientEncounterForm(instance=encounter, unit=units)
+                    vitals_form = VitalsForm(unit=units)
+                    if units == "i":
+                        history_view_imperial(form, encounter)
+                    suffix = (
+                        patient.get_suffix_display()
+                        if patient.suffix is not None
+                        else ""
+                    )
+                    return_response = render(
+                        request,
+                        "forms/history_tab.html",
+                        {
+                            "form": form,
+                            "aux_form": aux_form,
+                            "vitals": Vitals.objects.filter(encounter=encounter),
+                            "treatments": Treatment.objects.filter(encounter=encounter),
+                            "vitals_form": vitals_form,
+                            "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
+                            "encounter": encounter,
+                            "birth_sex": patient.sex_assigned_at_birth,
+                            "patient_id": patient_id,
+                            "encounter_id": encounter_id,
+                            "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
+                            "units": units,
+                            "patient": patient,
+                        },
+                    )
+            else:
+                return_response = __history_view_get(
+                    request, encounter_id, units, patient, aux_form
+                )
     else:
-        return redirect("/not_logged_in")
+        return_response = redirect("/not_logged_in")
+    return return_response
+
+
+def __history_view_get(request, encounter_id, units, patient, aux_form):
+    encounter = PatientEncounter.objects.get(pk=encounter_id)
+    treatments = Treatment.objects.filter(encounter=encounter)
+    form = PatientEncounterForm(instance=encounter, unit=units)
+    vitals_form = VitalsForm(unit=units)
+    if units == "i":
+        history_view_imperial(form, encounter)
+    suffix = patient.get_suffix_display() if patient.suffix is not None else ""
+    return render(
+        request,
+        "forms/history_tab.html",
+        {
+            "form": form,
+            "aux_form": aux_form,
+            "vitals": Vitals.objects.filter(encounter=encounter),
+            "treatments": treatments,
+            "vitals_form": vitals_form,
+            "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
+            "encounter": encounter,
+            "birth_sex": patient.sex_assigned_at_birth,
+            "encounter_id": encounter_id,
+            "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
+            "units": units,
+            "patient": patient,
+        },
+    )
 
 
 @silk_profile("new-vitals-view")
@@ -732,420 +735,161 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
     """
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
-            return redirect("main:home")
-        campaign = Campaign.objects.get(name=request.session["campaign"])
-        units = campaign.units
-        m = get_object_or_404(PatientEncounter, pk=encounter_id)
-        p = get_object_or_404(Patient, pk=patient_id)
-        v = Vitals.objects.filter(encounter=m)
-        t = Treatment.objects.filter(encounter=m)
-        if request.method == "POST":
-            vitals_form = VitalsForm(request.POST, unit=units)
-            if vitals_form.is_valid():
-                vitals = vitals_form.save(commit=False)
-                vitals.encounter = m
-                vitals.save()
-                DatabaseChangeLog.objects.create(
-                    action="New",
-                    model="Vitals",
-                    instance=str(m),
-                    ip=get_client_ip(request),
-                    username=request.user.username,
-                    campaign=campaign,
-                )
-                if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    encounter_data = PatientEncounterSerializer(m).data
-                    update_patient_encounter(encounter_data)
-        form = PatientEncounterForm(instance=m, unit=units)
-        vitals_form = VitalsForm(unit=units)
-        if units == "i":
-            form.initial = {
-                "body_mass_index": m.body_mass_index,
-                "smoking": m.smoking,
-                "history_of_diabetes": m.history_of_diabetes,
-                "history_of_hypertension": m.history_of_hypertension,
-                "history_of_high_cholesterol": m.history_of_high_cholesterol,
-                "alcohol": m.alcohol,
-                "chief_complaint": [c.pk for c in m.chief_complaint.all()],
-                "patient_history": m.patient_history,
-                "community_health_worker_notes": m.community_health_worker_notes,
-                "body_height_primary": math.floor(
-                    ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54)
-                    // 12
-                ),
-                "body_height_secondary": round(
-                    ((m.body_height_primary * 100 + m.body_height_secondary) / 2.54)
-                    % 12,
-                    2,
-                ),
-                "body_weight": round(m.body_weight * 2.2046, 2),
-            }
-        suffix = p.get_suffix_display() if p.suffix is not None else ""
-        return render(
-            request,
-            "forms/edit_encounter.html",
-            {
-                "active": m.active,
-                "form": form,
-                "vitals": v,
-                "treatments": t,
-                "vitals_form": vitals_form,
-                "page_name": "Edit Encounter for {} {} {}".format(
-                    p.first_name, p.last_name, suffix
-                ),
-                "encounter": m,
-                "birth_sex": p.sex_assigned_at_birth,
-                "encounter_id": encounter_id,
-                "patient": p,
-                "patient_name": "{} {} {}".format(p.first_name, p.last_name, suffix),
-                "units": units,
-            },
-        )
-    else:
-        return redirect("/not_logged_in")
-
-
-@silk_profile("upload-photo-view")
-def upload_photo_view(request, patient_id=None, encounter_id=None):
-    """
-
-    :param request:
-    :param patient_id:
-    :param encounter_id:
-    :return:
-    """
-    if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
-            return redirect("main:home")
-        campaign = Campaign.objects.get(name=request.session["campaign"])
-        units = campaign.units
-        m = get_object_or_404(PatientEncounter, pk=encounter_id)
-        p = get_object_or_404(Patient, pk=patient_id)
-        v = Vitals.objects.filter(encounter=m)
-        t = Treatment.objects.filter(encounter=m)
-        aux_form = PhotoForm()
-        if request.method == "POST":
-            aux_form = PhotoForm(request.POST, request.FILES)
-            if aux_form.is_valid():
-                ph = aux_form.save()
-                ph.save()
-                m.photos.add(ph)
-                m.save()
-                aux_form = PhotoForm()
-                DatabaseChangeLog.objects.create(
-                    action="Edit",
-                    model="PatientEncounter",
-                    instance=str(m),
-                    ip=get_client_ip(request),
-                    username=request.user.username,
-                    campaign=campaign,
-                )
-                if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    from .serializers import PatientEncounterSerializer
-
-                    encounter_data = PatientEncounterSerializer(m).data
-                    update_patient_encounter(encounter_data)
-        vitals_form = VitalsForm(unit=units)
-        suffix = p.get_suffix_display() if p.suffix is not None else ""
-        return render(
-            request,
-            "forms/photos_tab.html",
-            {
-                "aux_form": aux_form,
-                "vitals": v,
-                "treatments": t,
-                "vitals_form": vitals_form,
-                "page_name": "Edit Encounter for {} {} {}".format(
-                    p.first_name, p.last_name, suffix
-                ),
-                "encounter": m,
-                "birth_sex": p.sex_assigned_at_birth,
-                "encounter_id": encounter_id,
-                "patient_name": "{} {} {}".format(p.first_name, p.last_name, suffix),
-                "units": units,
-                "patient": p,
-            },
-        )
-    else:
-        return redirect("/not_logged_in")
-
-
-@silk_profile("edit-profile-view")
-def edit_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
-    """
-
-    :param request:
-    :param patient_id:
-    :param encounter_id:
-    :param photo_id:
-    :return:
-    """
-    if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
-            return redirect("main:home")
-        campaign = Campaign.objects.get(name=request.session["campaign"])
-        units = campaign.units
-        m = get_object_or_404(PatientEncounter, pk=encounter_id)
-        p = get_object_or_404(Patient, pk=patient_id)
-        v = Vitals.objects.filter(encounter=m)
-        t = Treatment.objects.filter(encounter=m)
-        photo = Photo.objects.get(pk=photo_id)
-        if request.method == "POST":
-            aux_form = PhotoForm(request.POST, request.FILES, instance=photo)
-            if aux_form.is_valid():
-                ph = aux_form.save()
-                try:
-                    ph.save()
-                except ValueError:
-                    ph.delete()
-                DatabaseChangeLog.objects.create(
-                    action="Edit",
-                    model="Photo",
-                    instance=str(ph),
-                    ip=get_client_ip(request),
-                    username=request.user.username,
-                    campaign=campaign,
-                )
-                if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    encounter_data = PatientEncounterSerializer(m).data
-                    update_patient_encounter(encounter_data)
-                vitals_form = VitalsForm(unit=units)
-                suffix = p.get_suffix_display() if p.suffix is not None else ""
-                return render(
-                    request,
-                    "forms/photos_tab.html",
-                    {
-                        "aux_form": aux_form,
-                        "vitals": v,
-                        "treatments": t,
-                        "vitals_form": vitals_form,
-                        "page_name": "Edit Encounter for {} {} {}".format(
-                            p.first_name, p.last_name, suffix
-                        ),
-                        "encounter": m,
-                        "birth_sex": p.sex_assigned_at_birth,
-                        "encounter_id": encounter_id,
-                        "patient_name": "{} {} {}".format(
-                            p.first_name, p.last_name, suffix
-                        ),
-                        "units": units,
-                        "patient": p,
-                    },
-                )
+            return_response = redirect("main:home")
         else:
-            aux_form = PhotoForm(instance=photo)
-            return render(
+            units = Campaign.objects.get(name=request.session["campaign"]).units
+            encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
+            patient = get_object_or_404(Patient, pk=patient_id)
+            vitals = Vitals.objects.filter(encounter=encounter)
+            treatments = Treatment.objects.filter(encounter=encounter)
+            if request.method == "POST":
+                new_vitals_view_post(request, units, encounter)
+            form = PatientEncounterForm(instance=encounter, unit=units)
+            vitals_form = VitalsForm(unit=units)
+            if units == "i":
+                new_vitals_imperial(form, encounter)
+            suffix = patient.get_suffix_display() if patient.suffix is not None else ""
+            return_response = render(
                 request,
-                "forms/edit_photo.html",
+                "forms/edit_encounter.html",
                 {
-                    "page_name": "Edit Photo",
-                    "aux_form": aux_form,
+                    "active": encounter.active,
+                    "form": form,
+                    "vitals": vitals,
+                    "treatments": treatments,
+                    "vitals_form": vitals_form,
+                    "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
+                    "encounter": encounter,
+                    "birth_sex": patient.sex_assigned_at_birth,
                     "encounter_id": encounter_id,
-                    "patient_id": patient_id,
-                    "photo_id": photo_id,
+                    "patient": patient,
+                    "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
+                    "units": units,
                 },
             )
     else:
-        return redirect("/not_logged_in")
+        return_response = redirect("/not_logged_in")
+    return return_response
 
 
-@silk_profile("delete-photo-view")
-def delete_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
-    """
-    Used to edit Encounter objects.
-
-    :param request: Django Request object.
-    :param patient_id:
-    :param encounter_id: The ID of the object to edit.
-    :param photo_id:
-    :return: HTTPResponse.
-    """
-    if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
-            return redirect("main:home")
-        units = Campaign.objects.get(name=request.session["campaign"]).units
-        m = get_object_or_404(PatientEncounter, pk=encounter_id)
-        p = get_object_or_404(Patient, pk=patient_id)
-        v = Vitals.objects.filter(encounter=m)
-        t = Treatment.objects.filter(encounter=m)
-        photo = Photo.objects.get(pk=photo_id)
-        photo.delete()
-        aux_form = PhotoForm()
-        vitals_form = VitalsForm(unit=units)
-        suffix = p.get_suffix_display() if p.suffix is not None else ""
-        return render(
-            request,
-            "forms/photos_tab.html",
-            {
-                "aux_form": aux_form,
-                "vitals": v,
-                "treatments": t,
-                "vitals_form": vitals_form,
-                "page_name": "Edit Encounter for {} {} {}".format(
-                    p.first_name, p.last_name, suffix
-                ),
-                "encounter": m,
-                "birth_sex": p.sex_assigned_at_birth,
-                "encounter_id": encounter_id,
-                "patient_name": "{} {} {}".format(p.first_name, p.last_name, suffix),
-                "units": units,
-                "patient": p,
-            },
+def new_vitals_view_post(request, units, encounter):
+    vitals_form = VitalsForm(request.POST, unit=units)
+    if vitals_form.is_valid():
+        vitals = vitals_form.save(commit=False)
+        vitals.encounter = encounter
+        vitals.save()
+        DatabaseChangeLog.objects.create(
+            action="New",
+            model="Vitals",
+            instance=str(encounter),
+            ip=get_client_ip(request),
+            username=request.user.username,
+            campaign=Campaign.objects.get(name=request.session["campaign"]),
         )
-    else:
-        return redirect("/not_logged_in")
+        if os.environ.get("QLDB_ENABLED") == "TRUE":
+            encounter_data = PatientEncounterSerializer(encounter).data
+            update_patient_encounter(encounter_data)
+
+
+@silk_profile("hpi-view-post")
+def __hpi_view_post(request, patient_id, encounter_id):
+    units = Campaign.objects.get(name=request.session["campaign"]).units
+    encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
+    patient = get_object_or_404(Patient, pk=patient_id)
+    vitals = Vitals.objects.filter(encounter=encounter)
+    treatments = Treatment.objects.filter(encounter=encounter)
+    hpis = []
+    for query_item in encounter.chief_complaint.all():
+        hpi_object = HistoryOfPresentIllness.objects.get_or_create(
+            encounter=encounter, chief_complaint=query_item
+        )[0]
+        hpis.append(
+            {
+                "id": hpi_object.id,
+                "form": HistoryOfPresentIllnessForm(instance=hpi_object),
+                "complaint": query_item,
+            }
+        )
+    vitals_form = VitalsForm(unit=units)
+    suffix = patient.get_suffix_display() if patient.suffix is not None else ""
+    return render(
+        request,
+        "forms/hpi_tab.html",
+        {
+            "hpis": hpis,
+            "vitals": vitals,
+            "treatments": treatments,
+            "vitals_form": vitals_form,
+            "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
+            "encounter": encounter,
+            "birth_sex": patient.sex_assigned_at_birth,
+            "encounter_id": encounter_id,
+            "patient_name": f"{patient.first_name}, {patient.last_name}, {suffix}",
+            "units": units,
+            "patient": patient,
+        },
+    )
 
 
 @silk_profile("hpi-view")
 def hpi_view(request, patient_id=None, encounter_id=None):
-    """
-
-    :param request:
-    :param patient_id:
-    :param encounter_id:
-    :return:
-    """
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
-            return redirect("main:home")
-        units = Campaign.objects.get(name=request.session["campaign"]).units
-        m = get_object_or_404(PatientEncounter, pk=encounter_id)
-        p = get_object_or_404(Patient, pk=patient_id)
-        v = Vitals.objects.filter(encounter=m)
-        t = Treatment.objects.filter(encounter=m)
-        hpis = []
-        for x in m.chief_complaint.all():
-            hpi_object = HistoryOfPresentIllness.objects.get_or_create(
-                encounter=m, chief_complaint=x
-            )[0]
-            hpis.append(
-                {
-                    "id": hpi_object.id,
-                    "form": HistoryOfPresentIllnessForm(instance=hpi_object),
-                    "complaint": x,
-                }
-            )
-        vitals_form = VitalsForm(unit=units)
-        suffix = p.get_suffix_display() if p.suffix is not None else ""
-        return render(
-            request,
-            "forms/hpi_tab.html",
-            {
-                "hpis": hpis,
-                "vitals": v,
-                "treatments": t,
-                "vitals_form": vitals_form,
-                "page_name": "Edit Encounter for {} {} {}".format(
-                    p.first_name, p.last_name, suffix
-                ),
-                "encounter": m,
-                "birth_sex": p.sex_assigned_at_birth,
-                "encounter_id": encounter_id,
-                "patient_name": "{} {} {}".format(p.first_name, p.last_name, suffix),
-                "units": units,
-                "patient": p,
-            },
-        )
+            return_response = redirect("main:home")
+        else:
+            return_response = __hpi_view_post(request, patient_id, encounter_id)
     else:
-        return redirect("/not_logged_in")
+        return_response = redirect("/not_logged_in")
+    return return_response
 
 
 @silk_profile("submit-hpi-view")
 def submit_hpi_view(request, patient_id=None, encounter_id=None, hpi_id=None):
-    """
-
-    :param request:
-    :param patient_id:
-    :param encounter_id:
-    :param hpi_id:
-    :return:
-    """
     if request.user.is_authenticated:
         if request.session["campaign"] == "RECOVERY MODE":
-            return redirect("main:home")
-        m = get_object_or_404(PatientEncounter, pk=encounter_id)
-        h = HistoryOfPresentIllness.objects.get(pk=hpi_id)
-        if request.method == "POST":
-            aux_form = HistoryOfPresentIllnessForm(request.POST, instance=h)
+            return_response = redirect("main:home")
+        elif request.method == "POST":
+            encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
+            history = HistoryOfPresentIllness.objects.get(pk=hpi_id)
+            aux_form = HistoryOfPresentIllnessForm(request.POST, instance=history)
             if aux_form.is_valid():
-                ph = aux_form.save()
-                ph.save()
+                updated_history = aux_form.save()
+                updated_history.save()
                 DatabaseChangeLog.objects.create(
                     action="Edit",
                     model="PatientEncounter",
-                    instance=str(m),
+                    instance=str(encounter),
                     ip=get_client_ip(request),
                     username=request.user.username,
                     campaign=Campaign.objects.get(name=request.session["campaign"]),
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
-                    encounter_data = PatientEncounterSerializer(m).data
+                    encounter_data = PatientEncounterSerializer(encounter).data
                     update_patient_encounter(encounter_data)
-        return redirect(
-            "main:hpi_view", patient_id=patient_id, encounter_id=encounter_id
-        )
+            return_response = redirect(
+                "main:hpi_view", patient_id=patient_id, encounter_id=encounter_id
+            )
     else:
-        return redirect("/not_logged_in")
+        return_response = redirect("/not_logged_in")
+    return return_response
 
 
-def patient_medical(request, id=None):
+def patient_medical(request, patient_id=None):
     if request.user.is_authenticated:
-        encounters = PatientEncounter.objects.filter(patient__pk=id).order_by(
+        encounters = PatientEncounter.objects.filter(patient__pk=patient_id).order_by(
             "-timestamp"
         )
         if encounters:
             encounter = encounters[0]
-            return redirect(
+            return_response = redirect(
                 "main:encounter_edit_form_view",
-                patient_id=id,
+                patient_id=patient_id,
                 encounter_id=encounter.pk,
             )
         else:
-            return redirect("main:patient_encounter_form_view", id=id)
-    else:
-        return redirect("/not_logged_in")
-
-
-@silk_profile("patient-export-view")
-def patient_export_view(request, id=None):
-    if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
-            return redirect("main:home")
-        m = get_object_or_404(Patient, pk=id)
-        encounters = PatientEncounter.objects.filter(patient=m).order_by("-timestamp")
-        prescriptions = {}
-        diagnoses = {}
-        vitals_dictionary = {}
-        for x in encounters:
-            try:
-                diagnoses[x] = sum(
-                    [
-                        list(queryset.diagnosis.all())
-                        for queryset in PatientDiagnosis.objects.filter(encounter=x)
-                    ],
-                    [],
-                )
-            except PatientDiagnosis.DoesNotExist:
-                diagnoses[x] = []
-            prescriptions[x] = list(Treatment.objects.filter(encounter=x))
-            vitals_dictionary[x] = list(Vitals.objects.filter(encounter=x))
-        if request.method == "GET":
-            return render(
-                request,
-                "export/patient_export.html",
-                {
-                    "patient": m,
-                    "encounters": encounters,
-                    "prescriptions": prescriptions,
-                    "diagnoses": diagnoses,
-                    "vitals": vitals_dictionary,
-                    "telehealth": Campaign.objects.get(
-                        name=request.session["campaign"]
-                    ).telehealth,
-                    "units": Campaign.objects.get(
-                        name=request.session["campaign"]
-                    ).units,
-                },
+            return_response = redirect(
+                "main:patient_encounter_form_view", patient_id=patient_id
             )
     else:
-        return redirect("/not_logged_in")
+        return_response = redirect("/not_logged_in")
+    return return_response

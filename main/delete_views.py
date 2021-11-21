@@ -10,13 +10,24 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from silk.profiling.profiler import silk_profile
 
 from clinic_messages.models import Message
 from main.femr_admin_views import get_client_ip
-from .models import Campaign, ChiefComplaint, DatabaseChangeLog, Patient, Treatment
+from main.forms import PhotoForm, VitalsForm
+from .models import (
+    Campaign,
+    ChiefComplaint,
+    DatabaseChangeLog,
+    Patient,
+    PatientEncounter,
+    Photo,
+    Treatment,
+    Vitals,
+)
 
 
-def patient_delete_view(request, id=None):
+def patient_delete_view(request, patient_id=None):
     """
     Delete function.
 
@@ -27,13 +38,13 @@ def patient_delete_view(request, id=None):
     if request.user.is_authenticated:
         if request.method == "POST":
             try:
-                p = get_object_or_404(Patient, pk=id)
+                target_object = get_object_or_404(Patient, pk=patient_id)
                 this_campaign = Campaign.objects.get(name=request.session["campaign"])
                 contact = this_campaign.instance.main_contact
                 DatabaseChangeLog.objects.create(
                     action="Delete",
                     model="Patient",
-                    instance=str(p),
+                    instance=str(target_object),
                     ip=get_client_ip(request),
                     username=request.user.username,
                     campaign=this_campaign,
@@ -57,31 +68,27 @@ def patient_delete_view(request, id=None):
                     os.environ.get("DEFAULT_FROM_EMAIL"),
                     [contact.email],
                 )
-                p.delete()
+                target_object.delete()
             except ObjectDoesNotExist:
                 pass
             return_response = render(request, "data/patient_deleted_success.html")
         else:
-            p = get_object_or_404(Patient, pk=id)
-            return_response = render(request, "data/delete.html", {"patient": p})
+            target_object = get_object_or_404(Patient, pk=patient_id)
+            return_response = render(
+                request, "data/delete.html", {"patient": target_object}
+            )
     else:
         return_response = redirect("main:not_logged_in")
     return return_response
 
 
-def delete_chief_complaint(request, id=None, patient_id=None, encounter_id=None):
-    """
-    Delete a selected Chief Complaint and redirect back.
-    :param request:
-    :param id:
-    :param patient_id:
-    :param encounter_id:
-    :return:
-    """
+def delete_chief_complaint(
+    request, chief_complaint_id=None, patient_id=None, encounter_id=None
+):
     if request.user.is_authenticated:
-        p = get_object_or_404(ChiefComplaint, pk=id)
-        p.active = False
-        p.save()
+        target_object = get_object_or_404(ChiefComplaint, pk=chief_complaint_id)
+        target_object.active = False
+        target_object.save()
         if encounter_id is not None:
             return_response = redirect(
                 "main:chief_complaint_list_view", patient_id, encounter_id
@@ -95,9 +102,52 @@ def delete_chief_complaint(request, id=None, patient_id=None, encounter_id=None)
 
 def delete_treatment_view(request, treatment_id=None):
     if request.user.is_authenticated:
-        p = get_object_or_404(Treatment, pk=treatment_id)
-        p.delete()
+        target_object = get_object_or_404(Treatment, pk=treatment_id)
+        target_object.delete()
         return_response = redirect(request.META.get("HTTP_REFERER", "/"))
     else:
         return_response = redirect("main:not_logged_in")
+    return return_response
+
+
+@silk_profile("delete-photo-view")
+def delete_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
+    """
+    Used to edit Encounter objects.
+
+    :param request: Django Request object.
+    :param patient_id:
+    :param encounter_id: The ID of the object to edit.
+    :param photo_id:
+    :return: HTTPResponse.
+    """
+    if request.user.is_authenticated:
+        if request.session["campaign"] == "RECOVERY MODE":
+            return_response = redirect("main:home")
+        else:
+            units = Campaign.objects.get(name=request.session["campaign"]).units
+            encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
+            patient = get_object_or_404(Patient, pk=patient_id)
+            photo = Photo.objects.get(pk=photo_id)
+            photo.delete()
+            suffix = patient.get_suffix_display() if patient.suffix is not None else ""
+            return_response = render(
+                request,
+                "forms/photos_tab.html",
+                {
+                    "aux_form": PhotoForm(),
+                    "vitals": Vitals.objects.filter(encounter=encounter),
+                    "treatments": Treatment.objects.filter(encounter=encounter),
+                    "vitals_form": VitalsForm(unit=units),
+                    "page_name": f"Edit Encounter for {patient.first_name}, {patient.last_name}, {suffix}",
+                    "encounter": encounter,
+                    "birth_sex": patient.sex_assigned_at_birth,
+                    "encounter_id": encounter_id,
+                    "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
+                    "units": units,
+                    "patient": patient,
+                },
+            )
+    else:
+        return_response = redirect("/not_logged_in")
     return return_response

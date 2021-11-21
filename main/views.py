@@ -12,7 +12,8 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from silk.profiling.profiler import silk_profile
 
-from main.background_tasks import run_encounter_close
+from main.background_tasks import check_admin_permission, run_encounter_close
+from main.background_tasks import reassign_admin_groups
 from main.forms import ForgotUsernameForm
 from main.models import Campaign, MessageOfTheDay, fEMRUser
 
@@ -37,6 +38,7 @@ def home(request):
     :return: An HttpResponse, rendering the home page.
     """
     if request.user.is_authenticated:
+        reassign_admin_groups(request.user)
         campaign_list = request.user.campaigns.filter(active=True)
         if len(campaign_list) != 0 and request.session["campaign"] != "RECOVERY MODE":
             campaign = campaign_list.get(name=request.session["campaign"])
@@ -90,7 +92,7 @@ def healthcheck(request):
 
 def set_timezone(request):
     if request.user.is_authenticated:
-        if request.user.groups.filter(name="Admin").exists():
+        if check_admin_permission(request.user):
             campaign = Campaign.objects.get(name=request.session["campaign"])
             if request.method == "POST":
                 request.session["django_timezone"] = request.POST["timezone"]
@@ -121,8 +123,8 @@ def forgot_username(request):
             # noinspection LongLine
             send_mail(
                 "Username Recovery",
-                f"Someone recently requested a username reminder from fEMR On-Chain. "
-                "If this was you, your username is:\n\n\n {user.username}\n\n\n "
+                "Someone recently requested a username reminder from fEMR On-Chain. "
+                f"If this was you, your username is:\n\n\n {user.username}\n\n\n "
                 "If it wasn't you, you "
                 "can safely ignore this email.\n\n\nTHIS IS AN AUTOMATED MESSAGE "
                 "FROM fEMR ON-CHAIN. "

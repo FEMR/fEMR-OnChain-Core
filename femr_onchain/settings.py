@@ -285,6 +285,7 @@ if EC2_PRIVATE_IP:
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SILKY_PYTHON_PROFILER = True
+SILKY_PYTHON_PROFILER_BINARY = True
 SILKY_AUTHENTICATION = True
 # noinspection PyPep8
 SILKY_PERMISSIONS = lambda user: user.is_superuser

@@ -51,7 +51,6 @@ class Command(BaseCommand):
                 Permission.objects.get(name="Can add medication")
             )
             superuser.save()
-            Group.objects.get(name="Admin").user_set.add(superuser)
             Group.objects.get(name="fEMR Admin").user_set.add(superuser)
             Group.objects.get(name="Organization Admin").user_set.add(superuser)
             Group.objects.get(name="Clinician").user_set.add(superuser)
@@ -60,12 +59,14 @@ class Command(BaseCommand):
             instance.main_contact = superuser
             instance.save()
         else:
-            for x in fEMRUser.objects.all():
-                x.user_permissions.add(Permission.objects.get(name="Can add state"))
-                x.user_permissions.add(Permission.objects.get(name="Can add diagnosis"))
-                x.user_permissions.add(
+            for user in fEMRUser.objects.all():
+                user.user_permissions.add(Permission.objects.get(name="Can add state"))
+                user.user_permissions.add(
+                    Permission.objects.get(name="Can add diagnosis")
+                )
+                user.user_permissions.add(
                     Permission.objects.get(name="Can add chief complaint")
                 )
-                x.user_permissions.add(
+                user.user_permissions.add(
                     Permission.objects.get(name="Can add medication")
                 )

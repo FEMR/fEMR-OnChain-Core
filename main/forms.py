@@ -83,7 +83,9 @@ class PatientDiagnosisForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
+        self.helper.add_input(
+            Submit("submit", "Save Diagnosis", css_class="btn btn-primary")
+        )
 
     class Meta:
         """
@@ -131,7 +133,9 @@ class TreatmentForm(ModelForm):
                 css_class="row",
             )
         )
-        self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
+        self.helper.add_input(
+            Submit("submit", "Save Treatment", css_class="btn btn-primary")
+        )
         self.fields["medication"].required = True
 
     class Meta:
@@ -243,10 +247,14 @@ class PatientForm(ModelForm):
             pass
         else:
             if "shared_phone_number" not in self.data.keys():
-                p = Patient.objects.filter(
+                patient_list = Patient.objects.filter(
                     phone_number=self.cleaned_data["phone_number"]
                 )
-                if p.exists() and len(p) != 1 and self.instance not in p:
+                if (
+                    patient_list.exists()
+                    and len(patient_list) != 1
+                    and self.instance not in patient_list
+                ):
                     raise ValidationError("This phone number has already been used.")
         return self.cleaned_data["phone_number"]
 
@@ -254,8 +262,14 @@ class PatientForm(ModelForm):
         if self.cleaned_data["email_address"] is None:
             pass
         elif "shared_email_address" not in self.data.keys():
-            p = Patient.objects.filter(email_address=self.cleaned_data["email_address"])
-            if p.exists() and len(p) != 1 and self.instance not in p:
+            patient_list = Patient.objects.filter(
+                email_address=self.cleaned_data["email_address"]
+            )
+            if (
+                patient_list.exists()
+                and len(patient_list) != 1
+                and self.instance not in patient_list
+            ):
                 raise ValidationError("This email address has already been used.")
         return self.cleaned_data["email_address"]
 
@@ -333,25 +347,28 @@ class PatientEncounterForm(ModelForm):
         return self.cleaned_data["body_mass_index"]
 
     def save(self, commit=True):
-        m = super().save(commit=False)
+        item = super().save(commit=False)
         if self.unit == "i":
             if (
-                m.body_height_primary is not None
-                and m.body_height_secondary is not None
+                item.body_height_primary is not None
+                and item.body_height_secondary is not None
             ):
-                tmp = m.body_height_primary
-                m.body_height_primary = math.floor(
-                    (((m.body_height_primary * 12) + m.body_height_secondary) * 2.54)
+                tmp = item.body_height_primary
+                item.body_height_primary = math.floor(
+                    (
+                        ((item.body_height_primary * 12) + item.body_height_secondary)
+                        * 2.54
+                    )
                     // 100
                 )
-                m.body_height_secondary = (
-                    ((tmp * 12) + m.body_height_secondary) * 2.54
+                item.body_height_secondary = (
+                    ((tmp * 12) + item.body_height_secondary) * 2.54
                 ) % 100
-            if m.body_weight is not None:
-                m.body_weight /= 2.2046
+            if item.body_weight is not None:
+                item.body_weight /= 2.2046
         if commit:
-            m.save()
-        return m
+            item.save()
+        return item
 
     class Meta:
         """
@@ -390,7 +407,9 @@ class AuxiliaryPatientEncounterForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
+        self.helper.add_input(
+            Submit("submit", "Save Encounter", css_class="btn btn-primary")
+        )
 
     class Meta:
         model = PatientEncounter
@@ -411,7 +430,9 @@ class HistoryPatientEncounterForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
+        self.helper.add_input(
+            Submit("submit", "Save Patient History", css_class="btn btn-primary")
+        )
 
     class Meta:
         model = PatientEncounter
@@ -504,16 +525,18 @@ class VitalsForm(ModelForm):
                 ),
                 css_class="row",
             ),
-            ButtonHolder(Submit("submit", "Save", css_class="btn btn-primary ml-auto")),
+            ButtonHolder(
+                Submit("submit", "Save Vitals", css_class="btn btn-primary ml-auto")
+            ),
         )
 
     def save(self, commit=True):
-        m = super().save(commit=False)
-        if self.unit == "i" and m.body_temperature is not None:
-            m.body_temperature = round((m.body_temperature - 32) * (5 / 9), 2)
+        item = super().save(commit=False)
+        if self.unit == "i" and item.body_temperature is not None:
+            item.body_temperature = round((item.body_temperature - 32) * (5 / 9), 2)
         if commit:
-            m.save()
-        return m
+            item.save()
+        return item
 
     class Meta:
         """
@@ -536,7 +559,7 @@ class UserForm(UserCreationForm):
 
     groups = ModelMultipleChoiceField(
         queryset=Group.objects.exclude(name="fEMR Admin").exclude(name="Manager"),
-        required=False,
+        required=True,
     )
 
     def __init__(self, *args, **kwargs):
@@ -562,6 +585,11 @@ class fEMRAdminUserForm(UserCreationForm):
     """
     Data entry form - fEMRUser
     """
+
+    groups = ModelMultipleChoiceField(
+        queryset=Group.objects.all(),
+        required=True,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -595,7 +623,7 @@ class UserUpdateForm(UserChangeForm):
     password = None
     groups = ModelMultipleChoiceField(
         queryset=Group.objects.exclude(name="fEMR Admin").exclude(name="Manager"),
-        required=False,
+        required=True,
     )
 
     def __init__(self, user, *args, **kwargs):
@@ -622,6 +650,10 @@ class fEMRAdminUserUpdateForm(UserChangeForm):
     """
 
     password = None
+    groups = ModelMultipleChoiceField(
+        queryset=Group.objects.all(),
+        required=True,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -707,7 +739,9 @@ class PhotoForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
+        self.helper.add_input(
+            Submit("submit", "Save Photo", css_class="btn btn-primary")
+        )
 
     class Meta:
         model = Photo
@@ -726,15 +760,15 @@ class HistoryOfPresentIllnessForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", "Save", css_class="btn btn-primary"))
+        self.helper.add_input(
+            Submit("submit", "Save History", css_class="btn btn-primary")
+        )
 
     class Meta:
         model = HistoryOfPresentIllness
         fields = "__all__"
         widgets = {
-            "tests_ordered": autocomplete.ModelSelect2Multiple(
-                url="main:test-autocomplete"
-            ),
+            "tests_ordered": Textarea(attrs={"rows": 4, "cols": 40}),
             "narrative": Textarea(attrs={"rows": 4, "cols": 40}),
             "physical_examination": Textarea(attrs={"rows": 4, "cols": 40}),
         }

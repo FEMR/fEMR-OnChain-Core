@@ -18,7 +18,7 @@
             <tr>
                 <th scope="row">{{ o.id }}</th>
                 <td>{{ o.name }}</td>
-                <td><a href="{% url 'main:edit_organization' id=o.id %}">Edit</a></td>
+                <td><a href="{% url 'main:edit_organization' organization_id=o.id %}">Edit</a></td>
             </tr>
             {% endfor %}
             </tbody>

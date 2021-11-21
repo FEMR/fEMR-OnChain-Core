@@ -37,8 +37,8 @@ def add_supply_view(request):
                 form = InventoryEntryForm()
             else:
                 form = InventoryEntryForm(request.POST)
-                t = form.save()
-                t.save()
+                entry = form.save()
+                entry.save()
             return_response = render(
                 request, "formulary/add_supply.html", {"form": form}
             )
@@ -49,10 +49,10 @@ def add_supply_view(request):
     return return_response
 
 
-def edit_add_supply_view(request, id=None):
+def edit_add_supply_view(request, entry_id=None):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
-            inventory_entry = InventoryEntry.objects.get(pk=id)
+            inventory_entry = InventoryEntry.objects.get(pk=entry_id)
             if request.method == "GET":
                 form = AddSupplyForm()
                 return_response = render(
@@ -88,10 +88,10 @@ def edit_add_supply_view(request, id=None):
     return return_response
 
 
-def edit_sub_supply_view(request, id=None):
+def edit_sub_supply_view(request, entry_id=None):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
-            inventory_entry = InventoryEntry.objects.get(pk=id)
+            inventory_entry = InventoryEntry.objects.get(pk=entry_id)
             if request.method == "GET":
                 form = RemoveSupplyForm()
                 return_response = render(

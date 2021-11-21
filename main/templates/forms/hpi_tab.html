@@ -232,6 +232,7 @@
             </ul>
             <div class="col-9">
                 <div>
+                    {% if hpis %}
                     {% for f in hpis %}
                     <div>
                         <h3>{{ f.complaint }}</h3>
@@ -240,9 +241,11 @@
                             {% crispy f.form %}
                         </form>
                     </div>
-                    <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}" type="text/javascript"></script>
-                    {{ f.form.media }}
                     {% endfor %}
+                    {% else %}
+                    Encounter has no chief complaints.
+                    {% endif %}
+                    <script src="{% static 'admin/js/vendor/jquery/jquery.js' %}" type="text/javascript"></script>
                 </div>
             </div>
         </div>

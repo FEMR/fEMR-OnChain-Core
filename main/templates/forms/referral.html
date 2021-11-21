@@ -1,6 +1,6 @@
 {% extends "data/base.html" %}
 {% block content %}
-<form action="{% url 'main:referral_form_view' id=patient_id %}" method="post">
+<form action="{% url 'main:referral_form_view' patient_id=patient_id %}" method="post">
     {% csrf_token %}
     <div class="container">
         <div class="row justify-content-center">

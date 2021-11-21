@@ -27,7 +27,8 @@ def has_suffix(patient):
 def open_encounters(patient):
     return (
         "Yes"
-        if len(PatientEncounter.objects.filter(patient=patient).filter(active=True)) > 0
+        if len(patient.patientencounter_set.filter(patient=patient).filter(active=True))
+        > 0
         else ""
     )
 
@@ -40,11 +41,7 @@ def has_middle_name(patient):
 @register.filter("last_timestamp")
 def last_timestamp(patient):
     try:
-        return (
-            PatientEncounter.objects.filter(patient=patient)
-            .order_by("-timestamp")[0]
-            .timestamp
-        )
+        return patient.patientencounter_set.order_by("-timestamp")[0].timestamp
     except IndexError:
         return patient.timestamp
 
@@ -110,8 +107,8 @@ def get_campaign_info(item):
 
 
 @register.filter("get_medications")
-def get_medications(t):
+def get_medications(treatment):
     result = ""
-    for element in list(t.medication.all()):
+    for element in list(treatment.medication.all()):
         result += str(element)
     return result

@@ -228,7 +228,7 @@
                 </li>
             </ul>
             <div class="row bg-light">
-                <form action="{% url 'main:new_diagnosis_view' patient.id encounter_id %}" method="post"
+                <form id="diagnosis_form" action="{% url 'main:new_diagnosis_view' patient.id encounter_id %}" method="post"
                     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
                     <h2>Diagnoses</h2>
                     {% crispy diagnosis_form %}

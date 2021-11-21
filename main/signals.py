@@ -1,16 +1,19 @@
 from django.conf import settings
 from django.contrib.auth import user_logged_in, user_logged_out
+from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+from appMR.models import SupportTicket
+from appMR.signals import ticket_activity
+from clinic_messages.models import Message
 
 from main.femr_admin_views import get_client_ip
-from main.models import Campaign, AuditEntry
+from main.models import Campaign, AuditEntry, fEMRUser
 
 
 @receiver(user_logged_in)
 def user_logged_in_callback(sender, request, user, **kwargs):
-    ip = get_client_ip(request)
     campaign_list = request.user.campaigns.filter(active=True)
     if len(campaign_list) != 0:
         name = campaign_list[0].name
@@ -19,7 +22,7 @@ def user_logged_in_callback(sender, request, user, **kwargs):
         campaign = None
     AuditEntry.objects.create(
         action="user_logged_in",
-        ip=ip,
+        ip=get_client_ip(request),
         username=user.username,
         campaign=campaign,
         browser_user_agent=request.user_agent.browser.family,
@@ -28,7 +31,6 @@ def user_logged_in_callback(sender, request, user, **kwargs):
 
 @receiver(user_logged_out)
 def user_logged_out_callback(sender, request, user, **kwargs):
-    ip = get_client_ip(request)
     try:
         campaign_list = request.user.campaigns.filter(active=True)
         if len(campaign_list) != 0:
@@ -38,7 +40,7 @@ def user_logged_out_callback(sender, request, user, **kwargs):
             campaign = None
         AuditEntry.objects.create(
             action="user_logged_out",
-            ip=ip,
+            ip=get_client_ip(request),
             username=user.username,
             campaign=campaign,
             browser_user_agent=request.user_agent.browser.family,
@@ -64,3 +66,15 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         # noinspection PyUnresolvedReferences
         Token.objects.create(user=instance)
+
+
+@receiver(ticket_activity)
+def handle_ticket_activity(sender, ticket, **kwargs):
+    ticket = SupportTicket.objects.get(pk=ticket)
+    for user in Group.objects.get(name="Developer").user_set.all():
+        Message.objects.create(
+            subject="Ticket Update",
+            content=f"This message is to let you know that an update was posted to ticket {ticket.id}. Use the Let Us Know link to view the new information.",
+            sender=fEMRUser.objects.get(username="admin"),
+            recipient=user,
+        )
