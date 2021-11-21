@@ -282,7 +282,7 @@ def __patient_encounter_form_post(request, patient):
                 {"patient_id": patient.id, "encounter_id": encounter.id},
             )
         elif "submit_refer" in request.POST:
-            kwargs = {"patient_id": id}
+            kwargs = {"patient_id": patient.id}
             return_response = redirect("main:referral_form_view", **kwargs)
         else:
             return_response = render(
