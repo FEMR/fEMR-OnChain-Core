@@ -119,7 +119,7 @@
                         A patient with this email address, {{ match.first_name }} {{ match.last_name }}
                         already
                         exists.
-                        <a class="btn btn-primary" href="{% url 'main:patient_edit_form_view' id=match.id %}"
+                        <a class="btn btn-primary" href="{% url 'main:patient_edit_form_view' patient_id=match.id %}"
                            style="margin-bottom: 10px;">Edit
                             Existing
                             Patient</a>
