@@ -7,7 +7,7 @@ from main.models import fEMRUser
 
 def user_locked_out_callback(request, credentials):
     user = fEMRUser.objects.filter(username=credentials["username"])
-    if user.exists() and len(user == 1):
+    if user.exists() and len(user) == 1:
         user = user[0]
         campaigns = user.campaigns.all()
         campaign_manager = campaigns[0].main_contact if len(campaigns) != 0 else None
