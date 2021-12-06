@@ -75,7 +75,7 @@ six==1.16.0
 sqlparse==0.4.2
 toml==0.10.2
 tomli==1.2.2
-typed-ast==1.4.3
+typed-ast==1.5.1
 typing-extensions==4.0.0
 ua-parser==0.10.0
 uritemplate==4.1.1
