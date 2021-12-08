@@ -21,6 +21,7 @@ def run_patient_csv_export(request):
     writer = csv.writer(resp)
     title_row = [
         "Patient",
+        "Sex Assigned at Birth",
         "Date Seen",
         "Systolic Blood Pressure",
         "Diastolic Blood Pressure",
@@ -56,6 +57,7 @@ def run_patient_csv_export(request):
             vital = Vitals.objects.filter(encounter=encounter)[0]
             row = [
                 export_id,
+                patient.sex_assigned_at_birth,
                 # pylint: disable=C0301
                 f"{encounter.timestamp.astimezone(campaign_time_zone)} {campaign_time_zone_b}",
                 vital.systolic_blood_pressure,
