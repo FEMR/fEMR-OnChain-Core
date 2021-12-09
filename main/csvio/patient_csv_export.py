@@ -22,6 +22,7 @@ def run_patient_csv_export(request):
     title_row = [
         "Patient",
         "Sex Assigned at Birth",
+        "Age (years)",
         "Date Seen",
         "Systolic Blood Pressure",
         "Diastolic Blood Pressure",
@@ -58,6 +59,7 @@ def run_patient_csv_export(request):
             row = [
                 export_id,
                 patient.sex_assigned_at_birth,
+                patient.age,
                 # pylint: disable=C0301
                 f"{encounter.timestamp.astimezone(campaign_time_zone)} {campaign_time_zone_b}",
                 vital.systolic_blood_pressure,
