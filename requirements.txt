@@ -74,7 +74,7 @@ simplejson==3.17.5
 six==1.16.0
 sqlparse==0.4.2
 toml==0.10.2
-tomli==1.2.2
+tomli==2.0.0
 typed-ast==1.5.1
 typing-extensions==4.0.1
 ua-parser==0.10.0
