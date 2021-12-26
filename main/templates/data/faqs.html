@@ -1,0 +1,68 @@
+{% extends "data/base.html" %}
+{% block content %}
+
+<h2>Frequently Asked Questios (FAQs)</h2><br/>
+
+<div class="accordion" id="accordionExample">
+
+  <h3>Log-In and General Assistance</h3>
+  {% for faq in faqsInViewsDotPy_SectionOne %}
+  <div class="card">
+      <div class="card-header" id="headingOne">
+        <h2 class="mb-0">
+          <button data-target="#collapseOne{{forloop.counter}}" aria-controls="collapseOne{{forloop.counter}}" 
+                  class="btn btn-link" type="button" data-toggle="collapse" aria-expanded="false"><i class="fa fa-arrow-circle-down"></i>{{forloop.counter}}. 
+{{faq.0}}</button>
+        </h2>
+      </div>
+      <div id="collapseOne{{forloop.counter}}" aria-labelledby="headingOne{{forloop.counter}}" 
+           class="collapse" data-parent="#accordionExample">
+        <div class="card-body">
+            {{faq.1}}
+        </div>
+      </div>
+  </div>
+  {% endfor %}
+
+  <h3>Working with a Patient Encounter</h3>
+  {% for faq in faqsInViewsDotPy_SectionTwo %}
+  <div class="card">
+      <div class="card-header" id="headingOne">
+        <h2 class="mb-0">
+          <button data-target="#collapseTwo{{forloop.counter}}" aria-controls="collapseTwo{{forloop.counter}}" 
+                  class="btn btn-link" type="button" data-toggle="collapse" aria-expanded="false"><i class="fa fa-arrow-circle-down"></i>{{forloop.counter}}. 
+{{faq.0}}</button>
+        </h2>
+      </div>
+      <div id="collapseTwo{{forloop.counter}}" aria-labelledby="headingTwo{{forloop.counter}}" 
+           class="collapse" data-parent="#accordionExample">
+        <div class="card-body">
+            {{faq.1}}
+        </div>
+      </div>
+  </div>
+  {% endfor %}
+
+
+  <h3>Administration/Campaign Managers</h3>
+  {% for faq in faqsInViewsDotPy_SectionThree %}
+  <div class="card">
+      <div class="card-header" id="headingOne">
+        <h2 class="mb-0">
+          <button data-target="#collapseThree{{forloop.counter}}" aria-controls="collapseThree{{forloop.counter}}" 
+                  class="btn btn-link" type="button" data-toggle="collapse" aria-expanded="false"><i class="fa fa-arrow-circle-down"></i>{{forloop.counter}}. 
+{{faq.0}}</button>
+        </h2>
+      </div>
+      <div id="collapseThree{{forloop.counter}}" aria-labelledby="headingThree{{forloop.counter}}" 
+           class="collapse" data-parent="#accordionExample">
+        <div class="card-body">
+            {{faq.1}}
+        </div>
+      </div>
+  </div>
+  {% endfor %}
+
+</div>
+
+{% endblock %}

@@ -5,6 +5,7 @@ valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
 import pytz
+import json
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -151,3 +152,14 @@ def help_messages_off(request):
     else:
         return_response = redirect("main:not_logged_in")
     return return_response
+
+# open .json file, convert into a dictionary object to display in html bootstrap:
+# return_response = render(request, "data/faqs.html", {"user": request.user})
+# ... ERROR: Exception Type:	ValueError Exception Value: The view main.views.faqs didn't return an HttpResponse object. It returned None instead.
+def faqs(request):
+    json_file = open('main/static/main/js/faqs.json','r')
+    json_data = json_file.read()
+    dictionary_object = json.loads(json_data)
+    json_file.close()
+  
+    return render(request, "data/faqs.html", dictionary_object)

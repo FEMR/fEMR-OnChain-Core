@@ -65,6 +65,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'main:home' %}">Home</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'main:faqs' %}">FAQs</a>
+                </li>
                 {% if request.user|has_any_group %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'main:patient_form_view' %}">New Patient</a>
