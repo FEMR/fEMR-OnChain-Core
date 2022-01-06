@@ -153,9 +153,7 @@ def help_messages_off(request):
         return_response = redirect("main:not_logged_in")
     return return_response
 
-# open .json file, convert into a dictionary object to display in html bootstrap:
-# return_response = render(request, "data/faqs.html", {"user": request.user})
-# ... ERROR: Exception Type:	ValueError Exception Value: The view main.views.faqs didn't return an HttpResponse object. It returned None instead.
+# open .json file and convert it into a dictionary object, to display in the FAQs page:
 def faqs(request):
     json_file = open('main/static/main/js/faqs.json','r')
     json_data = json_file.read()

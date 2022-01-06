@@ -1,18 +1,17 @@
 {% extends "data/base.html" %}
 {% block content %}
 
-<h2>Frequently Asked Questios (FAQs)</h2><br/>
-
+<h2 class="bg-primary">&nbsp;<i class="fa fa-question-circle-o"></i> Frequently Asked Questions (FAQs)</h2><br/>
 <div class="accordion" id="accordionExample">
 
-  <h3>Log-In and General Assistance</h3>
+  <h4><i class="fa fa-commenting-o"></i> Log-In and General Assistance</h4>
   {% for faq in faqsInViewsDotPy_SectionOne %}
   <div class="card">
       <div class="card-header" id="headingOne">
+        <!--i class="fa fa-arrow-circle-down"-->
         <h2 class="mb-0">
-          <button data-target="#collapseOne{{forloop.counter}}" aria-controls="collapseOne{{forloop.counter}}" 
-                  class="btn btn-link" type="button" data-toggle="collapse" aria-expanded="false"><i class="fa fa-arrow-circle-down"></i>{{forloop.counter}}. 
-{{faq.0}}</button>
+          <i class="fa fa-plus h5"></i><button data-target="#collapseOne{{forloop.counter}}" aria-controls="collapseOne{{forloop.counter}}" 
+                  class="btn btn-link" type="button" data-toggle="collapse" aria-expanded="false">{{forloop.counter}}. {{faq.0}}</button>
         </h2>
       </div>
       <div id="collapseOne{{forloop.counter}}" aria-labelledby="headingOne{{forloop.counter}}" 
@@ -24,13 +23,14 @@
   </div>
   {% endfor %}
 
-  <h3>Working with a Patient Encounter</h3>
+  <br/>
+  <h4><i class="fa fa-commenting-o"></i> Working with a Patient Encounter</h4>
   {% for faq in faqsInViewsDotPy_SectionTwo %}
   <div class="card">
       <div class="card-header" id="headingOne">
         <h2 class="mb-0">
-          <button data-target="#collapseTwo{{forloop.counter}}" aria-controls="collapseTwo{{forloop.counter}}" 
-                  class="btn btn-link" type="button" data-toggle="collapse" aria-expanded="false"><i class="fa fa-arrow-circle-down"></i>{{forloop.counter}}. 
+          <i class="fa fa-plus h5"></i><button data-target="#collapseTwo{{forloop.counter}}" aria-controls="collapseTwo{{forloop.counter}}" 
+                  class="btn btn-link" type="button" data-toggle="collapse" aria-expanded="false">{{forloop.counter}}. 
 {{faq.0}}</button>
         </h2>
       </div>
@@ -43,15 +43,14 @@
   </div>
   {% endfor %}
 
-
-  <h3>Administration/Campaign Managers</h3>
+  <br/>
+  <h4><i class="fa fa-commenting-o"></i> Administration/Campaign Managers</h4>
   {% for faq in faqsInViewsDotPy_SectionThree %}
   <div class="card">
       <div class="card-header" id="headingOne">
         <h2 class="mb-0">
-          <button data-target="#collapseThree{{forloop.counter}}" aria-controls="collapseThree{{forloop.counter}}" 
-                  class="btn btn-link" type="button" data-toggle="collapse" aria-expanded="false"><i class="fa fa-arrow-circle-down"></i>{{forloop.counter}}. 
-{{faq.0}}</button>
+          <i class="fa fa-plus h5"></i><button data-target="#collapseThree{{forloop.counter}}" aria-controls="collapseThree{{forloop.counter}}" 
+                  class="btn btn-link" type="button" data-toggle="collapse" aria-expanded="false">{{forloop.counter}}. {{faq.0}}</button>
         </h2>
       </div>
       <div id="collapseThree{{forloop.counter}}" aria-labelledby="headingThree{{forloop.counter}}" 
