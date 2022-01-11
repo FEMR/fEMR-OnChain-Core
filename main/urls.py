@@ -150,7 +150,7 @@ from .small_forms_views import (
     medication_form_view,
     treatment_form_view,
 )
-from .views import forgot_username, index, home, healthcheck, help_messages_off
+from .views import forgot_username, index, home, faqs, healthcheck, help_messages_off
 
 # pylint: disable=C0103
 app_name = "main"
@@ -201,6 +201,7 @@ urlpatterns = [
     url(r"^$", index, name="index"),
     url(r"^index/$", index, name="index"),
     url(r"^home/$", home, name="home"),
+    url(r"^faqs/$", faqs, name="faqs"),
     url(r"^logout/$", logout_view, name="logout_view"),
     url(r"^login_view/$", login_view, name="login_view"),
     url(r"^not_logged_in/$", not_logged_in, name="not_logged_in"),

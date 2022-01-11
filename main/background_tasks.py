@@ -50,17 +50,18 @@ def run_user_deactivate(now=timezone.now()):
     delta = now - timedelta(days=30)
     for user in fEMRUser.objects.filter(is_active=True):
         if user.last_login is not None and user.last_login < delta:
-            send_mail(
-                "Message from fEMR OnChain",
-                "We noticed you haven't logged in to fEMR OnChain in "
-                "quite a while. We're going to lock your account for now."
-                "\n\nYou'll be able to have it reactivated if you "
-                "need it again."
-                "\n\n\nTHIS IS AN AUTOMATED MESSAGE. "
-                "PLEASE DO NOT REPLY TO THIS EMAIL.",
-                os.environ.get("DEFAULT_FROM_EMAIL"),
-                [user.email],
-            )
+            if os.environ.get("EMAIL_HOST") != "":
+                send_mail(
+                    "Message from fEMR OnChain",
+                    "We noticed you haven't logged in to fEMR OnChain in "
+                    "quite a while. We're going to lock your account for now."
+                    "\n\nYou'll be able to have it reactivated if you "
+                    "need it again."
+                    "\n\n\nTHIS IS AN AUTOMATED MESSAGE. "
+                    "PLEASE DO NOT REPLY TO THIS EMAIL.",
+                    os.environ.get("DEFAULT_FROM_EMAIL"),
+                    [user.email],
+                )
             user.is_active = False
             user.save()
 
