@@ -161,4 +161,7 @@ def faqs(request):
     dictionary_object = json.loads(json_data)
     json_file.close()
 
-    return render(request, "data/faqs.html", dictionary_object)
+    if request.user.is_authenticated:
+        return render(request, "data/faqs_auth.html", dictionary_object)
+    else:
+        return render(request, "data/faqs.html", dictionary_object)
