@@ -13,7 +13,7 @@ colorama==0.4.4
 coreapi==2.3.3
 coreschema==0.0.4
 coverage==6.2
-Django==3.2.10
+Django==3.2.11
 django-autocomplete-light==3.8.2
 django-axes==5.27.0
 django-background-tasks==1.2.5
