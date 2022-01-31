@@ -292,6 +292,7 @@ def unlock_user_view(request, user_id=None):
             user = get_object_or_404(fEMRUser, pk=user_id)
             reset(username=user.username)
             user.is_active = True
+            user.last_login = timezone.now()
             user.save()
             return_response = redirect("main:list_users_view")
         else:
