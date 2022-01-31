@@ -114,22 +114,23 @@ def test_axes_lockout_sends_message():
 
 def test_run_user_deactivate():
     u = fEMRUser.objects.create_user(
-        username="test",
+        username="userdeactivatetest",
         password="testingpassword",
-        email="logintestinguseremail@email.com",
+        email="userdeactivatetest@email.com",
     )
     u.change_password = False
     u.save()
     reset(username="test")
     client = Client()
-    r = client.post("/login_view/", {"username": "test", "password": "testingpassword"})
-    print(r.url)
+    r = client.post(
+        "/login_view/",
+        {"username": "userdeactivatetest", "password": "testingpassword"},
+    )
     assert r.status_code == 302
     assert r.url == "/home/"
     assert u.is_active
     n = now() + timedelta(days=35)
     run_user_deactivate(n)
-    u = fEMRUser.objects.get(username="test")
-    print(u.last_login)
+    u = fEMRUser.objects.get(username="userdeactivatetest")
     assert not u.is_active
     u.delete()
