@@ -891,7 +891,12 @@ def __message_of_the_day_form_processor(request, message):
                     os.environ.get("DEFAULT_FROM_EMAIL"),
                     [user.email],
                 )
-    return form
+        return_response = render(request, "admin/motd_confirm.html")
+    else:
+        return_response = render(
+            request, "admin/motd.html", {"form": form, "page_name": "MotD"}
+        )
+    return return_response
 
 
 def message_of_the_day_view(request):
@@ -904,11 +909,11 @@ def message_of_the_day_view(request):
                 form.initial["text"] = message.text
                 form.initial["start_date"] = message.start_date
                 form.initial["end_date"] = message.end_date
+                return_response = render(
+                    request, "admin/motd.html", {"form": form, "page_name": "MotD"}
+                )
             elif request.method == "POST":
-                form = __message_of_the_day_form_processor(request, message)
-            return_response = render(
-                request, "admin/motd.html", {"form": form, "page_name": "MotD"}
-            )
+                return_response = __message_of_the_day_form_processor(request, message)
         else:
             return_response = redirect("main:permission_denied")
     else:
