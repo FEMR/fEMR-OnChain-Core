@@ -191,7 +191,8 @@
                         <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
                     </div>
                     <div>
-                        <a href="{% url 'main:delete_treatment_view' treatment_id=t.id %}" id="treatment_delete_{{ t.id }}"
+                        <a href="{% url 'main:delete_treatment_view' treatment_id=t.id %}"
+                            id="treatment_delete_{{ t.id }}"
                             onclick="return confirm('Are you sure you want to delete this prescribed treatment?');">Delete</a>
                     </div>
                 </div>
@@ -228,7 +229,8 @@
                 </li>
             </ul>
             <div class="row bg-light">
-                <form id="diagnosis_form" action="{% url 'main:new_diagnosis_view' patient.id encounter_id %}" method="post"
+                <form id="diagnosis_form" action="{% url 'main:new_diagnosis_view' patient.id encounter_id %}"
+                    method="post"
                     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
                     <h2>Diagnoses</h2>
                     {% crispy diagnosis_form %}
