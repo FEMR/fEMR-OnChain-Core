@@ -45,7 +45,8 @@ def admin_home(request):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
             return_response = render(
-                request, "admin/home.html", {"user": request.user, "page_name": "Admin"}
+                request, "admin/home.html", {"user": request.user,
+                                             "page_name": "Admin"}
             )
         else:
             return_response = redirect("main:permission_denied")
@@ -96,7 +97,8 @@ def filter_users_view(request):
             return_response = render(
                 request,
                 "admin/user_list.html",
-                {"user": request.user, "list_view": data, "page_name": "Clinic Users"},
+                {"user": request.user, "list_view": data,
+                    "page_name": "Clinic Users"},
             )
         else:
             return_response = redirect("main:permission_denied")
@@ -117,7 +119,8 @@ def search_users_view(request):
             return_response = render(
                 request,
                 "admin/user_list.html",
-                {"user": request.user, "list_view": data, "page_name": "Clinic Users"},
+                {"user": request.user, "list_view": data,
+                    "page_name": "Clinic Users"},
             )
         else:
             return_response = redirect("main:permission_denied")
@@ -150,11 +153,13 @@ def __create_user_view_post(request):
         form.save_m2m()
         item.created_by = request.user
         item.user_permissions.add(Permission.objects.get(name="Can add state"))
-        item.user_permissions.add(Permission.objects.get(name="Can add diagnosis"))
+        item.user_permissions.add(
+            Permission.objects.get(name="Can add diagnosis"))
         item.user_permissions.add(
             Permission.objects.get(name="Can add chief complaint")
         )
-        item.user_permissions.add(Permission.objects.get(name="Can add medication"))
+        item.user_permissions.add(
+            Permission.objects.get(name="Can add medication"))
         item.save()
         DatabaseChangeLog.objects.create(
             action="Create",
@@ -207,27 +212,38 @@ def update_user_view(request, user_id=None):
                     instance=str(item),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=Campaign.objects.get(
+                        name=request.session["campaign"]),
                 )
-                return_response = render(request, "admin/user_edit_confirmed.html")
+                return_response = render(
+                    request, "admin/user_edit_confirmed.html")
             else:
-                error = "Form is invalid."
+                return_response = render(
+                    request,
+                    "admin/user_edit_form.html",
+                    {
+                        "error": "Form is invalid.",
+                        "form": form,
+                        "user_id": user_id,
+                        "page_name": "Editing User",
+                    },
+                )
         else:
             form = (
                 fEMRAdminUserUpdateForm(instance=user)
                 if request.user.groups.filter(name="fEMR Admin").exists()
                 else UserUpdateForm(request.user, instance=user)
             )
-        return_response = render(
-            request,
-            "admin/user_edit_form.html",
-            {
-                "error": error,
-                "form": form,
-                "user_id": user_id,
-                "page_name": "Editing User",
-            },
-        )
+            return_response = render(
+                request,
+                "admin/user_edit_form.html",
+                {
+                    "error": error,
+                    "form": form,
+                    "user_id": user_id,
+                    "page_name": "Editing User",
+                },
+            )
     else:
         return_response = redirect("/not_logged_in")
     return return_response
@@ -250,9 +266,11 @@ def update_user_password_view(request, user_id=None):
                     instance=str(item),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=Campaign.objects.get(
+                        name=request.session["campaign"]),
                 )
-                return_response = render(request, "admin/user_edit_confirmed.html")
+                return_response = render(
+                    request, "admin/user_edit_confirmed.html")
             else:
                 error = "Form is invalid."
         else:
@@ -307,7 +325,8 @@ def get_audit_logs_view(request):
         if check_admin_permission(request.user):
             try:
                 data = AuditEntry.objects.filter(
-                    Q(campaign=Campaign.objects.get(name=request.session["campaign"]))
+                    Q(campaign=Campaign.objects.get(
+                        name=request.session["campaign"]))
                     | Q(action="user_login_failed")
                 ).order_by("-timestamp")
             except ObjectDoesNotExist:
@@ -334,7 +353,8 @@ def __filter_audit_logs_process(request):
         logs = AuditEntry.objects.all()
         campaign = Campaign.objects.get(name=request.session["campaign"])
         if request.GET["filter_list"] == "1":
-            now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
+            now = timezone.make_aware(
+                datetime.today(), timezone.get_default_timezone())
             now = now.astimezone(timezone.get_current_timezone())
             data = set(
                 list(
@@ -407,7 +427,8 @@ def __filter_audit_logs_process(request):
                                 timestamp__lt=timestamp_to,
                             )
                             .filter(
-                                Q(campaign=campaign) | Q(action="user_login_failed")
+                                Q(campaign=campaign) | Q(
+                                    action="user_login_failed")
                             )
                             .order_by("-timestamp"),
                             logs.filter(
@@ -438,7 +459,8 @@ def __filter_audit_logs_process(request):
                                 timestamp__lt=timestamp_to,
                             )
                             .filter(
-                                Q(campaign=campaign) | Q(action="user_login_failed")
+                                Q(campaign=campaign) | Q(
+                                    action="user_login_failed")
                             )
                             .order_by("-timestamp"),
                             logs.filter(
@@ -495,7 +517,8 @@ def search_audit_logs_view(request):
         if check_admin_permission(request.user):
             try:
                 data = AuditEntry.objects.filter(
-                    Q(campaign=Campaign.objects.get(name=request.session["campaign"]))
+                    Q(campaign=Campaign.objects.get(
+                        name=request.session["campaign"]))
                     | Q(action="user_login_failed")
                 )
             except ObjectDoesNotExist:
@@ -520,7 +543,8 @@ def export_audit_logs_view(request):
                 "export/audit_logfile.html",
                 {
                     "log": AuditEntry.objects.filter(
-                        campaign=Campaign.objects.get(name=request.session["campaign"])
+                        campaign=Campaign.objects.get(
+                            name=request.session["campaign"])
                     )
                 },
             )
@@ -539,7 +563,8 @@ def get_database_logs_view(request):
                 data = (
                     DatabaseChangeLog.objects.exclude(model__in=excludemodels)
                     .filter(
-                        campaign=Campaign.objects.get(name=request.session["campaign"])
+                        campaign=Campaign.objects.get(
+                            name=request.session["campaign"])
                     )
                     .order_by("-timestamp")
                 )
@@ -567,7 +592,8 @@ def __filter_database_logs_check(request):
     try:
         logs = DatabaseChangeLog.objects.all()
         if request.GET["filter_list"] == "1":
-            now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
+            now = timezone.make_aware(
+                datetime.today(), timezone.get_default_timezone())
             now = now.astimezone(timezone.get_current_timezone())
             data = set(
                 list(
@@ -720,7 +746,8 @@ def __filter_database_logs_check(request):
         elif request.GET["filter_list"] == "6":
             try:
                 data = logs.exclude(model__in=excludemodels).filter(
-                    campaign=Campaign.objects.get(name=request.session["campaign"])
+                    campaign=Campaign.objects.get(
+                        name=request.session["campaign"])
                 )
             except ValueError:
                 data = []
@@ -763,7 +790,8 @@ def search_database_logs_view(request):
                 data = DatabaseChangeLog.objects.exclude(
                     model__in=excludemodels
                 ).filter(
-                    campaign=Campaign.objects.get(name=request.session["campaign"])
+                    campaign=Campaign.objects.get(
+                        name=request.session["campaign"])
                 )
             except ObjectDoesNotExist:
                 data = ""
@@ -794,7 +822,8 @@ def export_database_logs_view(request):
                     "log": DatabaseChangeLog.objects.exclude(
                         model__in=excludemodels
                     ).filter(
-                        campaign=Campaign.objects.get(name=request.session["campaign"])
+                        campaign=Campaign.objects.get(
+                            name=request.session["campaign"])
                     )
                 },
             )
@@ -824,7 +853,8 @@ def add_user_to_campaign(request, user_id=None):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
             user = fEMRUser.objects.get(pk=user_id)
-            user.campaigns.add(Campaign.objects.get(name=request.session["campaign"]))
+            user.campaigns.add(Campaign.objects.get(
+                name=request.session["campaign"]))
             user.save()
             return_response = render(
                 request,
@@ -864,7 +894,8 @@ def __retrieve_needed_users(request):
     users_in_my_campaigns = user_set.filter(
         campaigns__in=request.user.campaigns.all()
     ).filter(is_active=True)
-    users = set(list(itertools.chain(users_created_by_me, users_in_my_campaigns)))
+    users = set(list(itertools.chain(
+        users_created_by_me, users_in_my_campaigns)))
     return users
 
 
@@ -910,10 +941,12 @@ def message_of_the_day_view(request):
                 form.initial["start_date"] = message.start_date
                 form.initial["end_date"] = message.end_date
                 return_response = render(
-                    request, "admin/motd.html", {"form": form, "page_name": "MotD"}
+                    request, "admin/motd.html", {"form": form,
+                                                 "page_name": "MotD"}
                 )
             elif request.method == "POST":
-                return_response = __message_of_the_day_form_processor(request, message)
+                return_response = __message_of_the_day_form_processor(
+                    request, message)
         else:
             return_response = redirect("main:permission_denied")
     else:
