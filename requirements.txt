@@ -18,7 +18,7 @@ django-autocomplete-light==3.8.2
 django-axes==5.27.0
 django-background-tasks==1.2.5
 django-compat==1.0.15
-django-crispy-forms==1.13.0
+django-crispy-forms==1.14.0
 django-ipware==4.0.0
 django-localflavor==3.1
 django-nose==1.4.7
