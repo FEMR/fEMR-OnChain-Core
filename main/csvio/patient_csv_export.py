@@ -145,6 +145,8 @@ def run_patient_csv_export(request):
                         vital.glucose_level,
                     ]
                 )
+                if len(vitals) < max_vitals:
+                    row.extend([""] * (max_vitals - len(vitals)))
             for item in treatments:
                 row.extend(
                     [
@@ -155,6 +157,8 @@ def run_patient_csv_export(request):
                         item.prescriber,
                     ]
                 )
+                if len(treatments) < max_treatments:
+                    row.extend([""] * (max_treatments - len(treatments)))
             for item in hpis:
                 row.extend(
                     [
@@ -171,6 +175,8 @@ def run_patient_csv_export(request):
                         item.tests_ordered,
                     ]
                 )
+                if len(hpis) < max_hpis:
+                    row.extend([""] * (max_hpis - len(hpis)))
             patient_rows.append(row)
         export_id += 1
     for _ in range(max_vitals):
