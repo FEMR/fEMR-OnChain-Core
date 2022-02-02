@@ -43,7 +43,7 @@ isort==5.10.1
 itypes==1.2.0
 Jinja2==3.0.3
 jmespath==0.10.0
-lazy-object-proxy==1.6.0
+lazy-object-proxy==1.7.1
 MarkupSafe==2.0.1
 mccabe==0.6.1
 model-bakery==1.4.0
