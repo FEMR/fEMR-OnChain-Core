@@ -25,6 +25,14 @@
   height: 50%;
 }
 
+.select2 .select2-container .select2-container--default .select2-container--focus .select2-container--below {
+  width: 615px;
+}
+
+.select2-selection .select2-selection--multiple .modelselect2multiple .form-control .custom-select {
+  height: 80px;
+}
+
 /* Firefox */
 #id_mean_arterial_pressure,
 #id_body_mass_index {
