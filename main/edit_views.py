@@ -349,7 +349,7 @@ def __new_diagnosis_view_body(request, patient_id, encounter_id):
             "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
             "units": units,
             "patient": patient,
-            "treatment_active": treatment_active
+            "treatment_active": treatment_active,
         },
     )
 
@@ -448,7 +448,7 @@ def __new_treatment_view_body(request, patient_id, encounter_id):
             "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
             "units": units,
             "patient": patient,
-            "treatment_active": treatment_active
+            "treatment_active": treatment_active,
         },
     )
 
