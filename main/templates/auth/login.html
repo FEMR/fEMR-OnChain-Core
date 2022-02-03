@@ -1,6 +1,7 @@
 {% extends "data/base_login.html" %}
 {% block content %}
 {% load crispy_forms_tags %}
+{% load static %}
 {{ error_message }}
 <form action="{% url 'main:login_view' %}" class="form-signin container-sm my-auto mx-auto" id="login_form"
       method="post" name="login_form">
