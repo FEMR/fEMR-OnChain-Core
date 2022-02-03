@@ -250,7 +250,10 @@
                         $('#submit-id-submit').prop('disabled', true);
                     </script>
                     {% endif %}
-                    <h2 id="prescriptions_title">Prescriptions</h2>
+                    <h2 id="prescriptions_title">Prescriptions <button class="btn btn-link"
+                            data-content='Prescription will only save upon hitting the "Save Treament" button. Must select a diagnosis that this prescription is for.'
+                            data-toggle="popover" data-trigger="hover"><i class="fa fa-question-circle"></i></button>
+                    </h2>
                     {% crispy treatment_form %}
                 </form>
             </div>
