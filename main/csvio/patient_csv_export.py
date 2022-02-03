@@ -52,6 +52,22 @@ def run_patient_csv_export(request):
     max_treatments = 0
     max_hpis = 0
     max_vitals = 0
+    vitals_dict = {}
+    treatments_dict = {}
+    hpis_dict = {}
+    for patient in data:
+        for encounter in patient.patientencounter_set.all():
+            vitals = Vitals.objects.filter(encounter=encounter)
+            treatments = Treatment.objects.filter(encounter=encounter)
+            hpis = HistoryOfPresentIllness.objects.filter(encounter=encounter)
+
+            vitals_dict[encounter] = vitals
+            treatments_dict[encounter] = treatments
+            hpis_dict[encounter] = hpis
+
+            max_treatments = max(len(treatments), max_treatments)
+            max_hpis = max(len(hpis), max_hpis)
+            max_vitals = max(len(vitals), max_vitals)
     for patient in data:
         for encounter in patient.patientencounter_set.all():
             row = [
@@ -113,12 +129,9 @@ def run_patient_csv_export(request):
                 encounter.current_medications,
                 encounter.family_history,
             ]
-            vitals = Vitals.objects.filter(encounter=encounter)
-            treatments = Treatment.objects.filter(encounter=encounter)
-            hpis = HistoryOfPresentIllness.objects.filter(encounter=encounter)
-            max_treatments = max(len(treatments), max_treatments)
-            max_hpis = max(len(hpis), max_hpis)
-            max_vitals = max(len(vitals), max_vitals)
+            vitals = vitals_dict[encounter]
+            treatments = treatments_dict[encounter]
+            hpis = hpis_dict[encounter]
             for vital in vitals:
                 row.extend(
                     [
@@ -146,7 +159,9 @@ def run_patient_csv_export(request):
                     ]
                 )
                 if len(vitals) < max_vitals:
-                    row.extend(["","","","","","",""] * (max_vitals - len(vitals)))
+                    row.extend(
+                        ["", "", "", "", "", "", ""] * (max_vitals - len(vitals))
+                    )
             for item in treatments:
                 row.extend(
                     [
@@ -158,7 +173,9 @@ def run_patient_csv_export(request):
                     ]
                 )
                 if len(treatments) < max_treatments:
-                    row.extend(["","","","",""] * (max_treatments - len(treatments)))
+                    row.extend(
+                        ["", "", "", "", ""] * (max_treatments - len(treatments))
+                    )
             for item in hpis:
                 row.extend(
                     [
@@ -176,7 +193,10 @@ def run_patient_csv_export(request):
                     ]
                 )
                 if len(hpis) < max_hpis:
-                    row.extend(["","","","","","","","","","",""] * (max_hpis - len(hpis)))
+                    row.extend(
+                        ["", "", "", "", "", "", "", "", "", "", ""]
+                        * (max_hpis - len(hpis))
+                    )
             patient_rows.append(row)
         export_id += 1
     for _ in range(max_vitals):
