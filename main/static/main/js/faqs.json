@@ -1,0 +1,26 @@
+{ 
+  "faqsInViewsDotPy_SectionOne": [
+        ["How do I reset my login?", 
+            "Contact your Campaign Manager."],
+        ["I tried logging in too many times, and now I am locked out. How can I fix this?",
+            "Contact your Campaign Manager."],
+        ["I forgot my password. What should I do?",
+            "There is a button underneath the log in that says “Forgot Password”. If you click that, you will get an email to reset your password."],
+        ["How do I get help from fEMR staff?", 
+            "There is an issue reporting system built into the EMR. It is on the very bottom and left side of the screen. This is the fastest way to get a hold of fEMR staff."]
+  ],
+  "faqsInViewsDotPy_SectionTwo": [
+        ["How do I find a patient that’s been to the clinic before?",
+            "There are several ways to do this."],
+        ["How do I write a prescription?",
+            "Navigate to the Treatment Tab under the open medical encounter. Type in a diagnosis, and save it first. The diagnosis will then appear under the “Prescriptions” section in the diagnosis box. Click on that box for the drop down menu to appear, and you should see the diagnosis you just added. Fill out an appropriate treatment for that specific diagnosis, and click “Save Treatment”. The treatment will then appear on the left side of the screen. If it does not appear there, then the treatment was not saved."],
+        ["How do I report a bug?",
+            "There is an issue reporting system built into the EMR. It is on the very bottom and left side of the screen. This is the fastest way to get a hold of fEMR staff."]
+  ],
+  "faqsInViewsDotPy_SectionThree": [
+        ["How do I create a new user?",
+            "Click on the Admin Tab. Then click on User Management, and “Create New User” at the top of the page."],
+        ["How do I fix a login for someone on my team who has been locked out?",
+            "Click on the Admin Tab. Then click on User Management: 1. If the user has attempted to log in too many times, then click “Reset Login Attempts.” 2. If they need to reset their password, click “Update” next to their name, then click Change Password. 3. If their account has been locked, it will appear on the right side of the screen under “Inactive Users”. Click on “Unlock Account” and it will move to the left side of the screen."]
+   ]
+}

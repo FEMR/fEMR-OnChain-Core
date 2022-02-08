@@ -316,6 +316,7 @@ def required_change_password(request):
                 user = form.save()
                 update_session_auth_hash(request, user)
                 user.change_password = False
+                user.password_reset_last = timezone.now()
                 user.save()
                 return_response = redirect("main:home")
             else:

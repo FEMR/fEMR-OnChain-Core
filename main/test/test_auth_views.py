@@ -72,9 +72,9 @@ def test_login_with_campaigns():
 
 def test_login_with_inactive_campaigns():
     u = fEMRUser.objects.create_user(
-        username="test",
+        username="logininactivecampaigntest",
         password="testingpassword",
-        email="logintestinguseremail@email.com",
+        email="inactivecampaignlogintestinguseremail@email.com",
     )
     u.change_password = False
     c = baker.make("main.Campaign")
@@ -85,7 +85,10 @@ def test_login_with_inactive_campaigns():
     campaign_list = u.campaigns.filter(active=True)
     assert len(campaign_list) == 0
     client = Client()
-    client.post("/login_view/", {"username": "test", "password": "testingpassword"})
+    client.post(
+        "/login_view/",
+        {"username": "logininactivecampaigntest", "password": "testingpassword"},
+    )
     return_response = client.post("/logout/")
     u.delete()
     c.delete()
@@ -126,6 +129,44 @@ def test_required_password_change():
     u.delete()
     assert return_response.status_code == 302
     assert return_response.url == "/required_change_password/"
+
+
+def test_required_password_change_no_repeat():
+    u = fEMRUser.objects.create_user(
+        username="test2",
+        password="testingpassword",
+        email="logintestinguseremail2@email.com",
+    )
+    c = baker.make("main.Campaign")
+    c.active = True
+    c.save()
+    u.campaigns.add(c)
+    u.change_password = True
+    u.save()
+    client = Client()
+    return_response = client.post(
+        "/login_view/", {"username": "test2", "password": "testingpassword"}
+    )
+    assert return_response.status_code == 302
+    assert return_response.url == "/required_change_password/"
+    return_response = client.post(
+        "/required_change_password/",
+        {
+            "old_password": "testingpassword",
+            "new_password1": "testingpasswordreset",
+            "new_password2": "testingpasswordreset",
+        },
+    )
+    assert return_response.status_code == 302
+    assert return_response.url == "/home/"
+    client.get("/logout/")
+    return_response = client.post(
+        "/login_view/", {"username": "test2", "password": "testingpasswordreset"}
+    )
+    u.delete()
+    c.delete()
+    assert return_response.status_code == 302
+    assert return_response.url == "/home/"
 
 
 def test_login_view_with_remember_me():

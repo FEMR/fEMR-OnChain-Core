@@ -1,12 +1,13 @@
 {% extends "data/base_login.html" %}
 {% block content %}
 {% load crispy_forms_tags %}
+{% load static %}
 {{ error_message }}
 <form action="{% url 'main:login_view' %}" class="form-signin container-sm my-auto mx-auto" id="login_form"
       method="post" name="login_form">
     <p class="text-center" id="header_image">
         <img alt="" class="mb-4"
-             src="https://demo.teamfemr.org/assets/img/52749c927045848ae798e9df58dcc0dd-logo_color_sm.png">
+             src="{% static 'main/assets/logo.png' %}">
     </p>
     <div id="divon" style="visibility:hidden;color:red;">Caps Lock is on.</div>
     {% csrf_token %}

@@ -326,8 +326,10 @@ def __new_diagnosis_view_body(request, patient_id, encounter_id):
         for query_item in querysets:
             item.union(query_item.diagnosis.all())
         treatment_form.fields["diagnosis"].queryset = item
+        treatment_active = True
     else:
         treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
+        treatment_active = False
     return render(
         request,
         "forms/treatment_tab.html",
@@ -347,6 +349,7 @@ def __new_diagnosis_view_body(request, patient_id, encounter_id):
             "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
             "units": units,
             "patient": patient,
+            "treatment_active": treatment_active,
         },
     )
 
@@ -412,8 +415,10 @@ def __new_treatment_view_body(request, patient_id, encounter_id):
         for query_item in querysets:
             item.union(query_item.diagnosis.all())
         treatment_form.fields["diagnosis"].queryset = item
+        treatment_active = True
     else:
         treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
+        treatment_active = False
     diagnosis_set = patient_diagnoses
     if len(diagnosis_set) > 0:
         diagnosis_form = PatientDiagnosisForm(instance=diagnosis_set[0])
@@ -443,6 +448,7 @@ def __new_treatment_view_body(request, patient_id, encounter_id):
             "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
             "units": units,
             "patient": patient,
+            "treatment_active": treatment_active,
         },
     )
 

@@ -191,7 +191,8 @@
                         <div class=""><a href="mailto:{{ t.prescriber.email }}">{{ t.prescriber.email }}</a></div>
                     </div>
                     <div>
-                        <a href="{% url 'main:delete_treatment_view' treatment_id=t.id %}" id="treatment_delete_{{ t.id }}"
+                        <a href="{% url 'main:delete_treatment_view' treatment_id=t.id %}"
+                            id="treatment_delete_{{ t.id }}"
                             onclick="return confirm('Are you sure you want to delete this prescribed treatment?');">Delete</a>
                     </div>
                 </div>
@@ -228,14 +229,31 @@
                 </li>
             </ul>
             <div class="row bg-light">
-                <form id="diagnosis_form" action="{% url 'main:new_diagnosis_view' patient.id encounter_id %}" method="post"
+                <form id="diagnosis_form" action="{% url 'main:new_diagnosis_view' patient.id encounter_id %}"
+                    method="post"
                     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
-                    <h2>Diagnoses</h2>
+                    <h2>Diagnoses <button class="btn btn-link"
+                            data-content='Type in a diagnosis and click "Save Diagnosis". Only then will the option to write a prescription appear. If no formal diagnosis, type in "wellness visit" or "N/A".'
+                            data-toggle="popover" data-trigger="hover"><i class="fa fa-question-circle"></i></button>
+                    </h2>
                     {% crispy diagnosis_form %}
                 </form>
                 <form action="{% url 'main:new_treatment_view' patient.id encounter_id %}" method="post"
                     onreset="return confirm('Are you sure you want to reset the form? Any work may be lost.');">
-                    <h2>Prescriptions</h2>
+                    {% if not treatment_active %}
+                    <style>
+                        #prescriptions_title {
+                            color: rgb(151, 150, 150);
+                        }
+                    </style>
+                    <script>
+                        $('#submit-id-submit').prop('disabled', true);
+                    </script>
+                    {% endif %}
+                    <h2 id="prescriptions_title">Prescriptions <button class="btn btn-link"
+                            data-content='Prescription will only save upon hitting the "Save Treament" button. Must select a diagnosis that this prescription is for.'
+                            data-toggle="popover" data-trigger="hover"><i class="fa fa-question-circle"></i></button>
+                    </h2>
                     {% crispy treatment_form %}
                 </form>
             </div>

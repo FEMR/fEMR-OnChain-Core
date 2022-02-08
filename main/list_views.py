@@ -267,6 +267,7 @@ def search_patient_list_view(request):
         try:
             current_campaign = Campaign.objects.get(name=request.session["campaign"])
             patients = Patient.objects.filter(campaign=current_campaign)
+            data = None
             for term in request.GET["name_search"].split():
                 data = set(
                     list(
@@ -290,6 +291,7 @@ def search_patient_list_view(request):
                         )
                     )
                 )
+            data = data if data is not None else []
         except ObjectDoesNotExist:
             data = []
         data = sorted(data, reverse=True, key=get_latest_timestamp)

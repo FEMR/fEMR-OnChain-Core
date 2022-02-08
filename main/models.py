@@ -91,7 +91,6 @@ class Contact(models.Model):
 class Organization(models.Model):
     name = models.CharField(max_length=30, unique=True)
     active = models.BooleanField(default=True)
-    contract_start_date = models.DateField(null=True, blank=True)
     address1 = models.CharField(
         "Address line 1", max_length=1024, null=True, blank=True
     )
@@ -138,6 +137,7 @@ class Instance(models.Model):
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, default=get_test_org
     )
+    contract_start_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return str(self.name)

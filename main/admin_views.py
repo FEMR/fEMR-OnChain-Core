@@ -211,23 +211,32 @@ def update_user_view(request, user_id=None):
                 )
                 return_response = render(request, "admin/user_edit_confirmed.html")
             else:
-                error = "Form is invalid."
+                return_response = render(
+                    request,
+                    "admin/user_edit_form.html",
+                    {
+                        "error": "Form is invalid.",
+                        "form": form,
+                        "user_id": user_id,
+                        "page_name": "Editing User",
+                    },
+                )
         else:
             form = (
                 fEMRAdminUserUpdateForm(instance=user)
                 if request.user.groups.filter(name="fEMR Admin").exists()
                 else UserUpdateForm(request.user, instance=user)
             )
-        return_response = render(
-            request,
-            "admin/user_edit_form.html",
-            {
-                "error": error,
-                "form": form,
-                "user_id": user_id,
-                "page_name": "Editing User",
-            },
-        )
+            return_response = render(
+                request,
+                "admin/user_edit_form.html",
+                {
+                    "error": error,
+                    "form": form,
+                    "user_id": user_id,
+                    "page_name": "Editing User",
+                },
+            )
     else:
         return_response = redirect("/not_logged_in")
     return return_response
@@ -292,6 +301,7 @@ def unlock_user_view(request, user_id=None):
             user = get_object_or_404(fEMRUser, pk=user_id)
             reset(username=user.username)
             user.is_active = True
+            user.last_login = timezone.now()
             user.save()
             return_response = redirect("main:list_users_view")
         else:
@@ -890,7 +900,12 @@ def __message_of_the_day_form_processor(request, message):
                     os.environ.get("DEFAULT_FROM_EMAIL"),
                     [user.email],
                 )
-    return form
+        return_response = render(request, "admin/motd_confirm.html")
+    else:
+        return_response = render(
+            request, "admin/motd.html", {"form": form, "page_name": "MotD"}
+        )
+    return return_response
 
 
 def message_of_the_day_view(request):
@@ -903,11 +918,11 @@ def message_of_the_day_view(request):
                 form.initial["text"] = message.text
                 form.initial["start_date"] = message.start_date
                 form.initial["end_date"] = message.end_date
+                return_response = render(
+                    request, "admin/motd.html", {"form": form, "page_name": "MotD"}
+                )
             elif request.method == "POST":
-                form = __message_of_the_day_form_processor(request, message)
-            return_response = render(
-                request, "admin/motd.html", {"form": form, "page_name": "MotD"}
-            )
+                return_response = __message_of_the_day_form_processor(request, message)
         else:
             return_response = redirect("main:permission_denied")
     else:
