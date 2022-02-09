@@ -27,6 +27,7 @@ def run_patient_csv_export(request):
         "Patient",
         "Sex Assigned at Birth",
         "Age (years)",
+        "City",
         "Date Seen",
         "Height",
         "Weight (lbs)" if units == "i" else "Weight (kg)",
@@ -74,6 +75,7 @@ def run_patient_csv_export(request):
                 export_id,
                 patient.sex_assigned_at_birth,
                 patient.age,
+                patient.city,
                 # pylint: disable=C0301
                 f"{encounter.timestamp.astimezone(campaign_time_zone)} {campaign_time_zone_b}",
                 # pylint: disable=C0209
