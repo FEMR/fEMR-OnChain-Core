@@ -884,7 +884,7 @@ def __message_of_the_day_form_processor(request, message):
         message.start_date = request.POST["start_date"]
         message.end_date = request.POST["end_date"]
         message.save()
-        for user in fEMRUser.objects.all():
+        for user in fEMRUser.objects.filter(is_active=True):
             Message.objects.create(
                 sender=request.user,
                 recipient=user,
