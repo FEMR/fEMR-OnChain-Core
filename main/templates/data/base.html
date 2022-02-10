@@ -36,6 +36,7 @@
         .select2-container .select2-selection--single {
             height: 38px !important;
         }
+
         textarea {
             overflow-y: scroll;
         }
@@ -45,8 +46,7 @@
 <body class="page-home">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark-femr">
         <a class="navbar-brand" href="{% url 'main:home' %}">
-            <img alt="" src="{% static 'main/assets/logo.png' %}"
-                width="60">
+            <img alt="" src="{% static 'main/assets/logo.png' %}" width="60">
         </a>
         <a data-content="Make sure you are using Google Chrome.
     Make sure Campaign is set to the correct clinic location or program.
@@ -74,7 +74,7 @@
                         Manager</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">Pharmacy</a>
+                    <a class="nav-link" href="{% url 'main:formulary_home_view' %}">Pharmacy</a>
                 </li>
                 {% endif %}
                 {% if request.message_number > 0 %}
