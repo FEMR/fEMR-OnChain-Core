@@ -49,8 +49,8 @@ class InitialInventoryHandler:
 
     @staticmethod
     def __import(upload, campaign):
-        csvfile = requests.get(upload.document.url).content
-        reader = csv.reader(csvfile, delimiter=",")
+        csvfile = requests.get(upload.document.url).content.decode('utf-8')
+        reader = csv.reader(csvfile.splitlines(), delimiter=",")
         next(reader)
         for row in reader:
             add_to_inventory(campaign, row)
