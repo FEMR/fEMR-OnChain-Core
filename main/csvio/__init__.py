@@ -10,16 +10,22 @@ from main.models import (
 def add_to_inventory(campaign, row):
     campaign.inventory.entries.add(
         InventoryEntry.objects.create(
-            category=InventoryCategory.objects.get_or_create(name=row[0])[0],
-            medication=Medication.objects.get_or_create(text=row[1])[0],
-            form=InventoryForm.objects.get_or_create(name=row[2])[0],
-            strength=row[3],
-            count=row[4],
-            quantity=row[5],
-            initial_quantity=row[6],
-            item_number=row[7],
-            box_number=row[8],
-            expiration_date=row[9],
-            manufacturer=Manufacturer.objects.get_or_create(name=row[10])[0],
+            category=InventoryCategory.objects.get_or_create(name=row["Category"])[0],
+            medication=Medication.objects.get_or_create(text=row["Medication"])[0],
+            form=InventoryForm.objects.get_or_create(name=row["Form"])[0],
+            strength=row["Strength"],
+            strength_unit=row["Strength Unit"],
+            count=row["Count"],
+            count_unit=row["Count Unit"],
+            quantity=row["Quantity"],
+            quantity_unit=row["Quantity Unit"],
+            initial_quantity=row["Initial quantity"],
+            item_number=row["Item number"],
+            box_number=row["Box number"],
+            expiration_date=row["Expiration date"],
+            manufacturer=Manufacturer.objects.get_or_create(name=row["Manufacturer"])[
+                0
+            ],
         )
     )
+    campaign.save()

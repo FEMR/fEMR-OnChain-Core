@@ -158,17 +158,25 @@ def csv_import_view(request):
                 upload = form.save()
                 upload.save()
 
-                if upload.mode_option == "1":
-                    InitialInventoryHandler().read(upload, campaign)
-                elif upload.mode_option == "2":
-                    AddedInventoryHandler().read(upload, campaign)
-                upload.document.delete()
-                upload.delete()
-                return_response = render(
-                    request,
-                    "formulary/csv_import.html",
-                    {"result": "Formulary uploaded successfully."},
-                )
+                upload_file = request.FILES["document"]
+                if not upload_file:
+                    return_response = render(
+                        request,
+                        "formulary/csv_handler.html",
+                        {"form": form, "result": "File failed to upload."},
+                    )
+                else:
+                    if upload.mode_option == "1":
+                        InitialInventoryHandler().read(upload_file, campaign)
+                    elif upload.mode_option == "2":
+                        AddedInventoryHandler().read(upload_file, campaign)
+                    upload.document.delete()
+                    upload.delete()
+                    return_response = render(
+                        request,
+                        "formulary/csv_import.html",
+                        {"result": "Formulary uploaded successfully."},
+                    )
             else:
                 return_response = render(
                     request,

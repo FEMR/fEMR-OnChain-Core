@@ -6,6 +6,7 @@ from django.contrib import admin
 from .forms import PatientEncounterForm, TreatmentForm
 from .models import (
     Ethnicity,
+    InventoryEntry,
     MessageOfTheDay,
     Patient,
     Contact,
@@ -64,3 +65,4 @@ admin.site.register(MessageOfTheDay)
 admin.site.register(Race)
 admin.site.register(Ethnicity)
 admin.site.register(UserSession)
+admin.site.register(InventoryEntry)

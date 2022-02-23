@@ -55,9 +55,9 @@ class AddedInventoryHandler:
         return response
 
     @staticmethod
-    def __import(upload, campaign):
-        csvfile = requests.get(upload.document.url).content
-        reader = csv.reader(csvfile, delimiter=",")
-        next(reader)
-        for row in reader:
-            add_to_inventory(campaign, row)
+    def __import(csvfile, campaign):
+        proc_file = csvfile.read().decode("utf-8")
+        lines = proc_file.split("\n")
+        lines.pop(0)
+        for row in lines:
+            add_to_inventory(campaign, row.split(","))

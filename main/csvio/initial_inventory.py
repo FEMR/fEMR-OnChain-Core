@@ -1,6 +1,6 @@
 import csv
+import io
 
-import requests
 from main.csvio import add_to_inventory
 
 
@@ -48,9 +48,10 @@ class InitialInventoryHandler:
         return response
 
     @staticmethod
-    def __import(upload, campaign):
-        csvfile = requests.get(upload.document.url).content.decode('utf-8')
-        reader = csv.reader(csvfile.splitlines(), delimiter=",")
-        next(reader)
-        for row in reader:
+    def __import(csvfile, campaign):
+        csvfile.seek(0)
+        proc_file = csvfile.read().decode("utf-8")
+        reader = csv.DictReader(io.StringIO(proc_file))
+        data = [line for line in reader]
+        for row in data:
             add_to_inventory(campaign, row)
