@@ -50,7 +50,7 @@
                 <th scope="row">{{ o.id }}</th>
                 <td>{{ o.name }}</td>
                 <td><a href="{% url 'main:view_contact' contact_id=o.main_contact.id %}">{{ o.main_contact }}</a></td>
-                <td><a href="{% url 'main:edit_instance' contact_id=o.id %}">Edit</a></td>
+                <td><a href="{% url 'main:edit_instance' instance_id=o.id %}">Edit</a></td>
                 {% if o.active %}
                 <td><a href="{% url 'main:lock_instance_view' instance_id=o.id %}">Lock Operation</a></td>
                 {% else %}
