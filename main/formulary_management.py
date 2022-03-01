@@ -167,15 +167,15 @@ def csv_import_view(request):
                     )
                 else:
                     if upload.mode_option == "1":
-                        InitialInventoryHandler().read(upload_file, campaign)
+                        result = InitialInventoryHandler().read(upload_file, campaign)
                     elif upload.mode_option == "2":
-                        AddedInventoryHandler().read(upload_file, campaign)
+                        result = AddedInventoryHandler().read(upload_file, campaign)
                     upload.document.delete()
                     upload.delete()
                     return_response = render(
                         request,
                         "formulary/csv_import.html",
-                        {"result": "Formulary uploaded successfully."},
+                        {"result": result},
                     )
             else:
                 return_response = render(

@@ -15,14 +15,14 @@ def add_to_inventory(campaign, row):
             form=InventoryForm.objects.get_or_create(name=row["Form"])[0],
             strength=row["Strength"],
             strength_unit=row["Strength Unit"],
-            count=row["Count"],
+            count=0 if row["Count"] == '' else row["Count"],
             count_unit=row["Count Unit"],
             quantity=row["Quantity"],
             quantity_unit=row["Quantity Unit"],
-            initial_quantity=row["Initial quantity"],
+            initial_quantity=0 if row["Initial quantity"] == '' else row["Initial quantity"],
             item_number=row["Item number"],
             box_number=row["Box number"],
-            expiration_date=row["Expiration date"],
+            expiration_date=None if row["Expiration date"] == '' else row["Expiration date"],
             manufacturer=Manufacturer.objects.get_or_create(name=row["Manufacturer"])[
                 0
             ],
