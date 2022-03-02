@@ -48,7 +48,11 @@ class InitialInventoryHandler:
         return response
 
     @staticmethod
-    def __import(data, campaign):
+    def __import(csvfile, campaign):
+        csvfile.seek(0)
+        proc_file = csvfile.read().decode("utf-8")
+        reader = csv.DictReader(io.StringIO(proc_file))
+        data = [line for line in reader]
         try:
             for row in data:
                 add_to_inventory(campaign, row)
