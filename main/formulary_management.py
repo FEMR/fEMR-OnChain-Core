@@ -1,3 +1,5 @@
+import csv
+import io
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from main.background_tasks import check_admin_permission
@@ -166,10 +168,14 @@ def csv_import_view(request):
                         {"form": form, "result": "File failed to upload."},
                     )
                 else:
+                    upload_file.seek(0)
+                    proc_file = upload_file.read().decode("utf-8")
+                    reader = csv.DictReader(io.StringIO(proc_file))
+                    data = [line for line in reader]
                     if upload.mode_option == "1":
-                        result = InitialInventoryHandler().read(upload_file, campaign)
+                        result = InitialInventoryHandler().read(data, campaign)
                     elif upload.mode_option == "2":
-                        result = AddedInventoryHandler().read(upload_file, campaign)
+                        result = AddedInventoryHandler().read(data, campaign)
                     upload.document.delete()
                     upload.delete()
                     return_response = render(
