@@ -607,7 +607,7 @@ class InventoryEntry(models.Model):
     medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
     form = models.ForeignKey(InventoryForm, on_delete=models.CASCADE)
     strength = models.CharField(max_length=25, null=True, blank=True)
-    strenth_unit = models.CharField(max_length=25, null=True, blank=True)
+    strength_unit = models.CharField(max_length=25, null=True, blank=True)
     count = models.PositiveIntegerField(default=0)
     count_unit = models.CharField(max_length=25, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=0)

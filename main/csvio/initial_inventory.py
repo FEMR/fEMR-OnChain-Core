@@ -53,5 +53,10 @@ class InitialInventoryHandler:
         proc_file = csvfile.read().decode("utf-8")
         reader = csv.DictReader(io.StringIO(proc_file))
         data = [line for line in reader]
-        for row in data:
-            add_to_inventory(campaign, row)
+        try:
+            for row in data:
+                add_to_inventory(campaign, row)
+            return_result = "Formulary uploaded successfully."
+        except KeyError as e:
+            return_result = "Heading '{}' is missing or incorrect.".format(e.message)
+        return return_result
