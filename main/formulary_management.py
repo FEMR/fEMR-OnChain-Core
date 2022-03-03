@@ -158,7 +158,7 @@ def csv_import_view(request):
                 upload = form.save()
                 upload.save()
 
-                upload_file = request.FILES["document"]
+                upload_file = upload.document
                 if not upload_file:
                     return_response = render(
                         request,

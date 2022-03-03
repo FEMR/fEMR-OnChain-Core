@@ -57,5 +57,5 @@ class InitialInventoryHandler:
                 add_to_inventory(campaign, row)
             return_result = "Formulary uploaded successfully."
         except KeyError as e:
-            return_result = "Heading '{}' is missing or incorrect.".format(e.message)
+            return_result = "Heading '{}' is missing or incorrect.".format(e)
         return return_result
