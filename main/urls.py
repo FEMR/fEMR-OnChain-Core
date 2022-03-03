@@ -514,17 +514,17 @@ urlpatterns = [
     ),
     url(
         r"^inventory-form-autocomplete/$",
-        InventoryFormAutocomplete.as_view(),
+        InventoryFormAutocomplete.as_view(create_field="name"),
         name="inventory-form-autocomplete",
     ),
     url(
         r"^inventory-category-autocomplete/$",
-        InventoryCategoryAutocomplete.as_view(),
+        InventoryCategoryAutocomplete.as_view(create_field="name"),
         name="inventory-category-autocomplete",
     ),
     url(
         r"^manufacturer-autocomplete/$",
-        ManufacturerAutocomplete.as_view(),
+        ManufacturerAutocomplete.as_view(create_field="name"),
         name="manufacturer-autocomplete",
     ),
     url(
