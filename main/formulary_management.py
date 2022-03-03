@@ -36,9 +36,11 @@ def add_supply_view(request):
             if request.method == "GET":
                 form = InventoryEntryForm()
             else:
+                campaign = Campaign.objects.get(name=request.session["campaign"])
                 form = InventoryEntryForm(request.POST)
                 entry = form.save()
                 entry.save()
+                campaign.inventory.entries.add(entry)
             return_response = render(
                 request, "formulary/add_supply.html", {"form": form}
             )

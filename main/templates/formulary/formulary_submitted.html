@@ -1,0 +1,12 @@
+{% extends "data/base.html" %}
+{% load patient_tags %}
+{% block content %}
+<div>
+    <div class="row">
+        <div class="col-lg-10">
+            <h2>Medication update submitted.</h2>
+        </div>v
+        <div><a class="btn btn-primary" href="{% url 'main:formulary_home_view' %}">View Pharmacy</a></div>
+    </div>
+</div>
+{% endblock %}

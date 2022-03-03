@@ -622,7 +622,7 @@ class InventoryEntry(models.Model):
     timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f"{self.medication} {self.strength}"
+        return f"{self.medication} {self.strength} {self.strength_unit} {self.form}"
 
 
 class Inventory(models.Model):
