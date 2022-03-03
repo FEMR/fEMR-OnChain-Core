@@ -49,7 +49,6 @@ class InitialInventoryHandler:
 
     @staticmethod
     def __import(csvfile, campaign):
-        csvfile.seek(0)
         proc_file = csvfile.read().decode("utf-8")
         reader = csv.DictReader(io.StringIO(proc_file))
         data = [line for line in reader]
