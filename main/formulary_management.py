@@ -35,17 +35,30 @@ def add_supply_view(request):
         if check_admin_permission(request.user):
             if request.method == "GET":
                 form = InventoryEntryForm()
+                return_response = render(
+                    request, "formulary/add_supply.html", {"form": form}
+                )
             else:
                 campaign = Campaign.objects.get(name=request.session["campaign"])
                 form = InventoryEntryForm(request.POST)
                 entry = form.save()
                 entry.save()
                 campaign.inventory.entries.add(entry)
-            return_response = render(
-                request, "formulary/add_supply.html", {"form": form}
-            )
+                campaign.save()
+                return_response = render(
+                    request, "formulary/formulary_submitted.html"
+                )
         else:
             return_response = redirect("main:permission_denied")
+    else:
+        return_response = redirect("main:not_logged_in")
+    return return_response
+
+
+def delete_supply_item(request, supply_id=None):
+    if request.user.is_authenticated:
+        InventoryEntry.objects.get(pk=supply_id).delete()
+        return_response = redirect("main:formulary_home_view")
     else:
         return_response = redirect("main:not_logged_in")
     return return_response
