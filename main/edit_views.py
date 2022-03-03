@@ -26,6 +26,7 @@ from main.models import (
     Campaign,
     Diagnosis,
     HistoryOfPresentIllness,
+    InventoryEntry,
     Patient,
     PatientDiagnosis,
     PatientEncounter,
@@ -461,6 +462,12 @@ def __treatment_view_post(request, encounter):
         treatment.prescriber = request.user
         treatment.save()
         treatment_form.save_m2m()
+        treatment_inventory = InventoryEntry.objects.get(
+            medication__in=treatment.medication.all()
+        )
+        for item in treatment_inventory:
+            item.count -= 1
+            item.save()
         treatment_form = TreatmentForm()
         DatabaseChangeLog.objects.create(
             action="Edit",

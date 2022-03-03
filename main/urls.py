@@ -93,6 +93,10 @@ from .auth_views import (
 from .autocomplete_views import (
     DiagnosisAutocomplete,
     EthnicityAutocomplete,
+    InventoryCategoryAutocomplete,
+    InventoryEntryAutocomplete,
+    InventoryFormAutocomplete,
+    ManufacturerAutocomplete,
     MedicationAutocomplete,
     ChiefComplaintAutocomplete,
     AdministrationScheduleAutocomplete,
@@ -502,6 +506,26 @@ urlpatterns = [
         r"^medication-autocomplete/$",
         MedicationAutocomplete.as_view(create_field="text"),
         name="medication-autocomplete",
+    ),
+    url(
+        r"^inventory-entry-autocomplete/$",
+        InventoryEntryAutocomplete.as_view(),
+        name="inventory-entry-autocomplete",
+    ),
+    url(
+        r"^inventory-form-autocomplete/$",
+        InventoryFormAutocomplete.as_view(),
+        name="inventory-form-autocomplete",
+    ),
+    url(
+        r"^inventory-category-autocomplete/$",
+        InventoryCategoryAutocomplete.as_view(),
+        name="inventory-category-autocomplete",
+    ),
+    url(
+        r"^manufacturer-autocomplete/$",
+        ManufacturerAutocomplete.as_view(),
+        name="manufacturer-autocomplete",
     ),
     url(
         r"^test-autocomplete/$",

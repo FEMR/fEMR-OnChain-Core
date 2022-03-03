@@ -30,7 +30,7 @@ class InitialInventoryHandler:
             ]
         )
         for item in formulary:
-            writer.write(
+            writer.writerow(
                 [
                     item.category,
                     item.medication,

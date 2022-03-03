@@ -3,6 +3,10 @@ from silk.profiling.profiler import silk_profile
 
 from .models import (
     Ethnicity,
+    InventoryCategory,
+    InventoryEntry,
+    InventoryForm,
+    Manufacturer,
     Medication,
     ChiefComplaint,
     Diagnosis,
@@ -55,6 +59,68 @@ class MedicationAutocomplete(
 
         if self.q:
             autocomplete_queryset = autocomplete_queryset.filter(text__icontains=self.q)
+
+        return autocomplete_queryset
+
+
+class InventoryEntryAutocomplete(
+    autocomplete.Select2QuerySetView
+):  # pylint: disable=too-many-ancestors
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return InventoryEntry.objects.none()
+
+        autocomplete_queryset = InventoryEntry.objects.all()
+
+        if self.q:
+            autocomplete_queryset = autocomplete_queryset.filter(
+                medication__text__icontains=self.q
+            )
+
+        return autocomplete_queryset
+
+
+class InventoryFormAutocomplete(
+    autocomplete.Select2QuerySetView
+):  # pylint: disable=too-many-ancestors
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return InventoryForm.objects.none()
+
+        autocomplete_queryset = InventoryForm.objects.all()
+
+        if self.q:
+            autocomplete_queryset = autocomplete_queryset.filter(name__icontains=self.q)
+
+        return autocomplete_queryset
+
+
+class InventoryCategoryAutocomplete(
+    autocomplete.Select2QuerySetView
+):  # pylint: disable=too-many-ancestors
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return InventoryCategory.objects.none()
+
+        autocomplete_queryset = InventoryCategory.objects.all()
+
+        if self.q:
+            autocomplete_queryset = autocomplete_queryset.filter(name__icontains=self.q)
+
+        return autocomplete_queryset
+
+
+class ManufacturerAutocomplete(
+    autocomplete.Select2QuerySetView
+):  # pylint: disable=too-many-ancestors
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Manufacturer.objects.none()
+
+        autocomplete_queryset = Manufacturer.objects.all()
+
+        if self.q:
+            autocomplete_queryset = autocomplete_queryset.filter(name__icontains=self.q)
 
         return autocomplete_queryset
 

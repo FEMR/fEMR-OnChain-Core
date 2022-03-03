@@ -553,7 +553,7 @@ class PatientDiagnosis(models.Model):
 
 
 class Treatment(models.Model):
-    medication = models.ManyToManyField(Medication, blank=True)
+    medication = models.ManyToManyField("InventoryEntry", blank=True)
     administration_schedule = models.ForeignKey(
         AdministrationSchedule, on_delete=models.CASCADE, null=True, blank=True
     )

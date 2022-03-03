@@ -150,7 +150,7 @@ class TreatmentForm(ModelForm):
         }
         widgets = {
             "medication": autocomplete.ModelSelect2Multiple(
-                url="main:medication-autocomplete"
+                url="main:inventory-entry-autocomplete"
             ),
         }
 
@@ -832,6 +832,16 @@ class InventoryEntryForm(ModelForm):
     class Meta:
         model = InventoryEntry
         fields = "__all__"
+        widgets = {
+            "category": autocomplete.ModelSelect2(
+                url="main:inventory-category-autocomplete"
+            ),
+            "medication": autocomplete.ModelSelect2(url="main:medication-autocomplete"),
+            "form": autocomplete.ModelSelect2(url="main:inventory-form-autocomplete"),
+            "manufacturer": autocomplete.ModelSelect2(
+                url="main:manufacturer-autocomplete"
+            ),
+        }
 
 
 class AddSupplyForm(Form):
