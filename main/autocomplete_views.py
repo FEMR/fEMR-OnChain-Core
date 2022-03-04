@@ -2,6 +2,7 @@ from dal import autocomplete
 from silk.profiling.profiler import silk_profile
 
 from .models import (
+    Campaign,
     Ethnicity,
     InventoryCategory,
     InventoryEntry,
@@ -72,8 +73,9 @@ class InventoryEntryAutocomplete(
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return InventoryEntry.objects.none()
-
-        autocomplete_queryset = InventoryEntry.objects.all()
+        
+        campaign = Campaign.objects.get(name=self.request.session["campaign"])
+        autocomplete_queryset = campaign.inventory.entries.all()
 
         if self.q:
             autocomplete_queryset = autocomplete_queryset.filter(
