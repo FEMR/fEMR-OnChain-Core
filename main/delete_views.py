@@ -103,6 +103,9 @@ def delete_chief_complaint(
 def delete_treatment_view(request, treatment_id=None):
     if request.user.is_authenticated:
         target_object = get_object_or_404(Treatment, pk=treatment_id)
+        for item in target_object.medication.all():
+            item.count += 1
+            item.save()
         target_object.delete()
         return_response = redirect(request.META.get("HTTP_REFERER", "/"))
     else:
