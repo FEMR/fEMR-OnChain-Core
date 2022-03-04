@@ -467,7 +467,7 @@ def __treatment_view_post(request, encounter):
         treatment.save()
         treatment_form.save_m2m()
         for item in treatment.medication.all():
-            item.count -= 1
+            item.quantity -= 1
             item.save()
         treatment_form = TreatmentForm()
         DatabaseChangeLog.objects.create(

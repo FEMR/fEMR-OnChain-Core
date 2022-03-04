@@ -66,6 +66,9 @@ class MedicationAutocomplete(
 class InventoryEntryAutocomplete(
     autocomplete.Select2QuerySetView
 ):  # pylint: disable=too-many-ancestors
+    def get_result_label(self, result):
+        return str(result)
+
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return InventoryEntry.objects.none()

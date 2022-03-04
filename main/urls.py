@@ -44,6 +44,7 @@ from main.formulary_management import (
     csv_export_view,
     csv_handler_view,
     csv_import_view,
+    delete_supply_item,
     edit_add_supply_view,
     edit_sub_supply_view,
     formulary_home_view,
@@ -232,6 +233,11 @@ urlpatterns = [
         r"delete_chief_complaint/<int:chief_complaint_id>/<int:patient_id>",
         delete_chief_complaint,
         name="delete_chief_complaint",
+    ),
+    path(
+        r"delete_supply_item/<int:supply_id>",
+        delete_supply_item,
+        name="delete_supply_item",
     ),
     path(
         r"delete_chief_complaint/<int:chief_complaint_id>/<int:patient_id>/<int:encounter_id>",
