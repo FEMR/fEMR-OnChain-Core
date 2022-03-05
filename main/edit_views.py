@@ -460,6 +460,7 @@ def __treatment_view_post(request, encounter):
         treatment = treatment_form.save(commit=False)
         treatment.encounter = encounter
         treatment.prescriber = request.user
+        treatment.amount = treatment.days * treatment.administration_schedule.modifier
         treatment.save()
         treatment_form.save_m2m()
         for item in treatment.medication.all():

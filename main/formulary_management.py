@@ -45,9 +45,7 @@ def add_supply_view(request):
                 entry.save()
                 campaign.inventory.entries.add(entry)
                 campaign.save()
-                return_response = render(
-                    request, "formulary/formulary_submitted.html"
-                )
+                return_response = render(request, "formulary/formulary_submitted.html")
         else:
             return_response = redirect("main:permission_denied")
     else:

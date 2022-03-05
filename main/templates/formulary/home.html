@@ -16,6 +16,7 @@
         <th scope="col">Strength</th>
         <th scope="col">Count</th>
         <th scope="col">Quantity</th>
+        <th scope="col">Amount</th>
         <th scope="col">Item #</th>
         <th scope="col">Box #</th>
         <th scope="col">Expiration Date</th>
@@ -35,6 +36,7 @@
         <td>{{ o.strength }}</td>
         <td>{{ o.count }}</td>
         <td>{{ o.quantity }}</td>
+        <td>{{ o.count * o.quantity }}</td>
         <td>{{ o.item_number }}</td>
         <td>{{ o.box_number }}</td>
         <td>{{ o.expiration_date }}</td>

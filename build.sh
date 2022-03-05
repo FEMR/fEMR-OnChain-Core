@@ -14,10 +14,10 @@ export DEFAULT_FROM_EMAIL=""
 export SERVER_EMAIL=""
 
 function all() {
+  migrate
   pip3 install -r requirements.txt
   python3 -m safety check -r requirements.txt
   python3 manage.py check
-  migrate
   static
   run_tests
   pushd ./main/static/main/js || exit
@@ -146,7 +146,6 @@ init-all-run)
   run
   ;;
 
-
 all-run)
   check
   all
@@ -154,7 +153,6 @@ all-run)
   ;;
 
 all)
-  check
   all
   ;;
 

@@ -187,6 +187,10 @@
                         <div class="">{{ t.days }}</div>
                     </div>
                     <div class="row">
+                        <div class=""><b>Amount |</b></div>
+                        <div class="">{{ t.amount }}</div>
+                    </div>
+                    <div class="row">
                         <div class=""><b>Prescriber |</b></div>
                         <div class=""><a href="{% url 'clinic_messages:new_message' t.prescriber.id %}">
                             {{ t.prescriber.first_name }} {{ t.prescriber.last_name }}</a></div>

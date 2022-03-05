@@ -329,6 +329,7 @@ class ChiefComplaint(models.Model):
 
 class AdministrationSchedule(models.Model):
     text = models.CharField(max_length=1024, null=True, blank=True)
+    modifier = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return str(self.text)
@@ -564,6 +565,7 @@ class Treatment(models.Model):
     diagnosis = models.ForeignKey(
         Diagnosis, on_delete=models.CASCADE, null=True, blank=True
     )
+    amount = models.PositiveIntegerField(null=True, blank=True)
     encounter = models.ForeignKey(
         PatientEncounter,
         on_delete=models.CASCADE,
