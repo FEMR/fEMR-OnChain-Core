@@ -306,10 +306,12 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
 
 
 def __new_diagnosis_view_body(request, patient_id, encounter_id):
-    units = Campaign.objects.get(name=request.session["campaign"]).units
+    campaign = Campaign.objects.get(name=request.session["campaign"])
+    units = campaign.units
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
     treatment_form = TreatmentForm()
+    treatment_form.fields["medication"].queryset = campaign.inventory.entries.all()
     querysets = PatientDiagnosis.objects.filter(encounter=encounter)
     diagnosis_set = PatientDiagnosis.objects.filter(encounter=encounter)
     if len(diagnosis_set) > 0:
@@ -404,10 +406,12 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
 
 
 def __new_treatment_view_body(request, patient_id, encounter_id):
-    units = Campaign.objects.get(name=request.session["campaign"]).units
+    campaign = Campaign.objects.get(name=request.session["campaign"])
+    units = campaign.units
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
     treatment_form = TreatmentForm()
+    treatment_form.fields["medication"] = campaign.inventory.entries.all()
     patient_diagnoses = querysets = list(
         PatientDiagnosis.objects.filter(encounter=encounter)
     )

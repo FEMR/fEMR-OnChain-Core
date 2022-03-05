@@ -33,9 +33,9 @@
         <td>{{ o.category }}</td>
         <td>{{ o.medication }}</td>
         <td>{{ o.form }}</td>
-        <td>{{ o.strength }}</td>
-        <td>{{ o.count }}</td>
-        <td>{{ o.quantity }}</td>
+        <td>{{ o.strength }} {{ o.strength_unit }}</td>
+        <td>{{ o.count }} {{ o.count_unit }}</td>
+        <td>{{ o.quantity }} {{ o.quantity_unit }}</td>
         <td>{{ o.count * o.quantity }}</td>
         <td>{{ o.item_number }}</td>
         <td>{{ o.box_number }}</td>
@@ -44,7 +44,7 @@
         <td>{{ o.timestamp }}</td>
         <td><a href="{% url 'main:edit_add_supply_view' o.id %}">Add</a></td>
         <td><a href="{% url 'main:edit_sub_supply_view' o.id %}">Remove</a></td>
-        <td><a href="{% url 'main:delete_supply_item' o.id %}"></a></td>
+        <td><a href="{% url 'main:delete_supply_item' o.id %}">Delete</a></td>
     </tr>
     {% endfor %}
     </tbody>
