@@ -112,3 +112,8 @@ def get_medications(treatment):
     for element in list(treatment.medication.all()):
         result += str(element)
     return result
+
+
+@register.filter("get_amount")
+def get_amount(item):
+    return item.count * item.quantity
