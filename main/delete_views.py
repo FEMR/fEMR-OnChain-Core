@@ -105,6 +105,7 @@ def delete_treatment_view(request, treatment_id=None):
         target_object = get_object_or_404(Treatment, pk=treatment_id)
         for item in target_object.medication.all():
             item.quantity += 1
+            item.amount = item.count * item.quantity
             item.save()
         target_object.delete()
         return_response = redirect(request.META.get("HTTP_REFERER", "/"))
