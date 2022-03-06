@@ -4,6 +4,7 @@ All views, except auth views and the index view, should be considered to check
 for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
+import math
 import os
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -104,8 +105,8 @@ def delete_treatment_view(request, treatment_id=None):
     if request.user.is_authenticated:
         target_object = get_object_or_404(Treatment, pk=treatment_id)
         for item in target_object.medication.all():
-            item.quantity += 1
-            item.amount = item.count * item.quantity
+            item.amount += target_object.amount
+            item.quantity = math.ceil(item.amount / item.count)
             item.save()
         target_object.delete()
         return_response = redirect(request.META.get("HTTP_REFERER", "/"))

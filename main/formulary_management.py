@@ -55,7 +55,9 @@ def add_supply_view(request):
 
 def delete_supply_item(request, supply_id=None):
     if request.user.is_authenticated:
-        InventoryEntry.objects.get(pk=supply_id).delete()
+        campaign = Campaign.objects.get(name=request.session["campaign"])
+        entry = InventoryEntry.objects.get(pk=supply_id)
+        campaign.inventory.entries.remove(entry)
         return_response = redirect("main:formulary_home_view")
     else:
         return_response = redirect("main:not_logged_in")

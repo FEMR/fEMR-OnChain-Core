@@ -4,6 +4,7 @@ All views, except auth views and the index view, should be considered
 to check for a valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
+import math
 import os
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -471,8 +472,8 @@ def __treatment_view_post(request, encounter):
         treatment.save()
         treatment_form.save_m2m()
         for item in treatment.medication.all():
-            item.quantity -= 1
-            item.amount = item.count * item.quantity
+            item.amount -= treatment.amount
+            item.quantity = math.ceil(item.amount / item.count)
             item.save()
         treatment_form = TreatmentForm()
         DatabaseChangeLog.objects.create(
