@@ -8,7 +8,7 @@ from main.models import AdministrationSchedule
 
 OPTIONS = [
     ["BID", 2],
-    ["BIW", (2/7)],
+    ["BIW", (2 / 7)],
     ["HS", 1],
     ["q12", 2],
     ["q24", 1],
@@ -21,11 +21,11 @@ OPTIONS = [
     ["qHS", 1],
     ["QID", 4],
     ["q5min", 288],
-    ["qOd", (1/2)],
+    ["qOd", (1 / 2)],
     ["qPM", 1],
-    ["qWeek", (1/7)],
+    ["qWeek", (1 / 7)],
     ["TID", 3],
-    ["TIW", (3/7)],
+    ["TIW", (3 / 7)],
     ["prn", 5],
 ]
 

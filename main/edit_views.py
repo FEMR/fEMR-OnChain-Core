@@ -466,7 +466,9 @@ def __treatment_view_post(request, encounter):
         treatment.encounter = encounter
         treatment.prescriber = request.user
         if treatment.administration_schedule is not None:
-            treatment.amount = treatment.days * treatment.administration_schedule.modifier
+            treatment.amount = (
+                treatment.days * treatment.administration_schedule.modifier
+            )
         else:
             treatment.amount = 1
         treatment.save()

@@ -73,7 +73,7 @@ class InventoryEntryAutocomplete(
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return InventoryEntry.objects.none()
-        
+
         campaign = Campaign.objects.get(name=self.request.session["campaign"])
         autocomplete_queryset = campaign.inventory.entries.all()
 
