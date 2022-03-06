@@ -42,6 +42,7 @@ def add_supply_view(request):
                 campaign = Campaign.objects.get(name=request.session["campaign"])
                 form = InventoryEntryForm(request.POST)
                 entry = form.save()
+                entry.amount = entry.count * entry.quantity
                 entry.save()
                 campaign.inventory.entries.add(entry)
                 campaign.save()

@@ -614,6 +614,7 @@ class InventoryEntry(models.Model):
     count_unit = models.CharField(max_length=25, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=0)
     quantity_unit = models.CharField(max_length=25, null=True, blank=True)
+    amount = models.PositiveIntegerField(default=0)
     initial_quantity = models.PositiveIntegerField(default=0)
     item_number = models.CharField(max_length=25, null=True, blank=True)
     box_number = models.CharField(max_length=25, null=True, blank=True)

@@ -22,6 +22,8 @@ def add_to_inventory(campaign, row):
             initial_quantity=0
             if row["Initial quantity"] == ""
             else row["Initial quantity"],
+            amount=0 if row["Amount"] == ""
+            else row["Amount"],
             item_number=row["Item number"],
             box_number=row["Box number"],
             expiration_date=None

@@ -51,7 +51,7 @@ class AddedInventoryHandler:
                     item.count,
                     item.count_unit,
                     item.quantity,
-                    item.count * item.quantity,
+                    item.amount,
                     item.quantity_unit,
                     item.initial_quantity,
                     item.item_number,
