@@ -18,9 +18,6 @@ def formulary_home_view(request):
         if check_admin_permission(request.user):
             campaign = Campaign.objects.get(name=request.session["campaign"])
             formulary = campaign.inventory.entries.all().order_by("medication")
-            for item in formulary:
-                item.amount = item.count * item.quantity
-                item.save()
             return_response = render(
                 request,
                 "formulary/home.html",
