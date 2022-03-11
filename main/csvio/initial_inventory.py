@@ -1,6 +1,8 @@
 import csv
 import io
 
+from django.core.exceptions import ValidationError
+
 from main.csvio import add_to_inventory
 
 
@@ -66,4 +68,6 @@ class InitialInventoryHandler:
             return_result = "Formulary uploaded successfully."
         except KeyError as e:
             return_result = "Heading '{}' is missing or incorrect.".format(e)
+        except ValidationError as e:
+            return_result = "Data is misformatted: {}".format(e)
         return return_result
