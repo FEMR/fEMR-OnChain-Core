@@ -62,7 +62,7 @@ class AddedInventoryHandler:
         proc_file = csvfile.read().decode("utf-8")
         proc_file = proc_file.replace('\r\n', '\n')
         reader = csv.DictReader(io.StringIO(proc_file))
-        data = [line.replace('\r\n', '\n') for line in reader]
+        data = [line for line in reader]
         try:
             for row in data:
                 add_to_inventory(campaign, row)
