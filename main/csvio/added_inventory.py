@@ -1,17 +1,12 @@
-"""
-AddedInventoryHandler and required imports.
-"""
 import csv
+import io
 
-import requests
+from django.core.exceptions import ValidationError
+
 from main.csvio import add_to_inventory
 
 
-class AddedInventoryHandler:
-    """
-    Implements CSVHandler and adds inventory to supplies that already existed in the formulary.
-    """
-
+class InitialInventoryHandler:
     def read(self, upload, campaign):
         return self.__import(upload, campaign)
 
@@ -41,7 +36,7 @@ class AddedInventoryHandler:
             ]
         )
         for item in formulary:
-            writer.write(
+            writer.writerow(
                 [
                     item.category,
                     item.medication,
@@ -65,7 +60,16 @@ class AddedInventoryHandler:
     @staticmethod
     def __import(csvfile, campaign):
         proc_file = csvfile.read().decode("utf-8")
-        lines = proc_file.split("\n")
-        lines.pop(0)
-        for row in lines:
-            add_to_inventory(campaign, row.split(","))
+        reader = csv.DictReader(io.StringIO(proc_file))
+        data = [line.replace('\r\n', '\n') for line in reader]
+        try:
+            for row in data:
+                add_to_inventory(campaign, row)
+            return_result = "Formulary uploaded successfully."
+        except KeyError as e:
+            return_result = "Heading '{}' is missing or incorrect.".format(e)
+        except ValidationError as e:
+            return_result = "Data is misformatted: {}".format(e)
+        except UnicodeDecodeError as e:
+            return_result = "File is encoded incorrectly. You may have uploaded an Excel sheet - Make sure you uploaded a CSV file."
+        return return_result

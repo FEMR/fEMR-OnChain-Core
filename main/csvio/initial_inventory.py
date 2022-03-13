@@ -61,7 +61,7 @@ class InitialInventoryHandler:
     def __import(csvfile, campaign):
         proc_file = csvfile.read().decode("utf-8")
         reader = csv.DictReader(io.StringIO(proc_file))
-        data = [line for line in reader]
+        data = [line.replace('\r\n', '\n') for line in reader]
         try:
             for row in data:
                 add_to_inventory(campaign, row)
