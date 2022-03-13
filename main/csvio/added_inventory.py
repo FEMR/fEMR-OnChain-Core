@@ -60,6 +60,7 @@ class AddedInventoryHandler:
     @staticmethod
     def __import(csvfile, campaign):
         proc_file = csvfile.read().decode("utf-8")
+        proc_file = proc_file.replace('\r\n', '\n')
         reader = csv.DictReader(io.StringIO(proc_file))
         data = [line.replace('\r\n', '\n') for line in reader]
         try:
