@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from main.csvio import add_to_inventory
 
 
-class InitialInventoryHandler:
+class AddedInventoryHandler:
     def read(self, upload, campaign):
         return self.__import(upload, campaign)
 
