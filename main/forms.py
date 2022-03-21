@@ -201,10 +201,10 @@ class PatientForm(ModelForm):
         self.fields["ethnicity"].widget.attrs["required"] = True
         self.fields["social_security_number"].widget.attrs["minlength"] = "4"
         self.fields["zip_code"].widget.attrs["minlength"] = "5"
-        self.fields["age"].widget.attrs[
-            "style"
-        ] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
-        self.fields["age"].widget.attrs["readonly"] = ""
+        # self.fields["age"].widget.attrs[
+        #     "style"
+        # ] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
+        # self.fields["age"].widget.attrs["readonly"] = ""
 
     def clean_social_security_number(self):
         if self.cleaned_data["social_security_number"] is None:
