@@ -238,8 +238,9 @@ class PatientForm(ModelForm):
         return self.cleaned_data["zip_code"]
 
     def clean_date_of_birth(self):
-        if self.cleaned_data["date_of_birth"] > timezone.now().date():
-            raise ValidationError("Must not be later than today.")
+        if self.cleaned_data["date_of_birth"] is not None:
+            if self.cleaned_data["date_of_birth"] > timezone.now().date():
+                raise ValidationError("Must not be later than today.")
         return self.cleaned_data["date_of_birth"]
 
     def clean_phone_number(self):
