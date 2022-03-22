@@ -223,7 +223,9 @@ class Patient(models.Model):
     sex_assigned_at_birth = models.CharField(max_length=6, choices=birth_sex_choices)
     explain = models.CharField(max_length=400, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
-    age = models.IntegerField()
+    age = models.PositiveIntegerField(
+        validators=[MaxValueValidator(120), MinValueValidator(0)]
+    )
 
     race = models.ForeignKey(
         Race,
