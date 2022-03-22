@@ -11,57 +11,54 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="{% static 'main/assets/styles.css' %}" rel="stylesheet">
-    <script crossorigin="anonymous"
-            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-            src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script crossorigin="anonymous"
-            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-            src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script crossorigin="anonymous"
-            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-            src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css'
-          rel='stylesheet'>
+    <script crossorigin="anonymous" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css' rel='stylesheet'>
     <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" rel="stylesheet">
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" rel="stylesheet">
     <link href="{% static 'main/css/main.css' %}" media="screen" rel="stylesheet">
     <link href="{% static 'main/assets/styles.css' %}" media="screen" rel="stylesheet">
 </head>
+
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark-femr">
-    <a class="navbar-brand" href="#">
-        <img alt=""
-             src="{% static 'main/assets/logo.png' %}" width="60">
-    </a>
-    <button aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+    <div id="watermark">{{ ENVIRONMENT }}</div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark-femr">
+        <a class="navbar-brand" href="#">
+            <img alt="" src="{% static 'main/assets/logo.png' %}" width="60">
+        </a>
+        <button aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
             data-target="#navbarText" data-toggle="collapse" type="button">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</nav>
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
 
-<main class="container-fluid" role="main">
-    {% block content %}
-    {% endblock %}
-</main>
+    <main class="container-fluid" role="main">
+        {% block content %}
+        {% endblock %}
+    </main>
 
-<footer class="footer mt-auto py-3">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12 col-md-4">
-            </div>
-            <div class="col-sm-12 col-md-4 text-center">
-                v1.5.2
-            </div>
-            <div class="col-sm-12 col-md-4">
-                <a href="https://github.com/FEMR/fEMR-OnChain-Core/wiki" target="_blank">fEMR On-Chain Wiki | </a>
-                <a href="{% url 'main:faqs' %}">FAQ</a>
+    <footer class="footer mt-auto py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 col-md-4">
+                </div>
+                <div class="col-sm-12 col-md-4 text-center">
+                    v1.5.2
+                </div>
+                <div class="col-sm-12 col-md-4">
+                    <a href="https://github.com/FEMR/fEMR-OnChain-Core/wiki" target="_blank">fEMR On-Chain Wiki | </a>
+                    <a href="{% url 'main:faqs' %}">FAQ</a>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
-<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
-<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js'></script>
 
 </body>
 
