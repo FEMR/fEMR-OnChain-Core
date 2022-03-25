@@ -3,6 +3,7 @@ from silk.profiling.profiler import silk_profile
 
 from main.models import (
     Campaign,
+    HistoryOfPresentIllness,
     Patient,
     PatientDiagnosis,
     PatientEncounter,
@@ -18,6 +19,7 @@ def __patient_export_view_get(request, patient_id=None):
     prescriptions = {}
     diagnoses = {}
     vitals_dictionary = {}
+    history_of_present_illness_dictionary = {}
     for encounter in encounters:
         try:
             diagnoses[encounter] = sum(
@@ -29,6 +31,7 @@ def __patient_export_view_get(request, patient_id=None):
             )
         except PatientDiagnosis.DoesNotExist:
             diagnoses[encounter] = []
+        history_of_present_illness_dictionary[encounter] = list(HistoryOfPresentIllness.objects.filter(encounter=encounter))
         prescriptions[encounter] = list(Treatment.objects.filter(encounter=encounter))
         vitals_dictionary[encounter] = list(Vitals.objects.filter(encounter=encounter))
     return render(
@@ -39,6 +42,7 @@ def __patient_export_view_get(request, patient_id=None):
             "encounters": encounters,
             "prescriptions": prescriptions,
             "diagnoses": diagnoses,
+            "histories_of_present_illness": history_of_present_illness_dictionary,
             "vitals": vitals_dictionary,
             "telehealth": Campaign.objects.get(
                 name=request.session["campaign"]

@@ -18,14 +18,11 @@
             position: relative;
             left: 25px;
         }
-
-
-
     </style>
     <script crossorigin="anonymous" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-            src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script crossorigin="anonymous" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-            src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css' rel='stylesheet'>
@@ -34,213 +31,214 @@
 </head>
 
 <body>
-<h1>Patient Export - {{ patient }}</h1>
-<div>
-    <div class="col-10">
-        <div class="row">
-            <div class="form-group col-md-6">
-                <div>
+    <h1>Patient Export - {{ patient }}</h1>
+    <div>
+        <div class="col-10">
+            <div class="row">
+                <div class="form-group col-md-6">
                     <div>
-                        <div class="form-group" id="div_id_first_name">
-                            <label class=" requiredField" for="id_first_name">
-                                First name
-                            </label>
-                            <div class="">
-                                {{ patient.first_name }}
+                        <div>
+                            <div class="form-group" id="div_id_first_name">
+                                <label class=" requiredField" for="id_first_name">
+                                    First name
+                                </label>
+                                <div class="">
+                                    {{ patient.first_name }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <div class="form-group" id="div_id_middle_name">
+                                <label class="" for="id_middle_name">
+                                    Middle name
+                                </label>
+                                <div class="">
+                                    {{ patient.middle_name }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <div class="form-group" id="div_id_last_name">
+                                <label class=" requiredField" for="id_last_name">
+                                    Last name
+                                </label>
+                                <div class="">
+                                    {{ patient.last_name }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <div class="form-group" id="div_id_suffix">
+                                <label class="" for="id_suffix">
+                                    Suffix
+                                </label>
+                                <div class="">
+                                    {{ patient.suffix }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <div class="form-group" id="div_id_social_security_number">
+                                <label class="" for="id_social_security_number">
+                                    National I.D. number
+                                </label>
+                                <div class="">
+                                    {{ patient.social_security_number|mask_social }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <div class="form-group" id="div_id_sex_assigned_at_birth">
+                                <label class=" requiredField" for="id_sex_assigned_at_birth">
+                                    Sex assigned at birth
+                                </label>
+                                <div class="">
+                                    {{ patient.get_sex_assigned_at_birth_display }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="explain_box" style="display:none;visibility:hidden;">
+                        <div>
+                            <div class="form-group" id="div_id_explain">
+                                <label class="" for="id_explain">
+                                    Explain
+                                </label>
+                                <div class="">
+                                    {{ patient.explain }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <div class="form-group" id="div_id_date_of_birth">
+                                <label class=" requiredField" for="id_date_of_birth">
+                                    Date of birth
+                                </label>
+                                <div class="">
+                                    {{ patient.date_of_birth }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <div class="form-group" id="div_id_race">
+                                <label class=" requiredField" for="id_race">
+                                    Race
+                                </label>
+                                <div class="">
+                                    {{ patient.get_race_display }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <div class="form-group" id="div_id_ethnicity">
+                                <label class=" requiredField" for="id_ethnicity">
+                                    Ethnicity
+                                </label>
+                                <div class="">
+                                    {{ patient.get_ethnicity_display }}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div>
+                <div class="form-group col-md-6">
                     <div>
-                        <div class="form-group" id="div_id_middle_name">
-                            <label class="" for="id_middle_name">
-                                Middle name
-                            </label>
-                            <div class="">
-                                {{ patient.middle_name }}
+                        <div>
+                            <div class="form-group" id="div_id_address1">
+                                <label class="" for="id_address1">
+                                    Address line 1
+                                </label>
+                                <div class="">
+                                    {{ patient.address_line_1}}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div>
                     <div>
-                        <div class="form-group" id="div_id_last_name">
-                            <label class=" requiredField" for="id_last_name">
-                                Last name
-                            </label>
-                            <div class="">
-                                {{ patient.last_name }}
+                        <div>
+                            <div class="form-group" id="div_id_address2">
+                                <label class="" for="id_address2">
+                                    Address line 2
+                                </label>
+                                <div class="">
+                                    {{ patient.address_line_2 }}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div>
                     <div>
-                        <div class="form-group" id="div_id_suffix">
-                            <label class="" for="id_suffix">
-                                Suffix
-                            </label>
-                            <div class="">
-                                {{ patient.suffix }}
+                        <div>
+                            <div class="form-group" id="div_id_city">
+                                <label class="" for="id_city">
+                                    City
+                                </label>
+                                <div class="">
+                                    {{ patient.city }}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div>
                     <div>
-                        <div class="form-group" id="div_id_social_security_number">
-                            <label class="" for="id_social_security_number">
-                                National I.D. number
-                            </label>
-                            <div class="">
-                                {{ patient.social_security_number|mask_social }}
+                        <div>
+                            <div class="form-group" id="div_id_zip_code">
+                                <label class="" for="id_zip_code">
+                                    ZIP / Postal code
+                                </label>
+                                <div class="">
+                                    {{ zip_code }}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div>
                     <div>
-                        <div class="form-group" id="div_id_sex_assigned_at_birth">
-                            <label class=" requiredField" for="id_sex_assigned_at_birth">
-                                Sex assigned at birth
-                            </label>
-                            <div class="">
-                                {{ patient.get_sex_assigned_at_birth_display }}
+                        <div>
+                            <div class="form-group" id="div_id_state">
+                                <label class="" for="id_state">
+                                    State
+                                </label>
+                                <div class="">
+                                    {{ patient.state }}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div id="explain_box" style="display:none;visibility:hidden;">
                     <div>
-                        <div class="form-group" id="div_id_explain">
-                            <label class="" for="id_explain">
-                                Explain
-                            </label>
-                            <div class="">
-                                {{ patient.explain }}
+                        <div>
+                            <div class="form-group" id="div_id_phone_number">
+                                <label class="" for="id_phone_number">
+                                    Phone number
+                                </label>
+                                <div class="">
+                                    {{ patient.phone_number }}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div>
                     <div>
-                        <div class="form-group" id="div_id_date_of_birth">
-                            <label class=" requiredField" for="id_date_of_birth">
-                                Date of birth
-                            </label>
-                            <div class="">
-                                {{ patient.date_of_birth }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <div class="form-group" id="div_id_race">
-                            <label class=" requiredField" for="id_race">
-                                Race
-                            </label>
-                            <div class="">
-                                {{ patient.get_race_display }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <div class="form-group" id="div_id_ethnicity">
-                            <label class=" requiredField" for="id_ethnicity">
-                                Ethnicity
-                            </label>
-                            <div class="">
-                                {{ patient.get_ethnicity_display }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group col-md-6">
-                <div>
-                    <div>
-                        <div class="form-group" id="div_id_address1">
-                            <label class="" for="id_address1">
-                                Address line 1
-                            </label>
-                            <div class="">
-                                {{ patient.address_line_1}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <div class="form-group" id="div_id_address2">
-                            <label class="" for="id_address2">
-                                Address line 2
-                            </label>
-                            <div class="">
-                                {{ patient.address_line_2 }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <div class="form-group" id="div_id_city">
-                            <label class="" for="id_city">
-                                City
-                            </label>
-                            <div class="">
-                                {{ patient.city }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <div class="form-group" id="div_id_zip_code">
-                            <label class="" for="id_zip_code">
-                                ZIP / Postal code
-                            </label>
-                            <div class="">
-                                {{ zip_code }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <div class="form-group" id="div_id_state">
-                            <label class="" for="id_state">
-                                State
-                            </label>
-                            <div class="">
-                                {{ patient.state }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <div class="form-group" id="div_id_phone_number">
-                            <label class="" for="id_phone_number">
-                                Phone number
-                            </label>
-                            <div class="">
-                                {{ patient.phone_number }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <div class="form-group" id="div_id_email_address">
-                            <label class="" for="id_email_address">
-                                Email address
-                            </label>
-                            <div class="">
-                                {{ patient.email_address }}
+                        <div>
+                            <div class="form-group" id="div_id_email_address">
+                                <label class="" for="id_email_address">
+                                    Email address
+                                </label>
+                                <div class="">
+                                    {{ patient.email_address }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -248,365 +246,375 @@
             </div>
         </div>
     </div>
-</div>
-<div>
-    <hr>
-    <h2>Encounter History</h2>
-    <hr>
-    {% for encounter in encounters %}
     <div>
-        <div class="col-10">
-            <h5>{{ encounter.timestamp }}</h5>
-            <div class="row">
-                <div class="form-group col-md-4">
-                    {% for encoun, vitals_list in vitals_dictionary.items %}
-                    {% if encoun == encounter %}
-                    {% for vitals in vitals_list %}
-                    <div class="row">
-                        <div>
-                            <div>
-                                <div class="form-group" id="div_id_systolic_blood_pressure">
-                                    <label class=" requiredField" for="id_systolic_blood_pressure">
-                                        Systolic blood pressure
-                                    </label>
-                                    <div class="">
-                                        {{ vitals.systolic_blood_pressure }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div class="form-group" id="div_id_diastolic_blood_pressure">
-                                    <label class=" requiredField" for="id_diastolic_blood_pressure">
-                                        Diastolic blood pressure
-                                    </label>
-                                    <div class="">
-                                        {{ vitals.diastolic_blood_pressure }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div class="form-group" id="div_id_mean_arterial_pressure">
-                                    <label class=" requiredField" for="id_mean_arterial_pressure">
-                                        Mean arterial pressure
-                                    </label>
-                                    <div class="">
-                                        {{ vitals.mean_arterial_pressure }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div class="form-group" id="div_id_heart_rate">
-                                    <label class=" requiredField" for="id_heart_rate">
-                                        Heart rate
-                                    </label>
-                                    <div class="">
-                                        {{ vitals.heart_rate }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div class="form-group" id="div_id_respiratory_rate">
-                                    <label class=" requiredField" for="id_respiratory_rate">
-                                        Respiratory rate
-                                    </label>
-                                    <div class="">
-                                        {{ vitals.respiratory_rate }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div class="form-group" id="div_id_body_temperature">
-                                    <label class=" requiredField" for="id_body_temperature">
-                                        {% if units == 'i' %}
-                                        Body temperature - F
-                                        {% else %}
-                                        Body temperature - C
-                                        {% endif %}
-                                    </label>
-                                    <div class="">
-                                        {% if units == 'i' %}
-                                        {{ vitals|imperial_temperature }}
-                                        {% else %}
-                                        {{ vitals.body_temperature }}
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div class="form-group" id="div_id_oxygen_concentration">
-                                    <label class="" for="id_oxygen_concentration">
-                                        Oxygen concentration
-                                    </label>
-                                    <div class="">
-                                        {{ vitals.oxygen_concentration }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div class="form-group" id="div_id_glucose_level">
-                                    <label class="" for="id_glucose_level">
-                                        Glucose level
-                                    </label>
-                                    <div class="">
-                                        {{ vitals.glucose_level }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                        {% endif %}
-                        {% endfor %}
-                    </div>
-                    <div class="form-group col-md-4">
-                        <div>
-                            <div>
-                                <div class="form-group" id="div_id_weeks_pregnant">
-                                    <label class="" for="id_weeks_pregnant">
-                                        Weeks pregnant
-                                    </label>
-                                    <div class="">
-                                        {{ encounter.weeks_pregnant }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div class="form-group" id="div_id_body_mass_index">
-                                    <label class="" for="id_body_mass_index">
-                                        Body mass index
-                                    </label>
-                                    <div class="">
-                                        {{ encounter.body_mass_index }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <hr>
+        <h2>Encounter History</h2>
+        <hr>
+        {% for encounter in encounters %}
+        <div>
+            <div class="col-10">
+                <h5>{{ encounter.timestamp }}</h5>
                 <div class="row">
                     <div class="form-group col-md-4">
-                        <div>
-                            <div>
-                                <div class="form-group" id="div_id_body_height_primary">
-                                    <label class=" requiredField" for="id_body_height_primary">
-                                        {% if units == 'i' %}
-                                        Height - ft
-                                        {% else %}
-                                        Height - m
-                                        {% endif %}
-                                    </label>
-                                    <div class="">
-                                        {% if units == 'i' %}
-                                        {{ encounter|imperial_primary_height }}
-                                        {% else %}
-                                        {{ encounter.body_height_primary }}
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <div>
-                            <div>
-                                <div class="form-group" id="div_id_body_height_secondary">
-                                    <label class=" requiredField" for="id_body_height_secondary">
-                                        {% if units == 'i' %}
-                                        Height - in
-                                        {% else %}
-                                        Height - cm
-                                        {% endif %}
-                                    </label>
-                                    <div class="">
-                                        {% if units == 'i' %}
-                                        {{ encounter|imperial_secondary_height }}
-                                        {% else %}
-                                        {{ encounter.body_height_secondary }}
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <div>
-                            <div>
-                                <div class="form-group" id="div_id_body_weight">
-                                    <label class=" requiredField" for="id_body_weight">
-                                        {% if units == 'i' %}
-                                        Body weight - lbs
-                                        {% else %}
-                                        Body weight - kgs
-                                        {% endif %}
-                                    </label>
-                                    <div class="">
-                                        {% if units == 'i' %}
-                                        {{ encounter|imperial_weight }}
-                                        {% else %}
-                                        {{ encounter.body_weight }}
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <div>
-                            <div>
-                                <div class="form-group">
-                                    <div class="form-check" id="div_id_smoking">
-                                        <label class="form-check-label" for="id_smoking">
-                                            History of tobacco use disorder:
-                                        </label>
-                                        {{ encounter.smoking }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div class="form-group">
-                                    <div class="form-check" id="div_id_diabetes">
-                                        <label class="form-check-label" for="id_diabetes">
-                                            History of diabetes:
-                                        </label>
-                                        {{ encounter.history_of_diabetes}}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div class="form-group">
-                                    <div class="form-check" id="div_id_diabetes">
-                                        <label class="form-check-label" for="id_diabetes">
-                                            History of hypertension:
-                                        </label>
-                                        {{ encounter.history_of_hypertension}}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div class="form-group">
-                                    <div class="form-check" id="div_id_diabetes">
-                                        <label class="form-check-label" for="id_diabetes">
-                                            History of high cholesterol:
-                                        </label>
-                                        {{ encounter.history_of_high_cholesterol}}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div>
-                                <div class="form-group">
-                                    <div class="form-check" id="div_id_alcohol">
-                                        <label class="form-check-label" for="id_alcohol">
-                                            History of substance/alcohol abuse:
-                                        </label>
-                                        {{ encounter.alcohol }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        {% if telehealth %}
+                        {% for encoun, vitals_list in vitals_dictionary.items %}
+                        {% if encoun == encounter %}
+                        {% for vitals in vitals_list %}
                         <div class="row">
+                            <div>
+                                <div>
+                                    <div class="form-group" id="div_id_systolic_blood_pressure">
+                                        <label class=" requiredField" for="id_systolic_blood_pressure">
+                                            Systolic blood pressure
+                                        </label>
+                                        <div class="">
+                                            {{ vitals.systolic_blood_pressure }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div class="form-group" id="div_id_diastolic_blood_pressure">
+                                        <label class=" requiredField" for="id_diastolic_blood_pressure">
+                                            Diastolic blood pressure
+                                        </label>
+                                        <div class="">
+                                            {{ vitals.diastolic_blood_pressure }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div class="form-group" id="div_id_mean_arterial_pressure">
+                                        <label class=" requiredField" for="id_mean_arterial_pressure">
+                                            Mean arterial pressure
+                                        </label>
+                                        <div class="">
+                                            {{ vitals.mean_arterial_pressure }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div class="form-group" id="div_id_heart_rate">
+                                        <label class=" requiredField" for="id_heart_rate">
+                                            Heart rate
+                                        </label>
+                                        <div class="">
+                                            {{ vitals.heart_rate }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div class="form-group" id="div_id_respiratory_rate">
+                                        <label class=" requiredField" for="id_respiratory_rate">
+                                            Respiratory rate
+                                        </label>
+                                        <div class="">
+                                            {{ vitals.respiratory_rate }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div class="form-group" id="div_id_body_temperature">
+                                        <label class=" requiredField" for="id_body_temperature">
+                                            {% if units == 'i' %}
+                                            Body temperature - F
+                                            {% else %}
+                                            Body temperature - C
+                                            {% endif %}
+                                        </label>
+                                        <div class="">
+                                            {% if units == 'i' %}
+                                            {{ vitals|imperial_temperature }}
+                                            {% else %}
+                                            {{ vitals.body_temperature }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div class="form-group" id="div_id_oxygen_concentration">
+                                        <label class="" for="id_oxygen_concentration">
+                                            Oxygen concentration
+                                        </label>
+                                        <div class="">
+                                            {{ vitals.oxygen_concentration }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div class="form-group" id="div_id_glucose_level">
+                                        <label class="" for="id_glucose_level">
+                                            Glucose level
+                                        </label>
+                                        <div class="">
+                                            {{ vitals.glucose_level }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="form-group col-md-4">
+                            <div>
+                                <div>
+                                    <div class="form-group" id="div_id_weeks_pregnant">
+                                        <label class="" for="id_weeks_pregnant">
+                                            Weeks pregnant
+                                        </label>
+                                        <div class="">
+                                            {{ encounter.weeks_pregnant }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div class="form-group" id="div_id_body_mass_index">
+                                        <label class="" for="id_body_mass_index">
+                                            Body mass index
+                                        </label>
+                                        <div class="">
+                                            {{ encounter.body_mass_index }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <div>
+                                <div>
+                                    <div class="form-group" id="div_id_body_height_primary">
+                                        <label class=" requiredField" for="id_body_height_primary">
+                                            {% if units == 'i' %}
+                                            Height - ft
+                                            {% else %}
+                                            Height - m
+                                            {% endif %}
+                                        </label>
+                                        <div class="">
+                                            {% if units == 'i' %}
+                                            {{ encounter|imperial_primary_height }}
+                                            {% else %}
+                                            {{ encounter.body_height_primary }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <div>
+                                <div>
+                                    <div class="form-group" id="div_id_body_height_secondary">
+                                        <label class=" requiredField" for="id_body_height_secondary">
+                                            {% if units == 'i' %}
+                                            Height - in
+                                            {% else %}
+                                            Height - cm
+                                            {% endif %}
+                                        </label>
+                                        <div class="">
+                                            {% if units == 'i' %}
+                                            {{ encounter|imperial_secondary_height }}
+                                            {% else %}
+                                            {{ encounter.body_height_secondary }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <div>
+                                <div>
+                                    <div class="form-group" id="div_id_body_weight">
+                                        <label class=" requiredField" for="id_body_weight">
+                                            {% if units == 'i' %}
+                                            Body weight - lbs
+                                            {% else %}
+                                            Body weight - kgs
+                                            {% endif %}
+                                        </label>
+                                        <div class="">
+                                            {% if units == 'i' %}
+                                            {{ encounter|imperial_weight }}
+                                            {% else %}
+                                            {{ encounter.body_weight }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <div>
+                                <div>
+                                    <div class="form-group">
+                                        <div class="form-check" id="div_id_smoking">
+                                            <label class="form-check-label" for="id_smoking">
+                                                History of tobacco use disorder:
+                                            </label>
+                                            {{ encounter.smoking }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div class="form-group">
+                                        <div class="form-check" id="div_id_diabetes">
+                                            <label class="form-check-label" for="id_diabetes">
+                                                History of diabetes:
+                                            </label>
+                                            {{ encounter.history_of_diabetes}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div class="form-group">
+                                        <div class="form-check" id="div_id_diabetes">
+                                            <label class="form-check-label" for="id_diabetes">
+                                                History of hypertension:
+                                            </label>
+                                            {{ encounter.history_of_hypertension}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div class="form-group">
+                                        <div class="form-check" id="div_id_diabetes">
+                                            <label class="form-check-label" for="id_diabetes">
+                                                History of high cholesterol:
+                                            </label>
+                                            {{ encounter.history_of_high_cholesterol}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <div class="form-group">
+                                        <div class="form-check" id="div_id_alcohol">
+                                            <label class="form-check-label" for="id_alcohol">
+                                                History of substance/alcohol abuse:
+                                            </label>
+                                            {{ encounter.alcohol }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% for encoun, illness_list in histories_of_present_illness.items %}
+                    {% if encoun == encounter %}
+                    {% for illness in illness_list %}
+                    <div class="row">
+                        <div class="col-md-4">
                             <label class="form-check-label" for="id_chief_complaint">
                                 Chief complaint:
                             </label>
                             <div class="form-group col-md-12">
-                                {{ encounter.chief_complaint }}
+                                {{ illness.chief_complaint }}
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="col-md-4">
                             <label class="form-check-label" for="id_patient_history">
                                 Patient history:
                             </label>
                             <div class="form-group col-md-12">
-                                {{ encounter.patient_history }}
+                                {{ illness.patient_history }}
                             </div>
                         </div>
-                        {% endif %}
-                        <div class="row">
+                        <div class="col-md-4">
                             <label class="form-check-label" for="id_community_health_worker_notes">
                                 Community health worker notes:
                             </label>
                             <div class="form-group col-md-12">
-                                {{ encounter.community_health_worker_notes }}
+                                {{ illness.community_health_worker_notes }}
                             </div>
                         </div>
-                        <div class="row">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
                             <label class="form-check-label" for="id_procedure">
                                 Procedure/Counseling:
                             </label>
                             <div class="form-group col-md-12">
-                                {{ encounter.procedure }}
+                                {{ illness.procedure }}
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="col-md-4">
                             <label class="form-check-label" for="id_pharmacy_notes">
                                 Pharmacy notes:
                             </label>
                             <div class="form-group col-md-12">
-                                {{ encounter.pharmacy_notes }}
+                                {{ illness.pharmacy_notes }}
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="col-md-4">
                             <label class="form-check-label" for="id_medical_history">
                                 Medical/Surgical History:
                             </label>
                             <div class="form-group col-md-12">
-                                {{ encounter.medical_history }}
+                                {{ illness.medical_history }}
                             </div>
                         </div>
-                        <div class="row">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
                             <label class="form-check-label" for="id_social_history">
                                 Social history:
                             </label>
                             <div class="form-group col-md-12">
-                                {{ encounter.social_history }}
+                                {{ illness.social_history }}
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="col-md-4">
                             <label class="form-check-label" for="id_current_medications">
                                 Current medications:
                             </label>
                             <div class="form-group col-md-12">
-                                {{ encounter.current_medications }}
+                                {{ illness.current_medications }}
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="col-md-4">
                             <label class="form-check-label" for="id_family_history">
                                 Family history:
                             </label>
                             <div class="form-group col-md-12">
-                                {{ encounter.family_history }}
+                                {{ illness.family_history }}
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
             <div>
-                <div><h3>Diagnoses and Treatment</h3></div>
+                <div>
+                    <h3>Diagnoses and Treatment</h3>
+                </div>
                 <div>
                     <h4>All Diagnoses</h4>
                     {% for key, value in diagnoses.items %}
@@ -646,7 +654,7 @@
                             <div class="">{{ t.prescriber.email }}</div>
                         </div>
                     </div>
-                    <hr/>
+                    <hr />
                     {% endfor %}
                     {% endif %}
                     {% endfor %}
@@ -656,7 +664,7 @@
         <hr>
         {% endfor %}
     </div>
-</div>
+    </div>
 </body>
 
 </html>
