@@ -525,6 +525,9 @@
                             </div>
                         </div>
                     </div>
+                    <div>
+                        {{ encounter|get_chief_complaint }}
+                    </div>
                     {% for encoun, illness_list in histories_of_present_illness.items %}
                     {% if encoun == encounter %}
                     {% for illness in illness_list %}
