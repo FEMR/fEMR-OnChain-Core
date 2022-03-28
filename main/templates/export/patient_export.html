@@ -526,20 +526,14 @@
                         </div>
                     </div>
                     <div>
+                        <h5>Encounter complaints:</h5>
                         {{ encounter|get_chief_complaint }}
                     </div>
                     {% for encoun, illness_list in histories_of_present_illness.items %}
                     {% if encoun == encounter %}
                     {% for illness in illness_list %}
                     <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-check-label" for="id_chief_complaint">
-                                Chief complaint:
-                            </label>
-                            <div class="form-group col-md-12">
-                                {{ illness.chief_complaint }}
-                            </div>
-                        </div>
+                        <h4>History of complaint: {{ illness.chief_complaint }}</h4>
                         <div class="col-md-4">
                             <label class="form-check-label" for="id_patient_history">
                                 Patient history:
