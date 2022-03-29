@@ -202,7 +202,7 @@ class Patient(models.Model):
     or may be connected directly to a user of the fEMR-OnChain platform.
     """
 
-    campaign_key = models.PositiveIntegerField(
+    campaign_key = models.BigIntegerField(
         null=True, blank=True, validators=[MinValueValidator(1)]
     )
 
@@ -567,7 +567,9 @@ class Treatment(models.Model):
     diagnosis = models.ForeignKey(
         Diagnosis, on_delete=models.CASCADE, null=True, blank=True
     )
-    amount = models.PositiveIntegerField(null=True, blank=True)
+    amount = models.BigIntegerField(
+        null=True, blank=True, validators=[MinValueValidator(0)]
+    )
     encounter = models.ForeignKey(
         PatientEncounter,
         on_delete=models.CASCADE,
@@ -612,12 +614,14 @@ class InventoryEntry(models.Model):
     form = models.ForeignKey(InventoryForm, on_delete=models.CASCADE)
     strength = models.CharField(max_length=25, null=True, blank=True)
     strength_unit = models.CharField(max_length=25, null=True, blank=True)
-    count = models.PositiveIntegerField(default=0)
+    count = models.BigIntegerField(default=0, validators=[MinValueValidator(0)])
     count_unit = models.CharField(max_length=25, null=True, blank=True)
-    quantity = models.PositiveIntegerField(default=0)
+    quantity = models.BigIntegerField(default=0, validators=[MinValueValidator(0)])
     quantity_unit = models.CharField(max_length=25, null=True, blank=True)
-    amount = models.PositiveIntegerField(default=0)
-    initial_quantity = models.PositiveIntegerField(default=0)
+    amount = models.BigIntegerField(default=0)
+    initial_quantity = models.BigIntegerField(
+        default=0, validators=[MinValueValidator(0)]
+    )
     item_number = models.CharField(max_length=25, null=True, blank=True)
     box_number = models.CharField(max_length=25, null=True, blank=True)
     expiration_date = models.DateField(blank=True, null=True)

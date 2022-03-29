@@ -31,7 +31,9 @@ def __patient_export_view_get(request, patient_id=None):
             )
         except PatientDiagnosis.DoesNotExist:
             diagnoses[encounter] = []
-        history_of_present_illness_dictionary[encounter] = list(HistoryOfPresentIllness.objects.filter(encounter=encounter))
+        history_of_present_illness_dictionary[encounter] = list(
+            HistoryOfPresentIllness.objects.filter(encounter=encounter)
+        )
         prescriptions[encounter] = list(Treatment.objects.filter(encounter=encounter))
         vitals_dictionary[encounter] = list(Vitals.objects.filter(encounter=encounter))
     return render(

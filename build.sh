@@ -12,6 +12,7 @@ export EMAIL_USERNAME=""
 export EMAIL_PASSWORD=""
 export DEFAULT_FROM_EMAIL=""
 export SERVER_EMAIL=""
+export ENVIRONMENT="LOCAL"
 
 function all() {
   migrate
