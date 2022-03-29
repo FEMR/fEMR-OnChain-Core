@@ -44,9 +44,6 @@
 </head>
 
 <body class="page-home">
-    {% if ENVIRONMENT != "PROD" %}
-    <div id="watermark">{{ ENVIRONMENT }}</div>
-    {% endif %}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark-femr">
         <a class="navbar-brand" href="{% url 'main:home' %}">
             <img alt="" src="{% static 'main/assets/logo.png' %}" width="60">
