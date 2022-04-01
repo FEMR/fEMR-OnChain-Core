@@ -101,7 +101,7 @@ def run_patient_csv_export(request):
                     ),
                     round(
                         (
-                            encounter.body_height_primary * 100
+                            (encounter.body_height_primary if encounter.body_height_primary is not None else 0) * 100
                             + encounter.body_height_secondary
                         )
                         / 2.54
@@ -161,7 +161,8 @@ def run_patient_csv_export(request):
                     ]
                 )
             if len(vitals) < max_vitals:
-                row.extend(["", "", "", "", "", "", ""] * (max_vitals - len(vitals)))
+                row.extend(["", "", "", "", "", "", ""]
+                           * (max_vitals - len(vitals)))
             for item in treatments:
                 row.extend(
                     [
@@ -173,7 +174,8 @@ def run_patient_csv_export(request):
                     ]
                 )
             if len(treatments) < max_treatments:
-                row.extend(["", "", "", "", ""] * (max_treatments - len(treatments)))
+                row.extend(["", "", "", "", ""] *
+                           (max_treatments - len(treatments)))
             for item in hpis:
                 row.extend(
                     [
