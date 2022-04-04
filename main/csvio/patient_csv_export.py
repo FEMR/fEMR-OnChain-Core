@@ -5,6 +5,7 @@ patient records as CSV files.
 import csv
 from datetime import datetime
 import math
+from silk.profiling.profiler import silk_profile
 from pytz import timezone as pytz_timezone
 from django.http.response import HttpResponse
 from main.models import (
@@ -17,6 +18,7 @@ from main.models import (
 
 
 # pylint: disable=R0914
+@silk_profile("run-patient-csv-export")
 def run_patient_csv_export(request):
     campaign = Campaign.objects.get(name=request.session["campaign"])
     units = campaign.units
