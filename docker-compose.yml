@@ -18,6 +18,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASS=postgres
       - POSTGRES_NAME=database
+      - ENVIRONMENT=LOCAL
     depends_on:
       - "database"
 volumes:

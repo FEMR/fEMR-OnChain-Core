@@ -3,6 +3,9 @@
 {% load crispy_forms_tags %}
 {% load static %}
 {{ error_message }}
+{% if ENVIRONMENT != "PROD" %}
+<div id="watermark">{{ ENVIRONMENT }}</div>
+{% endif %}
 <form action="{% url 'main:login_view' %}" class="form-signin container-sm my-auto mx-auto" id="login_form"
       method="post" name="login_form">
     <p class="text-center" id="header_image">

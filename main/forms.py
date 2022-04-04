@@ -201,10 +201,10 @@ class PatientForm(ModelForm):
         self.fields["ethnicity"].widget.attrs["required"] = True
         self.fields["social_security_number"].widget.attrs["minlength"] = "4"
         self.fields["zip_code"].widget.attrs["minlength"] = "5"
-        self.fields["age"].widget.attrs[
-            "style"
-        ] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
-        self.fields["age"].widget.attrs["readonly"] = ""
+        # self.fields["age"].widget.attrs[
+        #     "style"
+        # ] = "pointer-events: none; -webkit-appearance: none; margin: 0; -moz-appearance:textfield;"
+        # self.fields["age"].widget.attrs["readonly"] = ""
 
     def clean_social_security_number(self):
         if self.cleaned_data["social_security_number"] is None:
@@ -238,8 +238,9 @@ class PatientForm(ModelForm):
         return self.cleaned_data["zip_code"]
 
     def clean_date_of_birth(self):
-        if self.cleaned_data["date_of_birth"] > timezone.now().date():
-            raise ValidationError("Must not be later than today.")
+        if self.cleaned_data["date_of_birth"] is not None:
+            if self.cleaned_data["date_of_birth"] > timezone.now().date():
+                raise ValidationError("Must not be later than today.")
         return self.cleaned_data["date_of_birth"]
 
     def clean_phone_number(self):

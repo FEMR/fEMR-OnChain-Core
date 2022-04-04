@@ -475,7 +475,10 @@ def __treatment_view_post(request, encounter):
         treatment_form.save_m2m()
         for item in treatment.medication.all():
             item.amount -= treatment.amount
-            item.quantity = math.ceil(item.amount / item.count)
+            if item.count > 0:
+                item.quantity = math.ceil(item.amount / item.count)
+            else:
+                item.quantity = item.amount
             item.save()
         treatment_form = TreatmentForm()
         DatabaseChangeLog.objects.create(
