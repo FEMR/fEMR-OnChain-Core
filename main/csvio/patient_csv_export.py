@@ -102,7 +102,7 @@ def run_patient_csv_export(request):
                     round(
                         (
                             (encounter.body_height_primary if encounter.body_height_primary is not None else 0) * 100
-                            + encounter.body_height_secondary
+                            + (encounter.body_height_secondary if encounter.body_height_secondary is not None else 0)
                         )
                         / 2.54
                     )
