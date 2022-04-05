@@ -12,7 +12,7 @@ Welcome to fEMR OnChain's documentation!
 
    main
    clinic_messages
-   appMR
+   app_mr
 
 
 

@@ -4,8 +4,8 @@ All views, except auth views and the index view, should be considered to check f
 valid and authenticated user.
 If one is not found, they will direct to the appropriate error page.
 """
-import pytz
 import json
+import pytz
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -18,7 +18,6 @@ from main.background_tasks import (
     check_admin_permission,
     run_encounter_close,
 )
-from main.background_tasks import reassign_admin_groups
 from main.forms import ForgotUsernameForm
 from main.models import Campaign, MessageOfTheDay, fEMRUser
 
@@ -43,7 +42,6 @@ def home(request):
     :return: An HttpResponse, rendering the home page.
     """
     if request.user.is_authenticated:
-        reassign_admin_groups(request.user)
         assign_broken_patient()
         campaign_list = request.user.campaigns.filter(active=True)
         if len(campaign_list) != 0 and request.session["campaign"] != "RECOVERY MODE":
@@ -161,12 +159,12 @@ def help_messages_off(request):
 
 # open .json file and convert it into a dictionary object, to display in the FAQs page:
 def faqs(request):
-    json_file = open("main/static/main/js/faqs.json", "r")
-    json_data = json_file.read()
-    dictionary_object = json.loads(json_data)
-    json_file.close()
+    with open("main/static/main/js/faqs.json", "r", encoding="utf-8") as json_file:
+        json_data = json_file.read()
+        dictionary_object = json.loads(json_data)
 
     if request.user.is_authenticated:
-        return render(request, "data/faqs_auth.html", dictionary_object)
+        return_value = render(request, "data/faqs_auth.html", dictionary_object)
     else:
-        return render(request, "data/faqs.html", dictionary_object)
+        return_value = render(request, "data/faqs.html", dictionary_object)
+    return return_value

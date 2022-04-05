@@ -1,7 +1,7 @@
-appMR.apps
+app_mr.apps
 ==========
 
-.. automodule:: appMR.apps
+.. automodule:: app_mr.apps
 
    
    
@@ -17,7 +17,7 @@ appMR.apps
 
    .. autosummary::
    
-      AppmrConfig
+      app_mrConfig
    
    
 

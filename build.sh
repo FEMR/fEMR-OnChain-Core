@@ -42,7 +42,7 @@ function clean() {
 function migrate() {
   pwd
   python3 manage.py makemigrations main
-  python3 manage.py makemigrations appMR
+  python3 manage.py makemigrations app_mr
   python3 manage.py makemigrations clinic_messages
   python3 manage.py makemigrations
   python3 manage.py migrate
@@ -50,7 +50,7 @@ function migrate() {
 
 function makemigrations() {
   python3 manage.py makemigrations main
-  python3 manage.py makemigrations appMR
+  python3 manage.py makemigrations app_mr
   python3 manage.py makemigrations clinic_messages
   python3 manage.py makemigrations
 }
@@ -66,7 +66,7 @@ function run() {
 function documents() {
   rm -rf build/
   sphinx-apidoc -f -o source main
-  sphinx-apidoc -f -o source appMR
+  sphinx-apidoc -f -o source app_mr
   sphinx-apidoc -f -o source clinic_messages
   make html
   mkdir -p docs/
@@ -103,7 +103,7 @@ function check() {
   clear && \
    black . && \
    ./build.sh test && \
-   pylint main appMR clinic_messages --disable=E1101,W0613,R0903,C0301
+   pylint main app_mr clinic_messages --disable=E1101,W0613,R0903,C0301,C0114,C0115,C0116,R0801
 }
 
 case "$1" in

@@ -4,8 +4,8 @@ from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
-from appMR.models import SupportTicket
-from appMR.signals import ticket_activity
+from app_mr.models import SupportTicket
+from app_mr.signals import ticket_activity
 from clinic_messages.models import Message
 
 from main.femr_admin_views import get_client_ip

@@ -45,6 +45,6 @@ class Command(BaseCommand):
         """
         AdministrationSchedule.objects.filter(modifier=0.0).delete()
         for option in OPTIONS:
-            a = AdministrationSchedule.objects.get_or_create(text=option[0])[0]
-            a.modifier = option[1]
-            a.save()
+            schedule = AdministrationSchedule.objects.get_or_create(text=option[0])[0]
+            schedule.modifier = option[1]
+            schedule.save()

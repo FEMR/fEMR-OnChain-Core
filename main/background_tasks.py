@@ -4,7 +4,6 @@ Non-view functions used to carry out background processes.
 import os
 from datetime import timedelta
 
-from django.contrib.auth.models import Group
 from django.db.models.query_utils import Q
 from django.utils import timezone
 from django.core.mail import send_mail
@@ -125,15 +124,3 @@ def assign_broken_patient():
     for patient in Patient.objects.filter(campaign_key=None):
         patient.campaign_key = cal_key(patient.id)
         patient.save()
-
-
-@silk_profile("reassign-admin-groups")
-def reassign_admin_groups(user):
-    for u in fEMRUser.objects.all():
-        if u.groups.filter(name="Admin").exists():
-            u.groups.add(Group.objects.get(name="Campaign Manager"))
-            u.groups.remove(Group.objects.get(name="Admin"))
-    if Group.objects.filter(name="Admin").exists():
-        admin_group = Group.objects.get(name="Admin")
-        if len(admin_group.user_set.all()) == 0:
-            admin_group.delete()

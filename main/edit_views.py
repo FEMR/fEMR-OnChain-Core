@@ -27,7 +27,6 @@ from main.models import (
     Campaign,
     Diagnosis,
     HistoryOfPresentIllness,
-    InventoryEntry,
     Patient,
     PatientDiagnosis,
     PatientEncounter,
@@ -308,7 +307,6 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
 
 def __new_diagnosis_view_body(request, patient_id, encounter_id):
     campaign = Campaign.objects.get(name=request.session["campaign"])
-    units = campaign.units
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
     treatment_form = TreatmentForm()
@@ -321,8 +319,8 @@ def __new_diagnosis_view_body(request, patient_id, encounter_id):
         diagnosis_form = PatientDiagnosisForm()
     if request.method == "POST":
         diagnosis_form = new_diagnosis_view_post(request, encounter, diagnosis_set)
-    form = PatientEncounterForm(instance=encounter, unit=units)
-    if units == "i":
+    form = PatientEncounterForm(instance=encounter, unit=campaign.units)
+    if campaign.units == "i":
         new_diagnosis_imperial(form, encounter)
     suffix = patient.get_suffix_display() if patient.suffix is not None else ""
     if len(querysets) > 0:
@@ -343,7 +341,7 @@ def __new_diagnosis_view_body(request, patient_id, encounter_id):
             "form": form,
             "vitals": Vitals.objects.filter(encounter=encounter),
             "treatments": Treatment.objects.filter(encounter=encounter),
-            "vitals_form": VitalsForm(unit=units),
+            "vitals_form": VitalsForm(unit=campaign.units),
             "diagnosis_form": diagnosis_form,
             "treatment_form": treatment_form,
             "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
@@ -351,7 +349,7 @@ def __new_diagnosis_view_body(request, patient_id, encounter_id):
             "birth_sex": patient.sex_assigned_at_birth,
             "encounter_id": encounter_id,
             "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
-            "units": units,
+            "units": campaign.units,
             "patient": patient,
             "treatment_active": treatment_active,
         },
@@ -408,14 +406,11 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
 
 def __new_treatment_view_body(request, patient_id, encounter_id):
     campaign = Campaign.objects.get(name=request.session["campaign"])
-    units = campaign.units
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
     treatment_form = TreatmentForm()
     treatment_form.fields["medication"].queryset = campaign.inventory.entries.all()
-    patient_diagnoses = querysets = list(
-        PatientDiagnosis.objects.filter(encounter=encounter)
-    )
+    querysets = list(PatientDiagnosis.objects.filter(encounter=encounter))
     if len(querysets) > 0:
         item = querysets.pop().diagnosis.all()
         for query_item in querysets:
@@ -425,15 +420,15 @@ def __new_treatment_view_body(request, patient_id, encounter_id):
     else:
         treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
         treatment_active = False
-    diagnosis_set = patient_diagnoses
+    diagnosis_set = list(PatientDiagnosis.objects.filter(encounter=encounter))
     if len(diagnosis_set) > 0:
         diagnosis_form = PatientDiagnosisForm(instance=diagnosis_set[0])
     else:
         diagnosis_form = PatientDiagnosisForm()
     if request.method == "POST":
         treatment_form = __treatment_view_post(request, encounter)
-    form = PatientEncounterForm(instance=encounter, unit=units)
-    if units == "i":
+    form = PatientEncounterForm(instance=encounter, unit=campaign.units)
+    if campaign.units == "i":
         new_treatment_imperial(form, encounter)
     suffix = patient.get_suffix_display() if patient.suffix is not None else ""
     return render(
@@ -444,7 +439,7 @@ def __new_treatment_view_body(request, patient_id, encounter_id):
             "aux_form": AuxiliaryPatientEncounterForm(instance=encounter),
             "vitals": Vitals.objects.filter(encounter=encounter),
             "treatments": Treatment.objects.filter(encounter=encounter),
-            "vitals_form": VitalsForm(unit=units),
+            "vitals_form": VitalsForm(unit=campaign.units),
             "diagnosis_form": diagnosis_form,
             "treatment_form": treatment_form,
             "page_name": f"Edit Encounter for {patient.first_name} {patient.last_name} {suffix}",
@@ -452,7 +447,7 @@ def __new_treatment_view_body(request, patient_id, encounter_id):
             "birth_sex": patient.sex_assigned_at_birth,
             "encounter_id": encounter_id,
             "patient_name": f"{patient.first_name} {patient.last_name} {suffix}",
-            "units": units,
+            "units": campaign.units,
             "patient": patient,
             "treatment_active": treatment_active,
         },

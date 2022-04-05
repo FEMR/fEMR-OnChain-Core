@@ -1,7 +1,7 @@
-appMR.migrations.0006\_auto\_20210306\_1748
+app_mr.migrations.0006\_auto\_20210306\_1748
 ===========================================
 
-.. automodule:: appMR.migrations.0006_auto_20210306_1748
+.. automodule:: app_mr.migrations.0006_auto_20210306_1748
 
    
    

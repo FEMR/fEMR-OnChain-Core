@@ -68,7 +68,9 @@ def new_campaign_view(request):
         if request.user.groups.filter(name="fEMR Admin").exists():
             campaign_name = request.session.get("campaign", None)
             if campaign_name == "RECOVERY MODE":
-                return render(request, "femr_admin/campaign/op_not_permitted.html")
+                return_value = render(
+                    request, "femr_admin/campaign/op_not_permitted.html"
+                )
             else:
                 if request.method == "POST":
                     form = CampaignForm(request.POST)
@@ -85,26 +87,27 @@ def new_campaign_view(request):
                                 name=request.session["campaign"]
                             ),
                         )
-                        return render(
+                        return_value = render(
                             request, "femr_admin/confirm/campaign_submitted.html"
                         )
                     else:
-                        return render(
+                        return_value = render(
                             request,
                             "femr_admin/campaign/new_campaign.html",
                             {"form": form, "page_name": "New Campaign"},
                         )
                 else:
                     form = CampaignForm()
-                    return render(
+                    return_value = render(
                         request,
                         "femr_admin/campaign/new_campaign.html",
                         {"form": form, "page_name": "New Campaign"},
                     )
         else:
-            return redirect("main:permission_denied")
+            return_value = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_value = redirect("main:not_logged_in")
+    return return_value
 
 
 def new_instance_view(request):
@@ -124,24 +127,36 @@ def new_instance_view(request):
                         username=request.user.username,
                         campaign=Campaign.objects.get(name=request.session["campaign"]),
                     )
-                    return render(request, "femr_admin/confirm/instance_submitted.html")
+                    return_value = render(
+                        request, "femr_admin/confirm/instance_submitted.html"
+                    )
+                else:
+                    return_value = render(
+                        request,
+                        "femr_admin/instance/new_instance.html",
+                        {
+                            "form": form,
+                            "contact_form": contact_form,
+                            "page_name": "New Operation",
+                            "show": False,
+                        },
+                    )
             else:
-                form = InstanceForm()
-                contact_form = fEMRAdminUserForm()
-            return render(
-                request,
-                "femr_admin/instance/new_instance.html",
-                {
-                    "form": form,
-                    "contact_form": contact_form,
-                    "page_name": "New Operation",
-                    "show": False,
-                },
-            )
+                return_value = render(
+                    request,
+                    "femr_admin/instance/new_instance.html",
+                    {
+                        "form": InstanceForm(),
+                        "contact_form": fEMRAdminUserForm(),
+                        "page_name": "New Operation",
+                        "show": False,
+                    },
+                )
         else:
-            return redirect("main:permission_denied")
+            return_value = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_value = redirect("main:not_logged_in")
+    return return_value
 
 
 def new_contact_view(request):
@@ -252,18 +267,34 @@ def edit_contact_view(request, user_id=None):
                         username=request.user.username,
                         campaign=Campaign.objects.get(name=request.session["campaign"]),
                     )
-                    return render(request, "femr_admin/confirm/contact_submitted.html")
+                    return_value = render(
+                        request, "femr_admin/confirm/contact_submitted.html"
+                    )
+                else:
+                    return_value = render(
+                        request,
+                        "femr_admin/contact/edit_contact.html",
+                        {
+                            "form": form,
+                            "page_name": "Edit Contact",
+                            "contact_id": user_id,
+                        },
+                    )
             else:
-                form = fEMRAdminUserUpdateForm(instance=instance)
-            return render(
-                request,
-                "femr_admin/contact/edit_contact.html",
-                {"form": form, "page_name": "Edit Contact", "contact_id": user_id},
-            )
+                return_value = render(
+                    request,
+                    "femr_admin/contact/edit_contact.html",
+                    {
+                        "form": fEMRAdminUserUpdateForm(instance=instance),
+                        "page_name": "Edit Contact",
+                        "contact_id": user_id,
+                    },
+                )
         else:
-            return redirect("main:permission_denied")
+            return_value = redirect("main:permission_denied")
     else:
-        return redirect("main:not_logged_in")
+        return_value = redirect("main:not_logged_in")
+    return return_value
 
 
 def view_contact_view(request, user_id=None):

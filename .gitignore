@@ -33,10 +33,10 @@ build/
 source/_autosummary
 .coverage
 cover/
-source/appMR.migrations.rst
-source/appMR.rst
-source/appMR.test.rst
-source/appMR.tests.rst
+source/app_mr.migrations.rst
+source/app_mr.rst
+source/app_mr.test.rst
+source/app_mr.tests.rst
 source/clinic_messages.migrations.rst
 source/clinic_messages.rst
 source/clinic_messages.test.rst

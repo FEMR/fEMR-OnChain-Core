@@ -6,7 +6,6 @@ from main.models import (
     HistoryOfPresentIllness,
     Patient,
     PatientDiagnosis,
-    PatientEncounter,
     Vitals,
     Treatment,
 )
@@ -15,7 +14,7 @@ from main.models import (
 @silk_profile("patient-export-view-get")
 def __patient_export_view_get(request, patient_id=None):
     patient = get_object_or_404(Patient, pk=patient_id)
-    encounters = PatientEncounter.objects.filter(patient=patient).order_by("-timestamp")
+    encounters = patient.patientencounter_set.order_by("-timestamp")
     prescriptions = {}
     diagnoses = {}
     vitals_dictionary = {}

@@ -18,11 +18,127 @@ from main.models import (
 )
 
 
+@silk_profile("calc-height")
+def calc_height(encounter: PatientEncounter) -> str:
+    primary = math.floor(
+        round(
+            (
+                (
+                    encounter.body_height_primary
+                    if encounter.body_height_primary is not None
+                    else 0
+                )
+                * 100
+                + (
+                    encounter.body_height_secondary
+                    if encounter.body_height_secondary is not None
+                    else 0
+                )
+            )
+            / 2.54
+        )
+        // 12
+    )
+    secondary = (
+        round(
+            (
+                (
+                    encounter.body_height_primary
+                    if encounter.body_height_primary is not None
+                    else 0
+                )
+                * 100
+                + (
+                    encounter.body_height_secondary
+                    if encounter.body_height_secondary is not None
+                    else 0
+                )
+            )
+            / 2.54
+        )
+        % 12
+    )
+    return f"{primary}' {secondary}\""
+
+
+@silk_profile("extend-vitals-list")
+def extend_vitals_list(campaign, vitals, row):
+    for vital in vitals:
+        row.extend(
+            [
+                vital.systolic_blood_pressure,
+                vital.diastolic_blood_pressure,
+                vital.mean_arterial_pressure,
+                vital.heart_rate,
+                round(
+                    (
+                        (
+                            vital.body_temperature
+                            if vital.body_temperature is not None
+                            else 0
+                        )
+                        * 9
+                        / 5
+                    )
+                    + 32,
+                    2,
+                )
+                if campaign.units == "i"
+                else vital.body_temperature,
+                vital.oxygen_concentration,
+                vital.glucose_level,
+            ]
+        )
+
+
+@silk_profile("build-title-row")
+def build_title_row(campaign, title_row, max_vitals, max_treatments, max_hpis):
+    for _ in range(max_vitals):
+        title_row.extend(
+            [
+                "Systolic Blood Pressure",
+                "Diastolic Blood Pressure",
+                "Mean Arterial Pressure",
+                "Heart Rate",
+                "Body Temperature (F)"
+                if campaign.units == "i"
+                else "Body Temperature (C)",
+                "Oxygen Concentration",
+                "Glucose Level",
+            ]
+        )
+    for _ in range(max_treatments):
+        title_row.extend(
+            [
+                "Diagnosis",
+                "Medication",
+                "Administration Schedule",
+                "Days",
+                "Prescriber",
+            ]
+        )
+    for _ in range(max_hpis):
+        title_row.extend(
+            [
+                "Chief Complaint",
+                "Onset",
+                "Provokes",
+                "Palliates",
+                "Quality",
+                "Radiation",
+                "Severity",
+                "Time of Day",
+                "Narrative",
+                "Physical Examination",
+                "Tests Ordered",
+            ]
+        )
+
+
 # pylint: disable=R0914
 @silk_profile("run-patient-csv-export")
 def run_patient_csv_export(request):
     campaign = Campaign.objects.get(name=request.session["campaign"])
-    units = campaign.units
     resp = HttpResponse(content_type="text/csv")
     resp["Content-Disposition"] = 'attachment; filename="patient_export.csv"'
     writer = csv.writer(resp)
@@ -33,7 +149,7 @@ def run_patient_csv_export(request):
         "City",
         "Date Seen",
         "Height",
-        "Weight (lbs)" if units == "i" else "Weight (kg)",
+        "Weight (lbs)" if campaign.units == "i" else "Weight (kg)",
         "BMI",
         "History of Tobacco Use",
         "History of Diabetes",
@@ -84,44 +200,15 @@ def run_patient_csv_export(request):
                 patient.city,
                 # pylint: disable=C0301
                 f"{encounter.timestamp.astimezone(campaign_time_zone)} {campaign_time_zone_b}",
-                # pylint: disable=C0209
-                "{0}' {1}\"".format(
-                    math.floor(
-                        round(
-                            (
-                                (
-                                    encounter.body_height_primary
-                                    if encounter.body_height_primary is not None
-                                    else 0
-                                )
-                                * 100
-                                + (
-                                    encounter.body_height_secondary
-                                    if encounter.body_height_secondary is not None
-                                    else 0
-                                )
-                            )
-                            / 2.54
-                        )
-                        // 12
-                    ),
-                    round(
-                        (
-                            (encounter.body_height_primary if encounter.body_height_primary is not None else 0) * 100
-                            + (encounter.body_height_secondary if encounter.body_height_secondary is not None else 0)
-                        )
-                        / 2.54
-                    )
-                    % 12,
-                )
-                if units == "i"
+                calc_height(encounter)
+                if campaign.units == "i"
                 else f"{encounter.body_height_primary} m {encounter.body_height_secondary} cm",
                 round(
                     (encounter.body_weight if encounter.body_weight is not None else 0)
                     * 2.2046,
                     2,
                 )
-                if units == "i"
+                if campaign.units == "i"
                 else encounter.body_weight,
                 encounter.body_mass_index,
                 encounter.smoking,
@@ -140,35 +227,9 @@ def run_patient_csv_export(request):
             vitals = vitals_dict[encounter]
             treatments = treatments_dict[encounter]
             hpis = hpis_dict[encounter]
-            for vital in vitals:
-                row.extend(
-                    [
-                        vital.systolic_blood_pressure,
-                        vital.diastolic_blood_pressure,
-                        vital.mean_arterial_pressure,
-                        vital.heart_rate,
-                        round(
-                            (
-                                (
-                                    vital.body_temperature
-                                    if vital.body_temperature is not None
-                                    else 0
-                                )
-                                * 9
-                                / 5
-                            )
-                            + 32,
-                            2,
-                        )
-                        if units == "i"
-                        else vital.body_temperature,
-                        vital.oxygen_concentration,
-                        vital.glucose_level,
-                    ]
-                )
+            extend_vitals_list(campaign, vitals, row)
             if len(vitals) < max_vitals:
-                row.extend(["", "", "", "", "", "", ""]
-                           * (max_vitals - len(vitals)))
+                row.extend(["", "", "", "", "", "", ""] * (max_vitals - len(vitals)))
             for item in treatments:
                 row.extend(
                     [
@@ -180,8 +241,7 @@ def run_patient_csv_export(request):
                     ]
                 )
             if len(treatments) < max_treatments:
-                row.extend(["", "", "", "", ""] *
-                           (max_treatments - len(treatments)))
+                row.extend(["", "", "", "", ""] * (max_treatments - len(treatments)))
             for item in hpis:
                 row.extend(
                     [
@@ -205,44 +265,7 @@ def run_patient_csv_export(request):
                 )
             patient_rows.append(row)
         export_id += 1
-    for _ in range(max_vitals):
-        title_row.extend(
-            [
-                "Systolic Blood Pressure",
-                "Diastolic Blood Pressure",
-                "Mean Arterial Pressure",
-                "Heart Rate",
-                "Body Temperature (F)" if units == "i" else "Body Temperature (C)",
-                "Oxygen Concentration",
-                "Glucose Level",
-            ]
-        )
-    for _ in range(max_treatments):
-        title_row.extend(
-            [
-                "Diagnosis",
-                "Medication",
-                "Administration Schedule",
-                "Days",
-                "Prescriber",
-            ]
-        )
-    for _ in range(max_hpis):
-        title_row.extend(
-            [
-                "Chief Complaint",
-                "Onset",
-                "Provokes",
-                "Palliates",
-                "Quality",
-                "Radiation",
-                "Severity",
-                "Time of Day",
-                "Narrative",
-                "Physical Examination",
-                "Tests Ordered",
-            ]
-        )
+    build_title_row(campaign, title_row, max_vitals, max_treatments, max_hpis)
     writer.writerow(title_row)
     for row in patient_rows:
         writer.writerow(row)

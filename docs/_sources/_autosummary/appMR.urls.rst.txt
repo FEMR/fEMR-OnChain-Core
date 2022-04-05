@@ -1,7 +1,7 @@
-appMR.urls
+app_mr.urls
 ==========
 
-.. automodule:: appMR.urls
+.. automodule:: app_mr.urls
 
    
    

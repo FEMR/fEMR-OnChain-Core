@@ -1,7 +1,7 @@
-appMR.forms
+app_mr.forms
 ===========
 
-.. automodule:: appMR.forms
+.. automodule:: app_mr.forms
 
    
    

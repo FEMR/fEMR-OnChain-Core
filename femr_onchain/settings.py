@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "main.apps.MainConfig",
-    "appMR",
+    "app_mr",
     "clinic_messages",
     "crispy_forms",
     "axes",
@@ -59,7 +59,7 @@ TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 NOSE_ARGS = [
     "--with-coverage",
-    "--cover-package=main,appMR,clinic_messages",
+    "--cover-package=main,app_mr,clinic_messages",
     "--cover-html",
     "--cover-inclusive",
 ]

@@ -6,8 +6,6 @@ import math
 # Core Django imports
 from django import template
 
-from main.models import PatientEncounter
-
 # Stdlib imports
 
 # Third-party app imports
