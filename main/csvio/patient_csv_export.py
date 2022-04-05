@@ -11,7 +11,7 @@ from django.http.response import HttpResponse
 from main.models import (
     Campaign,
     HistoryOfPresentIllness,
-    Patient,
+    PatientEncounter,
     Treatment,
     Vitals,
 )
@@ -47,7 +47,7 @@ def run_patient_csv_export(request):
         "Current Medications",
         "Family History",
     ]
-    data = Patient.objects.filter(campaign=campaign)
+    data = PatientEncounter.objects.filter(campaign=campaign)
     export_id = 1
     campaign_time_zone = pytz_timezone(campaign.timezone)
     campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
@@ -61,149 +61,147 @@ def run_patient_csv_export(request):
     all_vitals = Vitals.objects.all()
     all_treatments = Treatment.objects.all()
     all_hpis = HistoryOfPresentIllness.objects.all()
-    for patient in data:
-        for encounter in patient.patientencounter_set.all():
-            vitals = all_vitals.filter(encounter=encounter)
-            treatments = all_treatments.filter(encounter=encounter)
-            hpis = all_hpis.filter(encounter=encounter)
+    for encounter in data:
+        vitals = all_vitals.filter(encounter=encounter)
+        treatments = all_treatments.filter(encounter=encounter)
+        hpis = all_hpis.filter(encounter=encounter)
 
-            vitals_dict[encounter] = vitals
-            treatments_dict[encounter] = treatments
-            hpis_dict[encounter] = hpis
+        vitals_dict[encounter] = vitals
+        treatments_dict[encounter] = treatments
+        hpis_dict[encounter] = hpis
 
-            max_treatments = max(len(treatments), max_treatments)
-            max_hpis = max(len(hpis), max_hpis)
-            max_vitals = max(len(vitals), max_vitals)
-    for patient in data:
-        for encounter in patient.patientencounter_set.all():
-            row = [
-                export_id,
-                patient.sex_assigned_at_birth,
-                patient.age,
-                patient.city,
-                # pylint: disable=C0301
-                f"{encounter.timestamp.astimezone(campaign_time_zone)} {campaign_time_zone_b}",
-                # pylint: disable=C0209
-                "{0}' {1}\"".format(
-                    math.floor(
-                        round(
-                            (
-                                (
-                                    encounter.body_height_primary
-                                    if encounter.body_height_primary is not None
-                                    else 0
-                                )
-                                * 100
-                                + (
-                                    encounter.body_height_secondary
-                                    if encounter.body_height_secondary is not None
-                                    else 0
-                                )
-                            )
-                            / 2.54
-                        )
-                        // 12
-                    ),
+        max_treatments = max(len(treatments), max_treatments)
+        max_hpis = max(len(hpis), max_hpis)
+        max_vitals = max(len(vitals), max_vitals)
+    for encounter in data:
+        row = [
+            export_id,
+            patient.sex_assigned_at_birth,
+            patient.age,
+            patient.city,
+            # pylint: disable=C0301
+            f"{encounter.timestamp.astimezone(campaign_time_zone)} {campaign_time_zone_b}",
+            # pylint: disable=C0209
+            "{0}' {1}\"".format(
+                math.floor(
                     round(
                         (
-                            (encounter.body_height_primary if encounter.body_height_primary is not None else 0) * 100
-                            + (encounter.body_height_secondary if encounter.body_height_secondary is not None else 0)
+                            (
+                                encounter.body_height_primary
+                                if encounter.body_height_primary is not None
+                                else 0
+                            )
+                            * 100
+                            + (
+                                encounter.body_height_secondary
+                                if encounter.body_height_secondary is not None
+                                else 0
+                            )
                         )
                         / 2.54
                     )
-                    % 12,
-                )
-                if units == "i"
-                else f"{encounter.body_height_primary} m {encounter.body_height_secondary} cm",
+                    // 12
+                ),
                 round(
-                    (encounter.body_weight if encounter.body_weight is not None else 0)
-                    * 2.2046,
-                    2,
+                    (
+                        (encounter.body_height_primary if encounter.body_height_primary is not None else 0) * 100
+                        + (encounter.body_height_secondary if encounter.body_height_secondary is not None else 0)
+                    )
+                    / 2.54
                 )
-                if units == "i"
-                else encounter.body_weight,
-                encounter.body_mass_index,
-                encounter.smoking,
-                encounter.history_of_diabetes,
-                encounter.history_of_hypertension,
-                encounter.history_of_high_cholesterol,
-                encounter.alcohol,
-                encounter.community_health_worker_notes,
-                encounter.procedure,
-                encounter.pharmacy_notes,
-                encounter.medical_history,
-                encounter.social_history,
-                encounter.current_medications,
-                encounter.family_history,
-            ]
-            vitals = vitals_dict[encounter]
-            treatments = treatments_dict[encounter]
-            hpis = hpis_dict[encounter]
-            for vital in vitals:
-                row.extend(
-                    [
-                        vital.systolic_blood_pressure,
-                        vital.diastolic_blood_pressure,
-                        vital.mean_arterial_pressure,
-                        vital.heart_rate,
-                        round(
+                % 12,
+            )
+            if units == "i"
+            else f"{encounter.body_height_primary} m {encounter.body_height_secondary} cm",
+            round(
+                (encounter.body_weight if encounter.body_weight is not None else 0)
+                * 2.2046,
+                2,
+            )
+            if units == "i"
+            else encounter.body_weight,
+            encounter.body_mass_index,
+            encounter.smoking,
+            encounter.history_of_diabetes,
+            encounter.history_of_hypertension,
+            encounter.history_of_high_cholesterol,
+            encounter.alcohol,
+            encounter.community_health_worker_notes,
+            encounter.procedure,
+            encounter.pharmacy_notes,
+            encounter.medical_history,
+            encounter.social_history,
+            encounter.current_medications,
+            encounter.family_history,
+        ]
+        vitals = vitals_dict[encounter]
+        treatments = treatments_dict[encounter]
+        hpis = hpis_dict[encounter]
+        for vital in vitals:
+            row.extend(
+                [
+                    vital.systolic_blood_pressure,
+                    vital.diastolic_blood_pressure,
+                    vital.mean_arterial_pressure,
+                    vital.heart_rate,
+                    round(
+                        (
                             (
-                                (
-                                    vital.body_temperature
-                                    if vital.body_temperature is not None
-                                    else 0
-                                )
-                                * 9
-                                / 5
+                                vital.body_temperature
+                                if vital.body_temperature is not None
+                                else 0
                             )
-                            + 32,
-                            2,
+                            * 9
+                            / 5
                         )
-                        if units == "i"
-                        else vital.body_temperature,
-                        vital.oxygen_concentration,
-                        vital.glucose_level,
-                    ]
-                )
-            if len(vitals) < max_vitals:
-                row.extend(["", "", "", "", "", "", ""]
-                           * (max_vitals - len(vitals)))
-            for item in treatments:
-                row.extend(
-                    [
-                        item.diagnosis,
-                        ",".join([str(x) for x in item.medication.all()]),
-                        item.administration_schedule,
-                        item.days,
-                        item.prescriber,
-                    ]
-                )
-            if len(treatments) < max_treatments:
-                row.extend(["", "", "", "", ""] *
-                           (max_treatments - len(treatments)))
-            for item in hpis:
-                row.extend(
-                    [
-                        item.chief_complaint,
-                        item.onset,
-                        item.provokes,
-                        item.palliates,
-                        item.quality,
-                        item.radiation,
-                        item.severity,
-                        item.time_of_day,
-                        item.narrative,
-                        item.physical_examination,
-                        item.tests_ordered,
-                    ]
-                )
-            if len(hpis) < max_hpis:
-                row.extend(
-                    ["", "", "", "", "", "", "", "", "", "", ""]
-                    * (max_hpis - len(hpis))
-                )
-            patient_rows.append(row)
-        export_id += 1
+                        + 32,
+                        2,
+                    )
+                    if units == "i"
+                    else vital.body_temperature,
+                    vital.oxygen_concentration,
+                    vital.glucose_level,
+                ]
+            )
+        if len(vitals) < max_vitals:
+            row.extend(["", "", "", "", "", "", ""]
+                        * (max_vitals - len(vitals)))
+        for item in treatments:
+            row.extend(
+                [
+                    item.diagnosis,
+                    ",".join([str(x) for x in item.medication.all()]),
+                    item.administration_schedule,
+                    item.days,
+                    item.prescriber,
+                ]
+            )
+        if len(treatments) < max_treatments:
+            row.extend(["", "", "", "", ""] *
+                        (max_treatments - len(treatments)))
+        for item in hpis:
+            row.extend(
+                [
+                    item.chief_complaint,
+                    item.onset,
+                    item.provokes,
+                    item.palliates,
+                    item.quality,
+                    item.radiation,
+                    item.severity,
+                    item.time_of_day,
+                    item.narrative,
+                    item.physical_examination,
+                    item.tests_ordered,
+                ]
+            )
+        if len(hpis) < max_hpis:
+            row.extend(
+                ["", "", "", "", "", "", "", "", "", "", ""]
+                * (max_hpis - len(hpis))
+            )
+        patient_rows.append(row)
+    export_id += 1
     for _ in range(max_vitals):
         title_row.extend(
             [
