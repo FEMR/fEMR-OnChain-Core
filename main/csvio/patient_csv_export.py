@@ -49,7 +49,6 @@ def run_patient_csv_export(request):
         "Family History",
     ]
     patient_data = Patient.objects.filter(campaign=campaign)
-    data = PatientEncounter.objects.filter(campaign=campaign)
     export_id = 1
     campaign_time_zone = pytz_timezone(campaign.timezone)
     campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
@@ -63,18 +62,19 @@ def run_patient_csv_export(request):
     all_vitals = Vitals.objects.all()
     all_treatments = Treatment.objects.all()
     all_hpis = HistoryOfPresentIllness.objects.all()
-    for encounter in data:
-        vitals = all_vitals.filter(encounter=encounter)
-        treatments = all_treatments.filter(encounter=encounter)
-        hpis = all_hpis.filter(encounter=encounter)
+    for patient in patient_data:
+        for encounter in patient.patientencounter_set.all():
+            vitals = all_vitals.filter(encounter=encounter)
+            treatments = all_treatments.filter(encounter=encounter)
+            hpis = all_hpis.filter(encounter=encounter)
 
-        vitals_dict[encounter] = vitals
-        treatments_dict[encounter] = treatments
-        hpis_dict[encounter] = hpis
+            vitals_dict[encounter] = vitals
+            treatments_dict[encounter] = treatments
+            hpis_dict[encounter] = hpis
 
-        max_treatments = max(len(treatments), max_treatments)
-        max_hpis = max(len(hpis), max_hpis)
-        max_vitals = max(len(vitals), max_vitals)
+            max_treatments = max(len(treatments), max_treatments)
+            max_hpis = max(len(hpis), max_hpis)
+            max_vitals = max(len(vitals), max_vitals)
     for patient in patient_data:
         for encounter in patient.patientencounter_set.all():
             row = [
