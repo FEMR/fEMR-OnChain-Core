@@ -60,7 +60,7 @@ def run_patient_csv_export(request):
     hpis_dict = {}
     all_vitals = Vitals.objects.all()
     all_treatments = Treatment.objects.all()
-    all_hpis = Treatment.objects.all()
+    all_hpis = HistoryOfPresentIllness.objects.all()
     for patient in data:
         for encounter in patient.patientencounter_set.all():
             vitals = all_vitals.filter(encounter=encounter)
