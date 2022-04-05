@@ -76,9 +76,9 @@ def run_patient_csv_export(request):
     for encounter in data:
         row = [
             export_id,
-            patient.sex_assigned_at_birth,
-            patient.age,
-            patient.city,
+            encounter.patient.sex_assigned_at_birth,
+            encounter.patient.age,
+            encounter.patient.city,
             # pylint: disable=C0301
             f"{encounter.timestamp.astimezone(campaign_time_zone)} {campaign_time_zone_b}",
             # pylint: disable=C0209
