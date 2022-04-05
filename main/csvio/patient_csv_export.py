@@ -68,9 +68,9 @@ def run_patient_csv_export(request):
             treatments_dict[encounter] = treatments
             hpis_dict[encounter] = hpis
 
-            max_treatments = max(treatments.count(), max_treatments)
-            max_hpis = max(hpis.count(), max_hpis)
-            max_vitals = max(vitals.count(), max_vitals)
+            max_treatments = max(len(treatments), max_treatments)
+            max_hpis = max(len(hpis), max_hpis)
+            max_vitals = max(len(vitals), max_vitals)
     for patient in data:
         for encounter in patient.patientencounter_set.all():
             row = [
@@ -194,10 +194,10 @@ def run_patient_csv_export(request):
                         item.tests_ordered,
                     ]
                 )
-            if hpis.count() < max_hpis:
+            if len(hpis) < max_hpis:
                 row.extend(
                     ["", "", "", "", "", "", "", "", "", "", ""]
-                    * (max_hpis - hpis.count())
+                    * (max_hpis - len(hpis))
                 )
             patient_rows.append(row)
         export_id += 1
