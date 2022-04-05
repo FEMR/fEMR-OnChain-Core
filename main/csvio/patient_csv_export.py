@@ -48,6 +48,7 @@ def run_patient_csv_export(request):
         "Current Medications",
         "Family History",
     ]
+    patient_data = Patient.objects.filter(campaign=campaign)
     data = PatientEncounter.objects.filter(campaign=campaign)
     export_id = 1
     campaign_time_zone = pytz_timezone(campaign.timezone)
@@ -74,7 +75,7 @@ def run_patient_csv_export(request):
         max_treatments = max(len(treatments), max_treatments)
         max_hpis = max(len(hpis), max_hpis)
         max_vitals = max(len(vitals), max_vitals)
-    for patient in data:
+    for patient in patient_data:
         for encounter in patient.patientencounter_set.all():
             row = [
                 export_id,
