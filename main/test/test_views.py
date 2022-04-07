@@ -15,7 +15,7 @@ def test_healthcheck():
 
 def test_home_view():
     u = fEMRUser.objects.create_user(
-        username="testhome",
+        username="testhomeview",
         password="testingpassword",
         email="hometestinguseremail@email.com",
     )
@@ -26,7 +26,9 @@ def test_home_view():
     u.campaigns.add(c)
     u.save()
     client = Client()
-    client.post("/login_view/", {"username": "testhome", "password": "testingpassword"})
+    client.post(
+        "/login_view/", {"username": "testhomeview", "password": "testingpassword"}
+    )
     return_response = client.post("/home/")
     u.delete()
     print(return_response.content)
