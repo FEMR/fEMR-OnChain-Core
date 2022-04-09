@@ -61,9 +61,32 @@ def calc_height(encounter: PatientEncounter) -> str:
     return f"{primary}' {secondary}\""
 
 
+@silk_profile("dict-builder")
+def dict_builder(campaign, vitals_dict, treatments_dict, hpis_dict):
+    max_treatments = 0
+    max_hpis = 0
+    max_vitals = 0
+    for encounter in PatientEncounter.objects.filter(campaign=campaign):
+        vitals = encounter.vitals_set.all()
+        vitals_count = len(vitals)
+        treatments = encounter.treatment_set.all()
+        treatments_count = len(treatments)
+        hpis = encounter.historyofpresentillness_set.all()
+        hpis_count = len(hpis)
+
+        vitals_dict[encounter] = (vitals, vitals_count)
+        treatments_dict[encounter] = (treatments, treatments_count)
+        hpis_dict[encounter] = (hpis, hpis_count)
+
+        max_treatments = max(treatments_count, max_treatments)
+        max_hpis = max(hpis_count, max_hpis)
+        max_vitals = max(vitals_count, max_vitals)
+    return max_treatments, max_hpis, max_vitals
+
+
 @silk_profile("extend-vitals-list")
-def extend_vitals_list(campaign, vitals, row):
-    for vital in vitals:
+def extend_vitals_list(campaign, vitals, row, max_vitals):
+    for vital in vitals[0]:
         row.extend(
             [
                 vital.systolic_blood_pressure,
@@ -88,6 +111,49 @@ def extend_vitals_list(campaign, vitals, row):
                 vital.oxygen_concentration,
                 vital.glucose_level,
             ]
+        )
+    if vitals[1] < max_vitals:
+        row.extend(["", "", "", "", "", "", ""] * (max_vitals - vitals[1]))
+
+
+@silk_profile("extend-treatments-list")
+def extend_treatments_list(row, treatments, max_treatments):
+    for item in treatments[0]:
+        row.extend(
+            [
+                item.diagnosis,
+                ",".join([str(x) for x in item.medication.all()]),
+                item.administration_schedule,
+                item.days,
+                item.prescriber,
+            ]
+        )
+    if treatments[1] < max_treatments:
+        row.extend(["", "", "", "", ""] * (max_treatments - treatments[1]))
+
+
+@silk_profile("extend-hpis-list")
+def extend_hpis_list(row, hpis, max_hpis):
+    for item in hpis[0]:
+        row.extend(
+            [
+                item.chief_complaint,
+                item.onset,
+                item.provokes,
+                item.palliates,
+                item.quality,
+                item.radiation,
+                item.severity,
+                item.time_of_day,
+                item.narrative,
+                item.physical_examination,
+                item.tests_ordered,
+            ]
+        )
+    if hpis[1] < max_hpis:
+        row.extend(
+            ["", "", "", "", "", "", "", "", "", "", ""]
+            * (max_hpis - hpis[1])
         )
 
 
@@ -135,6 +201,13 @@ def build_title_row(campaign, title_row, max_vitals, max_treatments, max_hpis):
         )
 
 
+@silk_profile("write-result-file")
+def write_result_file(writer, title_row, patient_rows):
+    writer.writerow(title_row)
+    for row in patient_rows:
+        writer.writerow(row)
+
+
 # pylint: disable=R0914
 @silk_profile("run-patient-csv-export")
 def run_patient_csv_export(request):
@@ -169,28 +242,10 @@ def run_patient_csv_export(request):
     campaign_time_zone = pytz_timezone(campaign.timezone)
     campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
     patient_rows = []
-    max_treatments = 0
-    max_hpis = 0
-    max_vitals = 0
     vitals_dict = {}
     treatments_dict = {}
     hpis_dict = {}
-    all_vitals = Vitals.objects.all()
-    all_treatments = Treatment.objects.all()
-    all_hpis = HistoryOfPresentIllness.objects.all()
-    for patient in patient_data:
-        for encounter in patient.patientencounter_set.all():
-            vitals = all_vitals.filter(encounter=encounter)
-            treatments = all_treatments.filter(encounter=encounter)
-            hpis = all_hpis.filter(encounter=encounter)
-
-            vitals_dict[encounter] = vitals
-            treatments_dict[encounter] = treatments
-            hpis_dict[encounter] = hpis
-
-            max_treatments = max(len(treatments), max_treatments)
-            max_hpis = max(len(hpis), max_hpis)
-            max_vitals = max(len(vitals), max_vitals)
+    max_treatments, max_hpis, max_vitals = dict_builder(campaign, vitals_dict, treatments_dict, hpis_dict)
     for patient in patient_data:
         for encounter in patient.patientencounter_set.all():
             row = [
@@ -224,49 +279,11 @@ def run_patient_csv_export(request):
                 encounter.current_medications,
                 encounter.family_history,
             ]
-            vitals = vitals_dict[encounter]
-            treatments = treatments_dict[encounter]
-            hpis = hpis_dict[encounter]
-            extend_vitals_list(campaign, vitals, row)
-            if len(vitals) < max_vitals:
-                row.extend(["", "", "", "", "", "", ""] * (max_vitals - len(vitals)))
-            for item in treatments:
-                row.extend(
-                    [
-                        item.diagnosis,
-                        ",".join([str(x) for x in item.medication.all()]),
-                        item.administration_schedule,
-                        item.days,
-                        item.prescriber,
-                    ]
-                )
-            if len(treatments) < max_treatments:
-                row.extend(["", "", "", "", ""] * (max_treatments - len(treatments)))
-            for item in hpis:
-                row.extend(
-                    [
-                        item.chief_complaint,
-                        item.onset,
-                        item.provokes,
-                        item.palliates,
-                        item.quality,
-                        item.radiation,
-                        item.severity,
-                        item.time_of_day,
-                        item.narrative,
-                        item.physical_examination,
-                        item.tests_ordered,
-                    ]
-                )
-            if len(hpis) < max_hpis:
-                row.extend(
-                    ["", "", "", "", "", "", "", "", "", "", ""]
-                    * (max_hpis - len(hpis))
-                )
+            extend_vitals_list(campaign, vitals_dict[encounter], row, max_vitals)
+            extend_treatments_list(row, treatments_dict[encounter], max_treatments)
+            extend_hpis_list(row, hpis_dict[encounter], max_hpis)
             patient_rows.append(row)
         export_id += 1
     build_title_row(campaign, title_row, max_vitals, max_treatments, max_hpis)
-    writer.writerow(title_row)
-    for row in patient_rows:
-        writer.writerow(row)
+    write_result_file(writer, title_row, patient_rows)
     return resp
