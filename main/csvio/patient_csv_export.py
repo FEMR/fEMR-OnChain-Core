@@ -59,25 +59,26 @@ def calc_height(encounter: PatientEncounter) -> str:
 
 
 @silk_profile("dict-builder")
-def dict_builder(campaign, vitals_dict, treatments_dict, hpis_dict):
+def dict_builder(patient_data, vitals_dict, treatments_dict, hpis_dict):
     max_treatments = 0
     max_hpis = 0
     max_vitals = 0
-    for encounter in PatientEncounter.objects.filter(campaign=campaign):
-        vitals = encounter.vitals_set.all()
-        vitals_count = len(vitals)
-        treatments = encounter.treatment_set.all()
-        treatments_count = len(treatments)
-        hpis = encounter.historyofpresentillness_set.all()
-        hpis_count = len(hpis)
+    for _, encounters in patient_data.items():
+        for encounter in encounters:
+            vitals = list(encounter.vitals_set.all())
+            vitals_count = len(vitals)
+            treatments = list(encounter.treatment_set.all())
+            treatments_count = len(treatments)
+            hpis = list(encounter.historyofpresentillness_set.all())
+            hpis_count = len(hpis)
 
-        vitals_dict[encounter] = (vitals, vitals_count)
-        treatments_dict[encounter] = (treatments, treatments_count)
-        hpis_dict[encounter] = (hpis, hpis_count)
+            vitals_dict[encounter] = (vitals, vitals_count)
+            treatments_dict[encounter] = (treatments, treatments_count)
+            hpis_dict[encounter] = (hpis, hpis_count)
 
-        max_treatments = max(treatments_count, max_treatments)
-        max_hpis = max(hpis_count, max_hpis)
-        max_vitals = max(vitals_count, max_vitals)
+            max_treatments = max(treatments_count, max_treatments)
+            max_hpis = max(hpis_count, max_hpis)
+            max_vitals = max(vitals_count, max_vitals)
     return max_treatments, max_hpis, max_vitals
 
 
@@ -234,7 +235,9 @@ def run_patient_csv_export(request):
         "Current Medications",
         "Family History",
     ]
-    patient_data = Patient.objects.filter(campaign=campaign)
+    patient_data = {
+        patient: list(patient.patientencounter_set.all()) for patient in Patient.objects.filter(campaign=campaign)
+    }
     export_id = 1
     campaign_time_zone = pytz_timezone(campaign.timezone)
     campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
@@ -242,9 +245,9 @@ def run_patient_csv_export(request):
     vitals_dict = {}
     treatments_dict = {}
     hpis_dict = {}
-    max_treatments, max_hpis, max_vitals = dict_builder(campaign, vitals_dict, treatments_dict, hpis_dict)
-    for patient in patient_data:
-        for encounter in patient.patientencounter_set.all():
+    max_treatments, max_hpis, max_vitals = dict_builder(patient_data, vitals_dict, treatments_dict, hpis_dict)
+    for patient, encounters in patient_data.items():
+        for encounter in encounters:
             row = [
                 export_id,
                 patient.sex_assigned_at_birth,
