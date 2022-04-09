@@ -65,11 +65,11 @@ def dict_builder(campaign, vitals_dict, treatments_dict, hpis_dict):
     max_vitals = 0
     for encounter in PatientEncounter.objects.filter(campaign=campaign):
         vitals = encounter.vitals_set.all()
-        vitals_count = vitals.count()
+        vitals_count = len(vitals)
         treatments = encounter.treatment_set.all()
-        treatments_count = treatments.count()
+        treatments_count = len(treatments)
         hpis = encounter.historyofpresentillness_set.all()
-        hpis_count = hpis.count()
+        hpis_count = len(hpis)
 
         vitals_dict[encounter] = (vitals, vitals_count)
         treatments_dict[encounter] = (treatments, treatments_count)
