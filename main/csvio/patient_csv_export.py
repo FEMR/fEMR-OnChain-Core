@@ -10,11 +10,8 @@ from pytz import timezone as pytz_timezone
 from django.http.response import HttpResponse
 from main.models import (
     Campaign,
-    HistoryOfPresentIllness,
     Patient,
     PatientEncounter,
-    Treatment,
-    Vitals,
 )
 
 
@@ -68,11 +65,11 @@ def dict_builder(campaign, vitals_dict, treatments_dict, hpis_dict):
     max_vitals = 0
     for encounter in PatientEncounter.objects.filter(campaign=campaign):
         vitals = encounter.vitals_set.all()
-        vitals_count = len(vitals)
+        vitals_count = vitals.count()
         treatments = encounter.treatment_set.all()
-        treatments_count = len(treatments)
+        treatments_count = treatments.count()
         hpis = encounter.historyofpresentillness_set.all()
-        hpis_count = len(hpis)
+        hpis_count = hpis.count()
 
         vitals_dict[encounter] = (vitals, vitals_count)
         treatments_dict[encounter] = (treatments, treatments_count)

@@ -163,7 +163,7 @@ app_name = "main"
 schema_view = get_schema_view(
     openapi.Info(
         title="fEMR OnChain API",
-        default_version="v1.5.2",
+        default_version="v1.5.3",
         description="API endpoints providing an interface with the fEMR OnChain application.",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="info@teamfemr.org"),
