@@ -149,10 +149,7 @@ def extend_hpis_list(row, hpis, max_hpis):
             ]
         )
     if hpis[1] < max_hpis:
-        row.extend(
-            ["", "", "", "", "", "", "", "", "", "", ""]
-            * (max_hpis - hpis[1])
-        )
+        row.extend(["", "", "", "", "", "", "", "", "", "", ""] * (max_hpis - hpis[1]))
 
 
 @silk_profile("build-title-row")
@@ -206,7 +203,19 @@ def write_result_file(writer, title_row, patient_rows):
         writer.writerow(row)
 
 
-def patient_processing_loop(patient_data, patient_rows, campaign_time_zone, campaign_time_zone_b, campaign, vitals_dict, max_vitals, treatments_dict, max_treatments, hpis_dict, max_hpis):
+def patient_processing_loop(
+    patient_data,
+    patient_rows,
+    campaign_time_zone,
+    campaign_time_zone_b,
+    campaign,
+    vitals_dict,
+    max_vitals,
+    treatments_dict,
+    max_treatments,
+    hpis_dict,
+    max_hpis,
+):
     export_id = 1
     for patient, encounters in patient_data.items():
         for encounter in encounters:
@@ -241,10 +250,8 @@ def patient_processing_loop(patient_data, patient_rows, campaign_time_zone, camp
                 encounter.current_medications,
                 encounter.family_history,
             ]
-            extend_vitals_list(
-                campaign, vitals_dict[encounter], row, max_vitals)
-            extend_treatments_list(
-                row, treatments_dict[encounter], max_treatments)
+            extend_vitals_list(campaign, vitals_dict[encounter], row, max_vitals)
+            extend_treatments_list(row, treatments_dict[encounter], max_treatments)
             extend_hpis_list(row, hpis_dict[encounter], max_hpis)
             patient_rows.append(row)
         export_id += 1
@@ -280,7 +287,8 @@ def run_patient_csv_export(request):
         "Family History",
     ]
     patient_data = {
-        patient: list(patient.patientencounter_set.all()) for patient in Patient.objects.filter(campaign=campaign)
+        patient: list(patient.patientencounter_set.all())
+        for patient in Patient.objects.filter(campaign=campaign)
     }
     campaign_time_zone = pytz_timezone(campaign.timezone)
     campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
@@ -289,9 +297,21 @@ def run_patient_csv_export(request):
     treatments_dict = {}
     hpis_dict = {}
     max_treatments, max_hpis, max_vitals = dict_builder(
-        patient_data, vitals_dict, treatments_dict, hpis_dict)
-    patient_processing_loop(patient_data, patient_rows, campaign_time_zone, campaign_time_zone_b,
-                            campaign, vitals_dict, max_vitals, treatments_dict, max_treatments, hpis_dict, max_hpis)
+        patient_data, vitals_dict, treatments_dict, hpis_dict
+    )
+    patient_processing_loop(
+        patient_data,
+        patient_rows,
+        campaign_time_zone,
+        campaign_time_zone_b,
+        campaign,
+        vitals_dict,
+        max_vitals,
+        treatments_dict,
+        max_treatments,
+        hpis_dict,
+        max_hpis,
+    )
     build_title_row(campaign, title_row, max_vitals, max_treatments, max_hpis)
     write_result_file(writer, title_row, patient_rows)
     return resp
