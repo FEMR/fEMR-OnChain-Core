@@ -89,6 +89,10 @@ function setup() {
   python3 manage.py createraceandethnicity
 }
 
+function docker-setup() {
+  python3 manage.py scaledata
+}
+
 function createsuperuser() {
   python3 manage.py createsuperuser
 }
@@ -144,6 +148,14 @@ init-all-run)
   check
   all
   setup
+  run
+  ;;
+
+docker-init-all-run)
+  check
+  all
+  setup
+  docker-setup
   run
   ;;
 

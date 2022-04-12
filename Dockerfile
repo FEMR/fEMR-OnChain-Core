@@ -24,4 +24,4 @@ ARG FOO
 COPY . /opt/app
 RUN find /opt/app -type f -exec dos2unix {} \;
 
-ENTRYPOINT [ "/opt/app/build.sh", "init-all-run" ]
+ENTRYPOINT [ "/opt/app/build.sh", "docker-init-all-run" ]
