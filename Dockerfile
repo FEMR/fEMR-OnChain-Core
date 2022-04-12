@@ -23,5 +23,6 @@ EXPOSE 8081
 ARG FOO
 COPY . /opt/app
 RUN find /opt/app -type f -exec dos2unix {} \;
+RUN /opt/app/build.sh docker-init-all
 
-ENTRYPOINT [ "/opt/app/build.sh", "docker-init-all-run" ]
+ENTRYPOINT [ "/opt/app/build.sh", "run" ]

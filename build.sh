@@ -151,12 +151,11 @@ init-all-run)
   run
   ;;
 
-docker-init-all-run)
+docker-init-all)
   check
   all
   setup
   docker-setup
-  run
   ;;
 
 all-run)
