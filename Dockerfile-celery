@@ -7,6 +7,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     apt-get install unzip curl python3 python3-pip \
                     python3-dev libssl-dev \
+                    libmemcache-dev \
                     virtualenv libpq-dev -y && \
     apt-get upgrade -y
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
