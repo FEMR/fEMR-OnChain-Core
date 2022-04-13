@@ -3,8 +3,8 @@ Defines a createadmin command extending manage.py.
 """
 
 from django.core.management.base import BaseCommand
-from main.models import Campaign, Patient
 from model_bakery import baker
+from main.models import Campaign, Patient
 
 
 class Command(BaseCommand):
@@ -23,7 +23,7 @@ class Command(BaseCommand):
         campaign = Campaign.objects.get_or_create("Test")[0]
         if Patient.objects.filter(campaign=campaign).count() == 0:
             print("Generating patient data.")
-            for p in range(1000):
+            for count in range(1000):
                 patient = baker.make("main.Patient")
                 patient.campaign.add(campaign)
                 for _ in range(10):
@@ -31,6 +31,6 @@ class Command(BaseCommand):
                     encounter.patient = patient
                     encounter.campaign = campaign
                     encounter.save()
-                print(f"Patient {p} finished.")
+                print(f"Patient {count} finished.")
         else:
             print("Database already populated.")

@@ -156,6 +156,7 @@ docker-init-all)
   all
   setup
   docker-setup
+  all
   ;;
 
 all-run)

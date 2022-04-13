@@ -1,3 +1,5 @@
+version: '3'
+
 services:
   database:
     image: "postgres"
@@ -7,6 +9,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - db:/var/lib/postgresql/data
+
   dev:
     build: .
     volumes:
@@ -21,5 +24,29 @@ services:
       - ENVIRONMENT=LOCAL
     depends_on:
       - "database"
+      - "cache"
+
+  celery:
+    build: .
+    command: celery worker --app=femr_onchain --loglevel=info --logfile=logs/celery.log
+    volumes:
+      - .:/build
+    environment:
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+    depends_on: 
+      - "dev"
+      - "redis"
+      - "database"
+  
+  redis:
+    image: redis:6-alpine
+
+  cache:
+   image: memcached
+   entrypoint:
+    - memcached
+    - -m 64
+
 volumes:
   db:

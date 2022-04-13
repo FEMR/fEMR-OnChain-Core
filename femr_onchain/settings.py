@@ -55,6 +55,13 @@ INSTALLED_APPS = [
     "silk",
 ]
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
+        "LOCATION": "cache:11211",
+    }
+}
+
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 NOSE_ARGS = [
