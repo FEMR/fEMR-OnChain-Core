@@ -110,7 +110,15 @@ function check() {
    pylint main app_mr clinic_messages --disable=E1101,W0613,R0903,C0301,C0114,C0115,C0116,R0801
 }
 
+function celery() {
+  celery --app=femr_onchain worker --loglevel=info --logfile=logs/celery.log
+}
+
 case "$1" in
+
+celery)
+  celery
+  ;;
 
 check)
   check

@@ -32,6 +32,7 @@ from main.admin_views import (
     update_user_view,
     update_user_password_view,
 )
+from main.csvio.patient_csv_export import csv_export_list, fetch_csv_export
 from main.delete_views import (
     delete_chief_complaint,
     delete_treatment_view,
@@ -426,6 +427,10 @@ urlpatterns = [
     url(r"^csv_handler_view/$", csv_handler_view, name="csv_handler_view"),
     url(r"^csv_import_view/$", csv_import_view, name="csv_import_view"),
     url(r"^csv_export_view/$", csv_export_view, name="csv_export_view"),
+    url(r"^csv_export_list/$", csv_export_list, name="csv_export_list"),
+    path(
+        r"fetch_csv_export/<int:export_id>", fetch_csv_export, name="fetch_csv_export"
+    ),
     # fEMR Environment Management
     url(r"^femr_admin_home/$", femr_admin_home, name="femr_admin_home"),
     url(r"^change_campaign/$", change_campaign, name="change_campaign"),

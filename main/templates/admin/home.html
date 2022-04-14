@@ -30,7 +30,13 @@
         </div>
         <div>
             <a href="{% url 'main:patient_csv_export_view' %}">Export Deidentified Patient Encounter Data</a>
-            <a data-content="Click here to create an administrative message." data-toggle="popover" data-trigger="hover"
+            <a data-content="Click here to export this campaign's encounter data." data-toggle="popover" data-trigger="hover"
+               href="#"><i
+                    class="fa fa-question-circle"></i></a>
+        </div>
+        <div>
+            <a href="{% url 'main:csv_export_list' %}">View Finished Exports</a>
+            <a data-content="Click here to view all completed export requests." data-toggle="popover" data-trigger="hover"
                href="#"><i
                     class="fa fa-question-circle"></i></a>
         </div>
@@ -39,6 +45,17 @@
             <a data-content="Adjust campaign-wide timezone settings." data-toggle="popover" data-trigger="hover"
                href="#"><i
                     class="fa fa-question-circle"></i></a>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                    {% endfor %}
+            </ul>
+            {% endif %}
         </div>
     </div>
 </div>

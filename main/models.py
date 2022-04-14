@@ -367,6 +367,13 @@ class Photo(models.Model):
         return str(self.description)
 
 
+class CSVExport(models.Model):
+    user = models.ForeignKey(
+        "fEMRUser", on_delete=models.CASCADE, blank=True, null=True
+    )
+    file = models.FileField(upload_to="export/")
+
+
 class PatientEncounter(models.Model):
     """
     Individual data point in a patient's medical record.

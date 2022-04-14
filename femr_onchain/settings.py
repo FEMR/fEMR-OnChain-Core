@@ -20,10 +20,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ["SECRET_KEY"]
+SECRET_KEY = os.environ.get("SECRET_KEY", "")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.environ["DEBUG"] == "True" else False
+DEBUG = True if os.environ.get("DEBUG", "") == "True" else False
 
 ALLOWED_HOSTS = [
     "*",
@@ -135,6 +135,17 @@ if "POSTGRES_USER" in os.environ:
             "PASSWORD": os.environ["POSTGRES_PASS"],
             "HOST": os.environ["POSTGRES_NAME"],
             "PORT": 5432,
+        }
+    }
+elif 'RDS_HOSTNAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ['RDS_DB_NAME'],
+            'USER': os.environ['RDS_USERNAME'],
+            'PASSWORD': os.environ['RDS_PASSWORD'],
+            'HOST': os.environ['RDS_HOSTNAME'],
+            'PORT': os.environ['RDS_PORT'],
         }
     }
 else:
@@ -251,7 +262,14 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 SERVER_EMAIL = os.environ.get("SERVER_EMAIL")
 
-SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+SESSIONS_ENGINE = "django.contrib.sessions.backends.cache"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
+        "LOCATION": "cache:11211",
+    }
+}
 
 AXES_RESET_ON_SUCCESS = True
 AXES_ENABLE_ADMIN_SITE = True
@@ -302,3 +320,6 @@ SILKY_META = True
 SILKY_INTERCEPT_PERCENT = 50
 SILKY_MAX_RECORDED_REQUESTS = 10**4
 SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 10
+
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"

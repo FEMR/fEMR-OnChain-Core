@@ -9,6 +9,8 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   dev:
     build:
@@ -32,12 +34,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-celery
-    command: celery worker --app=femr_onchain --loglevel=info --logfile=logs/celery.log
+    command: celery --app=femr_onchain worker --loglevel=info
     volumes:
       - .:/build
     environment:
+      - SECRET_KEY=2HY>fXi!dQ&(9Vf.XghCa;L6G=Ul4r-Bwqh>ae0RG3vIh1ZJ%T
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASS=postgres
+      - POSTGRES_NAME=database
+      - ENVIRONMENT=LOCAL
     depends_on: 
       - "dev"
       - "redis"
@@ -45,9 +53,13 @@ services:
   
   redis:
     image: redis:6-alpine
+    ports:
+      - "6379:6379"
 
   cache:
    image: memcached
+   ports:
+    - "11211:11211"
    entrypoint:
     - memcached
     - -m 64

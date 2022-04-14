@@ -4,14 +4,25 @@ patient records as CSV files.
 """
 import csv
 from datetime import datetime
+from io import StringIO
 import math
+import os
+from celery import shared_task
+from django.shortcuts import redirect, render
 from silk.profiling.profiler import silk_profile
 from pytz import timezone as pytz_timezone
 from django.http.response import HttpResponse
+from django.urls import reverse
+from django.contrib import messages
+from django.core.files.base import ContentFile
+from clinic_messages.models import Message
+from main.background_tasks import check_admin_permission
 from main.models import (
+    CSVExport,
     Campaign,
     Patient,
     PatientEncounter,
+    fEMRUser,
 )
 
 
@@ -257,13 +268,12 @@ def patient_processing_loop(
         export_id += 1
 
 
-# pylint: disable=R0914
-@silk_profile("run-patient-csv-export")
-def run_patient_csv_export(request):
-    campaign = Campaign.objects.get(name=request.session["campaign"])
-    resp = HttpResponse(content_type="text/csv")
-    resp["Content-Disposition"] = 'attachment; filename="patient_export.csv"'
-    writer = csv.writer(resp)
+@shared_task
+@silk_profile("csv-export-handler")
+def csv_export_handler(user_id, campaign_id):
+    campaign = Campaign.objects.get(pk=campaign_id)
+    export_file = StringIO()
+    writer = csv.writer(export_file)
     title_row = [
         "Patient",
         "Sex Assigned at Birth",
@@ -314,4 +324,68 @@ def run_patient_csv_export(request):
     )
     build_title_row(campaign, title_row, max_vitals, max_treatments, max_hpis)
     write_result_file(writer, title_row, patient_rows)
-    return resp
+    user = fEMRUser.objects.get(pk=user_id)
+    export = CSVExport()
+    csv_file = ContentFile(export_file.getvalue().encode("utf-8"))
+    export.file.save(f"patient-export-{campaign.name}-{datetime.now()}.csv", csv_file)
+    export.user = user
+    export.save()
+    Message.objects.create(
+        subject="CSV Export Finished",
+        content="""
+        This message is to let you know that the CSV export you began has finished.
+        """,
+        sender=fEMRUser.objects.get(username="admin"),
+        recipient=user,
+    )
+
+
+@silk_profile("csv-export-list")
+def csv_export_list(request):
+    if request.user.is_authenticated:
+        if check_admin_permission(request.user):
+            exports = CSVExport.objects.filter(user=request.user)
+            return render(request, "admin/export_list.html", {"exports": exports})
+        else:
+            return_response = redirect("main:permission_denied")
+    else:
+        return_response = redirect("main:not_logged_in")
+    return return_response
+
+
+@silk_profile("fetch-csv-export")
+def fetch_csv_export(request, export_id=None):
+    if request.user.is_authenticated:
+        if check_admin_permission(request.user):
+            export = CSVExport.objects.get(pk=export_id)
+            with open(export.file.url, "rb") as fh:
+                resp = HttpResponse(fh.read(), content_type="text/csv")
+                resp[
+                    "Content-Disposition"
+                ] = f'attachment; filename="{os.path.basename(export.file.path)}"'
+                return resp
+        else:
+            return_response = redirect("main:permission_denied")
+    else:
+        return_response = redirect("main:not_logged_in")
+    return return_response
+
+
+@silk_profile("run-patient-csv-export")
+def run_patient_csv_export(request):
+    if request.user.is_authenticated:
+        if check_admin_permission(request.user):
+            campaign = Campaign.objects.get(name=request.session["campaign"])
+            csv_export_handler.delay(request.user.pk, campaign.id)
+            messages.info(
+                request,
+                "We're building your CSV - you'll receive a message with a download link once it's done.",
+            )
+            return_response = render(
+                request, "admin/home.html", {"user": request.user, "page_name": "Admin"}
+            )
+        else:
+            return_response = redirect("main:permission_denied")
+    else:
+        return_response = redirect("main:not_logged_in")
+    return return_response
