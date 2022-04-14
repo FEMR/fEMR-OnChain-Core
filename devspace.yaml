@@ -1,0 +1,260 @@
+version: v1beta11
+
+# `images` specifies all images that may need to be built for this project
+images:
+  celery:
+    image: celery
+    dockerfile: Dockerfile-celery
+    context: .
+  dev:
+    image: dev
+    dockerfile: Dockerfile
+    context: .
+
+# `deployments` tells DevSpace how to deploy this project
+deployments:
+- name: cache
+  # This deployment uses `helm` but you can also define `kubectl` deployments or kustomizations
+  helm:
+    # We are deploying the so-called Component Chart: https://devspace.sh/component-chart/docs
+    componentChart: true
+    # Under `values` we can define the values for this Helm chart used during `helm install/upgrade`
+    # You may also use `valuesFiles` to load values from files, e.g. valuesFiles: ["values.yaml"]
+    values:
+      containers:
+      - command:
+        - memcached
+        - -m 64
+        image: memcached
+        name: cache-container
+- name: database
+  # This deployment uses `helm` but you can also define `kubectl` deployments or kustomizations
+  helm:
+    # We are deploying the so-called Component Chart: https://devspace.sh/component-chart/docs
+    componentChart: true
+    # Under `values` we can define the values for this Helm chart used during `helm install/upgrade`
+    # You may also use `valuesFiles` to load values from files, e.g. valuesFiles: ["values.yaml"]
+    values:
+      containers:
+      - env:
+        - name: POSTGRES_DB
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: postgres
+        - name: POSTGRES_USER
+          value: postgres
+        image: postgres
+        name: database-container
+        volumeMounts:
+        - containerPath: /var/lib/postgresql/data
+          volume:
+            name: db
+            readOnly: false
+      volumes:
+      - name: db
+        size: 5Gi
+- name: dev
+  # This deployment uses `helm` but you can also define `kubectl` deployments or kustomizations
+  helm:
+    # We are deploying the so-called Component Chart: https://devspace.sh/component-chart/docs
+    componentChart: true
+    # Under `values` we can define the values for this Helm chart used during `helm install/upgrade`
+    # You may also use `valuesFiles` to load values from files, e.g. valuesFiles: ["values.yaml"]
+    values:
+      containers:
+      - env:
+        - name: ENVIRONMENT
+          value: LOCAL
+        - name: POSTGRES_DB
+          value: postgres
+        - name: POSTGRES_NAME
+          value: database
+        - name: POSTGRES_PASS
+          value: postgres
+        - name: POSTGRES_USER
+          value: postgres
+        image: dev
+        name: dev-container
+        volumeMounts:
+        - containerPath: /build
+          volume:
+            name: volume-1
+            readOnly: false
+      initContainers:
+      - args:
+        - -c
+        - while [ ! -f /tmp/done ]; do sleep 2; done
+        command:
+        - sh
+        image: alpine
+        name: upload-volumes
+        volumeMounts:
+        - containerPath: /build
+          volume:
+            name: volume-1
+            readOnly: false
+      service:
+        ports:
+        - containerPort: 8081
+          port: 80
+          protocol: TCP
+      volumes:
+      - emptyDir: {}
+        name: volume-1
+- name: redis
+  # This deployment uses `helm` but you can also define `kubectl` deployments or kustomizations
+  helm:
+    # We are deploying the so-called Component Chart: https://devspace.sh/component-chart/docs
+    componentChart: true
+    # Under `values` we can define the values for this Helm chart used during `helm install/upgrade`
+    # You may also use `valuesFiles` to load values from files, e.g. valuesFiles: ["values.yaml"]
+    values:
+      containers:
+      - image: redis:6-alpine
+        name: redis-container
+- name: celery
+  # This deployment uses `helm` but you can also define `kubectl` deployments or kustomizations
+  helm:
+    # We are deploying the so-called Component Chart: https://devspace.sh/component-chart/docs
+    componentChart: true
+    # Under `values` we can define the values for this Helm chart used during `helm install/upgrade`
+    # You may also use `valuesFiles` to load values from files, e.g. valuesFiles: ["values.yaml"]
+    values:
+      containers:
+      - args:
+        - celery
+        - --app=femr_onchain
+        - worker
+        - --loglevel=info
+        env:
+        - name: CELERY_BACKEND
+          value: redis://redis:6379/0
+        - name: CELERY_BROKER
+          value: redis://redis:6379/0
+        - name: ENVIRONMENT
+          value: LOCAL
+        - name: POSTGRES_DB
+          value: postgres
+        - name: POSTGRES_NAME
+          value: database
+        - name: POSTGRES_PASS
+          value: postgres
+        - name: POSTGRES_USER
+          value: postgres
+        - name: SECRET_KEY
+          value: 2HY>fXi!dQ&(9Vf.XghCa;L6G=Ul4r-Bwqh>ae0RG3vIh1ZJ%T
+        image: celery
+        name: celery-container
+        volumeMounts:
+        - containerPath: /build
+          volume:
+            name: volume-1
+            readOnly: false
+      initContainers:
+      - args:
+        - -c
+        - while [ ! -f /tmp/done ]; do sleep 2; done
+        command:
+        - sh
+        image: alpine
+        name: upload-volumes
+        volumeMounts:
+        - containerPath: /build
+          volume:
+            name: volume-1
+            readOnly: false
+      volumes:
+      - emptyDir: {}
+        name: volume-1
+
+# `dev` only applies when you run `devspace dev`
+dev:
+  # `dev.ports` specifies all ports that should be forwarded while `devspace dev` is running
+  # Port-forwarding lets you access your application via localhost on your local machine
+  ports:
+  - labelSelector:
+      app.kubernetes.io/component: dev
+    forward:
+    - port: 80
+      remotePort: 8081
+  # `dev.sync` configures a file sync between our Pods in k8s and your local project files
+  sync:
+  - labelSelector:
+      app.kubernetes.io/component: dev
+    containerName: dev-container
+    localSubPath: .
+    containerPath: /build
+  - labelSelector:
+      app.kubernetes.io/component: celery
+    containerName: celery-container
+    localSubPath: .
+    containerPath: /build
+hooks:
+- events:
+  - after:deploy:cache
+  wait:
+    running: true
+    terminatedWithCode: 0
+  container:
+    labelSelector:
+      app.kubernetes.io/component: cache
+    containerName: cache-container
+- events:
+  - after:deploy:database
+  wait:
+    running: true
+    terminatedWithCode: 0
+  container:
+    labelSelector:
+      app.kubernetes.io/component: database
+    containerName: database-container
+- events:
+  - after:deploy:dev
+  upload:
+    localPath: .
+    containerPath: /build
+  container:
+    labelSelector:
+      app.kubernetes.io/component: dev
+    containerName: upload-volumes
+- events:
+  - after:deploy:dev
+  command: touch /tmp/done
+  container:
+    labelSelector:
+      app.kubernetes.io/component: dev
+    containerName: upload-volumes
+- events:
+  - after:deploy:dev
+  wait:
+    running: true
+    terminatedWithCode: 0
+  container:
+    labelSelector:
+      app.kubernetes.io/component: dev
+    containerName: dev-container
+- events:
+  - after:deploy:redis
+  wait:
+    running: true
+    terminatedWithCode: 0
+  container:
+    labelSelector:
+      app.kubernetes.io/component: redis
+    containerName: redis-container
+- events:
+  - after:deploy:celery
+  upload:
+    localPath: .
+    containerPath: /build
+  container:
+    labelSelector:
+      app.kubernetes.io/component: celery
+    containerName: upload-volumes
+- events:
+  - after:deploy:celery
+  command: touch /tmp/done
+  container:
+    labelSelector:
+      app.kubernetes.io/component: celery
+    containerName: upload-volumes

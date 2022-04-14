@@ -50,3 +50,7 @@ source/main.templatetags.rst
 source/main.test.rst
 source/main.tests.rst
 source/modules.rst
+
+
+# Ignore DevSpace cache and log folder
+.devspace/
