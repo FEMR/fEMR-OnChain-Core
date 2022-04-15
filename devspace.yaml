@@ -20,35 +20,16 @@ deployments:
     componentChart: true
     values:
       replicas: 1
-      resources:
-        limits:
-          cpu: 1000m
-          memory: 4Gi
-        requests:
-          cpu: 500m
-          Memory: 2Gi
       autoScaling:
         horizontal:
-          maxReplicas: 15
-          averageCpuUtilization: 50
+          maxReplicas: 25
           averageCPU: 500m
-          averageMemory: 2Gi
+          averageMemory: 1Gi
       rollingUpdate:
         enabled: true
         maxSurge: "50%"
         maxUnavailable: "30%"
         partition: 1
-      behavior:
-        scaleDown:
-          policies:
-          - type: Percent
-            value: 30
-            periodSeconds: 30
-        scaleUp:    
-          policies:
-          - type: Percent
-            value: 70
-            periodSeconds: 30
       containers:
       - command:
         - memcached
@@ -65,35 +46,16 @@ deployments:
     componentChart: true
     values:
       replicas: 1
-      resources:
-        limits:
-          cpu: 1000m
-          memory: 4Gi
-        requests:
-          cpu: 500m
-          Memory: 2Gi
       autoScaling:
         horizontal:
-          maxReplicas: 15
-          averageCpuUtilization: 50
+          maxReplicas: 25
           averageCPU: 500m
-          averageMemory: 2Gi
+          averageMemory: 1Gi
       rollingUpdate:
         enabled: true
         maxSurge: "50%"
         maxUnavailable: "30%"
         partition: 1
-      behavior:
-        scaleDown:
-          policies:
-          - type: Percent
-            value: 30
-            periodSeconds: 30
-        scaleUp:    
-          policies:
-          - type: Percent
-            value: 70
-            periodSeconds: 30
       containers:
       - env:
         - name: POSTGRES_DB
@@ -122,35 +84,16 @@ deployments:
     componentChart: true
     values:
       replicas: 1
-      resources:
-        limits:
-          cpu: 1000m
-          memory: 4Gi
-        requests:
-          cpu: 500m
-          Memory: 2Gi
       autoScaling:
         horizontal:
-          maxReplicas: 15
-          averageCpuUtilization: 50
+          maxReplicas: 25
           averageCPU: 500m
-          averageMemory: 2Gi
+          averageMemory: 1Gi
       rollingUpdate:
         enabled: true
         maxSurge: "50%"
         maxUnavailable: "30%"
         partition: 1
-      behavior:
-        scaleDown:
-          policies:
-          - type: Percent
-            value: 30
-            periodSeconds: 30
-        scaleUp:    
-          policies:
-          - type: Percent
-            value: 70
-            periodSeconds: 30
       containers:
       - env:
         - name: ENVIRONMENT
@@ -212,35 +155,16 @@ deployments:
     # You may also use `valuesFiles` to load values from files, e.g. valuesFiles: ["values.yaml"]
     values:
       replicas: 1
-      resources:
-        limits:
-          cpu: 1000m
-          memory: 4Gi
-        requests:
-          cpu: 500m
-          Memory: 2Gi
       autoScaling:
         horizontal:
-          maxReplicas: 15
-          averageCpuUtilization: 50
+          maxReplicas: 25
           averageCPU: 500m
-          averageMemory: 2Gi
+          averageMemory: 1Gi
       rollingUpdate:
         enabled: true
         maxSurge: "50%"
         maxUnavailable: "30%"
         partition: 1
-      behavior:
-        scaleDown:
-          policies:
-          - type: Percent
-            value: 30
-            periodSeconds: 30
-        scaleUp:    
-          policies:
-          - type: Percent
-            value: 70
-            periodSeconds: 30
       containers:
       - image: nginx
         name: nginx-container
@@ -256,6 +180,9 @@ deployments:
       ingress:
         tls: true
         rules:
+        - host: chain.teamfemr.org
+        - host: chain-dev.teamfemr.org
+        - host: chain-training.teamfemr.org
         - host: localhost
       service:
         ports:
