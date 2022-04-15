@@ -26,6 +26,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    entrypoint: "./build-dev.sh"
     volumes:
       - .:/build
       - staticvol:/opt/app/static
@@ -33,6 +34,19 @@ services:
     ports:
       - "8081:8081"
     environment:
+      - DEBUG=True
+      - QLDB_ENABLED="FALSE"
+      - qldb_name="fEMR-OnChain-Test"
+      - ADMIN_NAME=""
+      - ADMIN_EMAIL=""
+      - EMAIL_HOST=""
+      - EMAIL_PORT=""
+      - EMAIL_USERNAME=""
+      - EMAIL_PASSWORD=""
+      - DEFAULT_FROM_EMAIL=""
+      - SERVER_EMAIL=""
+      - ENVIRONMENT="LOCAL"
+      - SECRET_KEY=2HY>fXi!dQ&(9Vf.XghCa;L6G=Ul4r-Bwqh>ae0RG3vIh1ZJ%T
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASS=postgres
@@ -48,7 +62,20 @@ services:
       dockerfile: Dockerfile-celery
     volumes:
       - .:/build
+    entrypoint: "./build-celery.sh"
     environment:
+      - DEBUG=True
+      - QLDB_ENABLED="FALSE"
+      - qldb_name="fEMR-OnChain-Test"
+      - ADMIN_NAME=""
+      - ADMIN_EMAIL=""
+      - EMAIL_HOST=""
+      - EMAIL_PORT=""
+      - EMAIL_USERNAME=""
+      - EMAIL_PASSWORD=""
+      - DEFAULT_FROM_EMAIL=""
+      - SERVER_EMAIL=""
+      - ENVIRONMENT="LOCAL"
       - SECRET_KEY=2HY>fXi!dQ&(9Vf.XghCa;L6G=Ul4r-Bwqh>ae0RG3vIh1ZJ%T
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0

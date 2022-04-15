@@ -23,6 +23,3 @@ EXPOSE 8081
 
 ARG FOO
 COPY . /opt/app
-RUN /opt/app/build.sh all
-  
-ENTRYPOINT ["celery", "--app=femr_onchain", "worker", "--loglevel=info" ]

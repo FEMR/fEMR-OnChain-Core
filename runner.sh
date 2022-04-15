@@ -1,20 +1,18 @@
 #!/bin/bash
 
-export DEBUG=$DEBUG
-export SECRET_KEY=$SECRET_KEY
-export QLDB_ENABLED=$QLDB_ENABLED
-export qldb_name=$qldb_name
-export ADMIN_NAME=$ADMIN_NAME
-export ADMIN_EMAIL=$ADMIN_EMAIL
-export EMAIL_HOST=$EMAIL_HOST
-export EMAIL_PORT=$EMAIL_PORT
-export EMAIL_USERNAME=$EMAIL_USERNAME
-export EMAIL_PASSWORD=$EMAIL_PASSWORD
-export DEFAULT_FROM_EMAIL=$DEFAULT_FROM_EMAIL
-export SERVER_EMAIL=$SERVER_EMAIL
-export ENVIRONMENT=$ENVIRONMENT
-
-echo $SECRET_KEY
+export DEBUG=True
+export SECRET_KEY="2HY>fXi!dQ&(9Vf.XghCa;L6G=Ul4r-Bwqh>ae0RG3vIh1ZJ%T"
+export QLDB_ENABLED="FALSE"  # Toggles QLDB on or off.
+export qldb_name="fEMR-OnChain-Test"
+export ADMIN_NAME=""
+export ADMIN_EMAIL=""
+export EMAIL_HOST=""
+export EMAIL_PORT=""
+export EMAIL_USERNAME=""
+export EMAIL_PASSWORD=""
+export DEFAULT_FROM_EMAIL=""
+export SERVER_EMAIL=""
+export ENVIRONMENT="LOCAL"
 
 function all() {
   migrate

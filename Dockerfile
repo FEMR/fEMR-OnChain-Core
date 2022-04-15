@@ -25,6 +25,3 @@ EXPOSE 8081
 
 ARG FOO
 COPY . /opt/app
-RUN /opt/app/build.sh all
-
-ENTRYPOINT [ "/opt/app/build.sh", "init-all-run" ]
