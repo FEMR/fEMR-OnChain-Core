@@ -325,4 +325,4 @@ SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 10
 CELERY_BROKER_URL = "redis://redis:6379"
 CELERY_RESULT_BACKEND = "redis://redis:6379"
 
-STATICFILES_STORAGE = "femr_onchain.storage.WhiteNoiseStaticFilesStorage"
+#STATICFILES_STORAGE = "femr_onchain.storage.WhiteNoiseStaticFilesStorage"

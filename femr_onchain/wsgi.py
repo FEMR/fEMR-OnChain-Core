@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/3.0/howto/deployment/wsgi/
 import os
 import sys
 
-from whitenoise import WhiteNoise
+#from whitenoise import WhiteNoise
 
 from django.core.wsgi import get_wsgi_application
 
@@ -19,4 +19,4 @@ sys.path.append(path)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "femr_onchain.settings")
 
 application = get_wsgi_application()
-application = WhiteNoise(application, root="static")
+#application = WhiteNoise(application, root="static")
