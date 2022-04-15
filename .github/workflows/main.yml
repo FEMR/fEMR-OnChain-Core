@@ -18,6 +18,7 @@ jobs:
       SECRET_KEY: quxWeHk_L^F7%ZjR&rLVpTqD8|jzHzU?rlG(i8|Wp)aH^_}=?z
       DEBUG: True
       ENVIRONMENT: CI-CD
+      TESTING: Github Actions
 
     steps:
       - name: Checkout with Submodules
