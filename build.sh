@@ -111,7 +111,11 @@ function check() {
 }
 
 function celery() {
-  celery --app=femr_onchain worker --loglevel=info --logfile=logs/celery.log
+  celery --app=femr_onchain worker
+}
+
+function gunicorn_run() {
+  gunicorn femr_onchain.wsgi:application --bind 0.0.0.0:8081
 }
 
 case "$1" in
@@ -156,7 +160,7 @@ init-all-run)
   check
   all
   setup
-  run
+  gunicorn_run
   ;;
 
 docker-init-all)

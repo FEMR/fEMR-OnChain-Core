@@ -1,6 +1,16 @@
 version: '3'
 
 services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "1337:80"
+    volumes:
+      - staticvol:/opt/app/static
+      - mediavol:/opt/app/mediafiles
+    depends_on:
+      - "dev"
+
   database:
     image: "postgres"
     environment:
@@ -9,6 +19,8 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   dev:
     build:
@@ -16,8 +28,10 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/build
+      - staticvol:/opt/app/static
+      - mediavol:/opt/app/mediafiles
     ports:
-      - "80:8081"
+      - "8081:8081"
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
@@ -32,7 +46,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-celery
-    command: celery --app=femr_onchain worker --loglevel=info
     volumes:
       - .:/build
     environment:
@@ -51,12 +64,18 @@ services:
   
   redis:
     image: redis:6-alpine
+    ports:
+      - "6379:6379"
 
   cache:
    image: memcached
+   ports:
+    - "11211:11211"
    entrypoint:
     - memcached
     - -m 64
 
 volumes:
   db:
+  staticvol:
+  mediavol:

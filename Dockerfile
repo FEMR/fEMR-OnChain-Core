@@ -16,6 +16,8 @@ RUN pip install sphinx
 RUN apt-get update && apt-get install -y dos2unix
 
 COPY requirements.txt /opt/app/requirements.txt
+RUN mkdir /opt/app/static
+RUN mkdir /opt/app/mediafiles
 WORKDIR /opt/app
 RUN pip3 install -r requirements.txt
 
@@ -23,6 +25,6 @@ EXPOSE 8081
 
 ARG FOO
 COPY . /opt/app
-RUN find /opt/app -type f -exec dos2unix {} \;
+RUN /opt/app/build.sh all
 
 ENTRYPOINT [ "/opt/app/build.sh", "init-all-run" ]
