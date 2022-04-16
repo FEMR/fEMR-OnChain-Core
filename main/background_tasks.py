@@ -131,7 +131,7 @@ def assign_broken_patient():
 @shared_task
 @silk_profile("scale-data")
 def scale_data():
-    campaign = Campaign.objects.get_or_create("Test")[0]
+    campaign = Campaign.objects.get_or_create(name="Test")[0]
     if Patient.objects.filter(campaign=campaign).count() == 0:
         print("Generating patient data.")
         for count in range(1000):
