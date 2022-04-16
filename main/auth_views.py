@@ -158,7 +158,8 @@ def __login_view_post_success(request, user):
         if not is_admin:
             return_response = redirect("main:all_locked")
         else:
-            request.session["campaign"] = "RECOVERY MODE"
+            request.user.current_campaign = "RECOVERY MODE"
+            request.user.save()
             if "remember_me" in request.POST:
                 return_response = redirect("main:home")
                 return_response.set_cookie("username", request.POST["username"])
@@ -261,7 +262,7 @@ def logout_view(request):
         UserSession.objects.filter(user=request.user).delete()
     logout(request)
     if "campaign" in request.session:
-        del request.session["campaign"]
+        del request.user.current_campaign
     return_response = redirect("main:login_view")
     if "username" in request.COOKIES:
         return_response.delete_cookie("username")

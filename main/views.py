@@ -44,8 +44,8 @@ def home(request):
     if request.user.is_authenticated:
         assign_broken_patient()
         campaign_list = request.user.campaigns.filter(active=True)
-        if len(campaign_list) != 0 and request.session["campaign"] != "RECOVERY MODE":
-            campaign = campaign_list.get(name=request.session["campaign"])
+        if len(campaign_list) != 0 and request.user.current_campaign != "RECOVERY MODE":
+            campaign = campaign_list.get(name=request.user.current_campaign)
             run_encounter_close(campaign)
         motd = MessageOfTheDay.load()
         if motd.start_date is not None or motd.end_date is not None:
@@ -63,7 +63,7 @@ def home(request):
                 "page_name": "Home",
                 "campaigns": campaign_list,
                 "motd": motd_final,
-                "selected_campaign": request.session["campaign"],
+                "selected_campaign": request.user.current_campaign,
             },
         )
     else:
@@ -97,7 +97,7 @@ def healthcheck(request):
 def set_timezone(request):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
-            campaign = Campaign.objects.get(name=request.session["campaign"])
+            campaign = Campaign.objects.get(name=request.user.current_campaign)
             if request.method == "POST":
                 request.session["django_timezone"] = request.POST["timezone"]
                 campaign.timezone = request.POST["timezone"]

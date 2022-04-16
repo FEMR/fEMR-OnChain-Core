@@ -19,5 +19,4 @@ def test_patient_list_view():
     client.post("/login_view/", {"username": "testhome", "password": "testingpassword"})
     return_response = client.post("/patient_list_view/")
     u.delete()
-    print(return_response.content)
     assert return_response.status_code == 200

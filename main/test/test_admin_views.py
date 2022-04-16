@@ -57,7 +57,6 @@ def test_permission_denied_account_reset():
     return_response = client.get(
         reverse("main:reset_lockouts", kwargs={"username": "test2"})
     )
-    print(return_response.url)
     u.delete()
     v.delete()
     c.delete()
@@ -94,7 +93,6 @@ def test_success_account_reset():
     v.delete()
     c.delete()
     assert return_response.status_code == 200
-    print(return_response.content)
     assert "test2\\'s account has been reset successfully." in str(
         return_response.content
     )
@@ -151,7 +149,6 @@ def test_campaigns_option_on_admin_user_create():
         "/login_view/", {"username": "test", "password": "testingpassword"}
     )
     return_response = client.get("/create_user_view/")
-    print(return_response)
     u.delete()
     c.delete()
     assert return_response.status_code == 200
@@ -195,7 +192,6 @@ def test_error_on_creating_user_with_existing_username():
             "username": "createusertestuser",
         },
     )
-    print(return_response.content)
     u.delete()
     l.delete()
     c.delete()
@@ -235,7 +231,6 @@ def test_create_user():
             "username": "createusertestusersuccess",
         },
     )
-    print(return_response.content)
     u.delete()
     c.delete()
     assert return_response.status_code == 200

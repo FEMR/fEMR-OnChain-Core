@@ -14,8 +14,6 @@ export DEFAULT_FROM_EMAIL=$DEFAULT_FROM_EMAIL
 export SERVER_EMAIL=$SERVER_EMAIL
 export ENVIRONMENT=$ENVIRONMENT
 
-echo $SECRET_KEY
-
 function all() {
   migrate
   pip3 install -r requirements.txt

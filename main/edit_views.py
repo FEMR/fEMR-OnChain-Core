@@ -52,7 +52,7 @@ def __patient_edit_form_get(request, patient_id, patient, encounters):
         instance=str(patient),
         ip=get_client_ip(request),
         username=request.user.username,
-        campaign=Campaign.objects.get(name=request.session["campaign"]),
+        campaign=Campaign.objects.get(name=request.user.current_campaign),
     )
     form = PatientForm(instance=patient)
     return render(
@@ -75,7 +75,7 @@ def __patient_edit_form_post(request, patient_id, patient, encounters):
     if form.is_valid():
         patient = form.save()
         patient.campaign_key = campaign_key
-        patient.campaign.add(Campaign.objects.get(name=request.session["campaign"]))
+        patient.campaign.add(Campaign.objects.get(name=request.user.current_campaign))
         patient.save()
         DatabaseChangeLog.objects.create(
             action="Edit",
@@ -83,7 +83,7 @@ def __patient_edit_form_post(request, patient_id, patient, encounters):
             instance=str(patient),
             ip=get_client_ip(request),
             username=request.user.username,
-            campaign=Campaign.objects.get(name=request.session["campaign"]),
+            campaign=Campaign.objects.get(name=request.user.current_campaign),
         )
         if os.environ.get("QLDB_ENABLED") == "TRUE":
             update_patient(form.cleaned_data)
@@ -117,7 +117,7 @@ def patient_edit_form_view(request, patient_id=None):
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return redirect("main:home")
         patient = get_object_or_404(Patient, pk=patient_id)
         encounters = PatientEncounter.objects.filter(patient=patient)
@@ -138,7 +138,7 @@ def patient_edit_form_view(request, patient_id=None):
 def __encounter_edit_form_get(request, patient_id, encounter_id):
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
-    units = Campaign.objects.get(name=request.session["campaign"]).units
+    units = Campaign.objects.get(name=request.user.current_campaign).units
     vitals_form = VitalsForm(unit=units)
     DatabaseChangeLog.objects.create(
         action="View",
@@ -146,7 +146,7 @@ def __encounter_edit_form_get(request, patient_id, encounter_id):
         instance=str(encounter),
         ip=get_client_ip(request),
         username=request.user.username,
-        campaign=Campaign.objects.get(name=request.session["campaign"]),
+        campaign=Campaign.objects.get(name=request.user.current_campaign),
     )
     form = PatientEncounterForm(instance=encounter, unit=units)
     if not encounter.active:
@@ -194,7 +194,7 @@ def __encounter_edit_form_get(request, patient_id, encounter_id):
 def __encounter_edit_form_post(request, patient_id, encounter_id):
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
-    units = Campaign.objects.get(name=request.session["campaign"]).units
+    units = Campaign.objects.get(name=request.user.current_campaign).units
     photos = list(encounter.photos.all())
     treatments = Treatment.objects.filter(encounter=encounter)
     form = PatientEncounterForm(request.POST or None, instance=encounter, unit=units)
@@ -211,7 +211,7 @@ def __encounter_edit_form_post(request, patient_id, encounter_id):
             instance=str(encounter),
             ip=get_client_ip(request),
             username=request.user.username,
-            campaign=Campaign.objects.get(name=request.session["campaign"]),
+            campaign=Campaign.objects.get(name=request.user.current_campaign),
         )
         if os.environ.get("QLDB_ENABLED") == "TRUE":
             encounter_data = PatientEncounterSerializer(encounter).data
@@ -268,7 +268,7 @@ def encounter_edit_form_view(request, patient_id=None, encounter_id=None):
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         elif request.method == "POST":
             return_response = __encounter_edit_form_post(
@@ -294,7 +294,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         else:
             return_response = __new_diagnosis_view_body(
@@ -306,7 +306,7 @@ def new_diagnosis_view(request, patient_id=None, encounter_id=None):
 
 
 def __new_diagnosis_view_body(request, patient_id, encounter_id):
-    campaign = Campaign.objects.get(name=request.session["campaign"])
+    campaign = Campaign.objects.get(name=request.user.current_campaign)
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
     treatment_form = TreatmentForm()
@@ -374,7 +374,7 @@ def new_diagnosis_view_post(request, encounter, diagnosis_set):
             instance=str(encounter),
             ip=get_client_ip(request),
             username=request.user.username,
-            campaign=Campaign.objects.get(name=request.session["campaign"]),
+            campaign=Campaign.objects.get(name=request.user.current_campaign),
         )
         if os.environ.get("QLDB_ENABLED") == "TRUE":
             encounter_data = PatientEncounterSerializer(encounter).data
@@ -393,7 +393,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         else:
             return_response = __new_treatment_view_body(
@@ -405,7 +405,7 @@ def new_treatment_view(request, patient_id=None, encounter_id=None):
 
 
 def __new_treatment_view_body(request, patient_id, encounter_id):
-    campaign = Campaign.objects.get(name=request.session["campaign"])
+    campaign = Campaign.objects.get(name=request.user.current_campaign)
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
     treatment_form = TreatmentForm()
@@ -482,7 +482,7 @@ def __treatment_view_post(request, encounter):
             instance=str(encounter),
             ip=get_client_ip(request),
             username=request.user.username,
-            campaign=Campaign.objects.get(name=request.session["campaign"]),
+            campaign=Campaign.objects.get(name=request.user.current_campaign),
         )
         if os.environ.get("QLDB_ENABLED") == "TRUE":
             encounter_data = PatientEncounterSerializer(encounter).data
@@ -501,7 +501,7 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         else:
             encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
@@ -557,7 +557,7 @@ def __aux_form_view_post(
 
 def __aux_form_view_get(request, encounter_id, patient, treatment_form, diagnosis_form):
     encounter = PatientEncounter.objects.get(pk=encounter_id)
-    units = Campaign.objects.get(name=request.session["campaign"]).units
+    units = Campaign.objects.get(name=request.user.current_campaign).units
     form = PatientEncounterForm(instance=encounter, unit=units)
     if units == "i":
         aux_form_imperial(form, encounter)
@@ -585,7 +585,7 @@ def __aux_form_view_get(request, encounter_id, patient, treatment_form, diagnosi
 
 
 def __aux_form_invalid(request, encounter_id, patient, treatment_form, diagnosis_form):
-    units = Campaign.objects.get(name=request.session["campaign"]).units
+    units = Campaign.objects.get(name=request.user.current_campaign).units
     encounter = PatientEncounter.objects.get(pk=encounter_id)
     form = PatientEncounterForm(instance=encounter, unit=units)
     if units == "i":
@@ -631,7 +631,7 @@ def __aux_form_is_valid(request, encounter, treatment_form):
         instance=str(encounter),
         ip=get_client_ip(request),
         username=request.user.username,
-        campaign=Campaign.objects.get(name=request.session["campaign"]),
+        campaign=Campaign.objects.get(name=request.user.current_campaign),
     )
     if os.environ.get("QLDB_ENABLED") == "TRUE":
         encounter_data = PatientEncounterSerializer(encounter).data
@@ -646,10 +646,10 @@ def __aux_form_is_valid(request, encounter, treatment_form):
 @silk_profile("history-view")
 def history_view(request, patient_id=None, encounter_id=None):
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         else:
-            units = Campaign.objects.get(name=request.session["campaign"]).units
+            units = Campaign.objects.get(name=request.user.current_campaign).units
             encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
             patient = get_object_or_404(Patient, pk=patient_id)
             aux_form = HistoryPatientEncounterForm(instance=encounter)
@@ -667,7 +667,9 @@ def history_view(request, patient_id=None, encounter_id=None):
                         instance=str(encounter),
                         ip=get_client_ip(request),
                         username=request.user.username,
-                        campaign=Campaign.objects.get(name=request.session["campaign"]),
+                        campaign=Campaign.objects.get(
+                            name=request.user.current_campaign
+                        ),
                     )
                     if os.environ.get("QLDB_ENABLED") == "TRUE":
                         encounter_data = PatientEncounterSerializer(encounter).data
@@ -754,10 +756,10 @@ def new_vitals_view(request, patient_id=None, encounter_id=None):
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         else:
-            units = Campaign.objects.get(name=request.session["campaign"]).units
+            units = Campaign.objects.get(name=request.user.current_campaign).units
             encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
             patient = get_object_or_404(Patient, pk=patient_id)
             vitals = Vitals.objects.filter(encounter=encounter)
@@ -804,7 +806,7 @@ def new_vitals_view_post(request, units, encounter):
             instance=str(encounter),
             ip=get_client_ip(request),
             username=request.user.username,
-            campaign=Campaign.objects.get(name=request.session["campaign"]),
+            campaign=Campaign.objects.get(name=request.user.current_campaign),
         )
         if os.environ.get("QLDB_ENABLED") == "TRUE":
             encounter_data = PatientEncounterSerializer(encounter).data
@@ -813,7 +815,7 @@ def new_vitals_view_post(request, units, encounter):
 
 @silk_profile("hpi-view-post")
 def __hpi_view_post(request, patient_id, encounter_id):
-    units = Campaign.objects.get(name=request.session["campaign"]).units
+    units = Campaign.objects.get(name=request.user.current_campaign).units
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
     vitals = Vitals.objects.filter(encounter=encounter)
@@ -854,7 +856,7 @@ def __hpi_view_post(request, patient_id, encounter_id):
 @silk_profile("hpi-view")
 def hpi_view(request, patient_id=None, encounter_id=None):
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         else:
             return_response = __hpi_view_post(request, patient_id, encounter_id)
@@ -866,7 +868,7 @@ def hpi_view(request, patient_id=None, encounter_id=None):
 @silk_profile("submit-hpi-view")
 def submit_hpi_view(request, patient_id=None, encounter_id=None, hpi_id=None):
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         elif request.method == "POST":
             encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
@@ -881,7 +883,7 @@ def submit_hpi_view(request, patient_id=None, encounter_id=None, hpi_id=None):
                     instance=str(encounter),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=Campaign.objects.get(name=request.user.current_campaign),
                 )
                 if os.environ.get("QLDB_ENABLED") == "TRUE":
                     encounter_data = PatientEncounterSerializer(encounter).data

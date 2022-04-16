@@ -545,6 +545,7 @@ class fEMRUser(AbstractUser):
 
     email = models.EmailField(unique=True)
     change_password = models.BooleanField(default=True, editable=False)
+    current_campaign = models.CharField(max_length=100)
     campaigns = models.ManyToManyField(Campaign, blank=True)
     password_reset_last = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(

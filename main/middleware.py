@@ -24,23 +24,24 @@ class TimezoneMiddleware:
 
     def __call__(self, request):
         if request.user.is_authenticated and not AnonymousUser:
-            if (
-                "campaign" not in request.session
-                or request.session["campaign"] == "RECOVERY MODE"
-            ):
+            if request.user.current_campaign == "RECOVERY MODE":
                 try:
-                    request.session["campaign"] = request.user.campaigns.filter(
+                    request.user.current_campaign = request.user.campaigns.filter(
                         active=True
                     )[0].name
+                    request.user.save()
                     tzname = Campaign.objects.get(
-                        name=request.session["campaign"]
+                        name=request.user.current_campaign
                     ).timezone
                 except IndexError:
                     if request.user.groups.filter(name="fEMR Admin").exists():
-                        request.session["campaign"] = "RECOVERY MODE"
+                        request.user.current_campaign = "RECOVERY MODE"
+                        request.user.save()
                     tzname = request.session.get("django_timezone")
             else:
-                tzname = Campaign.objects.get(name=request.session["campaign"]).timezone
+                tzname = Campaign.objects.get(
+                    name=request.user.current_campaign
+                ).timezone
         else:
             tzname = request.session.get("django_timezone")
         if tzname:
@@ -67,8 +68,8 @@ class CampaignActivityCheckMiddleware:
         return return_response
 
     def __user_not_admin(self, request):
-        campaign_name = request.session.get("campaign", None)
-        if campaign_name is None:
+        campaign_name = request.user.current_campaign
+        if campaign_name is None or campaign_name == "":
             return_response = self.__campaign_is_none(request)
             campaign = None
         else:
@@ -80,7 +81,6 @@ class CampaignActivityCheckMiddleware:
 
     @staticmethod
     def __campaign_not_active(request):
-        del request.session["campaign"]
         logout(request)
         form = LoginForm()
         return render(
@@ -96,7 +96,8 @@ class CampaignActivityCheckMiddleware:
     def __campaign_is_none(self, request):
         campaigns = request.user.campaigns.filter(active=True)
         if len(campaigns) != 0:
-            request.session["campaign"] = campaigns[0].name
+            request.user.current_campaign = campaigns[0].name
+            request.user.save()
             return_response = self.get_response(request)
         else:
             logout(request)
@@ -113,8 +114,8 @@ class CampaignActivityCheckMiddleware:
 
     def __run_if_admin(self, request, is_admin):
         if request.user.is_authenticated and is_admin:
-            campaign_name = request.session.get("campaign", None)
-            if campaign_name is None:
+            campaign_name = request.user.current_campaign
+            if campaign_name is None or campaign_name == "":
                 return_response = self.__campaign_name_is_none(request)
             elif campaign_name != "RECOVERY MODE":
                 return_response = self.__campaign_not_in_recovery_mode(request)
@@ -126,22 +127,24 @@ class CampaignActivityCheckMiddleware:
 
     def __campaign_name_is_none(self, request):
         if len(request.user.campaigns.filter(active=True)) != 0:
-            request.session["campaign"] = request.user.campaigns.filter(active=True)[
+            request.user.current_campaign = request.user.campaigns.filter(active=True)[
                 0
             ].name
         else:
-            request.session["campaign"] = "RECOVERY MODE"
+            request.user.current_campaign = "RECOVERY MODE"
+        request.user.save()
         return self.get_response(request)
 
     def __campaign_not_in_recovery_mode(self, request):
-        campaign = Campaign.objects.get(name=request.session["campaign"])
+        campaign = Campaign.objects.get(name=request.user.current_campaign)
         if not campaign.active:
             if len(request.user.campaigns.filter(active=True)) != 0:
-                request.session["campaign"] = request.user.campaigns.filter(
+                request.user.current_campaign = request.user.campaigns.filter(
                     active=True
                 )[0].name
             else:
-                request.session["campaign"] = "RECOVERY MODE"
+                request.user.current_campaign = "RECOVERY MODE"
+            request.user.save()
         return self.get_response(request)
 
 

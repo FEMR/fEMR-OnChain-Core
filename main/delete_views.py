@@ -40,7 +40,7 @@ def patient_delete_view(request, patient_id=None):
         if request.method == "POST":
             try:
                 target_object = get_object_or_404(Patient, pk=patient_id)
-                this_campaign = Campaign.objects.get(name=request.session["campaign"])
+                this_campaign = Campaign.objects.get(name=request.user.current_campaign)
                 contact = this_campaign.instance.main_contact
                 DatabaseChangeLog.objects.create(
                     action="Delete",
@@ -130,10 +130,10 @@ def delete_photo_view(request, patient_id=None, encounter_id=None, photo_id=None
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         else:
-            units = Campaign.objects.get(name=request.session["campaign"]).units
+            units = Campaign.objects.get(name=request.user.current_campaign).units
             encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
             patient = get_object_or_404(Patient, pk=patient_id)
             photo = Photo.objects.get(pk=photo_id)

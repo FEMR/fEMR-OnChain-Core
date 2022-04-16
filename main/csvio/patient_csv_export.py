@@ -7,14 +7,17 @@ from datetime import datetime
 from io import StringIO
 import math
 import os
+
 from celery import shared_task
-from django.shortcuts import redirect, render
 from silk.profiling.profiler import silk_profile
 from pytz import timezone as pytz_timezone
+
 from django.http.response import HttpResponse
 from django.contrib import messages
+from django.shortcuts import redirect, render
 from django.core.files.base import ContentFile
 from clinic_messages.models import Message
+
 from main.background_tasks import check_admin_permission
 from main.models import (
     CSVExport,
@@ -344,7 +347,9 @@ def csv_export_list(request):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
             exports = CSVExport.objects.filter(user=request.user)
-            return render(request, "admin/export_list.html", {"exports": exports})
+            return_response = render(
+                request, "admin/export_list.html", {"exports": exports}
+            )
         else:
             return_response = redirect("main:permission_denied")
     else:
@@ -357,8 +362,8 @@ def fetch_csv_export(request, export_id=None):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
             export = CSVExport.objects.get(pk=export_id)
-            with open(export.file.url, "rb") as fh:
-                resp = HttpResponse(fh.read(), content_type="text/csv")
+            with open(export.file.url, "rb") as file_handle:
+                resp = HttpResponse(file_handle.read(), content_type="text/csv")
                 resp[
                     "Content-Disposition"
                 ] = f'attachment; filename="{os.path.basename(export.file.path)}"'
@@ -374,7 +379,7 @@ def fetch_csv_export(request, export_id=None):
 def run_patient_csv_export(request):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
-            campaign = Campaign.objects.get(name=request.session["campaign"])
+            campaign = Campaign.objects.get(name=request.user.current_campaign)
             csv_export_handler.delay(request.user.pk, campaign.id)
             messages.info(
                 request,

@@ -28,7 +28,7 @@
         <select name="campaign">
             {% for campaign in campaigns %}
             <!--suppress HtmlUnknownAttribute -->
-            <option %} %} campaign|is_selected:selected_campaign endif if selected value="{{ campaign }}" {% {%>
+            <option value="{{ campaign }}" {% if campaign|is_selected:selected_campaign %} selected {% endif %}>
                 {{ campaign }}
             </option>
             {% endfor %}

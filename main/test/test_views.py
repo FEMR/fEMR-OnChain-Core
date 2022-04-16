@@ -31,7 +31,6 @@ def test_home_view():
     )
     return_response = client.post("/home/")
     u.delete()
-    print(return_response.content)
     assert return_response.status_code == 200
     assert "Home" in str(return_response.content)
 
@@ -53,6 +52,5 @@ def test_home_view_recovery_mode():
     client.post("/login_view/", {"username": "testhome", "password": "testingpassword"})
     return_response = client.post("/home/")
     u.delete()
-    print(return_response.content)
     assert return_response.status_code == 200
     assert "RECOVERY MODE" in str(return_response.content)
