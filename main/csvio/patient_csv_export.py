@@ -346,7 +346,7 @@ def csv_export_handler(user_id, campaign_id):
 def csv_export_list(request):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
-            exports = CSVExport.objects.filter(user=request.user)
+            exports = CSVExport.objects.filter(user=request.user).order_by("-id")
             return_response = render(
                 request, "admin/export_list.html", {"exports": exports}
             )
