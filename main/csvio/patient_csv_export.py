@@ -12,7 +12,6 @@ from django.shortcuts import redirect, render
 from silk.profiling.profiler import silk_profile
 from pytz import timezone as pytz_timezone
 from django.http.response import HttpResponse
-from django.urls import reverse
 from django.contrib import messages
 from django.core.files.base import ContentFile
 from clinic_messages.models import Message
@@ -333,7 +332,7 @@ def csv_export_handler(user_id, campaign_id):
     Message.objects.create(
         subject="CSV Export Finished",
         content="""
-        This message is to let you know that the CSV export you began has finished.
+        This message is to let you know that the CSV export you began has finished. You can go back to the View Finished Exports page to download it.
         """,
         sender=fEMRUser.objects.get(username="admin"),
         recipient=user,
@@ -379,7 +378,7 @@ def run_patient_csv_export(request):
             csv_export_handler.delay(request.user.pk, campaign.id)
             messages.info(
                 request,
-                "We're building your CSV - you'll receive a message with a download link once it's done.",
+                "We're building your CSV - you'll receive a message once it's done.",
             )
             return_response = render(
                 request, "admin/home.html", {"user": request.user, "page_name": "Admin"}
