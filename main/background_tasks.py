@@ -3,12 +3,14 @@ Non-view functions used to carry out background processes.
 """
 import os
 from datetime import timedelta
+from celery import shared_task
 
 from django.db.models.query_utils import Q
 from django.utils import timezone
 from django.core.mail import send_mail
 
 from silk.profiling.profiler import silk_profile
+from model_bakery import baker
 
 from main.models import (
     Campaign,
@@ -124,3 +126,22 @@ def assign_broken_patient():
     for patient in Patient.objects.filter(campaign_key=None):
         patient.campaign_key = cal_key(patient.id)
         patient.save()
+
+
+@shared_task
+@silk_profile("scale-data")
+def scale_data():
+    campaign = Campaign.objects.get_or_create("Test")[0]
+    if Patient.objects.filter(campaign=campaign).count() == 0:
+        print("Generating patient data.")
+        for count in range(1000):
+            patient = baker.make("main.Patient")
+            patient.campaign.add(campaign)
+            for _ in range(10):
+                encounter = baker.make("main.PatientEncounter")
+                encounter.patient = patient
+                encounter.campaign = campaign
+                encounter.save()
+            print(f"Patient {count} finished.")
+    else:
+        print("Database already populated.")
