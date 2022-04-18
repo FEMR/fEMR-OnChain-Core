@@ -73,13 +73,14 @@ class CampaignActivityCheckMiddleware:
 
     def __check_valid_campaign(self, user):
         campaigns = user.campaigns.filter(active=True)
-        if (
-            user.current_campaign not in campaigns
-            and user.current_campaign != "RECOVERY_MODE"
-        ):
-            if len(campaigns) != 0:
-                user.current_campaign = campaigns[0].name
-                user.save()
+        if user.current_campaign != "RECOVERY_MODE":
+            try:
+                campaigns.get(name=user.current_campaign)
+            except Campaign.DoesNotExist:
+                print(f"Campaign {user.current_campaign} _not_ valid.")
+                if len(campaigns) != 0:
+                    user.current_campaign = campaigns[0].name
+                    user.save()
 
     def __user_not_admin(self, request):
         campaign_name = request.user.current_campaign
