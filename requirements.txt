@@ -69,7 +69,7 @@ pyflakes==2.4.0
 Pygments==2.10.0
 pylint==2.11.1
 pyparsing==3.0.6
-pyqldb==3.0.0
+pyqldb==3.2.2
 python-dateutil==2.8.2
 python-memcached==1.59
 python-stdnum==1.17
