@@ -1,12 +1,12 @@
-amazon.ion==0.5.0
-amqp==5.0.6
+amazon.ion==0.9.1
+amqp==5.1.1
 asgiref==3.4.1
-astroid==2.8.5
+astroid==2.11.2
 autopep8==1.6.0
 billiard==3.6.4.0
 black==22.1.0
-boto3==1.20.7
-botocore==1.23.7
+boto3==1.21.42
+botocore==1.24.42
 celery==5.2.6
 certifi==2021.10.8
 chardet==4.0.0
@@ -51,7 +51,7 @@ isort==5.10.1
 itypes==1.2.0
 Jinja2==3.0.3
 jmespath==0.10.0
-kombu==5.2.2
+kombu==5.2.3
 lazy-object-proxy==1.7.1
 MarkupSafe==2.0.1
 mccabe==0.6.1
@@ -67,9 +67,9 @@ psycopg2-binary==2.9.2
 pycodestyle==2.8.0
 pyflakes==2.4.0
 Pygments==2.10.0
-pylint==2.11.1
+pylint==2.13.5
 pyparsing==3.0.6
-pyqldb==3.0.0
+pyqldb==3.2.2
 python-dateutil==2.8.2
 python-memcached==1.59
 python-stdnum==1.17
@@ -86,7 +86,7 @@ simplejson==3.17.6
 six==1.16.0
 sqlparse==0.4.2
 toml==0.10.2
-tomli==1.2.2
+tomli==2.0.1
 typed-ast==1.5.1
 typing-extensions==4.0.1
 ua-parser==0.10.0
