@@ -54,3 +54,26 @@ def test_home_view_recovery_mode():
     u.delete()
     assert return_response.status_code == 200
     assert "RECOVERY MODE" in str(return_response.content)
+
+
+def test_home_view_wrong_current_campaign():
+    u = fEMRUser.objects.create_user(
+        username="testhomeview",
+        password="testingpassword",
+        email="hometestinguseremail@email.com",
+    )
+    u.change_password = False
+    c = baker.make("main.Campaign")
+    c.active = True
+    c.save()
+    u.campaigns.add(c)
+    u.current_campaign = "Test"
+    u.save()
+    client = Client()
+    client.post(
+        "/login_view/", {"username": "testhomeview", "password": "testingpassword"}
+    )
+    return_response = client.post("/home/")
+    u.delete()
+    assert return_response.status_code == 200
+    assert "Home" in str(return_response.content)

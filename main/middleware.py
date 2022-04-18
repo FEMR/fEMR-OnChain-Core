@@ -61,11 +61,25 @@ class CampaignActivityCheckMiddleware:
 
     def __call__(self, request):
         is_admin = request.user.groups.filter(name="fEMR Admin").exists()
-        if request.user.is_authenticated and not is_admin:
-            return_response = self.__user_not_admin(request)
+        if request.user.is_authenticated:
+            self.__check_valid_campaign(request.user)
+            if not is_admin:
+                return_response = self.__user_not_admin(request)
+            else:
+                return_response = self.__run_if_admin(request, is_admin)
         else:
-            return_response = self.__run_if_admin(request, is_admin)
+            return_response = self.get_response(request)
         return return_response
+
+    def __check_valid_campaign(self, user):
+        campaigns = user.campaigns.filter(active=True)
+        if (
+            user.current_campaign not in campaigns
+            and user.current_campaign != "RECOVERY_MODE"
+        ):
+            if len(campaigns) != 0:
+                user.current_campaign = campaigns[0].name
+                user.save()
 
     def __user_not_admin(self, request):
         campaign_name = request.user.current_campaign
