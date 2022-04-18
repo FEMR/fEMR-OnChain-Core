@@ -1,7 +1,7 @@
-appMR.migrations.0001\_initial
+app_mr.migrations.0001\_initial
 ==============================
 
-.. automodule:: appMR.migrations.0001_initial
+.. automodule:: app_mr.migrations.0001_initial
 
    
    

@@ -1,7 +1,7 @@
-appMR.background\_tasks
+app_mr.background\_tasks
 =======================
 
-.. automodule:: appMR.background_tasks
+.. automodule:: app_mr.background_tasks
 
    
    

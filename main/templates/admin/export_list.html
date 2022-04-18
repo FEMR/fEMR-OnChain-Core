@@ -1,0 +1,25 @@
+{% extends "data/base.html" %} {% block content %} {% load static %}
+<div class="row">
+    <div class="col-md-6">
+        <h2>Deidentified Patient Export</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Filename</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for o in exports %}
+            <tr>
+                <th scope="row">{{ o.id }}</th>
+                <td>{{ o.file.name }}</td>
+                <td><a href="{{ o.file.url }}">Download</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

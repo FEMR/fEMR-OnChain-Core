@@ -7,7 +7,7 @@ def organization_admin_home_view(request):
     if request.user.is_authenticated:
         if request.user.groups.filter(name="Organization Admin").exists():
             org = Campaign.objects.get(
-                name=request.session["campaign"]
+                name=request.user.current_campaign
             ).instance.organization
             instances = []
             campaigns = []

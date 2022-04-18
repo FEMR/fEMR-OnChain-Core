@@ -63,15 +63,14 @@ class InitialInventoryHandler:
         proc_file = proc_file.replace("\ufeff", "")
         proc_file = proc_file.replace("\r\n", "\n")
         reader = csv.DictReader(io.StringIO(proc_file))
-        data = [line for line in reader]
         try:
-            for row in data:
+            for row in list(reader):
                 add_to_inventory(campaign, row)
             return_result = "Formulary uploaded successfully."
-        except KeyError as e:
-            return_result = "Heading '{}' is missing or incorrect.".format(e)
-        except ValidationError as e:
-            return_result = "Data is misformatted: {}".format(e)
-        except UnicodeDecodeError as e:
+        except KeyError as error:
+            return_result = f"Heading '{error}' is missing or incorrect."
+        except ValidationError as error:
+            return_result = f"Data is misformatted: {error}"
+        except UnicodeDecodeError as error:
             return_result = "File is encoded incorrectly. You may have uploaded an Excel sheet - Make sure you uploaded a CSV file."
         return return_result

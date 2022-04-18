@@ -38,11 +38,11 @@ class Command(BaseCommand):
         campaign = Campaign.objects.get(name="Test")
         for option in R_OPTIONS:
             if not Race.objects.filter(name=option).exists():
-                r = Race.objects.create(name=option)
-                campaign.race_options.add(r)
+                race = Race.objects.create(name=option)
+                campaign.race_options.add(race)
 
         for option in E_OPTIONS:
             if not Ethnicity.objects.filter(name=option).exists():
-                e = Ethnicity.objects.create(name=option)
-                campaign.ethnicity_options.add(e)
+                ethnicity = Ethnicity.objects.create(name=option)
+                campaign.ethnicity_options.add(ethnicity)
         campaign.save()

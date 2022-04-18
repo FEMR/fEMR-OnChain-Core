@@ -1,0 +1,369 @@
+version: v1beta11
+
+images:
+  celery:
+    image: celery
+    dockerfile: Dockerfile-celery
+    context: .
+  dev:
+    image: dev
+    dockerfile: Dockerfile
+    context: .
+  nginx:
+    image: nginx
+    dockerfile: nginx/Dockerfile
+    context: nginx
+
+deployments:
+- name: cache
+  helm:
+    componentChart: true
+    values:
+      replicas: 1
+      autoScaling:
+        horizontal:
+          maxReplicas: 25
+          averageCPU: 500m
+          averageMemory: 1Gi
+      rollingUpdate:
+        enabled: true
+        maxSurge: "50%"
+        maxUnavailable: "30%"
+        partition: 1
+      containers:
+      - command:
+        - memcached
+        - -m 64
+        image: memcached
+        name: cache-container
+      service:
+        ports:
+        - containerPort: 11211
+          port: 11211
+          protocol: TCP
+- name: database
+  helm:
+    componentChart: true
+    values:
+      replicas: 1
+      autoScaling:
+        horizontal:
+          maxReplicas: 25
+          averageCPU: 500m
+          averageMemory: 1Gi
+      rollingUpdate:
+        enabled: true
+        maxSurge: "50%"
+        maxUnavailable: "30%"
+        partition: 1
+      containers:
+      - env:
+        - name: POSTGRES_DB
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: postgres
+        - name: POSTGRES_USER
+          value: postgres
+        image: postgres
+        name: database-container
+        volumeMounts:
+        - containerPath: /var/lib/postgresql/data
+          volume:
+            name: db
+            readOnly: false
+      service:
+        ports:
+        - containerPort: 5432
+          port: 5432
+          protocol: TCP
+      volumes:
+      - name: db
+        size: 10Gi
+- name: dev
+  helm:
+    componentChart: true
+    values:
+      replicas: 1
+      autoScaling:
+        horizontal:
+          maxReplicas: 25
+          averageCPU: 500m
+          averageMemory: 1Gi
+      rollingUpdate:
+        enabled: true
+        maxSurge: "50%"
+        maxUnavailable: "30%"
+        partition: 1
+      containers:
+      - env:
+        - name: ENVIRONMENT
+          value: LOCAL
+        - name: POSTGRES_DB
+          value: postgres
+        - name: POSTGRES_NAME
+          value: database
+        - name: POSTGRES_PASS
+          value: postgres
+        - name: POSTGRES_USER
+          value: postgres
+        image: dev
+        name: dev-container
+        volumeMounts:
+        - containerPath: /opt/app/static
+          volume:
+            name: staticvol
+            readOnly: false
+        - containerPath: /opt/app/mediafiles
+          volume:
+            name: mediavol
+            readOnly: false
+        - containerPath: /build
+          volume:
+            name: volume-1
+            readOnly: false
+      initContainers:
+      - args:
+        - -c
+        - while [ ! -f /tmp/done ]; do sleep 2; done
+        command:
+        - sh
+        image: alpine
+        name: upload-volumes
+        volumeMounts:
+        - containerPath: /build
+          volume:
+            name: volume-1
+            readOnly: false
+      service:
+        ports:
+        - containerPort: 8081
+          port: 8081
+          protocol: TCP
+      volumes:
+      - name: staticvol
+        size: 5Gi
+      - name: mediavol
+        size: 5Gi
+      - emptyDir: {}
+        name: volume-1
+- name: nginx
+  # This deployment uses `helm` but you can also define `kubectl` deployments or kustomizations
+  helm:
+    # We are deploying the so-called Component Chart: https://devspace.sh/component-chart/docs
+    componentChart: true
+    # Under `values` we can define the values for this Helm chart used during `helm install/upgrade`
+    # You may also use `valuesFiles` to load values from files, e.g. valuesFiles: ["values.yaml"]
+    values:
+      replicas: 1
+      autoScaling:
+        horizontal:
+          maxReplicas: 25
+          averageCPU: 500m
+          averageMemory: 1Gi
+      rollingUpdate:
+        enabled: true
+        maxSurge: "50%"
+        maxUnavailable: "30%"
+        partition: 1
+      containers:
+      - image: nginx
+        name: nginx-container
+        volumeMounts:
+        - containerPath: /opt/app/static
+          volume:
+            name: staticvol
+            readOnly: false
+        - containerPath: /opt/app/mediafiles
+          volume:
+            name: mediavol
+            readOnly: false
+      ingress:
+        tls: true
+        rules:
+        - host: chain.teamfemr.org
+        - host: chain-dev.teamfemr.org
+        - host: chain-training.teamfemr.org
+        - host: localhost
+      service:
+        ports:
+        - containerPort: 80
+          port: 1337
+          protocol: TCP
+      volumes:
+      - name: staticvol
+        size: 5Gi
+      - name: mediavol
+        size: 5Gi
+- name: redis
+  # This deployment uses `helm` but you can also define `kubectl` deployments or kustomizations
+  helm:
+    # We are deploying the so-called Component Chart: https://devspace.sh/component-chart/docs
+    componentChart: true
+    # Under `values` we can define the values for this Helm chart used during `helm install/upgrade`
+    # You may also use `valuesFiles` to load values from files, e.g. valuesFiles: ["values.yaml"]
+    values:
+      containers:
+      - image: redis:6-alpine
+        name: redis-container
+      service:
+        ports:
+        - containerPort: 6379
+          port: 6379
+          protocol: TCP
+- name: celery
+  # This deployment uses `helm` but you can also define `kubectl` deployments or kustomizations
+  helm:
+    # We are deploying the so-called Component Chart: https://devspace.sh/component-chart/docs
+    componentChart: true
+    # Under `values` we can define the values for this Helm chart used during `helm install/upgrade`
+    # You may also use `valuesFiles` to load values from files, e.g. valuesFiles: ["values.yaml"]
+    values:
+      containers:
+      - env:
+        - name: CELERY_BACKEND
+          value: redis://redis:6379/0
+        - name: CELERY_BROKER
+          value: redis://redis:6379/0
+        - name: ENVIRONMENT
+          value: LOCAL
+        - name: POSTGRES_DB
+          value: postgres
+        - name: POSTGRES_NAME
+          value: database
+        - name: POSTGRES_PASS
+          value: postgres
+        - name: POSTGRES_USER
+          value: postgres
+        - name: SECRET_KEY
+          value: 2HY>fXi!dQ&(9Vf.XghCa;L6G=Ul4r-Bwqh>ae0RG3vIh1ZJ%T
+        image: celery
+        name: celery-container
+        volumeMounts:
+        - containerPath: /build
+          volume:
+            name: volume-1
+            readOnly: false
+      initContainers:
+      - args:
+        - -c
+        - while [ ! -f /tmp/done ]; do sleep 2; done
+        command:
+        - sh
+        image: alpine
+        name: upload-volumes
+        volumeMounts:
+        - containerPath: /build
+          volume:
+            name: volume-1
+            readOnly: false
+      volumes:
+      - emptyDir: {}
+        name: volume-1
+
+# `dev` only applies when you run `devspace dev`
+dev:
+  # `dev.ports` specifies all ports that should be forwarded while `devspace dev` is running
+  # Port-forwarding lets you access your application via localhost on your local machine
+  ports:
+  - labelSelector:
+      app.kubernetes.io/component: cache
+    forward:
+    - port: 11211
+  - labelSelector:
+      app.kubernetes.io/component: database
+    forward:
+    - port: 5432
+  - labelSelector:
+      app.kubernetes.io/component: dev
+    forward:
+    - port: 8081
+  - labelSelector:
+      app.kubernetes.io/component: nginx
+    forward:
+    - port: 1337
+      remotePort: 80
+  - labelSelector:
+      app.kubernetes.io/component: redis
+    forward:
+    - port: 6379
+  # `dev.sync` configures a file sync between our Pods in k8s and your local project files
+  sync:
+  - labelSelector:
+      app.kubernetes.io/component: dev
+    containerName: dev-container
+    localSubPath: .
+    containerPath: /build
+  - labelSelector:
+      app.kubernetes.io/component: celery
+    containerName: celery-container
+    localSubPath: .
+    containerPath: /build
+hooks:
+- events:
+  - after:deploy:cache
+  wait:
+    running: true
+    terminatedWithCode: 0
+  container:
+    labelSelector:
+      app.kubernetes.io/component: cache
+    containerName: cache-container
+- events:
+  - after:deploy:database
+  wait:
+    running: true
+    terminatedWithCode: 0
+  container:
+    labelSelector:
+      app.kubernetes.io/component: database
+    containerName: database-container
+- events:
+  - after:deploy:dev
+  upload:
+    localPath: .
+    containerPath: /build
+  container:
+    labelSelector:
+      app.kubernetes.io/component: dev
+    containerName: upload-volumes
+- events:
+  - after:deploy:dev
+  command: touch /tmp/done
+  container:
+    labelSelector:
+      app.kubernetes.io/component: dev
+    containerName: upload-volumes
+- events:
+  - after:deploy:dev
+  wait:
+    running: true
+    terminatedWithCode: 0
+  container:
+    labelSelector:
+      app.kubernetes.io/component: dev
+    containerName: dev-container
+- events:
+  - after:deploy:redis
+  wait:
+    running: true
+    terminatedWithCode: 0
+  container:
+    labelSelector:
+      app.kubernetes.io/component: redis
+    containerName: redis-container
+- events:
+  - after:deploy:celery
+  upload:
+    localPath: .
+    containerPath: /build
+  container:
+    labelSelector:
+      app.kubernetes.io/component: celery
+    containerName: upload-volumes
+- events:
+  - after:deploy:celery
+  command: touch /tmp/done
+  container:
+    labelSelector:
+      app.kubernetes.io/component: celery
+    containerName: upload-volumes

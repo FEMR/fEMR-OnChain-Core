@@ -1,7 +1,7 @@
-appMR.tests
+app_mr.tests
 ===========
 
-.. automodule:: appMR.tests
+.. automodule:: app_mr.tests
 
    
    
@@ -27,5 +27,5 @@ appMR.tests
    :toctree:
    :recursive:
 
-   appMR.tests.test_background_tasks
+   app_mr.tests.test_background_tasks
 

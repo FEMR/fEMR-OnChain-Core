@@ -42,12 +42,16 @@ class ChiefComplaintAutocomplete(
         if not self.request.user.is_authenticated:
             return ChiefComplaint.objects.none()
 
-        autocomplete_queryset = ChiefComplaint.objects.filter(
-            active=True).order_by("text").distinct("text")
+        autocomplete_queryset = (
+            ChiefComplaint.objects.filter(active=True).order_by("text").distinct("text")
+        )
 
         if self.q:
-            autocomplete_queryset = autocomplete_queryset.filter(
-                text__icontains=self.q).order_by("text").distinct("text")
+            autocomplete_queryset = (
+                autocomplete_queryset.filter(text__icontains=self.q)
+                .order_by("text")
+                .distinct("text")
+            )
 
         return autocomplete_queryset
 
@@ -78,7 +82,7 @@ class InventoryEntryAutocomplete(
         if not self.request.user.is_authenticated:
             return InventoryEntry.objects.none()
 
-        campaign = Campaign.objects.get(name=self.request.session["campaign"])
+        campaign = Campaign.objects.get(name=self.request.user.current_campaign)
         autocomplete_queryset = campaign.inventory.entries.all()
 
         if self.q:

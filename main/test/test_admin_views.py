@@ -57,7 +57,6 @@ def test_permission_denied_account_reset():
     return_response = client.get(
         reverse("main:reset_lockouts", kwargs={"username": "test2"})
     )
-    print(return_response.url)
     u.delete()
     v.delete()
     c.delete()
@@ -94,7 +93,6 @@ def test_success_account_reset():
     v.delete()
     c.delete()
     assert return_response.status_code == 200
-    print(return_response.content)
     assert "test2\\'s account has been reset successfully." in str(
         return_response.content
     )
@@ -151,11 +149,92 @@ def test_campaigns_option_on_admin_user_create():
         "/login_view/", {"username": "test", "password": "testingpassword"}
     )
     return_response = client.get("/create_user_view/")
-    print(return_response)
     u.delete()
     c.delete()
     assert return_response.status_code == 200
     assert "Campaigns" in str(return_response.content)
+
+
+def test_error_on_creating_user_with_existing_username():
+    l = fEMRUser.objects.create_user(
+        username="createusertestuser",
+        password="testingpassword",
+        email="anothertestuseremail@email.com",
+    )
+    u = fEMRUser.objects.create_user(
+        username="createusertest",
+        password="testingpassword",
+        email="logintestinguseremail@email.com",
+    )
+    u.change_password = False
+    g = Group.objects.get_or_create(name="Clinician")[0]
+    Group.objects.get_or_create(name="Campaign Manager")[0].user_set.add(u)
+    Group.objects.get_or_create(name="fEMR Admin")[0].user_set.add(u)
+    c = baker.make("main.Campaign")
+    c.active = True
+    c.save()
+    u.campaigns.add(c)
+    u.save()
+    client = Client()
+    return_response = client.post(
+        "/login_view/", {"username": "createusertest", "password": "testingpassword"}
+    )
+    return_response = client.post(
+        "/create_user_view/",
+        {
+            "campaigns": [str(c.id)],
+            "email": "testuser@test.com",
+            "first_name": "Test",
+            "groups": [str(g.id)],
+            "last_name": "User",
+            "password1": "testingpassword",
+            "password2": "testingpassword",
+            "username": "createusertestuser",
+        },
+    )
+    u.delete()
+    l.delete()
+    c.delete()
+    assert return_response.status_code == 200
+    assert "A user with that username already exists." in str(return_response.content)
+
+
+def test_create_user():
+    u = fEMRUser.objects.create_user(
+        username="createusertest",
+        password="testingpassword",
+        email="logintestinguseremail@email.com",
+    )
+    u.change_password = False
+    g = Group.objects.get_or_create(name="Clinician")[0]
+    Group.objects.get_or_create(name="Campaign Manager")[0].user_set.add(u)
+    Group.objects.get_or_create(name="fEMR Admin")[0].user_set.add(u)
+    c = baker.make("main.Campaign")
+    c.active = True
+    c.save()
+    u.campaigns.add(c)
+    u.save()
+    client = Client()
+    return_response = client.post(
+        "/login_view/", {"username": "createusertest", "password": "testingpassword"}
+    )
+    return_response = client.post(
+        "/create_user_view/",
+        {
+            "campaigns": [str(c.id)],
+            "email": "createtestuser@test.com",
+            "first_name": "Test",
+            "groups": [str(g.id)],
+            "last_name": "User",
+            "password1": "testingpassword",
+            "password2": "testingpassword",
+            "username": "createusertestusersuccess",
+        },
+    )
+    u.delete()
+    c.delete()
+    assert return_response.status_code == 200
+    assert "Changes successfully submitted." in str(return_response.content)
 
 
 def test_permission_denied_account_reset():

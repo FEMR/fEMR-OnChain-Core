@@ -16,7 +16,7 @@ from main.models import Campaign, InventoryEntry
 def formulary_home_view(request):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
-            campaign = Campaign.objects.get(name=request.session["campaign"])
+            campaign = Campaign.objects.get(name=request.user.current_campaign)
             formulary = campaign.inventory.entries.all().order_by("medication")
             return_response = render(
                 request,
@@ -39,7 +39,7 @@ def add_supply_view(request):
                     request, "formulary/add_supply.html", {"form": form}
                 )
             else:
-                campaign = Campaign.objects.get(name=request.session["campaign"])
+                campaign = Campaign.objects.get(name=request.user.current_campaign)
                 form = InventoryEntryForm(request.POST)
                 entry = form.save()
                 entry.amount = entry.count * entry.quantity
@@ -56,7 +56,7 @@ def add_supply_view(request):
 
 def delete_supply_item(request, supply_id=None):
     if request.user.is_authenticated:
-        campaign = Campaign.objects.get(name=request.session["campaign"])
+        campaign = Campaign.objects.get(name=request.user.current_campaign)
         entry = InventoryEntry.objects.get(pk=supply_id)
         campaign.inventory.entries.remove(entry)
         return_response = redirect("main:formulary_home_view")
@@ -167,7 +167,7 @@ def csv_handler_view(request):
 def csv_import_view(request):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
-            campaign = Campaign.objects.get(name=request.session["campaign"])
+            campaign = Campaign.objects.get(name=request.user.current_campaign)
             form = CSVUploadForm(request.POST, request.FILES)
             result = ""
             if form.is_valid():
@@ -209,7 +209,7 @@ def csv_import_view(request):
 def csv_export_view(request):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
-            campaign = Campaign.objects.get(name=request.session["campaign"])
+            campaign = Campaign.objects.get(name=request.user.current_campaign)
             formulary = campaign.inventory.entries.all().order_by("medication")
             return_response = HttpResponse(
                 content_type="text/csv",

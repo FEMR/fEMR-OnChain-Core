@@ -1,7 +1,7 @@
-﻿appMR
+﻿app_mr
 =====
 
-.. automodule:: appMR
+.. automodule:: app_mr
 
    
    
@@ -27,13 +27,13 @@
    :toctree:
    :recursive:
 
-   appMR.admin
-   appMR.apps
-   appMR.background_tasks
-   appMR.forms
-   appMR.migrations
-   appMR.models
-   appMR.tests
-   appMR.urls
-   appMR.views
+   app_mr.admin
+   app_mr.apps
+   app_mr.background_tasks
+   app_mr.forms
+   app_mr.migrations
+   app_mr.models
+   app_mr.tests
+   app_mr.urls
+   app_mr.views
 

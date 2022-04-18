@@ -1,4 +1,4 @@
-appMR package
+app_mr package
 =============
 
 Subpackages
@@ -7,64 +7,64 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   appMR.migrations
-   appMR.tests
+   app_mr.migrations
+   app_mr.tests
 
 Submodules
 ----------
 
-appMR.admin module
+app_mr.admin module
 ------------------
 
-.. automodule:: appMR.admin
+.. automodule:: app_mr.admin
    :members:
    :undoc-members:
    :show-inheritance:
 
-appMR.apps module
+app_mr.apps module
 -----------------
 
-.. automodule:: appMR.apps
+.. automodule:: app_mr.apps
    :members:
    :undoc-members:
    :show-inheritance:
 
-appMR.background\_tasks module
+app_mr.background\_tasks module
 ------------------------------
 
-.. automodule:: appMR.background_tasks
+.. automodule:: app_mr.background_tasks
    :members:
    :undoc-members:
    :show-inheritance:
 
-appMR.forms module
+app_mr.forms module
 ------------------
 
-.. automodule:: appMR.forms
+.. automodule:: app_mr.forms
    :members:
    :undoc-members:
    :show-inheritance:
 
-appMR.models module
+app_mr.models module
 -------------------
 
-.. automodule:: appMR.models
+.. automodule:: app_mr.models
    :members:
    :undoc-members:
    :show-inheritance:
 
-appMR.urls module
+app_mr.urls module
 -----------------
 
-.. automodule:: appMR.urls
+.. automodule:: app_mr.urls
    :members:
    :undoc-members:
    :show-inheritance:
 
-appMR.views module
+app_mr.views module
 ------------------
 
-.. automodule:: appMR.views
+.. automodule:: app_mr.views
    :members:
    :undoc-members:
    :show-inheritance:
@@ -72,7 +72,7 @@ appMR.views module
 Module contents
 ---------------
 
-.. automodule:: appMR
+.. automodule:: app_mr
    :members:
    :undoc-members:
    :show-inheritance:

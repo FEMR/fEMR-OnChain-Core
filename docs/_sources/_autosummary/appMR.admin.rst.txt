@@ -1,7 +1,7 @@
-appMR.admin
+app_mr.admin
 ===========
 
-.. automodule:: appMR.admin
+.. automodule:: app_mr.admin
 
    
    

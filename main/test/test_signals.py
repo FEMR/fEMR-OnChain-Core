@@ -61,7 +61,7 @@ def test_handle_ticket_activity():
     assert return_response.url == "/home/"
     messages = len(Message.objects.filter(recipient=u))
     return_response = client.post(
-        "/appMR/new/", {"title": "Test Ticket", "description": "Test Description."}
+        "/app_mr/new/", {"title": "Test Ticket", "description": "Test Description."}
     )
     messages_after = len(Message.objects.filter(recipient=u))
     u.delete()

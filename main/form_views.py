@@ -78,7 +78,7 @@ def __patient_form_view_post(request, campaign):
             instance=str(item),
             ip=get_client_ip(request),
             username=request.user.username,
-            campaign=Campaign.objects.get(name=request.session["campaign"]),
+            campaign=Campaign.objects.get(name=request.user.current_campaign),
         )
         if item.id != "" and item.id is not None:
             return_response = render(
@@ -134,10 +134,10 @@ def patient_form_view(request):
     :return: HTTPResponse.
     """
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         else:
-            campaign = Campaign.objects.get(name=request.session["campaign"])
+            campaign = Campaign.objects.get(name=request.user.current_campaign)
             if request.method == "POST":
                 return_response = __patient_form_view_post(request, campaign)
             else:
@@ -148,13 +148,13 @@ def patient_form_view(request):
 
 
 def __patient_encounter_form_get(request, patient):
-    telehealth = Campaign.objects.get(name=request.session["campaign"]).telehealth
+    telehealth = Campaign.objects.get(name=request.user.current_campaign).telehealth
     treatment_form = TreatmentForm()
     diagnosis_form = DiagnosisForm()
     encounter_open = (
         len(PatientEncounter.objects.filter(patient=patient).filter(active=True)) > 0
     )
-    units = Campaign.objects.get(name=request.session["campaign"]).units
+    units = Campaign.objects.get(name=request.user.current_campaign).units
     form = PatientEncounterForm(unit=units, prefix="form")
     vitals_form = VitalsForm(unit=units, prefix="vitals_form")
     try:
@@ -237,8 +237,8 @@ def __patient_encounter_form_get(request, patient):
 
 
 def __patient_encounter_form_post(request, patient):
-    telehealth = Campaign.objects.get(name=request.session["campaign"]).telehealth
-    units = Campaign.objects.get(name=request.session["campaign"]).units
+    telehealth = Campaign.objects.get(name=request.user.current_campaign).telehealth
+    units = Campaign.objects.get(name=request.user.current_campaign).units
     encounter_open = (
         len(PatientEncounter.objects.filter(patient=patient).filter(active=True)) > 0
     )
@@ -251,7 +251,7 @@ def __patient_encounter_form_post(request, patient):
         vitals = vitals_form.save(commit=False)
         encounter.patient = patient
         encounter.active = True
-        encounter.campaign = Campaign.objects.get(name=request.session["campaign"])
+        encounter.campaign = Campaign.objects.get(name=request.user.current_campaign)
         encounter.save()
         vitals.encounter = encounter
         vitals.save()
@@ -265,7 +265,7 @@ def __patient_encounter_form_post(request, patient):
             instance=str(encounter),
             ip=get_client_ip(request),
             username=request.user.username,
-            campaign=Campaign.objects.get(name=request.session["campaign"]),
+            campaign=Campaign.objects.get(name=request.user.current_campaign),
         )
         DatabaseChangeLog.objects.create(
             action="Create",
@@ -273,7 +273,7 @@ def __patient_encounter_form_post(request, patient):
             instance=str(encounter),
             ip=get_client_ip(request),
             username=request.user.username,
-            campaign=Campaign.objects.get(name=request.session["campaign"]),
+            campaign=Campaign.objects.get(name=request.user.current_campaign),
         )
         if "submit_encounter" in request.POST:
             return_response = render(
@@ -324,7 +324,7 @@ def patient_encounter_form_view(request, patient_id=None):
     """
     if request.user.is_authenticated:
         patient = Patient.objects.get(pk=patient_id)
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         else:
             if request.method == "POST":
@@ -338,7 +338,7 @@ def patient_encounter_form_view(request, patient_id=None):
 
 def referral_form_view(request, patient_id=None):
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         elif request.method == "POST":
             patient = Patient.objects.get(pk=patient_id)
@@ -358,7 +358,7 @@ def referral_form_view(request, patient_id=None):
                     "page_name": "Campaign Referral",
                     "campaigns": Campaign.objects.filter(
                         instance=Campaign.objects.get(
-                            name=request.session["campaign"]
+                            name=request.user.current_campaign
                         ).instance
                     ).filter(active=True),
                 },

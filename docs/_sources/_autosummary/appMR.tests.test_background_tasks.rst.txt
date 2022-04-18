@@ -1,7 +1,7 @@
-appMR.tests.test\_background\_tasks
+app_mr.tests.test\_background\_tasks
 ===================================
 
-.. automodule:: appMR.tests.test_background_tasks
+.. automodule:: app_mr.tests.test_background_tasks
 
    
    
