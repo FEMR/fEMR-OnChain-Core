@@ -44,7 +44,7 @@ def patient_list_view(request):
     if request.user.is_authenticated:
         try:
             patients = Patient.objects.filter(
-                campaign=Campaign.objects.get(name=request.session["campaign"])
+                campaign=Campaign.objects.get(name=request.user.current_campaign)
             )
             now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
             now = now.astimezone(timezone.get_current_timezone())
@@ -197,7 +197,7 @@ def __run_patient_list_filter_five(request, campaign):
 
 @silk_profile("--run-patient-list-filter")
 def __run_patient_list_filter(request):
-    current_campaign = Campaign.objects.get(name=request.session["campaign"])
+    current_campaign = Campaign.objects.get(name=request.user.current_campaign)
     try:
         if request.GET["filter_list"] == "1":
             data = __run_patient_list_filter_one(request, current_campaign)
@@ -265,7 +265,7 @@ def search_patient_list_view(request):
     """
     if request.user.is_authenticated:
         try:
-            current_campaign = Campaign.objects.get(name=request.session["campaign"])
+            current_campaign = Campaign.objects.get(name=request.user.current_campaign)
             patients = Patient.objects.filter(campaign=current_campaign)
             data = None
             for term in request.GET["name_search"].split():

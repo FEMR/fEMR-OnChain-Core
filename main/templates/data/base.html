@@ -58,7 +58,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div style="color: white;">{{ request.session.campaign }}</div>
+        <div style="color: white;">{{ request.user.current_campaign }}</div>
 
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav ml-auto">
@@ -155,10 +155,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-12 col-md-4">
-                    Find a bug or problem? <a href="{% url 'appMR:index' %}">Let us know.</a>
+                    Find a bug or problem? <a href="{% url 'app_mr:index' %}">Let us know.</a>
                 </div>
                 <div class="col-sm-12 col-md-4 text-center">
-                    v1.5.2
+                    v1.5.3
                 </div>
                 <div class="col-sm-12 col-md-4">
                     <a href="https://github.com/FEMR/fEMR-OnChain-Core/wiki" target="_blank">fEMR On-Chain Wiki | </a>

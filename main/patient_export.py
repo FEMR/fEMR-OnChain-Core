@@ -6,7 +6,6 @@ from main.models import (
     HistoryOfPresentIllness,
     Patient,
     PatientDiagnosis,
-    PatientEncounter,
     Vitals,
     Treatment,
 )
@@ -15,7 +14,7 @@ from main.models import (
 @silk_profile("patient-export-view-get")
 def __patient_export_view_get(request, patient_id=None):
     patient = get_object_or_404(Patient, pk=patient_id)
-    encounters = PatientEncounter.objects.filter(patient=patient).order_by("-timestamp")
+    encounters = patient.patientencounter_set.order_by("-timestamp")
     prescriptions = {}
     diagnoses = {}
     vitals_dictionary = {}
@@ -47,9 +46,9 @@ def __patient_export_view_get(request, patient_id=None):
             "histories_of_present_illness": history_of_present_illness_dictionary,
             "vitals": vitals_dictionary,
             "telehealth": Campaign.objects.get(
-                name=request.session["campaign"]
+                name=request.user.current_campaign
             ).telehealth,
-            "units": Campaign.objects.get(name=request.session["campaign"]).units,
+            "units": Campaign.objects.get(name=request.user.current_campaign).units,
         },
     )
 
@@ -57,7 +56,7 @@ def __patient_export_view_get(request, patient_id=None):
 @silk_profile("patient-export-view")
 def patient_export_view(request, patient_id=None):
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         else:
             return_response = __patient_export_view_get(request, patient_id)

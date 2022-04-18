@@ -1,4 +1,16 @@
+version: '3'
+
 services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - staticvol:/opt/app/static
+      - mediavol:/opt/app/mediafiles
+    depends_on:
+      - "dev"
+
   database:
     image: "postgres"
     environment:
@@ -7,13 +19,34 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
   dev:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: "./build-dev.sh"
     volumes:
       - .:/build
+      - staticvol:/opt/app/static
+      - mediavol:/opt/app/mediafiles
     ports:
       - "8081:8081"
     environment:
+      - DEBUG=True
+      - QLDB_ENABLED="FALSE"
+      - qldb_name="fEMR-OnChain-Test"
+      - ADMIN_NAME=""
+      - ADMIN_EMAIL=""
+      - EMAIL_HOST=""
+      - EMAIL_PORT=""
+      - EMAIL_USERNAME=""
+      - EMAIL_PASSWORD=""
+      - DEFAULT_FROM_EMAIL=""
+      - SERVER_EMAIL=""
+      - ENVIRONMENT="LOCAL"
+      - SECRET_KEY=2HY>fXi!dQ&(9Vf.XghCa;L6G=Ul4r-Bwqh>ae0RG3vIh1ZJ%T
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASS=postgres
@@ -21,5 +54,55 @@ services:
       - ENVIRONMENT=LOCAL
     depends_on:
       - "database"
+      - "cache"
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile-celery
+    volumes:
+      - .:/build
+    entrypoint: "./build-celery.sh"
+    environment:
+      - DEBUG=True
+      - QLDB_ENABLED="FALSE"
+      - qldb_name="fEMR-OnChain-Test"
+      - ADMIN_NAME=""
+      - ADMIN_EMAIL=""
+      - EMAIL_HOST=""
+      - EMAIL_PORT=""
+      - EMAIL_USERNAME=""
+      - EMAIL_PASSWORD=""
+      - DEFAULT_FROM_EMAIL=""
+      - SERVER_EMAIL=""
+      - ENVIRONMENT="LOCAL"
+      - SECRET_KEY=2HY>fXi!dQ&(9Vf.XghCa;L6G=Ul4r-Bwqh>ae0RG3vIh1ZJ%T
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASS=postgres
+      - POSTGRES_NAME=database
+      - ENVIRONMENT=LOCAL
+    depends_on: 
+      - "dev"
+      - "redis"
+      - "database"
+  
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+
+  cache:
+   image: memcached
+   ports:
+    - "11211:11211"
+   entrypoint:
+    - memcached
+    - -m 64
+
 volumes:
   db:
+  staticvol:
+  mediavol:

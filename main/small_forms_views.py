@@ -5,7 +5,7 @@ from .forms import TreatmentForm, MedicationForm, DiagnosisForm, ChiefComplaintF
 
 def chief_complaint_form_view(request):
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         elif request.method == "POST":
             form = ChiefComplaintForm(request.POST)
@@ -25,7 +25,7 @@ def chief_complaint_form_view(request):
 
 def treatment_form_view(request):
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         elif request.method == "POST":
             form = TreatmentForm(request.POST)
@@ -45,7 +45,7 @@ def treatment_form_view(request):
 
 def diagnosis_form_view(request):
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         elif request.method == "POST":
             form = DiagnosisForm(request.POST)
@@ -65,7 +65,7 @@ def diagnosis_form_view(request):
 
 def medication_form_view(request):
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         elif request.method == "POST":
             form = MedicationForm(request.POST)

@@ -59,10 +59,10 @@ def list_users_view(request):
         if check_admin_permission(request.user):
             try:
                 active_users = Campaign.objects.get(
-                    name=request.session["campaign"]
+                    name=request.user.current_campaign
                 ).femruser_set.filter(is_active=True)
                 inactive_users = Campaign.objects.get(
-                    name=request.session["campaign"]
+                    name=request.user.current_campaign
                 ).femruser_set.filter(is_active=False)
             except ObjectDoesNotExist:
                 active_users = []
@@ -89,7 +89,7 @@ def filter_users_view(request):
         if check_admin_permission(request.user):
             try:
                 data = Campaign.objects.get(
-                    name=request.session["campaign"]
+                    name=request.user.current_campaign
                 ).femruser_set.filter(is_active=True)
             except ObjectDoesNotExist:
                 data = ""
@@ -110,7 +110,7 @@ def search_users_view(request):
         if check_admin_permission(request.user):
             try:
                 data = Campaign.objects.get(
-                    name=request.session["campaign"]
+                    name=request.user.current_campaign
                 ).femruser_set.filter(is_active=True)
             except ObjectDoesNotExist:
                 data = ""
@@ -162,7 +162,7 @@ def __create_user_view_post(request):
             instance=str(item),
             ip=get_client_ip(request),
             username=request.user.username,
-            campaign=Campaign.objects.get(name=request.session["campaign"]),
+            campaign=Campaign.objects.get(name=request.user.current_campaign),
         )
         return_response = render(request, "admin/user_edit_confirmed.html")
     else:
@@ -207,7 +207,7 @@ def update_user_view(request, user_id=None):
                     instance=str(item),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=Campaign.objects.get(name=request.user.current_campaign),
                 )
                 return_response = render(request, "admin/user_edit_confirmed.html")
             else:
@@ -259,7 +259,7 @@ def update_user_password_view(request, user_id=None):
                     instance=str(item),
                     ip=get_client_ip(request),
                     username=request.user.username,
-                    campaign=Campaign.objects.get(name=request.session["campaign"]),
+                    campaign=Campaign.objects.get(name=request.user.current_campaign),
                 )
                 return_response = render(request, "admin/user_edit_confirmed.html")
             else:
@@ -316,7 +316,7 @@ def get_audit_logs_view(request):
         if check_admin_permission(request.user):
             try:
                 data = AuditEntry.objects.filter(
-                    Q(campaign=Campaign.objects.get(name=request.session["campaign"]))
+                    Q(campaign=Campaign.objects.get(name=request.user.current_campaign))
                     | Q(action="user_login_failed")
                 ).order_by("-timestamp")
             except ObjectDoesNotExist:
@@ -341,7 +341,7 @@ def get_audit_logs_view(request):
 def __filter_audit_logs_process(request):
     try:
         logs = AuditEntry.objects.all()
-        campaign = Campaign.objects.get(name=request.session["campaign"])
+        campaign = Campaign.objects.get(name=request.user.current_campaign)
         if request.GET["filter_list"] == "1":
             now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
             now = now.astimezone(timezone.get_current_timezone())
@@ -504,7 +504,7 @@ def search_audit_logs_view(request):
         if check_admin_permission(request.user):
             try:
                 data = AuditEntry.objects.filter(
-                    Q(campaign=Campaign.objects.get(name=request.session["campaign"]))
+                    Q(campaign=Campaign.objects.get(name=request.user.current_campaign))
                     | Q(action="user_login_failed")
                 )
             except ObjectDoesNotExist:
@@ -529,7 +529,9 @@ def export_audit_logs_view(request):
                 "export/audit_logfile.html",
                 {
                     "log": AuditEntry.objects.filter(
-                        campaign=Campaign.objects.get(name=request.session["campaign"])
+                        campaign=Campaign.objects.get(
+                            name=request.user.current_campaign
+                        )
                     )
                 },
             )
@@ -548,7 +550,9 @@ def get_database_logs_view(request):
                 data = (
                     DatabaseChangeLog.objects.exclude(model__in=excludemodels)
                     .filter(
-                        campaign=Campaign.objects.get(name=request.session["campaign"])
+                        campaign=Campaign.objects.get(
+                            name=request.user.current_campaign
+                        )
                     )
                     .order_by("-timestamp")
                 )
@@ -585,14 +589,14 @@ def __filter_database_logs_check(request):
                         .filter(timestamp__date=now)
                         .filter(
                             campaign=Campaign.objects.get(
-                                name=request.session["campaign"]
+                                name=request.user.current_campaign
                             )
                         ),
                         logs.exclude(model__in=excludemodels)
                         .filter(timestamp__date=now)
                         .filter(
                             campaign=Campaign.objects.get(
-                                name=request.session["campaign"]
+                                name=request.user.current_campaign
                             )
                         ),
                     )
@@ -610,7 +614,7 @@ def __filter_database_logs_check(request):
                         )
                         .filter(
                             campaign=Campaign.objects.get(
-                                name=request.session["campaign"]
+                                name=request.user.current_campaign
                             )
                         ),
                         logs.exclude(model__in=excludemodels)
@@ -620,7 +624,7 @@ def __filter_database_logs_check(request):
                         )
                         .filter(
                             campaign=Campaign.objects.get(
-                                name=request.session["campaign"]
+                                name=request.user.current_campaign
                             )
                         ),
                     )
@@ -638,7 +642,7 @@ def __filter_database_logs_check(request):
                         )
                         .filter(
                             campaign=Campaign.objects.get(
-                                name=request.session["campaign"]
+                                name=request.user.current_campaign
                             )
                         ),
                         logs.exclude(model__in=excludemodels)
@@ -648,7 +652,7 @@ def __filter_database_logs_check(request):
                         )
                         .filter(
                             campaign=Campaign.objects.get(
-                                name=request.session["campaign"]
+                                name=request.user.current_campaign
                             )
                         ),
                     )
@@ -672,7 +676,7 @@ def __filter_database_logs_check(request):
                             )
                             .filter(
                                 campaign=Campaign.objects.get(
-                                    name=request.session["campaign"]
+                                    name=request.user.current_campaign
                                 )
                             ),
                             logs.exclude(model__in=excludemodels)
@@ -682,7 +686,7 @@ def __filter_database_logs_check(request):
                             )
                             .filter(
                                 campaign=Campaign.objects.get(
-                                    name=request.session["campaign"]
+                                    name=request.user.current_campaign
                                 )
                             ),
                         )
@@ -708,7 +712,7 @@ def __filter_database_logs_check(request):
                             )
                             .filter(
                                 campaign=Campaign.objects.get(
-                                    name=request.session["campaign"]
+                                    name=request.user.current_campaign
                                 )
                             ),
                             logs.exclude(model__in=excludemodels)
@@ -718,7 +722,7 @@ def __filter_database_logs_check(request):
                             )
                             .filter(
                                 campaign=Campaign.objects.get(
-                                    name=request.session["campaign"]
+                                    name=request.user.current_campaign
                                 )
                             ),
                         )
@@ -729,7 +733,7 @@ def __filter_database_logs_check(request):
         elif request.GET["filter_list"] == "6":
             try:
                 data = logs.exclude(model__in=excludemodels).filter(
-                    campaign=Campaign.objects.get(name=request.session["campaign"])
+                    campaign=Campaign.objects.get(name=request.user.current_campaign)
                 )
             except ValueError:
                 data = []
@@ -772,7 +776,7 @@ def search_database_logs_view(request):
                 data = DatabaseChangeLog.objects.exclude(
                     model__in=excludemodels
                 ).filter(
-                    campaign=Campaign.objects.get(name=request.session["campaign"])
+                    campaign=Campaign.objects.get(name=request.user.current_campaign)
                 )
             except ObjectDoesNotExist:
                 data = ""
@@ -803,7 +807,9 @@ def export_database_logs_view(request):
                     "log": DatabaseChangeLog.objects.exclude(
                         model__in=excludemodels
                     ).filter(
-                        campaign=Campaign.objects.get(name=request.session["campaign"])
+                        campaign=Campaign.objects.get(
+                            name=request.user.current_campaign
+                        )
                     )
                 },
             )
@@ -833,7 +839,7 @@ def add_user_to_campaign(request, user_id=None):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
             user = fEMRUser.objects.get(pk=user_id)
-            user.campaigns.add(Campaign.objects.get(name=request.session["campaign"]))
+            user.campaigns.add(Campaign.objects.get(name=request.user.current_campaign))
             user.save()
             return_response = render(
                 request,
@@ -852,7 +858,7 @@ def cut_user_from_campaign(request, user_id=None):
         if check_admin_permission(request.user):
             user = fEMRUser.objects.get(pk=user_id)
             user.campaigns.remove(
-                Campaign.objects.get(name=request.session["campaign"])
+                Campaign.objects.get(name=request.user.current_campaign)
             )
             user.save()
             return_response = render(

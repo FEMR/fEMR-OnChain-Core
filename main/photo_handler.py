@@ -24,10 +24,10 @@ from main.models import (
 @silk_profile("upload-photo-view")
 def upload_photo_view(request, patient_id=None, encounter_id=None):
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         else:
-            units = Campaign.objects.get(name=request.session["campaign"]).units
+            units = Campaign.objects.get(name=request.user.current_campaign).units
             encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
             patient = get_object_or_404(Patient, pk=patient_id)
             vitals = Vitals.objects.filter(encounter=encounter)
@@ -73,7 +73,7 @@ def __upload_photo_view_post(request, encounter):
             instance=str(encounter),
             ip=get_client_ip(request),
             username=request.user.username,
-            campaign=Campaign.objects.get(name=request.session["campaign"]),
+            campaign=Campaign.objects.get(name=request.user.current_campaign),
         )
         if os.environ.get("QLDB_ENABLED") == "TRUE":
             encounter_data = PatientEncounterSerializer(encounter).data
@@ -83,7 +83,7 @@ def __upload_photo_view_post(request, encounter):
 
 @silk_profile("edit-photo-view-post")
 def __edit_photo_view_post(request, patient_id, encounter_id, photo_id):
-    units = Campaign.objects.get(name=request.session["campaign"]).units
+    units = Campaign.objects.get(name=request.user.current_campaign).units
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
     photo = Photo.objects.get(pk=photo_id)
@@ -100,7 +100,7 @@ def __edit_photo_view_post(request, patient_id, encounter_id, photo_id):
             instance=str(photo),
             ip=get_client_ip(request),
             username=request.user.username,
-            campaign=Campaign.objects.get(name=request.session["campaign"]),
+            campaign=Campaign.objects.get(name=request.user.current_campaign),
         )
         if os.environ.get("QLDB_ENABLED") == "TRUE":
             encounter_data = PatientEncounterSerializer(encounter).data
@@ -129,7 +129,7 @@ def __edit_photo_view_post(request, patient_id, encounter_id, photo_id):
 @silk_profile("edit-profile-view")
 def edit_photo_view(request, patient_id=None, encounter_id=None, photo_id=None):
     if request.user.is_authenticated:
-        if request.session["campaign"] == "RECOVERY MODE":
+        if request.user.current_campaign == "RECOVERY MODE":
             return_response = redirect("main:home")
         if request.method == "POST":
             return_response = __edit_photo_view_post(

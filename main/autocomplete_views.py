@@ -28,8 +28,7 @@ class DiagnosisAutocomplete(
         autocomplete_queryset = Diagnosis.objects.all()
 
         if self.q:
-            autocomplete_queryset = autocomplete_queryset.filter(
-                text__icontains=self.q)
+            autocomplete_queryset = autocomplete_queryset.filter(text__icontains=self.q)
 
         return autocomplete_queryset
 
@@ -42,12 +41,16 @@ class ChiefComplaintAutocomplete(
         if not self.request.user.is_authenticated:
             return ChiefComplaint.objects.none()
 
-        autocomplete_queryset = ChiefComplaint.objects.filter(
-            active=True).order_by("text").distinct("text")
+        autocomplete_queryset = (
+            ChiefComplaint.objects.filter(active=True).order_by("text").distinct("text")
+        )
 
         if self.q:
-            autocomplete_queryset = autocomplete_queryset.filter(
-                text__icontains=self.q).order_by("text").distinct("text")
+            autocomplete_queryset = (
+                autocomplete_queryset.filter(text__icontains=self.q)
+                .order_by("text")
+                .distinct("text")
+            )
 
         return autocomplete_queryset
 
@@ -62,8 +65,7 @@ class MedicationAutocomplete(
         autocomplete_queryset = Medication.objects.all()
 
         if self.q:
-            autocomplete_queryset = autocomplete_queryset.filter(
-                text__icontains=self.q)
+            autocomplete_queryset = autocomplete_queryset.filter(text__icontains=self.q)
 
         return autocomplete_queryset
 
@@ -78,7 +80,7 @@ class InventoryEntryAutocomplete(
         if not self.request.user.is_authenticated:
             return InventoryEntry.objects.none()
 
-        campaign = Campaign.objects.get(name=self.request.session["campaign"])
+        campaign = Campaign.objects.get(name=self.request.user.current_campaign)
         autocomplete_queryset = campaign.inventory.entries.all()
 
         if self.q:
@@ -99,8 +101,7 @@ class InventoryFormAutocomplete(
         autocomplete_queryset = InventoryForm.objects.all()
 
         if self.q:
-            autocomplete_queryset = autocomplete_queryset.filter(
-                name__icontains=self.q)
+            autocomplete_queryset = autocomplete_queryset.filter(name__icontains=self.q)
 
         return autocomplete_queryset
 
@@ -115,8 +116,7 @@ class InventoryCategoryAutocomplete(
         autocomplete_queryset = InventoryCategory.objects.all()
 
         if self.q:
-            autocomplete_queryset = autocomplete_queryset.filter(
-                name__icontains=self.q)
+            autocomplete_queryset = autocomplete_queryset.filter(name__icontains=self.q)
 
         return autocomplete_queryset
 
@@ -131,8 +131,7 @@ class ManufacturerAutocomplete(
         autocomplete_queryset = Manufacturer.objects.all()
 
         if self.q:
-            autocomplete_queryset = autocomplete_queryset.filter(
-                name__icontains=self.q)
+            autocomplete_queryset = autocomplete_queryset.filter(name__icontains=self.q)
 
         return autocomplete_queryset
 
@@ -147,8 +146,7 @@ class TestAutocomplete(
         autocomplete_queryset = Test.objects.all()
 
         if self.q:
-            autocomplete_queryset = autocomplete_queryset.filter(
-                text__icontains=self.q)
+            autocomplete_queryset = autocomplete_queryset.filter(text__icontains=self.q)
 
         return autocomplete_queryset
 
@@ -163,8 +161,7 @@ class AdministrationScheduleAutocomplete(
         autocomplete_queryset = AdministrationSchedule.objects.all()
 
         if self.q:
-            autocomplete_queryset = autocomplete_queryset.filter(
-                text__icontains=self.q)
+            autocomplete_queryset = autocomplete_queryset.filter(text__icontains=self.q)
 
         return autocomplete_queryset
 
@@ -179,8 +176,7 @@ class RaceAutocomplete(
         autocomplete_queryset = Race.objects.all()
 
         if self.q:
-            autocomplete_queryset = autocomplete_queryset.filter(
-                name__icontains=self.q)
+            autocomplete_queryset = autocomplete_queryset.filter(name__icontains=self.q)
 
         return autocomplete_queryset
 
@@ -195,8 +191,7 @@ class EthnicityAutocomplete(
         autocomplete_queryset = Ethnicity.objects.all()
 
         if self.q:
-            autocomplete_queryset = autocomplete_queryset.filter(
-                name__icontains=self.q)
+            autocomplete_queryset = autocomplete_queryset.filter(name__icontains=self.q)
 
         return autocomplete_queryset
 
@@ -211,7 +206,6 @@ class StateAutocomplete(
         autocomplete_queryset = State.objects.all()
 
         if self.q:
-            autocomplete_queryset = autocomplete_queryset.filter(
-                name__icontains=self.q)
+            autocomplete_queryset = autocomplete_queryset.filter(name__icontains=self.q)
 
         return autocomplete_queryset

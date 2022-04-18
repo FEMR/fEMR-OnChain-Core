@@ -367,6 +367,13 @@ class Photo(models.Model):
         return str(self.description)
 
 
+class CSVExport(models.Model):
+    user = models.ForeignKey(
+        "fEMRUser", on_delete=models.CASCADE, blank=True, null=True
+    )
+    file = models.FileField(upload_to="export/")
+
+
 class PatientEncounter(models.Model):
     """
     Individual data point in a patient's medical record.
@@ -538,6 +545,7 @@ class fEMRUser(AbstractUser):
 
     email = models.EmailField(unique=True)
     change_password = models.BooleanField(default=True, editable=False)
+    current_campaign = models.CharField(max_length=100)
     campaigns = models.ManyToManyField(Campaign, blank=True)
     password_reset_last = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(

@@ -1,7 +1,7 @@
-appMR.views
+app_mr.views
 ===========
 
-.. automodule:: appMR.views
+.. automodule:: app_mr.views
 
    
    

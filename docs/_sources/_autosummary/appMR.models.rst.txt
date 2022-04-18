@@ -1,7 +1,7 @@
-appMR.models
+app_mr.models
 ============
 
-.. automodule:: appMR.models
+.. automodule:: app_mr.models
 
    
    

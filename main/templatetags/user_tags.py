@@ -35,7 +35,6 @@ def has_campaign(user: fEMRUser, campaign_name: str) -> bool:
 
 @register.filter("campaign_active")
 def campaign_active(campaign_name: str) -> bool:
-
     return Campaign.objects.get(name=campaign_name).active
 
 

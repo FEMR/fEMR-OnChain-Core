@@ -1,18 +1,18 @@
 #!/bin/bash
 
-export DEBUG=True
-export SECRET_KEY="2HY>fXi!dQ&(9Vf.XghCa;L6G=Ul4r-Bwqh>ae0RG3vIh1ZJ%T"
-export QLDB_ENABLED="FALSE"  # Toggles QLDB on or off.
-export qldb_name="fEMR-OnChain-Test"
-export ADMIN_NAME=""
-export ADMIN_EMAIL=""
-export EMAIL_HOST=""
-export EMAIL_PORT=""
-export EMAIL_USERNAME=""
-export EMAIL_PASSWORD=""
-export DEFAULT_FROM_EMAIL=""
-export SERVER_EMAIL=""
-export ENVIRONMENT="LOCAL"
+export DEBUG=$DEBUG
+export SECRET_KEY=$SECRET_KEY
+export QLDB_ENABLED=$QLDB_ENABLED
+export qldb_name=$qldb_name
+export ADMIN_NAME=$ADMIN_NAME
+export ADMIN_EMAIL=$ADMIN_EMAIL
+export EMAIL_HOST=$EMAIL_HOST
+export EMAIL_PORT=$EMAIL_PORT
+export EMAIL_USERNAME=$EMAIL_USERNAME
+export EMAIL_PASSWORD=$EMAIL_PASSWORD
+export DEFAULT_FROM_EMAIL=$DEFAULT_FROM_EMAIL
+export SERVER_EMAIL=$SERVER_EMAIL
+export ENVIRONMENT=$ENVIRONMENT
 
 function all() {
   migrate
@@ -42,7 +42,7 @@ function clean() {
 function migrate() {
   pwd
   python3 manage.py makemigrations main
-  python3 manage.py makemigrations appMR
+  python3 manage.py makemigrations app_mr
   python3 manage.py makemigrations clinic_messages
   python3 manage.py makemigrations
   python3 manage.py migrate
@@ -50,7 +50,7 @@ function migrate() {
 
 function makemigrations() {
   python3 manage.py makemigrations main
-  python3 manage.py makemigrations appMR
+  python3 manage.py makemigrations app_mr
   python3 manage.py makemigrations clinic_messages
   python3 manage.py makemigrations
 }
@@ -66,7 +66,7 @@ function run() {
 function documents() {
   rm -rf build/
   sphinx-apidoc -f -o source main
-  sphinx-apidoc -f -o source appMR
+  sphinx-apidoc -f -o source app_mr
   sphinx-apidoc -f -o source clinic_messages
   make html
   mkdir -p docs/
@@ -89,6 +89,10 @@ function setup() {
   python3 manage.py createraceandethnicity
 }
 
+function docker-setup() {
+  python3 manage.py scaledata
+}
+
 function createsuperuser() {
   python3 manage.py createsuperuser
 }
@@ -103,10 +107,22 @@ function check() {
   clear && \
    black . && \
    ./build.sh test && \
-   pylint main appMR clinic_messages --disable=E1101,W0613,R0903,C0301
+   pylint main app_mr clinic_messages --disable=E1101,W0613,R0903,C0301,C0114,C0115,C0116,R0801
+}
+
+function celery() {
+  celery --app=femr_onchain worker
+}
+
+function gunicorn_run() {
+  gunicorn femr_onchain.wsgi:application --bind 0.0.0.0:8081
 }
 
 case "$1" in
+
+celery)
+  celery
+  ;;
 
 check)
   check
@@ -144,7 +160,15 @@ init-all-run)
   check
   all
   setup
-  run
+  gunicorn_run
+  ;;
+
+docker-init-all)
+  check
+  all
+  setup
+  docker-setup
+  all
   ;;
 
 all-run)

@@ -18,7 +18,6 @@ def test_delete_treatment_view():
     client = Client()
     client.post("/login_view/", {"username": "test", "password": "testingpassword"})
     return_response = client.get(f"/delete_treatment_view/{t.id}")
-    print(Treatment.objects.all())
     assert len(Treatment.objects.all()) == 0
     u.delete()
     t.delete()

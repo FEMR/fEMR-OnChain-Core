@@ -1,13 +1,13 @@
-appMR.tests package
+app_mr.tests package
 ===================
 
 Submodules
 ----------
 
-appMR.tests.test\_background\_tasks module
+app_mr.tests.test\_background\_tasks module
 ------------------------------------------
 
-.. automodule:: appMR.tests.test_background_tasks
+.. automodule:: app_mr.tests.test_background_tasks
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,7 +15,7 @@ appMR.tests.test\_background\_tasks module
 Module contents
 ---------------
 
-.. automodule:: appMR.tests
+.. automodule:: app_mr.tests
    :members:
    :undoc-members:
    :show-inheritance:
