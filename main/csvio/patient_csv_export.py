@@ -79,12 +79,12 @@ def dict_builder(patient_data, vitals_dict, treatments_dict, hpis_dict):
     max_hpis = 0
     max_vitals = 0
     for _, encounters in patient_data.items():
-        for encounter in encounters:
-            vitals = list(encounter.vitals_set.all())
+        for encounter in encounters.iterator():
+            vitals = encounter.vitals_set.all()
             vitals_count = len(vitals)
-            treatments = list(encounter.treatment_set.all())
+            treatments = encounter.treatment_set.all()
             treatments_count = len(treatments)
-            hpis = list(encounter.historyofpresentillness_set.all())
+            hpis = encounter.historyofpresentillness_set.all()
             hpis_count = len(hpis)
 
             vitals_dict[encounter] = (vitals, vitals_count)
@@ -99,7 +99,7 @@ def dict_builder(patient_data, vitals_dict, treatments_dict, hpis_dict):
 
 @silk_profile("extend-vitals-list")
 def extend_vitals_list(campaign, vitals, row, max_vitals):
-    for vital in vitals[0]:
+    for vital in vitals[0].iterator():
         row.extend(
             [
                 vital.systolic_blood_pressure,
@@ -131,11 +131,11 @@ def extend_vitals_list(campaign, vitals, row, max_vitals):
 
 @silk_profile("extend-treatments-list")
 def extend_treatments_list(row, treatments, max_treatments):
-    for item in treatments[0]:
+    for item in treatments[0].iterator():
         row.extend(
             [
                 item.diagnosis,
-                ",".join([str(x) for x in item.medication.all()]),
+                ",".join([str(x) for x in item.medication.all().iterator()]),
                 item.administration_schedule,
                 item.days,
                 item.prescriber,
@@ -147,7 +147,7 @@ def extend_treatments_list(row, treatments, max_treatments):
 
 @silk_profile("extend-hpis-list")
 def extend_hpis_list(row, hpis, max_hpis):
-    for item in hpis[0]:
+    for item in hpis[0].iterator():
         row.extend(
             [
                 item.chief_complaint,
@@ -233,7 +233,7 @@ def patient_processing_loop(
 ):
     export_id = 1
     for patient, encounters in patient_data.items():
-        for encounter in encounters:
+        for encounter in encounters.iterator():
             row = [
                 export_id,
                 patient.sex_assigned_at_birth,
@@ -301,8 +301,8 @@ def csv_export_handler(user_id, campaign_id):
         "Family History",
     ]
     patient_data = {
-        patient: list(patient.patientencounter_set.all())
-        for patient in Patient.objects.filter(campaign=campaign)
+        patient: patient.patientencounter_set.all()
+        for patient in Patient.objects.filter(campaign=campaign).iterator()
     }
     campaign_time_zone = pytz_timezone(campaign.timezone)
     campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
