@@ -30,6 +30,7 @@ from main.models import AuditEntry, UserSession, fEMRUser
 @silk_profile("register_post")
 def __register_post(request):
     form = RegisterForm(request.POST)
+    error = ""
     if form.is_valid():
         try:
             try:
@@ -45,19 +46,22 @@ def __register_post(request):
             user.first_name = form.cleaned_data["first"]
             user.last_name = form.cleaned_data["last"]
             login(request, user)
-            return_response = redirect("/thanks")
         except IntegrityError:
             error = "An account already exists using that username."
         except MultipleObjectsReturned:
             error = "An account already exists with that email address."
         except DataError as data_error:
             error = str(data_error)
-        return_response = render(
-            request, "auth/register.html", {"form": RegisterForm(), "error": error}
-        )
+        finally:
+            if error != "":
+                return_response = render(
+                    request, "auth/register.html", {"form": RegisterForm(), "error": error}
+                )
+            else:
+                return_response = redirect("/thanks")
     else:
         return_response = render(
-            request, "auth/register.html", {"form": RegisterForm(), "error": ""}
+            request, "auth/register.html", {"form": form, "error": error}
         )
     return return_response
 
