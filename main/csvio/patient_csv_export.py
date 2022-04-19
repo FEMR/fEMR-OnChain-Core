@@ -16,6 +16,8 @@ from django.http.response import HttpResponse
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.core.files.base import ContentFile
+from django.core.paginator import Paginator
+
 from clinic_messages.models import Message
 
 from main.background_tasks import check_admin_permission
@@ -347,8 +349,11 @@ def csv_export_list(request):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
             exports = CSVExport.objects.filter(user=request.user).order_by("-id")
+            paginator = Paginator(exports, 25)
+            page_number = request.GET.get("page")
+            page_obj = paginator.get_page(page_number)
             return_response = render(
-                request, "admin/export_list.html", {"exports": exports}
+                request, "admin/export_list.html", {"exports": page_obj}
             )
         else:
             return_response = redirect("main:permission_denied")
