@@ -113,13 +113,13 @@ def check_admin_permission(user):
 
 
 @silk_profile("assign-broken-patients")
-def assign_broken_patient():
+def assign_broken_patient(campaign):
     """
     Skim the database for patients with a campaign_key of
     None and make sure they get a correct key.
 
     :return: None
     """
-    for patient in Patient.objects.filter(campaign_key=None):
+    for patient in Patient.objects.filter(Q(campaign_key=None) | Q(campaign=campaign)):
         patient.campaign_key = cal_key(patient.id)
         patient.save()

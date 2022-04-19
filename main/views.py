@@ -42,10 +42,10 @@ def home(request):
     :return: An HttpResponse, rendering the home page.
     """
     if request.user.is_authenticated:
-        assign_broken_patient()
         campaign_list = request.user.campaigns.filter(active=True)
         if len(campaign_list) != 0 and request.user.current_campaign != "RECOVERY MODE":
             campaign = campaign_list.get(name=request.user.current_campaign)
+            assign_broken_patient(campaign)
             run_encounter_close(campaign)
         motd = MessageOfTheDay.load()
         if motd.start_date is not None or motd.end_date is not None:

@@ -30,9 +30,12 @@ def test_check_admin_permission_true():
 
 
 def test_assign_broken_patient():
+    c = baker.make("main.Campaign")
     for _ in range(100):
-        baker.make("main.Patient")
+        p = baker.make("main.Patient")
+        p.campaign.add(c)
+        p.save()
     assert Patient.objects.filter(campaign_key=None).exists()
-    assign_broken_patient()
+    assign_broken_patient(c)
     assert not Patient.objects.filter(campaign_key=None).exists()
     Patient.objects.all().delete()
