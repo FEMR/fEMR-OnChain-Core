@@ -14,9 +14,7 @@ from django.core.mail import send_mail
 from silk.profiling.profiler import silk_profile
 
 from main.background_tasks import (
-    assign_broken_patient,
     check_admin_permission,
-    run_encounter_close,
 )
 from main.forms import ForgotUsernameForm
 from main.models import Campaign, MessageOfTheDay, fEMRUser
@@ -43,10 +41,6 @@ def home(request):
     """
     if request.user.is_authenticated:
         campaign_list = request.user.campaigns.filter(active=True)
-        if len(campaign_list) != 0 and request.user.current_campaign != "RECOVERY MODE":
-            campaign = campaign_list.get(name=request.user.current_campaign)
-            assign_broken_patient(campaign)
-            run_encounter_close(campaign)
         motd = MessageOfTheDay.load()
         if motd.start_date is not None or motd.end_date is not None:
             if motd.start_date < timezone.now().date() < motd.end_date:

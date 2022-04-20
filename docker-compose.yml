@@ -56,6 +56,39 @@ services:
       - "database"
       - "cache"
 
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile-celery
+    volumes:
+      - .:/build
+    entrypoint: "./build-celery-beat.sh"
+    environment:
+      - DEBUG=True
+      - QLDB_ENABLED="FALSE"
+      - qldb_name="fEMR-OnChain-Test"
+      - ADMIN_NAME=""
+      - ADMIN_EMAIL=""
+      - EMAIL_HOST=""
+      - EMAIL_PORT=""
+      - EMAIL_USERNAME=""
+      - EMAIL_PASSWORD=""
+      - DEFAULT_FROM_EMAIL=""
+      - SERVER_EMAIL=""
+      - ENVIRONMENT="LOCAL"
+      - SECRET_KEY=2HY>fXi!dQ&(9Vf.XghCa;L6G=Ul4r-Bwqh>ae0RG3vIh1ZJ%T
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASS=postgres
+      - POSTGRES_NAME=database
+      - ENVIRONMENT=LOCAL
+    depends_on: 
+      - "dev"
+      - "redis"
+      - "database"
+
   celery:
     build:
       context: .

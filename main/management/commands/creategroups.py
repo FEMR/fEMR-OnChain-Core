@@ -11,7 +11,7 @@ GROUPS = [
     "Clinician",
     "Operation Admin",
     "Campaign Manager",
-    "Developer"
+    "Developer",
 ]
 
 

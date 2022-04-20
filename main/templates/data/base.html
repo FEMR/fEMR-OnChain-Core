@@ -100,6 +100,8 @@
                         {% if request.user|has_group:"fEMR Admin" %}
                         <a class="dropdown-item" href="{% url 'main:femr_admin_home' %}">fEMR Admin</a>
                         <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'main:femr_admin_dashboard_view' %}">fEMR Metrics Dashboard</a>
+                        <div class="dropdown-divider"></div>
                         {% endif %}
                         {% if request.user|has_group:"Organization Admin" %}
                         <a class="dropdown-item" href="{% url 'main:organization_admin_home_view' %}">Organization

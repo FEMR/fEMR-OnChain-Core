@@ -33,6 +33,7 @@ from main.admin_views import (
     update_user_password_view,
 )
 from main.csvio.patient_csv_export import csv_export_list, fetch_csv_export
+from main.dashboard_views import femr_admin_dashboard_view
 from main.delete_views import (
     delete_chief_complaint,
     delete_treatment_view,
@@ -508,6 +509,7 @@ urlpatterns = [
     ),
     url(r"^forgot_username", forgot_username, name="forgot_username"),
     url(r"^help_messages_off", help_messages_off, name="help_messages_off"),
+    url(r"^femr_admin_dashboard_view", femr_admin_dashboard_view, name="femr_admin_dashboard_view"),
     url(
         r"^diagnosis-autocomplete/$",
         DiagnosisAutocomplete.as_view(create_field="text"),

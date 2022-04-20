@@ -18,9 +18,7 @@ from silk.profiling.profiler import silk_profile
 
 from main.background_tasks import (
     check_admin_permission,
-    reset_sessions,
     check_browser,
-    run_user_deactivate,
 )
 from main.femr_admin_views import get_client_ip
 from main.forms import RegisterForm, LoginForm
@@ -55,7 +53,9 @@ def __register_post(request):
         finally:
             if error != "":
                 return_response = render(
-                    request, "auth/register.html", {"form": RegisterForm(), "error": error}
+                    request,
+                    "auth/register.html",
+                    {"form": RegisterForm(), "error": error},
                 )
             else:
                 return_response = redirect("/thanks")
@@ -237,8 +237,6 @@ def login_view(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    reset_sessions()
-    run_user_deactivate()
     if not check_browser(request):
         return_response = render(request, "data/stop.html")
     elif request.user.is_authenticated:

@@ -371,7 +371,11 @@ class CSVExport(models.Model):
     user = models.ForeignKey(
         "fEMRUser", on_delete=models.CASCADE, blank=True, null=True
     )
+    campaign = models.ForeignKey(
+        "Campaign", on_delete=models.CASCADE, blank=True, null=True
+    )
     file = models.FileField(upload_to="export/")
+    timestamp = models.DateTimeField(auto_now=True, editable=False)
 
 
 class PatientEncounter(models.Model):
