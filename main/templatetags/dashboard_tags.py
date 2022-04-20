@@ -1,7 +1,6 @@
-from django import template
-
-from django.utils import timezone
 from datetime import datetime
+from django import template
+from django.utils import timezone
 from main.models import Patient, PatientEncounter
 
 register = template.Library()
@@ -23,7 +22,11 @@ def total_patients(campaign):
 def encounters_today(campaign):
     now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
     now = now.astimezone(timezone.get_current_timezone())
-    return PatientEncounter.objects.filter(campaign=campaign).filter(timestamp__date=now).count()
+    return (
+        PatientEncounter.objects.filter(campaign=campaign)
+        .filter(timestamp__date=now)
+        .count()
+    )
 
 
 @register.filter("total_encounters")

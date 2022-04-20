@@ -509,7 +509,11 @@ urlpatterns = [
     ),
     url(r"^forgot_username", forgot_username, name="forgot_username"),
     url(r"^help_messages_off", help_messages_off, name="help_messages_off"),
-    url(r"^femr_admin_dashboard_view", femr_admin_dashboard_view, name="femr_admin_dashboard_view"),
+    url(
+        r"^femr_admin_dashboard_view",
+        femr_admin_dashboard_view,
+        name="femr_admin_dashboard_view",
+    ),
     url(
         r"^diagnosis-autocomplete/$",
         DiagnosisAutocomplete.as_view(create_field="text"),

@@ -23,7 +23,6 @@ Deprecated==1.2.13
 Django==3.2.12
 django-autocomplete-light==3.9.4
 django-axes==5.32.0
-django-background-tasks==1.2.5
 django-compat==1.0.15
 django-crispy-forms==1.14.0
 django-ipware==4.0.2

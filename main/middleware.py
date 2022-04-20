@@ -71,13 +71,13 @@ class CampaignActivityCheckMiddleware:
             return_response = self.get_response(request)
         return return_response
 
-    def __check_valid_campaign(self, user):
+    @staticmethod
+    def __check_valid_campaign(user):
         campaigns = user.campaigns.filter(active=True)
         if user.current_campaign != "RECOVERY_MODE":
             try:
                 campaigns.get(name=user.current_campaign)
             except Campaign.DoesNotExist:
-                print(f"Campaign {user.current_campaign} _not_ valid.")
                 if len(campaigns) != 0:
                     user.current_campaign = campaigns[0].name
                     user.save()

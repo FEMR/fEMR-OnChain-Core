@@ -11,6 +11,7 @@ import os
 from datetime import datetime
 
 from django.shortcuts import render, redirect
+from main.decorators import in_recovery_mode, is_authenticated
 
 from main.femr_admin_views import get_client_ip
 
@@ -126,6 +127,7 @@ def __patient_form_view_post(request, campaign):
     return return_response
 
 
+@is_authenticated
 def patient_form_view(request):
     """
     Used to create new Patient objects.
@@ -133,17 +135,14 @@ def patient_form_view(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    if request.user.is_authenticated:
-        if request.user.current_campaign == "RECOVERY MODE":
-            return_response = redirect("main:home")
-        else:
-            campaign = Campaign.objects.get(name=request.user.current_campaign)
-            if request.method == "POST":
-                return_response = __patient_form_view_post(request, campaign)
-            else:
-                return_response = __patient_form_view_get(request, campaign)
+    if request.user.current_campaign == "RECOVERY MODE":
+        return_response = redirect("main:home")
     else:
-        return_response = redirect("/not_logged_in")
+        campaign = Campaign.objects.get(name=request.user.current_campaign)
+        if request.method == "POST":
+            return_response = __patient_form_view_post(request, campaign)
+        else:
+            return_response = __patient_form_view_get(request, campaign)
     return return_response
 
 
@@ -314,6 +313,8 @@ def __patient_encounter_form_post(request, patient):
     return return_response
 
 
+@is_authenticated
+@in_recovery_mode
 def patient_encounter_form_view(request, patient_id=None):
     """
     Used to create new PatientEncounter objects.
@@ -322,47 +323,38 @@ def patient_encounter_form_view(request, patient_id=None):
     :param patient_id: The internal ID of the patient to be edited.
     :return: HTTPResponse.
     """
-    if request.user.is_authenticated:
-        patient = Patient.objects.get(pk=patient_id)
-        if request.user.current_campaign == "RECOVERY MODE":
-            return_response = redirect("main:home")
-        else:
-            if request.method == "POST":
-                return_response = __patient_encounter_form_post(request, patient)
-            else:
-                return_response = __patient_encounter_form_get(request, patient)
+    patient = Patient.objects.get(pk=patient_id)
+    if request.method == "POST":
+        return_response = __patient_encounter_form_post(request, patient)
     else:
-        return_response = redirect("/not_logged_in")
+        return_response = __patient_encounter_form_get(request, patient)
     return return_response
 
 
+@is_authenticated
+@in_recovery_mode
 def referral_form_view(request, patient_id=None):
-    if request.user.is_authenticated:
-        if request.user.current_campaign == "RECOVERY MODE":
-            return_response = redirect("main:home")
-        elif request.method == "POST":
-            patient = Patient.objects.get(pk=patient_id)
-            patient.campaign.add(Campaign.objects.get(pk=request.POST["campaign"]))
-            patient.save()
-            if os.environ.get("QLDB_ENABLED") == "TRUE":
-                update_patient_encounter(
-                    {"patient": patient.id, "campaign": request.POST["campaign"]}
-                )
-            return_response = redirect("main:patient_list_view")
-        elif request.method == "GET":
-            return_response = render(
-                request,
-                "forms/referral.html",
-                {
-                    "patient_id": patient_id,
-                    "page_name": "Campaign Referral",
-                    "campaigns": Campaign.objects.filter(
-                        instance=Campaign.objects.get(
-                            name=request.user.current_campaign
-                        ).instance
-                    ).filter(active=True),
-                },
+    if request.method == "POST":
+        patient = Patient.objects.get(pk=patient_id)
+        patient.campaign.add(Campaign.objects.get(pk=request.POST["campaign"]))
+        patient.save()
+        if os.environ.get("QLDB_ENABLED") == "TRUE":
+            update_patient_encounter(
+                {"patient": patient.id, "campaign": request.POST["campaign"]}
             )
-    else:
-        return_response = redirect("/not_logged_in")
+        return_response = redirect("main:patient_list_view")
+    elif request.method == "GET":
+        return_response = render(
+            request,
+            "forms/referral.html",
+            {
+                "patient_id": patient_id,
+                "page_name": "Campaign Referral",
+                "campaigns": Campaign.objects.filter(
+                    instance=Campaign.objects.get(
+                        name=request.user.current_campaign
+                    ).instance
+                ).filter(active=True),
+            },
+        )
     return return_response

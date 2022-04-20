@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from silk.profiling.profiler import silk_profile
+from main.decorators import in_recovery_mode, is_authenticated
 
 from main.models import (
     Campaign,
@@ -53,13 +54,8 @@ def __patient_export_view_get(request, patient_id=None):
     )
 
 
+@is_authenticated
+@in_recovery_mode
 @silk_profile("patient-export-view")
 def patient_export_view(request, patient_id=None):
-    if request.user.is_authenticated:
-        if request.user.current_campaign == "RECOVERY MODE":
-            return_response = redirect("main:home")
-        else:
-            return_response = __patient_export_view_get(request, patient_id)
-    else:
-        return_response = redirect("/not_logged_in")
-    return return_response
+    return __patient_export_view_get(request, patient_id)

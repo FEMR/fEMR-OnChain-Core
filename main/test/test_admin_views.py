@@ -44,7 +44,6 @@ def test_permission_denied_account_reset():
         email="logintestinguseremail2@email.com",
     )
     u.change_password = False
-    Group.objects.get_or_create(name="fEMR Admin")[0].user_set.add(u)
     c = baker.make("main.Campaign")
     c.active = True
     c.save()
@@ -237,7 +236,7 @@ def test_create_user():
     assert "Changes successfully submitted." in str(return_response.content)
 
 
-def test_permission_denied_account_reset():
+def test_permission_denied_account_reset_lockouts():
     client = Client()
     return_response = client.get(
         reverse("main:reset_lockouts", kwargs={"username": "test2"})

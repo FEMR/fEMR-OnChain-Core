@@ -221,8 +221,6 @@ def write_result_file(writer, title_row, patient_rows):
 def patient_processing_loop(
     patient_data,
     patient_rows,
-    campaign_time_zone,
-    campaign_time_zone_b,
     campaign,
     vitals_dict,
     max_vitals,
@@ -231,6 +229,8 @@ def patient_processing_loop(
     hpis_dict,
     max_hpis,
 ):
+    campaign_time_zone = pytz_timezone(campaign.timezone)
+    campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
     export_id = 1
     for patient in patient_data:
         for encounter in patient.patientencounter_set.all().iterator():
@@ -301,8 +301,6 @@ def csv_export_handler(user_id, campaign_id):
         "Family History",
     ]
     patient_data = Patient.objects.filter(campaign=campaign).iterator()
-    campaign_time_zone = pytz_timezone(campaign.timezone)
-    campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
     patient_rows = []
     vitals_dict = {}
     treatments_dict = {}
@@ -313,8 +311,6 @@ def csv_export_handler(user_id, campaign_id):
     patient_processing_loop(
         patient_data,
         patient_rows,
-        campaign_time_zone,
-        campaign_time_zone_b,
         campaign,
         vitals_dict,
         max_vitals,
@@ -327,8 +323,10 @@ def csv_export_handler(user_id, campaign_id):
     write_result_file(writer, title_row, patient_rows)
     user = fEMRUser.objects.get(pk=user_id)
     export = CSVExport()
-    csv_file = ContentFile(export_file.getvalue().encode("utf-8"))
-    export.file.save(f"patient-export-{campaign.name}-{datetime.now()}.csv", csv_file)
+    export.file.save(
+        f"patient-export-{campaign.name}-{datetime.now()}.csv",
+        ContentFile(export_file.getvalue().encode("utf-8")),
+    )
     export.user = user
     export.campaign = campaign
     export.save()

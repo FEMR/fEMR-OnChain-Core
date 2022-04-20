@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     "crispy_forms",
     "axes",
     "session_security",
-    "background_task",
     "drf_yasg",
     "django_user_agents",
     "django_nose",
