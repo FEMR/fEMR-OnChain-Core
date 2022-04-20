@@ -26,7 +26,7 @@ django-axes==5.27.0
 django-background-tasks==1.2.5
 django-compat==1.0.15
 django-crispy-forms==1.14.0
-django-ipware==4.0.0
+django-ipware==4.0.2
 django-localflavor==3.1
 django-nose==1.4.7
 django-rest-swagger==2.2.0
