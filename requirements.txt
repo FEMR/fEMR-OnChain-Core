@@ -67,7 +67,7 @@ psycopg2-binary==2.9.2
 pycodestyle==2.8.0
 pyflakes==2.4.0
 Pygments==2.11.2
-pylint==2.13.5
+pylint==2.13.7
 pyparsing==3.0.8
 pyqldb==3.2.2
 python-dateutil==2.8.2
