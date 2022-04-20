@@ -1,7 +1,7 @@
 amazon.ion==0.9.1
 amqp==5.1.1
 asgiref==3.5.0
-astroid==2.11.2
+astroid==2.11.3
 autopep8==1.6.0
 billiard==3.6.4.0
 black==22.1.0
@@ -26,7 +26,7 @@ django-axes==5.27.0
 django-background-tasks==1.2.5
 django-compat==1.0.15
 django-crispy-forms==1.14.0
-django-ipware==4.0.0
+django-ipware==4.0.2
 django-localflavor==3.1
 django-nose==1.4.7
 django-rest-swagger==2.2.0
@@ -77,7 +77,7 @@ pytz==2022.1
 PyYAML==6.0
 redis==4.0.1
 regex==2022.3.15
-requests==2.26.0
+requests==2.27.1
 ruamel.yaml==0.17.21
 ruamel.yaml.clib==0.2.6
 s3transfer==0.5.2
@@ -87,7 +87,7 @@ six==1.16.0
 sqlparse==0.4.2
 toml==0.10.2
 tomli==2.0.1
-typed-ast==1.5.1
+typed-ast==1.5.3
 typing-extensions==4.2.0
 ua-parser==0.10.0
 uritemplate==4.1.1
