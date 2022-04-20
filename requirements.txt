@@ -18,7 +18,7 @@ click-repl==0.2.0
 colorama==0.4.4
 coreapi==2.3.3
 coreschema==0.0.4
-coverage==6.2
+coverage==6.3.2
 Deprecated==1.2.13
 Django==3.2.12
 django-autocomplete-light==3.8.2
@@ -38,7 +38,7 @@ django-storages==1.12.3
 django-timezone-utils==0.13
 django-user-agents==0.4.0
 djangorestframework==3.13.1
-docutils==0.18
+docutils==0.18.1
 dparse==0.5.1
 drf-yasg==1.20.0
 flake8==4.0.1
@@ -51,7 +51,7 @@ isort==5.10.1
 itypes==1.2.0
 Jinja2==3.0.3
 jmespath==0.10.0
-kombu==5.2.3
+kombu==5.2.4
 lazy-object-proxy==1.7.1
 MarkupSafe==2.1.1
 mccabe==0.6.1
@@ -88,7 +88,7 @@ sqlparse==0.4.2
 toml==0.10.2
 tomli==2.0.1
 typed-ast==1.5.1
-typing-extensions==4.0.1
+typing-extensions==4.2.0
 ua-parser==0.10.0
 uritemplate==4.1.1
 urllib3==1.26.9
@@ -96,4 +96,4 @@ user-agents==2.2.0
 vine==5.0.0
 wcwidth==0.2.5
 whitenoise==5.3.0
-wrapt==1.13.3
+wrapt==1.14.0
