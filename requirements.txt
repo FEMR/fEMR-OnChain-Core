@@ -1,6 +1,6 @@
 amazon.ion==0.9.1
 amqp==5.1.1
-asgiref==3.4.1
+asgiref==3.5.0
 astroid==2.11.2
 autopep8==1.6.0
 billiard==3.6.4.0
