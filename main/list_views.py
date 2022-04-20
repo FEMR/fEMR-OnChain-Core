@@ -59,7 +59,7 @@ def patient_list_view(request):
         except ObjectDoesNotExist:
             data = []
         data = sorted(data, reverse=True, key=get_latest_timestamp)
-        paginator = Paginator(data, 25)
+        paginator = Paginator(data, 10)
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
         return_response = render(
@@ -232,7 +232,7 @@ def filter_patient_list_view(request):
     if request.user.is_authenticated:
         data = __run_patient_list_filter(request)
         data = sorted(data, reverse=True, key=get_latest_timestamp)
-        paginator = Paginator(data, 25)
+        paginator = Paginator(data, 10)
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
         return_response = render(
@@ -295,7 +295,7 @@ def search_patient_list_view(request):
         except ObjectDoesNotExist:
             data = []
         data = sorted(data, reverse=True, key=get_latest_timestamp)
-        paginator = Paginator(data, 25)
+        paginator = Paginator(data, 10)
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
         return_response = render(

@@ -347,7 +347,7 @@ def csv_export_list(request):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
             exports = CSVExport.objects.filter(user=request.user).order_by("-id")
-            paginator = Paginator(exports, 25)
+            paginator = Paginator(exports, 10)
             page_number = request.GET.get("page")
             page_obj = paginator.get_page(page_number)
             return_response = render(
