@@ -5,7 +5,7 @@ astroid==2.11.2
 autopep8==1.6.0
 billiard==3.6.4.0
 black==22.1.0
-boto3==1.21.42
+boto3==1.21.43
 botocore==1.24.43
 celery==5.2.6
 certifi==2021.10.8
@@ -75,7 +75,7 @@ python-memcached==1.59
 python-stdnum==1.17
 pytz==2022.1
 PyYAML==6.0
-redis==4.0.1
+redis==4.2.2
 regex==2022.3.15
 requests==2.27.1
 ruamel.yaml==0.17.21
