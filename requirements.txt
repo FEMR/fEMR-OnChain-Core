@@ -63,7 +63,7 @@ packaging==21.3
 pathspec==0.9.0
 platformdirs==2.5.2
 prompt-toolkit==3.0.29
-psycopg2-binary==2.9.2
+psycopg2-binary==2.9.3
 pycodestyle==2.8.0
 pyflakes==2.4.0
 Pygments==2.11.2
