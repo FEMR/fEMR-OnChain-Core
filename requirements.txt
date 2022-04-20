@@ -51,7 +51,7 @@ isort==5.10.1
 itypes==1.2.0
 Jinja2==3.0.3
 jmespath==0.10.0
-kombu==5.2.3
+kombu==5.2.4
 lazy-object-proxy==1.7.1
 MarkupSafe==2.1.1
 mccabe==0.6.1
