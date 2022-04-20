@@ -75,7 +75,7 @@ python-memcached==1.59
 python-stdnum==1.17
 pytz==2022.1
 PyYAML==6.0
-redis==4.0.1
+redis==4.2.2
 regex==2022.3.15
 requests==2.27.1
 ruamel.yaml==0.17.21
@@ -95,5 +95,5 @@ urllib3==1.26.9
 user-agents==2.2.0
 vine==5.0.0
 wcwidth==0.2.5
-whitenoise==5.3.0
+whitenoise==6.0.0
 wrapt==1.14.0
