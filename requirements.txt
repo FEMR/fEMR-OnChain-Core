@@ -5,7 +5,7 @@ astroid==2.11.3
 autopep8==1.6.0
 billiard==3.6.4.0
 black==22.1.0
-boto3==1.21.42
+boto3==1.21.43
 botocore==1.24.43
 celery==5.2.6
 certifi==2021.10.8
@@ -63,7 +63,7 @@ packaging==21.3
 pathspec==0.9.0
 platformdirs==2.5.2
 prompt-toolkit==3.0.29
-psycopg2-binary==2.9.2
+psycopg2-binary==2.9.3
 pycodestyle==2.8.0
 pyflakes==2.4.0
 Pygments==2.11.2
@@ -95,5 +95,5 @@ urllib3==1.26.9
 user-agents==2.2.0
 vine==5.0.0
 wcwidth==0.2.5
-whitenoise==5.3.0
+whitenoise==6.0.0
 wrapt==1.14.0
