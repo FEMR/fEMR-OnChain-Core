@@ -4,9 +4,9 @@ asgiref==3.4.1
 astroid==2.11.2
 autopep8==1.6.0
 billiard==3.6.4.0
-black==22.1.0
-boto3==1.21.42
-botocore==1.24.42
+black==22.3.0
+boto3==1.21.43
+botocore==1.24.45
 celery==5.2.6
 certifi==2021.10.8
 chardet==4.0.0
@@ -22,8 +22,8 @@ coverage==6.2
 Deprecated==1.2.13
 dill==0.3.4
 Django==3.2.13
-django-autocomplete-light==3.8.2
-django-axes==5.27.0
+django-autocomplete-light==3.9.4
+django-axes==5.32.0
 django-background-tasks==1.2.5
 django-compat==1.0.15
 django-crispy-forms==1.14.0
