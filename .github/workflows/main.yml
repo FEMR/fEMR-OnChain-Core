@@ -31,7 +31,7 @@ jobs:
           python-version: 3.9
       - name: Install dependencies
         run: |
-          apt install libmemcached-dev
+          sudo apt install libmemcached-dev
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Lint with flake8
