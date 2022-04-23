@@ -20,7 +20,7 @@ coreapi==2.3.3
 coreschema==0.0.4
 coverage==6.3.2
 Deprecated==1.2.13
-Django==3.2.12
+Django==3.2.13
 django-autocomplete-light==3.9.4
 django-axes==5.32.0
 django-background-tasks==1.2.5
