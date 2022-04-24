@@ -1,4 +1,4 @@
-FROM ubuntu:impish
+FROM amd64/ubuntu:impish
 
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update -y && \
