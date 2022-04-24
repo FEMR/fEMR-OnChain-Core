@@ -25,3 +25,4 @@ EXPOSE 8081
 
 ARG FOO
 COPY . /opt/app
+RUN find /opt/app -type f -exec dos2unix {} \;
