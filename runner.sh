@@ -20,7 +20,6 @@ function all() {
   python3 -m safety check -r requirements.txt
   python3 manage.py check
   static
-  run_tests
   pushd ./main/static/main/js || exit
   npm install
   popd || exit
@@ -106,7 +105,7 @@ function check() {
   # that PyLint can't see.
   clear && \
    black . && \
-   ./build.sh test && \
+   run_tests && \
    pylint main app_mr clinic_messages --disable=E1101,W0613,R0903,C0301,C0114,C0115,C0116,R0801
 }
 
@@ -157,7 +156,6 @@ setup)
   ;;
 
 init-all-run)
-  check
   all
   setup
   gunicorn_run
