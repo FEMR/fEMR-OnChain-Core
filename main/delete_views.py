@@ -101,7 +101,7 @@ def delete_chief_complaint(
 @is_authenticated
 def delete_treatment_view(request, treatment_id=None):
     target_object = get_object_or_404(Treatment, pk=treatment_id)
-    for item in target_object.medication.all():
+    for item in target_object.medication.all().iterator():
         item.amount += target_object.amount
         if item.count > 0:
             item.quantity = math.ceil(item.amount / item.count)

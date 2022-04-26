@@ -17,8 +17,6 @@ export ENVIRONMENT=$ENVIRONMENT
 function all() {
   migrate
   pip3 install -r requirements.txt
-  python3 -m safety check -r requirements.txt
-  python3 manage.py check
   static
   pushd ./main/static/main/js || exit
   npm install

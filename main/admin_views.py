@@ -297,7 +297,7 @@ def get_audit_logs_view(request):
 
 def __filter_audit_logs_process(request):
     try:
-        logs = AuditEntry.objects.all()
+        logs = AuditEntry.objects.all().iterator()
         campaign = Campaign.objects.get(name=request.user.current_campaign)
         if request.GET["filter_list"] == "1":
             now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
@@ -508,7 +508,7 @@ def get_database_logs_view(request):
 def __filter_database_logs_check(request):
     excludemodels = ["Campaign", "Instance"]
     try:
-        logs = DatabaseChangeLog.objects.all()
+        logs = DatabaseChangeLog.objects.all().iterator()
         if request.GET["filter_list"] == "1":
             now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
             now = now.astimezone(timezone.get_current_timezone())
@@ -764,10 +764,10 @@ def cut_user_from_campaign(request, user_id=None):
 
 
 def __retrieve_needed_users(request):
-    user_set = fEMRUser.objects.all()
+    user_set = fEMRUser.objects.all().iterator()
     users_created_by_me = user_set.filter(created_by=request.user)
     users_in_my_campaigns = user_set.filter(
-        campaigns__in=request.user.campaigns.all()
+        campaigns__in=request.user.campaigns.all().iterator()
     ).filter(is_active=True)
     users = set(list(itertools.chain(users_created_by_me, users_in_my_campaigns)))
     return users

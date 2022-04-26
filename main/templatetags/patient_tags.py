@@ -25,8 +25,9 @@ def has_suffix(patient):
 def open_encounters(patient):
     return (
         "Yes"
-        if len(patient.patientencounter_set.filter(patient=patient).filter(active=True))
-        > 0
+        if patient.patientencounter_set.filter(patient=patient)
+        .filter(active=True)
+        .exists()
         else ""
     )
 
@@ -57,7 +58,7 @@ def mask_social(social):
 
 @register.filter("get_chief_complaint")
 def get_chief_complaint(encounter):
-    return ",".join([str(e) for e in encounter.chief_complaint.all()])
+    return ",".join([str(e) for e in encounter.chief_complaint.all().iterator()])
 
 
 @register.filter("imperial_primary_height")
@@ -91,7 +92,7 @@ def imperial_temperature(item):
 @register.filter("complaint_as_string")
 def complaint_as_string(item):
     result = ""
-    for element in list(item.all()):
+    for element in item.all().iterator():
         result += str(element) + ", "
     return result
 
@@ -99,7 +100,7 @@ def complaint_as_string(item):
 @register.filter("get_campaign_info")
 def get_campaign_info(item):
     result = ""
-    for element in list(item.campaign.all()):
+    for element in item.campaign.all().iterator():
         result += str(element) + ", "
     return result
 
@@ -107,7 +108,7 @@ def get_campaign_info(item):
 @register.filter("get_medications")
 def get_medications(treatment):
     result = ""
-    for element in list(treatment.medication.all()):
+    for element in treatment.medication.all().iterator():
         result += str(element)
     return result
 

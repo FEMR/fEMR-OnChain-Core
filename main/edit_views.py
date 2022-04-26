@@ -195,7 +195,7 @@ def __encounter_edit_form_post(request, patient_id, encounter_id):
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
     units = Campaign.objects.get(name=request.user.current_campaign).units
-    photos = list(encounter.photos.all())
+    photos = encounter.photos.all().iterator()
     treatments = Treatment.objects.filter(encounter=encounter)
     form = PatientEncounterForm(request.POST or None, instance=encounter, unit=units)
     if form.is_valid():
@@ -324,9 +324,9 @@ def __new_diagnosis_view_body(request, patient_id, encounter_id):
         new_diagnosis_imperial(form, encounter)
     suffix = patient.get_suffix_display() if patient.suffix is not None else ""
     if len(querysets) > 0:
-        item = querysets[0].diagnosis.all()
+        item = querysets[0].diagnosis.all().iterator()
         for query_item in querysets:
-            item.union(query_item.diagnosis.all())
+            item.union(query_item.diagnosis.all().iterator())
         treatment_form.fields["diagnosis"].queryset = item
         treatment_active = True
     else:
@@ -409,12 +409,14 @@ def __new_treatment_view_body(request, patient_id, encounter_id):
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
     treatment_form = TreatmentForm()
-    treatment_form.fields["medication"].queryset = campaign.inventory.entries.all()
+    treatment_form.fields[
+        "medication"
+    ].queryset = campaign.inventory.entries.all().iterator()
     querysets = list(PatientDiagnosis.objects.filter(encounter=encounter))
     if len(querysets) > 0:
-        item = querysets.pop().diagnosis.all()
+        item = querysets.pop().diagnosis.all().iterator()
         for query_item in querysets:
-            item.union(query_item.diagnosis.all())
+            item.union(query_item.diagnosis.all().iterator())
         treatment_form.fields["diagnosis"].queryset = item
         treatment_active = True
     else:
@@ -468,7 +470,7 @@ def __treatment_view_post(request, encounter):
             treatment.amount = 1
         treatment.save()
         treatment_form.save_m2m()
-        for item in treatment.medication.all():
+        for item in treatment.medication.all().iterator():
             item.amount -= treatment.amount
             if item.count > 0:
                 item.quantity = math.ceil(item.amount / item.count)
@@ -509,9 +511,9 @@ def aux_form_view(request, patient_id=None, encounter_id=None):
             treatment_form = TreatmentForm()
             querysets = list(PatientDiagnosis.objects.filter(encounter=encounter))
             if len(querysets) > 0:
-                item = querysets.pop().diagnosis.all()
+                item = querysets.pop().diagnosis.all().iterator()
                 for query_item in querysets:
-                    item.union(query_item.diagnosis.all())
+                    item.union(query_item.diagnosis.all().iterator())
                 treatment_form.fields["diagnosis"].queryset = item
             else:
                 treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
@@ -619,9 +621,9 @@ def __aux_form_is_valid(request, encounter, treatment_form):
     encounter.save()
     querysets = list(PatientDiagnosis.objects.filter(encounter=encounter))
     if len(querysets) > 0:
-        item = querysets.pop().diagnosis.all()
+        item = querysets.pop().diagnosis.all().iterator()
         for query_item in querysets:
-            item.union(query_item.diagnosis.all())
+            item.union(query_item.diagnosis.all().iterator())
         treatment_form.fields["diagnosis"].queryset = item
     else:
         treatment_form.fields["diagnosis"].queryset = Diagnosis.objects.none()
@@ -821,7 +823,7 @@ def __hpi_view_post(request, patient_id, encounter_id):
     vitals = Vitals.objects.filter(encounter=encounter)
     treatments = Treatment.objects.filter(encounter=encounter)
     hpis = []
-    for query_item in encounter.chief_complaint.all():
+    for query_item in encounter.chief_complaint.all().iterator():
         hpi_object = HistoryOfPresentIllness.objects.get_or_create(
             encounter=encounter, chief_complaint=query_item
         )[0]

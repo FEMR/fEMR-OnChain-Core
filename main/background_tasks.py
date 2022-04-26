@@ -31,7 +31,7 @@ def run_encounter_close():
     """
     now = timezone.now()
 
-    for campaign in Campaign.objects.all():
+    for campaign in Campaign.objects.all().iterator():
         close_time = campaign.encounter_close
         delta = now - timedelta(days=close_time)
 
@@ -109,12 +109,14 @@ def check_admin_permission(user):
     :param user: A user to check for permissions.
     :return: Whether the user is in an administrative group.
     """
-    return user.groups.filter(
-        Q(name="fEMR Admin")
-        | Q(name="Campaign Manager")
-        | Q(name="Organization Admin")
-        | Q(name="Operation Admin")
-    ).exists()
+    admin_groups = {
+        "fEMR Admin",
+        "Campaign Manager",
+        "Organization Admin",
+        "Operation Admin",
+    }
+    user_groups = {group.name for group in user.groups.all().iterator()}
+    return admin_groups.intersection(user_groups)
 
 
 @shared_task
@@ -136,5 +138,5 @@ def assign_broken_patient():
 def delete_old_export():
     now = timezone.now()
     delta = now - timedelta(weeks=2)
-    for export in CSVExport.objects.filter(timestamp__lt=delta):
+    for export in CSVExport.objects.filter(timestamp__lt=delta).iterator():
         export.delete()

@@ -17,7 +17,7 @@ from main.models import Campaign, InventoryEntry
 @is_admin
 def formulary_home_view(request):
     campaign = Campaign.objects.get(name=request.user.current_campaign)
-    formulary = campaign.inventory.entries.all().order_by("medication")
+    formulary = campaign.inventory.entries.all().order_by("medication").iterator()
     return render(
         request,
         "formulary/home.html",
@@ -173,7 +173,7 @@ def csv_import_view(request):
 @is_admin
 def csv_export_view(request):
     campaign = Campaign.objects.get(name=request.user.current_campaign)
-    formulary = campaign.inventory.entries.all().order_by("medication")
+    formulary = campaign.inventory.entries.all().order_by("medication").iterator()
     return_response = HttpResponse(
         content_type="text/csv",
         headers={"Content-Disposition": 'attachment; filename="formulary.csv"'},

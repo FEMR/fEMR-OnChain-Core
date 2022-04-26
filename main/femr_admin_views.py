@@ -357,7 +357,7 @@ def lock_instance_view(_, instance_id=None):
     instance = get_object_or_404(Instance, pk=instance_id)
     instance.active = False
     instance.save()
-    for campaign in instance.campaign_set.all():
+    for campaign in instance.campaign_set.all().iterator():
         campaign.active = False
         campaign.save()
     return redirect("main:list_instance")
@@ -437,7 +437,7 @@ def new_ethnicity_view(request):
 @is_femr_admin
 @is_authenticated
 def list_organization_view(request):
-    organizations = Organization.objects.all()
+    organizations = Organization.objects.all().iterator()
     return render(
         request,
         "femr_admin/organization/list_organization.html",

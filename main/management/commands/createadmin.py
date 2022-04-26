@@ -60,7 +60,7 @@ class Command(BaseCommand):
             instance.main_contact = superuser
             instance.save()
         else:
-            for user in fEMRUser.objects.all():
+            for user in fEMRUser.objects.all().iterator():
                 user.user_permissions.add(Permission.objects.get(name="Can add state"))
                 user.user_permissions.add(
                     Permission.objects.get(name="Can add diagnosis")

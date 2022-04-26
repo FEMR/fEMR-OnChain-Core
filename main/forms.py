@@ -611,7 +611,7 @@ class fEMRAdminUserForm(UserCreationForm):
 
 
 def filter_campaigns_for_instances(user):
-    campaigns = user.campaigns.all()
+    campaigns = user.campaigns.all().iterator()
     instances = [c.instance for c in campaigns]
     return Campaign.objects.filter(instance__in=instances)
 

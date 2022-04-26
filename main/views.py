@@ -37,7 +37,6 @@ def home(request):
     :param request: Django Request object.
     :return: An HttpResponse, rendering the home page.
     """
-    campaign_list = request.user.campaigns.filter(active=True)
     motd = MessageOfTheDay.load()
     if motd.start_date is not None or motd.end_date is not None:
         if motd.start_date < timezone.now().date() < motd.end_date:
@@ -52,7 +51,7 @@ def home(request):
         {
             "user": request.user,
             "page_name": "Home",
-            "campaigns": campaign_list,
+            "campaigns": request.user.campaigns.filter(active=True),
             "motd": motd_final,
             "selected_campaign": request.user.current_campaign,
         },

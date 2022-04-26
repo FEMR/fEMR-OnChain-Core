@@ -10,7 +10,7 @@ def user_locked_out_callback(request, credentials):
     if user.exists() and len(user) == 1:
         user = user[0]
         campaigns = user.campaigns.all()
-        campaign_manager = campaigns[0].main_contact if len(campaigns) != 0 else None
+        campaign_manager = campaigns[0].main_contact if campaigns.count() != 0 else None
         if campaign_manager:
             message = Message.objects.create(
                 subject="User Locked Out",

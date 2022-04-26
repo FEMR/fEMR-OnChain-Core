@@ -24,7 +24,7 @@ def __patient_export_view_get(request, patient_id=None):
         try:
             diagnoses[encounter] = sum(
                 [
-                    list(queryset.diagnosis.all())
+                    queryset.diagnosis.all().iterator()
                     for queryset in PatientDiagnosis.objects.filter(encounter=encounter)
                 ],
                 [],
@@ -34,8 +34,8 @@ def __patient_export_view_get(request, patient_id=None):
         history_of_present_illness_dictionary[encounter] = list(
             HistoryOfPresentIllness.objects.filter(encounter=encounter)
         )
-        prescriptions[encounter] = list(Treatment.objects.filter(encounter=encounter))
-        vitals_dictionary[encounter] = list(Vitals.objects.filter(encounter=encounter))
+        prescriptions[encounter] = Treatment.objects.filter(encounter=encounter)
+        vitals_dictionary[encounter] = Vitals.objects.filter(encounter=encounter)
     return render(
         request,
         "export/patient_export.html",
