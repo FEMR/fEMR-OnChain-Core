@@ -45,6 +45,7 @@ def change_campaign(request):
                 username=request.user.username,
                 campaign=Campaign.objects.get(name=request.user.current_campaign),
                 browser_user_agent=request.user_agent.browser.family,
+                system_user_agent=request.user_agent.os.family,
             )
         return_response = redirect("main:home")
     else:
