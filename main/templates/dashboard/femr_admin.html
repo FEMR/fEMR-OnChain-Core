@@ -3,30 +3,49 @@
 {% load dashboard_tags %}
 {% load static %}
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-8">
         <h2>Active Campaigns</h2>
         <table class="table">
             <thead>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col">Campaign Name</th>
-                <th scope="col">Patients Today</th>
-                <th scope="col">Total Patients</th>
-                <th scope="col">Encounters Today</th>
-                <th scope="col">Total Encounters</th>
-            </tr>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Campaign Name</th>
+                    <th scope="col">Patients Today</th>
+                    <th scope="col">Total Patients</th>
+                    <th scope="col">Encounters Today</th>
+                    <th scope="col">Total Encounters</th>
+                </tr>
             </thead>
             <tbody>
-            {% for o in campaigns %}
-            <tr>
-                <th scope="row">{{ o.id }}</th>
-                <td>{{ o.name }}</td>
-                <td>{{ o|patients_today }}</td>
-                <td>{{ o|total_patients }}</td>
-                <td>{{ o|encounters_today }}</td>
-                <td>{{ o|total_encounters }}</td>
-            </tr>
-            {% endfor %}
+                {% for o in campaigns %}
+                <tr>
+                    <th scope="row">{{ o.id }}</th>
+                    <td>{{ o.name }}</td>
+                    <td>{{ o|patients_today }}</td>
+                    <td>{{ o|total_patients }}</td>
+                    <td>{{ o|encounters_today }}</td>
+                    <td>{{ o|total_encounters }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <h2>Client Details</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">User Agent</th>
+                    <th scope="col">User Login Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key, value in browsers.items %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

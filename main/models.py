@@ -669,6 +669,7 @@ class AuditEntry(models.Model):
         Campaign, on_delete=models.CASCADE, blank=True, null=True
     )
     browser_user_agent = models.CharField(max_length=256, null=True)
+    system_user_agent = models.CharField(max_length=256, null=True)
 
     def __str__(self):
         return f"{self.action} - {self.username} - {self.ip} - {self.timestamp} - {self.campaign}"

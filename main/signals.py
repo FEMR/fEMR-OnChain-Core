@@ -26,6 +26,7 @@ def user_logged_in_callback(sender, request, user, **kwargs):
         username=user.username,
         campaign=campaign,
         browser_user_agent=request.user_agent.browser.family,
+        system_user_agent=request.user_agent.os.family,
     )
 
 
@@ -44,6 +45,7 @@ def user_logged_out_callback(sender, request, user, **kwargs):
             username=user.username,
             campaign=campaign,
             browser_user_agent=request.user_agent.browser.family,
+            system_user_agent=request.user_agent.os.family,
         )
     except AttributeError:
         pass
