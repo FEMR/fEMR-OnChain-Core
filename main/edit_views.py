@@ -409,9 +409,7 @@ def __new_treatment_view_body(request, patient_id, encounter_id):
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
     treatment_form = TreatmentForm()
-    treatment_form.fields[
-        "medication"
-    ].queryset = campaign.inventory.entries.all().iterator()
+    treatment_form.fields["medication"].queryset = campaign.inventory.entries.all()
     querysets = list(PatientDiagnosis.objects.filter(encounter=encounter))
     if len(querysets) > 0:
         item = querysets.pop().diagnosis.all()
