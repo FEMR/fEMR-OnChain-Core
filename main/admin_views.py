@@ -297,7 +297,7 @@ def get_audit_logs_view(request):
 
 def __filter_audit_logs_process(request):
     try:
-        logs = AuditEntry.objects.all().iterator()
+        logs = AuditEntry.objects.all()
         campaign = Campaign.objects.get(name=request.user.current_campaign)
         if request.GET["filter_list"] == "1":
             now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
@@ -764,13 +764,14 @@ def cut_user_from_campaign(request, user_id=None):
 
 
 def __retrieve_needed_users(request):
-    user_set = fEMRUser.objects.all().iterator()
-    users_created_by_me = user_set.filter(created_by=request.user)
-    users_in_my_campaigns = user_set.filter(
-        campaigns__in=request.user.campaigns.all().iterator()
-    ).filter(is_active=True)
-    users = set(list(itertools.chain(users_created_by_me, users_in_my_campaigns)))
-    return users
+    user_set = fEMRUser.objects.filter(
+        (
+            Q(created_by=request.user)
+            | Q(campaigns__in=request.user.campaigns.all().iterator())
+        )
+        & Q(is_active=True)
+    )
+    return user_set
 
 
 def __message_of_the_day_form_processor(request, message):

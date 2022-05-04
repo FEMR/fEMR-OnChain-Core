@@ -99,7 +99,7 @@ def dict_builder(patient_data, vitals_dict, treatments_dict, hpis_dict):
 
 @silk_profile("extend-vitals-list")
 def extend_vitals_list(campaign, vitals, row, max_vitals):
-    for vital in vitals[0].iterator():
+    for vital in vitals[0]:
         row.extend(
             [
                 vital.systolic_blood_pressure,
@@ -131,7 +131,7 @@ def extend_vitals_list(campaign, vitals, row, max_vitals):
 
 @silk_profile("extend-treatments-list")
 def extend_treatments_list(row, treatments, max_treatments):
-    for item in treatments[0].iterator():
+    for item in treatments[0]:
         row.extend(
             [
                 item.diagnosis,
@@ -147,7 +147,7 @@ def extend_treatments_list(row, treatments, max_treatments):
 
 @silk_profile("extend-hpis-list")
 def extend_hpis_list(row, hpis, max_hpis):
-    for item in hpis[0].iterator():
+    for item in hpis[0]:
         row.extend(
             [
                 item.chief_complaint,
