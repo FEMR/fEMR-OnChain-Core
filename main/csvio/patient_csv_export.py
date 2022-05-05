@@ -80,11 +80,11 @@ def dict_builder(patient_data, vitals_dict, treatments_dict, hpis_dict):
     max_vitals = 0
     for patient in patient_data:
         for encounter in patient.patientencounter_set.all().iterator():
-            vitals = encounter.vitals_set.all().iterator()
+            vitals = encounter.vitals_set.all()
             vitals_count = vitals.count()
-            treatments = encounter.treatment_set.all().iterator()
+            treatments = encounter.treatment_set.all()
             treatments_count = treatments.count()
-            hpis = encounter.historyofpresentillness_set.all().iterator()
+            hpis = encounter.historyofpresentillness_set.all()
             hpis_count = hpis.count()
 
             vitals_dict[encounter] = (vitals, vitals_count)
