@@ -766,11 +766,13 @@ def cut_user_from_campaign(request, user_id=None):
 def __retrieve_needed_users(request):
     user_set = fEMRUser.objects.filter(
         (
-            Q(created_by=request.user)
-            | Q(campaigns__in=request.user.campaigns.all().iterator())
+            (
+                Q(created_by=request.user)
+                | Q(campaigns__in=request.user.campaigns.all().iterator())
+            )
+            & Q(is_active=True)
         )
-        & Q(is_active=True)
-    )
+    ).exclude(campaigns__name=request.user.current_campaign)
     return user_set
 
 
