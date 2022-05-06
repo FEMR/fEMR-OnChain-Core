@@ -29,7 +29,10 @@
                     class="fa fa-question-circle"></i></a>
         </div>
         <div>
-            <a href="{% url 'main:patient_csv_export_view' %}">Export Deidentified Patient Encounter Data</a>
+            Export Deidentified Patient Encounter Data:
+            <a href="{% url 'main:patient_csv_export_view' 1 %}"> All </a>|
+            <a href="{% url 'main:patient_csv_export_view' 2 %}"> This Week </a>|
+            <a href="{% url 'main:patient_csv_export_view' 3 %}"> This Month</a>
             <a data-content="Click here to export this campaign's encounter data." data-toggle="popover" data-trigger="hover"
                href="#"><i
                     class="fa fa-question-circle"></i></a>

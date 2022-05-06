@@ -317,8 +317,8 @@ urlpatterns = [
         chief_complaint_list_view,
         name="chief_complaint_list_view",
     ),
-    url(
-        r"^patient_csv_export_view/$",
+    path(
+        r"patient_csv_export_view/<int:timeframe>",
         patient_csv_export_view,
         name="patient_csv_export_view",
     ),

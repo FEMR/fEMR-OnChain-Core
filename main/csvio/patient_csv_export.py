@@ -11,6 +11,8 @@ import os
 from celery import shared_task
 from silk.profiling.profiler import silk_profile
 from pytz import timezone as pytz_timezone
+from datetime import datetime, timedelta
+
 
 from django.http.response import HttpResponse
 from django.contrib import messages
@@ -18,6 +20,8 @@ from django.shortcuts import redirect, render
 from django.core.files.base import ContentFile
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
+from django.db.models import Q
+from django.utils import timezone
 
 from clinic_messages.models import Message
 
@@ -274,9 +278,47 @@ def patient_processing_loop(
     return len(patient_rows)
 
 
+@silk_profile("--filter-patients-by-week")
+def __filter_patients_by_week(campaign):
+    timestamp_from = timezone.now() - timedelta(days=7)
+    timestamp_to = timezone.now()
+    return Patient.objects.filter(
+        Q(campaign=campaign)
+        & (
+            Q(
+                patientencounter__timestamp__gte=timestamp_from,
+                patientencounter__timestamp__lt=timestamp_to,
+            )
+            | Q(
+                timestamp__gte=timestamp_from,
+                timestamp__lt=timestamp_to,
+            )
+        )
+    ).distinct()
+
+
+@silk_profile("--filter-patients-by-month")
+def __filter_patients_by_month(campaign):
+    timestamp_from = timezone.now() - timedelta(days=30)
+    timestamp_to = timezone.now()
+    return Patient.objects.filter(
+        Q(campaign=campaign)
+        & (
+            Q(
+                patientencounter__timestamp__gte=timestamp_from,
+                patientencounter__timestamp__lt=timestamp_to,
+            )
+            | Q(
+                timestamp__gte=timestamp_from,
+                timestamp__lt=timestamp_to,
+            )
+        )
+    ).distinct()
+
+
 @shared_task
 @silk_profile("csv-export-handler")
-def csv_export_handler(user_id, campaign_id):
+def csv_export_handler(user_id, campaign_id, timeframe):
     campaign = Campaign.objects.get(pk=campaign_id)
     export_file = StringIO()
     writer = csv.writer(export_file)
@@ -302,7 +344,12 @@ def csv_export_handler(user_id, campaign_id):
         "Current Medications",
         "Family History",
     ]
-    patient_data = Patient.objects.filter(campaign=campaign)
+    if timeframe == 2:
+        patient_data = __filter_patients_by_week(campaign)
+    elif timeframe == 3:
+        patient_data = __filter_patients_by_month(campaign)
+    else:
+        patient_data = Patient.objects.filter(campaign=campaign)
     patient_rows = []
     vitals_dict = {}
     treatments_dict = {}
@@ -387,14 +434,14 @@ def fetch_csv_export(request, export_id=None):
 
 
 @silk_profile("run-patient-csv-export")
-def run_patient_csv_export(request):
+def run_patient_csv_export(request, timeframe=1):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
             campaign = Campaign.objects.get(name=request.user.current_campaign)
-            csv_export_handler.delay(request.user.pk, campaign.id)
+            csv_export_handler.delay(request.user.pk, campaign.id, timeframe)
             messages.info(
                 request,
-                "We're building your CSV - you'll receive a message once it's done.",
+                "We're building your CSV - you'll receive a message once it's done. This may take up to 10 minutes.",
             )
             return_response = render(
                 request, "admin/home.html", {"user": request.user, "page_name": "Admin"}
