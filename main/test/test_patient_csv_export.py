@@ -55,7 +55,7 @@ def test_csv_export_handler():
     user.save()
     patient = baker.make("main.Patient", campaign=[campaign])
     baker.make("main.PatientEncounter", patient=patient, campaign=campaign)
-    csv_export_handler(user.id, campaign.id)
+    csv_export_handler(user.id, campaign.id, 1)
     assert Message.objects.filter(recipient=user).count() == 1
     user.delete()
     admin_user.delete()
