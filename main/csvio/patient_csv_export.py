@@ -80,7 +80,7 @@ def dict_builder(patient_data, vitals_dict, treatments_dict, hpis_dict):
     max_hpis = 0
     max_vitals = 0
     for patient in patient_data:
-        for encounter in patient.patientencounter_set.all().iterator():
+        for encounter in patient.patientencounter_set.all():
             vitals = encounter.vitals_set.all()
             vitals_count = vitals.count()
             treatments = encounter.treatment_set.all()
@@ -136,7 +136,7 @@ def extend_treatments_list(row, treatments, max_treatments):
         row.extend(
             [
                 item.diagnosis,
-                ",".join([str(x) for x in item.medication.all().iterator()]),
+                ",".join([str(x) for x in item.medication.all()]),
                 item.administration_schedule,
                 item.days,
                 item.prescriber,
@@ -234,7 +234,7 @@ def patient_processing_loop(
     campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
     export_id = 1
     for patient in patient_data:
-        for encounter in patient.patientencounter_set.all().iterator():
+        for encounter in patient.patientencounter_set.all():
             row = [
                 export_id,
                 patient.sex_assigned_at_birth,
@@ -271,6 +271,7 @@ def patient_processing_loop(
             extend_hpis_list(row, hpis_dict[encounter], max_hpis)
             patient_rows.append(row)
         export_id += 1
+    return len(patient_rows)
 
 
 @shared_task
@@ -301,7 +302,7 @@ def csv_export_handler(user_id, campaign_id):
         "Current Medications",
         "Family History",
     ]
-    patient_data = Patient.objects.filter(campaign=campaign).iterator()
+    patient_data = Patient.objects.filter(campaign=campaign)
     patient_rows = []
     vitals_dict = {}
     treatments_dict = {}
