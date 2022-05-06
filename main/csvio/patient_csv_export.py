@@ -17,6 +17,7 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.core.files.base import ContentFile
 from django.core.paginator import Paginator
+from django.core.mail import send_mail
 
 from clinic_messages.models import Message
 
@@ -330,7 +331,7 @@ def csv_export_handler(user_id, campaign_id):
     export.user = user
     export.campaign = campaign
     export.save()
-    Message.objects.create(
+    message = Message.objects.create(
         subject="CSV Export Finished",
         content="""
         This message is to let you know that the CSV export you began has finished. You can go back to the View Finished Exports page to download it.
@@ -338,6 +339,14 @@ def csv_export_handler(user_id, campaign_id):
         sender=fEMRUser.objects.get(username="admin"),
         recipient=user,
     )
+    if os.environ.get("DEFAULT_FROM_EMAIL", None) is not None:
+        send_mail(
+            f"Message from {message.sender}",
+            # pylint: disable=C0301
+            f"{message.content}\n\n\nTHIS IS AN AUTOMATED MESSAGE. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO REPLY.",
+            os.environ.get("DEFAULT_FROM_EMAIL"),
+            [message.recipient.email],
+        )
 
 
 @silk_profile("csv-export-list")
