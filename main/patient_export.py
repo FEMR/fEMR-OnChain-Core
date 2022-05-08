@@ -24,7 +24,7 @@ def __patient_export_view_get(request, patient_id=None):
         try:
             diagnoses[encounter] = sum(
                 [
-                    queryset.diagnosis.all()
+                    list(queryset.diagnosis.all())
                     for queryset in PatientDiagnosis.objects.filter(encounter=encounter)
                 ],
                 [],
