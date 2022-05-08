@@ -1,3 +1,6 @@
+from django.contrib.auth.models import Group
+from django.test.client import Client
+
 from clinic_messages.models import Message
 from model_bakery import baker
 

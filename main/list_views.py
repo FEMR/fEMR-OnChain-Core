@@ -44,17 +44,12 @@ def patient_list_view(request):
     :return: HTTPResponse.
     """
     try:
-        patients = Patient.objects.filter(
-            campaign=Campaign.objects.get(name=request.user.current_campaign)
-        )
         now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
         now = now.astimezone(timezone.get_current_timezone())
-        data = set(
-            list(
-                itertools.chain(
-                    patients.filter(patientencounter__timestamp__date=now),
-                    patients.filter(timestamp__date=now),
-                )
+        data = list(
+            Patient.objects.filter(
+                (Q(patientencounter__timestamp__date=now) | Q(timestamp__date=now))
+                & Q(campaign=Campaign.objects.get(name=request.user.current_campaign))
             )
         )
     except ObjectDoesNotExist:
@@ -77,14 +72,14 @@ def patient_list_view(request):
 
 
 @is_authenticated
-def patient_csv_export_view(request):
+def patient_csv_export_view(request, timeframe=1):
     """
     CSV Export of an Administrative/Clinician list of patients entered into the system.
 
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    return run_patient_csv_export(request)
+    return run_patient_csv_export(request, timeframe)
 
 
 @silk_profile("--run-patient-list-filter-one")
@@ -98,11 +93,9 @@ def __run_patient_list_filter_one(request, campaign):
     return data
 
 
-@silk_profile("--run-patient-list-filter-two")
-def __run_patient_list_filter_two(request, campaign):
-    timestamp_from = timezone.now() - timedelta(days=7)
-    timestamp_to = timezone.now()
-    data = Patient.objects.filter(
+@silk_profile("--run_timestamp_filter")
+def __run_timestamp_filter(campaign, timestamp_to, timestamp_from):
+    return Patient.objects.filter(
         Q(campaign=campaign)
         & (
             Q(
@@ -115,27 +108,20 @@ def __run_patient_list_filter_two(request, campaign):
             )
         )
     ).distinct()
-    return data
+
+
+@silk_profile("--run-patient-list-filter-two")
+def __run_patient_list_filter_two(_, campaign):
+    timestamp_from = timezone.now() - timedelta(days=7)
+    timestamp_to = timezone.now()
+    return __run_timestamp_filter(campaign, timestamp_to, timestamp_from)
 
 
 @silk_profile("--run-patient-list-filter-three")
-def __run_patient_list_filter_three(request, campaign):
+def __run_patient_list_filter_three(_, campaign):
     timestamp_from = timezone.now() - timedelta(days=30)
     timestamp_to = timezone.now()
-    data = Patient.objects.filter(
-        Q(campaign=campaign)
-        & (
-            Q(
-                patientencounter__timestamp__gte=timestamp_from,
-                patientencounter__timestamp__lt=timestamp_to,
-            )
-            | Q(
-                timestamp__gte=timestamp_from,
-                timestamp__lt=timestamp_to,
-            )
-        )
-    ).distinct()
-    return data
+    return __run_timestamp_filter(campaign, timestamp_to, timestamp_from)
 
 
 @silk_profile("--run-patient-list-filter-four")
@@ -147,19 +133,7 @@ def __run_patient_list_filter_four(request, campaign):
         timestamp_to = datetime.strptime(
             request.GET["date_filter_day"], "%Y-%m-%d"
         ).replace(hour=23, minute=59, second=59, microsecond=0)
-        data = Patient.objects.filter(
-            Q(campaign=campaign)
-            & (
-                Q(
-                    patientencounter__timestamp__gte=timestamp_from,
-                    patientencounter__timestamp__lt=timestamp_to,
-                )
-                | Q(
-                    timestamp__gte=timestamp_from,
-                    timestamp__lt=timestamp_to,
-                )
-            )
-        ).distinct()
+        data = __run_timestamp_filter(campaign, timestamp_to, timestamp_from)
     except ValueError:
         data = []
     return data
@@ -172,19 +146,7 @@ def __run_patient_list_filter_five(request, campaign):
         timestamp_to = datetime.strptime(
             request.GET["date_filter_end"], "%Y-%m-%d"
         ) + timedelta(days=1)
-        data = Patient.objects.filter(
-            Q(campaign=campaign)
-            & (
-                Q(
-                    patientencounter__timestamp__gte=timestamp_from,
-                    patientencounter__timestamp__lt=timestamp_to,
-                )
-                | Q(
-                    timestamp__gte=timestamp_from,
-                    timestamp__lt=timestamp_to,
-                )
-            ),
-        ).distinct()
+        data = __run_timestamp_filter(campaign, timestamp_to, timestamp_from)
     except ValueError:
         data = []
     return data
@@ -213,7 +175,7 @@ def __run_patient_list_filter(request):
             data = []
     except ObjectDoesNotExist:
         data = []
-    return data
+    return list(data)
 
 
 @is_authenticated
