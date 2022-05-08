@@ -3,16 +3,14 @@ This file contains a single function which handles exporting
 patient records as CSV files.
 """
 import csv
-from datetime import datetime
 from io import StringIO
 import math
 import os
+from datetime import datetime, timedelta
 
 from celery import shared_task
 from silk.profiling.profiler import silk_profile
 from pytz import timezone as pytz_timezone
-from datetime import datetime, timedelta
-
 
 from django.http.response import HttpResponse
 from django.contrib import messages

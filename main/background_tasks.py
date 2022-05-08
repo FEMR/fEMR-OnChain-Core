@@ -2,7 +2,7 @@
 Non-view functions used to carry out background processes.
 """
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime
 from celery import shared_task
 
 from django.db.models.query_utils import Q
@@ -140,3 +140,17 @@ def delete_old_export():
     delta = now - timedelta(weeks=2)
     for export in CSVExport.objects.filter(timestamp__lt=delta).iterator():
         export.delete()
+
+
+@shared_task
+@silk_profile("assign_new_timestamp")
+def assign_new_timestamp():
+    now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
+    now = now.astimezone(timezone.get_current_timezone())
+    for patient in Patient.objects.filter(
+        (Q(patientencounter__timestamp__date=now) | Q(timestamp__date=now))
+    ).order_by("-timestamp"):
+        patient.timestamp = (
+            patient.patientencounter_set.all().order_by("-timestamp")[0].timestamp
+        )
+        patient.save()

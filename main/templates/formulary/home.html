@@ -58,5 +58,22 @@
         </tr>
         {% endfor %}
     </tbody>
+    <div class="pagination">
+        <span class="step-links">
+               {% if list_view.has_previous %}
+               <a href="?page=1">&laquo; first</a>
+               <a href="?page={{ list_view.previous_page_number }}">previous</a>
+               {% endif %}
+
+               <span class="current">
+                      Page {{ list_view.number }} of {{ list_view.paginator.num_pages }}.
+               </span>
+
+               {% if list_view.has_next %}
+               <a href="?page={{ list_view.next_page_number }}">next</a>
+               <a href="?page={{ list_view.paginator.num_pages }}">last &raquo;</a>
+               {% endif %}
+        </span>
+    </div>
 </table>
 {% endblock %}

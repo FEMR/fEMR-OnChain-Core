@@ -6,7 +6,6 @@ to check for a valid and authenticated user.
 
 If one is not found, they will direct to the appropriate error page.
 """
-import itertools
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -28,10 +27,7 @@ from .models import (
 
 @silk_profile("get-latest-timestamp")
 def get_latest_timestamp(patient):
-    try:
-        return patient.patientencounter_set.all().order_by("-timestamp")[0].timestamp
-    except IndexError:
-        return patient.timestamp
+    return patient.timestamp
 
 
 @is_authenticated
@@ -46,15 +42,12 @@ def patient_list_view(request):
     try:
         now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
         now = now.astimezone(timezone.get_current_timezone())
-        data = list(
-            Patient.objects.filter(
-                (Q(patientencounter__timestamp__date=now) | Q(timestamp__date=now))
-                & Q(campaign=Campaign.objects.get(name=request.user.current_campaign))
-            )
-        )
+        data = Patient.objects.filter(
+            (Q(patientencounter__timestamp__date=now) | Q(timestamp__date=now))
+            & Q(campaign=Campaign.objects.get(name=request.user.current_campaign))
+        ).order_by("-timestamp")
     except ObjectDoesNotExist:
         data = []
-    data = sorted(data, reverse=True, key=get_latest_timestamp)
     paginator = Paginator(data, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -83,31 +76,35 @@ def patient_csv_export_view(request, timeframe=1):
 
 
 @silk_profile("--run-patient-list-filter-one")
-def __run_patient_list_filter_one(request, campaign):
+def __run_patient_list_filter_one(_, campaign):
     now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
     now = now.astimezone(timezone.get_current_timezone())
     data = Patient.objects.filter(
         Q(campaign=campaign)
         & (Q(patientencounter__timestamp__date=now) | Q(timestamp__date=now))
-    ).distinct()
+    ).order_by("-timestamp")
     return data
 
 
 @silk_profile("--run_timestamp_filter")
 def __run_timestamp_filter(campaign, timestamp_to, timestamp_from):
-    return Patient.objects.filter(
-        Q(campaign=campaign)
-        & (
-            Q(
-                patientencounter__timestamp__gte=timestamp_from,
-                patientencounter__timestamp__lt=timestamp_to,
-            )
-            | Q(
-                timestamp__gte=timestamp_from,
-                timestamp__lt=timestamp_to,
+    return (
+        Patient.objects.filter(
+            Q(campaign=campaign)
+            & (
+                Q(
+                    patientencounter__timestamp__gte=timestamp_from,
+                    patientencounter__timestamp__lt=timestamp_to,
+                )
+                | Q(
+                    timestamp__gte=timestamp_from,
+                    timestamp__lt=timestamp_to,
+                )
             )
         )
-    ).distinct()
+        .order_by("-timestamp")
+        .distinct()
+    )
 
 
 @silk_profile("--run-patient-list-filter-two")
@@ -168,7 +165,9 @@ def __run_patient_list_filter(request):
             data = __run_patient_list_filter_five(request, current_campaign)
         elif request.GET["filter_list"] == "6":
             try:
-                data = Patient.objects.filter(campaign=current_campaign)
+                data = Patient.objects.filter(campaign=current_campaign).order_by(
+                    "-timestamp"
+                )
             except ValueError:
                 data = []
         else:
@@ -188,7 +187,6 @@ def filter_patient_list_view(request):
     :return: HTTPResponse.
     """
     data = __run_patient_list_filter(request)
-    data = sorted(data, reverse=True, key=get_latest_timestamp)
     paginator = Paginator(data, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -222,32 +220,27 @@ def search_patient_list_view(request):
         current_campaign = Campaign.objects.get(name=request.user.current_campaign)
         patients = Patient.objects.filter(campaign=current_campaign)
         data = None
+        break_search = Q()
         for term in request.GET["name_search"].split():
-            data = set(
-                list(
-                    itertools.chain(
-                        patients.filter(
-                            Q(campaign_key__icontains=request.GET["name_search"])
-                            | Q(first_name__icontains=request.GET["name_search"])
-                            | Q(last_name__icontains=request.GET["name_search"])
-                            | Q(phone_number__icontains=request.GET["name_search"])
-                            | Q(
-                                phone_number__icontains=__parse_phone_number(
-                                    request.GET["name_search"]
-                                )
-                            )
-                            | Q(email_address__iexact=request.GET["name_search"])
-                        ),
-                        patients.filter(
-                            Q(first_name__icontains=term) | Q(last_name__icontains=term)
-                        ),
+            break_search |= (Q(first_name__icontains=term) | Q(last_name__icontains=term))
+        data = patients.filter(
+            (
+                Q(campaign_key__icontains=request.GET["name_search"])
+                | Q(first_name__icontains=request.GET["name_search"])
+                | Q(last_name__icontains=request.GET["name_search"])
+                | Q(phone_number__icontains=request.GET["name_search"])
+                | Q(
+                    phone_number__icontains=__parse_phone_number(
+                        request.GET["name_search"]
                     )
                 )
+                | Q(email_address__iexact=request.GET["name_search"])
+                | break_search
             )
+        ).order_by("-timestamp")
         data = data if data is not None else []
     except ObjectDoesNotExist:
         data = []
-    data = sorted(data, reverse=True, key=get_latest_timestamp)
     paginator = Paginator(data, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)

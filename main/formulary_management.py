@@ -1,5 +1,8 @@
 from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
+from django.core.paginator import Paginator
+
+from silk.profiling.profiler import silk_profile
 
 from main.csvio.added_inventory import AddedInventoryHandler
 from main.csvio.initial_inventory import InitialInventoryHandler
@@ -13,18 +16,24 @@ from main.forms import (
 from main.models import Campaign, InventoryEntry
 
 
+@silk_profile("formulary-home-view")
 @is_authenticated
 @is_admin
 def formulary_home_view(request):
     campaign = Campaign.objects.get(name=request.user.current_campaign)
-    formulary = campaign.inventory.entries.all().order_by("medication").iterator()
+    formulary = campaign.inventory.entries.all().order_by("medication")
+    paginator = Paginator(formulary, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
     return render(
         request,
         "formulary/home.html",
-        {"page_name": "Inventory", "list_view": formulary},
+        {"page_name": "Inventory", "list_view": page_obj},
     )
 
 
+@silk_profile("add-supply-view")
+@is_authenticated
 def add_supply_view(request):
     if request.method == "GET":
         form = InventoryEntryForm()
@@ -41,6 +50,7 @@ def add_supply_view(request):
     return return_response
 
 
+@silk_profile("delete-supply-item")
 @is_authenticated
 def delete_supply_item(request, supply_id=None):
     campaign = Campaign.objects.get(name=request.user.current_campaign)
@@ -49,6 +59,7 @@ def delete_supply_item(request, supply_id=None):
     return redirect("main:formulary_home_view")
 
 
+@silk_profile("edit-add-supply-view")
 @is_authenticated
 @is_admin
 def edit_add_supply_view(request, entry_id=None):
@@ -84,6 +95,7 @@ def edit_add_supply_view(request, entry_id=None):
     return return_response
 
 
+@silk_profile("edit-sub-supply-view")
 @is_authenticated
 @is_admin
 def edit_sub_supply_view(request, entry_id=None):
@@ -125,12 +137,14 @@ def edit_sub_supply_view(request, entry_id=None):
     return return_response
 
 
+@silk_profile("csv-handler-view")
 @is_authenticated
 @is_admin
 def csv_handler_view(request):
     return render(request, "formulary/csv_handler.html", {"form": CSVUploadForm()})
 
 
+@silk_profile("csv-import-view")
 @is_authenticated
 @is_admin
 def csv_import_view(request):
@@ -169,11 +183,12 @@ def csv_import_view(request):
     return return_response
 
 
+@silk_profile("csv-export-view")
 @is_authenticated
 @is_admin
 def csv_export_view(request):
     campaign = Campaign.objects.get(name=request.user.current_campaign)
-    formulary = campaign.inventory.entries.all().order_by("medication").iterator()
+    formulary = campaign.inventory.entries.all().order_by("medication")
     return_response = HttpResponse(
         content_type="text/csv",
         headers={"Content-Disposition": 'attachment; filename="formulary.csv"'},

@@ -30,4 +30,8 @@ app.conf.beat_schedule = {
         "task": "main.background_tasks.delete_old_export",
         "schedule": crontab(minute=0, hour=0),
     },
+    "assign_new_timestamp": {
+        "task": "main.background_tasks.assign_new_timestamp",
+        "schedule": crontab(),
+    },
 }

@@ -272,9 +272,7 @@ class Patient(models.Model):
     email_address = models.CharField(max_length=40, null=True, blank=True)
     shared_email_address = models.BooleanField()
 
-    timestamp = models.DateTimeField(
-        auto_now=True, editable=False, null=False, blank=False
-    )
+    timestamp = models.DateTimeField(auto_now=True, null=False, blank=False)
 
     campaign = models.ManyToManyField(Campaign, default=1)
 
