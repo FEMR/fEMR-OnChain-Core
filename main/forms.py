@@ -842,6 +842,7 @@ class InventoryEntryForm(ModelForm):
             "manufacturer": autocomplete.ModelSelect2(
                 url="main:manufacturer-autocomplete"
             ),
+            "expiration_date": DateInputOverride(),
         }
 
 

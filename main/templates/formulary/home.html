@@ -34,6 +34,7 @@
             <th scope="col">Last Edited</th>
             <th scope="col"></th>
             <th scope="col"></th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
@@ -54,6 +55,7 @@
             <td>{{ o.timestamp }}</td>
             <td><a href="{% url 'main:edit_add_supply_view' o.id %}">Add</a></td>
             <td><a href="{% url 'main:edit_sub_supply_view' o.id %}">Remove</a></td>
+            <td><a href="{% url 'main:edit_supply_view' o.id %}">Edit</a></td>
             <td><a href="{% url 'main:delete_supply_item' o.id %}">Delete</a></td>
         </tr>
         {% endfor %}

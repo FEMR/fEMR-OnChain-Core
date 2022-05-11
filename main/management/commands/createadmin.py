@@ -71,3 +71,15 @@ class Command(BaseCommand):
                 user.user_permissions.add(
                     Permission.objects.get(name="Can add medication")
                 )
+                user.user_permissions.add(
+                    Permission.objects.get(name="Can add administration schedule")
+                )
+                user.user_permissions.add(
+                    Permission.objects.get(name="Can add inventory category")
+                )
+                user.user_permissions.add(
+                    Permission.objects.get(name="Can add inventory form")
+                )
+                user.user_permissions.add(
+                    Permission.objects.get(name="Can add manufacturer")
+                )

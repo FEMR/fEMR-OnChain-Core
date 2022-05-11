@@ -49,6 +49,7 @@ from main.formulary_management import (
     delete_supply_item,
     edit_add_supply_view,
     edit_sub_supply_view,
+    edit_supply_view,
     formulary_home_view,
 )
 from main.operation_admin_views import operation_admin_home_view
@@ -415,6 +416,7 @@ urlpatterns = [
     # Formulary Management
     url(r"^formulary_home_view/$", formulary_home_view, name="formulary_home_view"),
     url(r"^add_supply_view/$", add_supply_view, name="add_supply_view"),
+    path(r"edit_supply/<int:entry_id>", edit_supply_view, name="edit_supply_view"),
     path(
         r"edit_add_supply_view/<int:entry_id>",
         edit_add_supply_view,

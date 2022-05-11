@@ -222,7 +222,7 @@ def search_patient_list_view(request):
         data = None
         break_search = Q()
         for term in request.GET["name_search"].split():
-            break_search |= (Q(first_name__icontains=term) | Q(last_name__icontains=term))
+            break_search |= Q(first_name__icontains=term) | Q(last_name__icontains=term)
         data = patients.filter(
             (
                 Q(campaign_key__icontains=request.GET["name_search"])

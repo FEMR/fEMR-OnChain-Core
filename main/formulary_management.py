@@ -1,5 +1,5 @@
 from django.http.response import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 
 from silk.profiling.profiler import silk_profile
@@ -46,6 +46,27 @@ def add_supply_view(request):
         entry.save()
         campaign.inventory.entries.add(entry)
         campaign.save()
+        return_response = render(request, "formulary/formulary_submitted.html")
+    return return_response
+
+
+@silk_profile("edit-supply-view")
+@is_authenticated
+@is_admin
+def edit_supply_view(request, entry_id=None):
+    supply = get_object_or_404(InventoryEntry, pk=entry_id)
+    if request.method == "GET":
+        form = InventoryEntryForm(instance=supply)
+        return_response = render(
+            request,
+            "formulary/edit_supply.html",
+            {"form": form, "supply_id": supply.id},
+        )
+    else:
+        form = InventoryEntryForm(request.POST or None, instance=supply)
+        entry = form.save(commit=False)
+        entry.amount = entry.count * entry.quantity
+        entry.save()
         return_response = render(request, "formulary/formulary_submitted.html")
     return return_response
 

@@ -135,6 +135,15 @@ def __create_user_view_post(request):
             Permission.objects.get(name="Can add chief complaint")
         )
         item.user_permissions.add(Permission.objects.get(name="Can add medication"))
+
+        item.user_permissions.add(
+            Permission.objects.get(name="Can add administration schedule")
+        )
+        item.user_permissions.add(
+            Permission.objects.get(name="Can add inventory category")
+        )
+        item.user_permissions.add(Permission.objects.get(name="Can add inventory form"))
+        item.user_permissions.add(Permission.objects.get(name="Can add manufacturer"))
         item.save()
         DatabaseChangeLog.objects.create(
             action="Create",
