@@ -56,10 +56,11 @@ class Command(BaseCommand):
             Group.objects.get(name="Clinician").user_set.add(superuser)
             Group.objects.get(name="Operation Admin").user_set.add(superuser)
             Group.objects.get(name="Campaign Manager").user_set.add(superuser)
+            Group.objects.get(name="Developer").user_set.add(superuser)
             instance.main_contact = superuser
             instance.save()
         else:
-            for user in fEMRUser.objects.all():
+            for user in fEMRUser.objects.all().iterator():
                 user.user_permissions.add(Permission.objects.get(name="Can add state"))
                 user.user_permissions.add(
                     Permission.objects.get(name="Can add diagnosis")
@@ -69,4 +70,16 @@ class Command(BaseCommand):
                 )
                 user.user_permissions.add(
                     Permission.objects.get(name="Can add medication")
+                )
+                user.user_permissions.add(
+                    Permission.objects.get(name="Can add administration schedule")
+                )
+                user.user_permissions.add(
+                    Permission.objects.get(name="Can add inventory category")
+                )
+                user.user_permissions.add(
+                    Permission.objects.get(name="Can add inventory form")
+                )
+                user.user_permissions.add(
+                    Permission.objects.get(name="Can add manufacturer")
                 )

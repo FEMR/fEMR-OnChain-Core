@@ -108,5 +108,4 @@ def test_switch_campaign():
     campaign = u.current_campaign
     u.delete()
     assert return_response.status_code == 200
-    print(campaign)
     assert campaign == c.name

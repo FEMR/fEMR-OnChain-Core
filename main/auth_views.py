@@ -17,11 +17,9 @@ from django.utils import timezone
 from silk.profiling.profiler import silk_profile
 
 from main.background_tasks import (
-    check_admin_permission,
-    reset_sessions,
     check_browser,
-    run_user_deactivate,
 )
+from main.decorators import is_admin, is_authenticated
 from main.femr_admin_views import get_client_ip
 from main.forms import RegisterForm, LoginForm
 from main.models import AuditEntry, UserSession, fEMRUser
@@ -30,6 +28,7 @@ from main.models import AuditEntry, UserSession, fEMRUser
 @silk_profile("register_post")
 def __register_post(request):
     form = RegisterForm(request.POST)
+    error = ""
     if form.is_valid():
         try:
             try:
@@ -45,19 +44,24 @@ def __register_post(request):
             user.first_name = form.cleaned_data["first"]
             user.last_name = form.cleaned_data["last"]
             login(request, user)
-            return_response = redirect("/thanks")
         except IntegrityError:
             error = "An account already exists using that username."
         except MultipleObjectsReturned:
             error = "An account already exists with that email address."
         except DataError as data_error:
             error = str(data_error)
-        return_response = render(
-            request, "auth/register.html", {"form": RegisterForm(), "error": error}
-        )
+        finally:
+            if error != "":
+                return_response = render(
+                    request,
+                    "auth/register.html",
+                    {"form": RegisterForm(), "error": error},
+                )
+            else:
+                return_response = redirect("/thanks")
     else:
         return_response = render(
-            request, "auth/register.html", {"form": RegisterForm(), "error": ""}
+            request, "auth/register.html", {"form": form, "error": error}
         )
     return return_response
 
@@ -154,8 +158,8 @@ def __login_view_post_success(request, user):
             },
         )
     elif len(user.campaigns.all()) == 1 and not user.campaigns.all()[0].active:
-        is_admin = request.user.groups.filter(name="fEMR Admin").exists()
-        if not is_admin:
+        user_is_admin = request.user.groups.filter(name="fEMR Admin").exists()
+        if not user_is_admin:
             return_response = redirect("main:all_locked")
         else:
             request.user.current_campaign = "RECOVERY MODE"
@@ -233,8 +237,6 @@ def login_view(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    reset_sessions()
-    run_user_deactivate()
     if not check_browser(request):
         return_response = render(request, "data/stop.html")
     elif request.user.is_authenticated:
@@ -269,6 +271,7 @@ def logout_view(request):
     return return_response
 
 
+@is_authenticated
 @silk_profile("change-password")
 def change_password(request):
     """
@@ -277,31 +280,39 @@ def change_password(request):
     :param request: Django request object. Provided by the URLS config.
     :return: Renders the change_password page as an HTTPResponse.
     """
-    error = ""
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            form = PasswordChangeForm(request.user, request.POST)
-            if form.is_valid():
-                user = form.save()
-                update_session_auth_hash(request, user)
-                user.change_password = False
-                user.password_reset_last = timezone.now()
-                user.save()
-                return_response = redirect("main:index")
-            else:
-                error = "Something went wrong."
+    if request.method == "POST":
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            user.change_password = False
+            user.password_reset_last = timezone.now()
+            user.save()
+            return_response = redirect("main:index")
         else:
-            form = PasswordChangeForm(request.user)
+            return_response = render(
+                request,
+                "auth/change_password.html",
+                {
+                    "user": request.user,
+                    "form": form,
+                    "error_message": "Something went wrong.",
+                },
+            )
+    else:
         return_response = render(
             request,
             "auth/change_password.html",
-            {"user": request.user, "form": form, "error_message": error},
+            {
+                "user": request.user,
+                "form": PasswordChangeForm(request.user),
+                "error_message": "",
+            },
         )
-    else:
-        return_response = redirect("main:not_logged_in")
     return return_response
 
 
+@is_authenticated
 @silk_profile("required-change-password")
 def required_change_password(request):
     """
@@ -310,51 +321,44 @@ def required_change_password(request):
     :param request: Django request object. Provided by the URLS config.
     :return: Renders the change_password page as an HTTPResponse.
     """
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            form = PasswordChangeForm(request.user, request.POST)
-            if form.is_valid():
-                user = form.save()
-                update_session_auth_hash(request, user)
-                user.change_password = False
-                user.password_reset_last = timezone.now()
-                user.save()
-                return_response = redirect("main:home")
-            else:
-                return_response = render(
-                    request,
-                    "auth/required_change_password.html",
-                    {
-                        "user": request.user,
-                        "form": form,
-                        "error_message": "Something went wrong.",
-                    },
-                )
+    if request.method == "POST":
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            user.change_password = False
+            user.password_reset_last = timezone.now()
+            user.save()
+            return_response = redirect("main:home")
         else:
-            form = PasswordChangeForm(request.user)
             return_response = render(
                 request,
                 "auth/required_change_password.html",
-                {"user": request.user, "form": form, "error_message": ""},
+                {
+                    "user": request.user,
+                    "form": form,
+                    "error_message": "Something went wrong.",
+                },
             )
     else:
-        return_response = redirect("main:not_logged_in")
+        form = PasswordChangeForm(request.user)
+        return_response = render(
+            request,
+            "auth/required_change_password.html",
+            {"user": request.user, "form": form, "error_message": ""},
+        )
     return return_response
 
 
+@is_authenticated
+@is_admin
 @silk_profile("reset-lockouts")
 def reset_lockouts(request, username=None):
-    if request.user.is_authenticated:
-        if check_admin_permission(request.user):
-            if username is not None:
-                reset(username=username)
-                return_response = render(
-                    request, "admin/user_reset_success.html", {"username": username}
-                )
-            else:
-                return_response = render(request, "admin/user_reset_no_success.html")
-        else:
-            return_response = redirect("main:permission_denied")
+    if username is not None:
+        reset(username=username)
+        return_response = render(
+            request, "admin/user_reset_success.html", {"username": username}
+        )
     else:
-        return_response = redirect("main:not_logged_in")
+        return_response = render(request, "admin/user_reset_no_success.html")
     return return_response

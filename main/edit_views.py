@@ -195,7 +195,7 @@ def __encounter_edit_form_post(request, patient_id, encounter_id):
     encounter = get_object_or_404(PatientEncounter, pk=encounter_id)
     patient = get_object_or_404(Patient, pk=patient_id)
     units = Campaign.objects.get(name=request.user.current_campaign).units
-    photos = list(encounter.photos.all())
+    photos = encounter.photos.all().iterator()
     treatments = Treatment.objects.filter(encounter=encounter)
     form = PatientEncounterForm(request.POST or None, instance=encounter, unit=units)
     if form.is_valid():
@@ -468,7 +468,7 @@ def __treatment_view_post(request, encounter):
             treatment.amount = 1
         treatment.save()
         treatment_form.save_m2m()
-        for item in treatment.medication.all():
+        for item in treatment.medication.all().iterator():
             item.amount -= treatment.amount
             if item.count > 0:
                 item.quantity = math.ceil(item.amount / item.count)
@@ -821,7 +821,7 @@ def __hpi_view_post(request, patient_id, encounter_id):
     vitals = Vitals.objects.filter(encounter=encounter)
     treatments = Treatment.objects.filter(encounter=encounter)
     hpis = []
-    for query_item in encounter.chief_complaint.all():
+    for query_item in encounter.chief_complaint.all().iterator():
         hpi_object = HistoryOfPresentIllness.objects.get_or_create(
             encounter=encounter, chief_complaint=query_item
         )[0]

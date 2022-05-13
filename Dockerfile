@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM amd64/ubuntu:latest
 
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update -y && \
@@ -10,10 +10,9 @@ RUN DEBIAN_FRONTEND=noninteractive \
                     libmemcached-dev \
                     virtualenv libpq-dev -y && \
     apt-get upgrade -y
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get install nodejs -y
 RUN pip install sphinx
-RUN apt-get update && apt-get install -y dos2unix
 
 COPY requirements.txt /opt/app/requirements.txt
 RUN mkdir /opt/app/static

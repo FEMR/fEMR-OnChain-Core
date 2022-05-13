@@ -6,47 +6,76 @@
 <a class="btn btn-primary" href="{% url 'main:add_supply_view' %}">Add New</a>
 <a class="btn btn-primary" href="{% url 'main:csv_handler_view' %}">Import CSV</a>
 <a class="btn btn-primary" href="{% url 'main:csv_export_view' %}" target="_blank">Export CSV</a>
+<style>
+    table {
+        display: block;
+        max-width: -moz-fit-content;
+        max-width: fit-content;
+        margin: 0 auto;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+</style>
 <table class="table">
     <thead>
-    <tr>
-        <th scope="col"></th>
-        <th scope="col">Category</th>
-        <th scope="col">Name</th>
-        <th scope="col">Form</th>
-        <th scope="col">Strength</th>
-        <th scope="col">Count</th>
-        <th scope="col">Quantity</th>
-        <th scope="col">Amount</th>
-        <th scope="col">Item #</th>
-        <th scope="col">Box #</th>
-        <th scope="col">Expiration Date</th>
-        <th scope="col">Manufacturer</th>
-        <th scope="col">Last Edited</th>
-        <th scope="col"></th>
-        <th scope="col"></th>
-    </tr>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Category</th>
+            <th scope="col">Name</th>
+            <th scope="col">Form</th>
+            <th scope="col">Strength</th>
+            <th scope="col">Count</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Item #</th>
+            <th scope="col">Box #</th>
+            <th scope="col">Expiration Date</th>
+            <th scope="col">Manufacturer</th>
+            <th scope="col">Last Edited</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
     </thead>
     <tbody>
-    {% for o in list_view %}
-    <tr>
-        <td>{{ o.id }}</td>
-        <td>{{ o.category }}</td>
-        <td>{{ o.medication }}</td>
-        <td>{{ o.form }}</td>
-        <td>{{ o.strength }} {{ o.strength_unit }}</td>
-        <td>{{ o.count }} {{ o.count_unit }}</td>
-        <td>{{ o.quantity }} {{ o.quantity_unit }}</td>
-        <td>{{ o.amount }} {{ o.count_unit }}</td>
-        <td>{{ o.item_number }}</td>
-        <td>{{ o.box_number }}</td>
-        <td>{{ o.expiration_date }}</td>
-        <td>{{ o.manufacturer }}</td>
-        <td>{{ o.timestamp }}</td>
-        <td><a href="{% url 'main:edit_add_supply_view' o.id %}">Add</a></td>
-        <td><a href="{% url 'main:edit_sub_supply_view' o.id %}">Remove</a></td>
-        <td><a href="{% url 'main:delete_supply_item' o.id %}">Delete</a></td>
-    </tr>
-    {% endfor %}
+        {% for o in list_view %}
+        <tr>
+            <td>{{ o.id }}</td>
+            <td>{{ o.category }}</td>
+            <td>{{ o.medication }}</td>
+            <td>{{ o.form }}</td>
+            <td>{{ o.strength }} {{ o.strength_unit }}</td>
+            <td>{{ o.count }} {{ o.count_unit }}</td>
+            <td>{{ o.quantity }} {{ o.quantity_unit }}</td>
+            <td>{{ o.amount }} {{ o.count_unit }}</td>
+            <td>{{ o.item_number }}</td>
+            <td>{{ o.box_number }}</td>
+            <td>{{ o.expiration_date }}</td>
+            <td>{{ o.manufacturer }}</td>
+            <td>{{ o.timestamp }}</td>
+            <td><a href="{% url 'main:edit_add_supply_view' o.id %}">Add</a></td>
+            <td><a href="{% url 'main:edit_sub_supply_view' o.id %}">Remove</a></td>
+            <td><a href="{% url 'main:edit_supply_view' o.id %}">Edit</a></td>
+            <td><a href="{% url 'main:delete_supply_item' o.id %}">Delete</a></td>
+        </tr>
+        {% endfor %}
     </tbody>
+    <div class="pagination">
+        <span class="step-links">
+               {% if list_view.has_previous %}
+               <a href="?page=1">&laquo; first</a>
+               <a href="?page={{ list_view.previous_page_number }}">previous</a>
+               {% endif %}
+
+               <span class="current">
+                      Page {{ list_view.number }} of {{ list_view.paginator.num_pages }}.
+               </span>
+
+               {% if list_view.has_next %}
+               <a href="?page={{ list_view.next_page_number }}">next</a>
+               <a href="?page={{ list_view.paginator.num_pages }}">last &raquo;</a>
+               {% endif %}
+        </span>
+    </div>
 </table>
 {% endblock %}

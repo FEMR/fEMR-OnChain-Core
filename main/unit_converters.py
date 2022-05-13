@@ -11,7 +11,7 @@ def history_view_imperial(form, encounter):
         "history_of_hypertension": encounter.history_of_hypertension,
         "history_of_high_cholesterol": encounter.history_of_high_cholesterol,
         "alcohol": encounter.alcohol,
-        "chief_complaint": [c.pk for c in encounter.chief_complaint.all()],
+        "chief_complaint": [c.pk for c in encounter.chief_complaint.all().iterator()],
         "patient_history": encounter.patient_history,
         "community_health_worker_notes": encounter.community_health_worker_notes,
         "body_height_primary": math.floor(
@@ -46,7 +46,7 @@ def new_vitals_imperial(form, encounter):
         "history_of_high_cholesterol": encounter.history_of_high_cholesterol,
         "alcohol": encounter.alcohol,
         "chief_complaint": [
-            complaint.pk for complaint in encounter.chief_complaint.all()
+            complaint.pk for complaint in encounter.chief_complaint.all().iterator()
         ],
         "patient_history": encounter.patient_history,
         "community_health_worker_notes": encounter.community_health_worker_notes,
@@ -78,7 +78,7 @@ def new_diagnosis_imperial(form, encounter):
         "history_of_hypertension": encounter.history_of_hypertension,
         "history_of_high_cholesterol": encounter.history_of_high_cholesterol,
         "alcohol": encounter.alcohol,
-        "chief_complaint": [c.pk for c in encounter.chief_complaint.all()],
+        "chief_complaint": [c.pk for c in encounter.chief_complaint.all().iterator()],
         "patient_history": encounter.patient_history,
         "community_health_worker_notes": encounter.community_health_worker_notes,
         "body_height_primary": math.floor(
@@ -112,7 +112,7 @@ def encounter_update_form_initial_imperial(form, encounter):
         "history_of_hypertension": encounter.history_of_hypertension,
         "history_of_high_cholesterol": encounter.history_of_high_cholesterol,
         "alcohol": encounter.alcohol,
-        "chief_complaint": [c.pk for c in encounter.chief_complaint.all()],
+        "chief_complaint": [c.pk for c in encounter.chief_complaint.all().iterator()],
         "patient_history": encounter.patient_history,
         "community_health_worker_notes": encounter.community_health_worker_notes,
         "body_height_primary": math.floor(
@@ -171,7 +171,7 @@ def new_treatment_imperial(form, encounter):
         "history_of_hypertension": encounter.history_of_hypertension,
         "history_of_high_cholesterol": encounter.history_of_high_cholesterol,
         "alcohol": encounter.alcohol,
-        "chief_complaint": [c.pk for c in encounter.chief_complaint.all()],
+        "chief_complaint": [c.pk for c in encounter.chief_complaint.all().iterator()],
         "patient_history": encounter.patient_history,
         "community_health_worker_notes": encounter.community_health_worker_notes,
         "body_height_primary": math.floor(
@@ -204,7 +204,7 @@ def aux_form_imperial(form, encounter):
         "history_of_hypertension": encounter.history_of_hypertension,
         "history_of_high_cholesterol": encounter.history_of_high_cholesterol,
         "alcohol": encounter.alcohol,
-        "chief_complaint": [c.pk for c in encounter.chief_complaint.all()],
+        "chief_complaint": [c.pk for c in encounter.chief_complaint.all().iterator()],
         "patient_history": encounter.patient_history,
         "community_health_worker_notes": encounter.community_health_worker_notes,
         "body_height_primary": math.floor(

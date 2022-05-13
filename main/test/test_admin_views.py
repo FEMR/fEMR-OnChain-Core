@@ -44,7 +44,6 @@ def test_permission_denied_account_reset():
         email="logintestinguseremail2@email.com",
     )
     u.change_password = False
-    Group.objects.get_or_create(name="fEMR Admin")[0].user_set.add(u)
     c = baker.make("main.Campaign")
     c.active = True
     c.save()
@@ -237,7 +236,65 @@ def test_create_user():
     assert "Changes successfully submitted." in str(return_response.content)
 
 
-def test_permission_denied_account_reset():
+def test_filter_audit_logs_view():
+    u = fEMRUser.objects.create_user(
+        username="testfilterauditlogsview",
+        password="testingpassword",
+        email="hometestinguseremail@email.com",
+    )
+    u.change_password = False
+    Group.objects.get_or_create(name="Clinician")[0]
+    Group.objects.get_or_create(name="Campaign Manager")[0].user_set.add(u)
+    Group.objects.get_or_create(name="fEMR Admin")[0].user_set.add(u)
+    c = baker.make("main.Campaign")
+    c.active = True
+    c.save()
+    u.campaigns.add(c)
+    u.save()
+    client = Client()
+    client.post(
+        "/login_view/",
+        {"username": "testfilterauditlogsview", "password": "testingpassword"},
+    )
+    return_response = client.get(
+        path="/filter_audit_logs_view/",
+        data={
+            "filter_list": "2",
+            "date_filter_day": "",
+            "date_filter_start": "",
+            "date_filter_end": "",
+        },
+    )
+    u.delete()
+    assert return_response.status_code == 200
+
+
+def test_add_users_to_campaign_view():
+    u = fEMRUser.objects.create_user(
+        username="testadduserstocampainview",
+        password="testingpassword",
+        email="testadduserstocampainview@email.com",
+    )
+    u.change_password = False
+    Group.objects.get_or_create(name="Clinician")[0]
+    Group.objects.get_or_create(name="Campaign Manager")[0].user_set.add(u)
+    Group.objects.get_or_create(name="fEMR Admin")[0].user_set.add(u)
+    c = baker.make("main.Campaign")
+    c.active = True
+    c.save()
+    u.campaigns.add(c)
+    u.save()
+    client = Client()
+    client.post(
+        "/login_view/",
+        {"username": "testadduserstocampainview", "password": "testingpassword"},
+    )
+    return_response = client.get(path="/add_users_to_campaign")
+    u.delete()
+    assert return_response.status_code == 200
+
+
+def test_permission_denied_account_reset_lockouts():
     client = Client()
     return_response = client.get(
         reverse("main:reset_lockouts", kwargs={"username": "test2"})

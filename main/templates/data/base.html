@@ -100,6 +100,8 @@
                         {% if request.user|has_group:"fEMR Admin" %}
                         <a class="dropdown-item" href="{% url 'main:femr_admin_home' %}">fEMR Admin</a>
                         <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'main:femr_admin_dashboard_view' %}">fEMR Metrics Dashboard</a>
+                        <div class="dropdown-divider"></div>
                         {% endif %}
                         {% if request.user|has_group:"Organization Admin" %}
                         <a class="dropdown-item" href="{% url 'main:organization_admin_home_view' %}">Organization
@@ -112,6 +114,12 @@
                         {% endif %}
                         {% if request.user|has_group:"Campaign Manager" %}
                         <a class="dropdown-item" href="{% url 'main:superuser_home' %}">Campaign Manager</a>
+                        <div class="dropdown-divider"></div>
+                        {% endif %}
+                        {% if request.user|has_group:"Developer" %}
+                        <a class="dropdown-item" href="/admin">Developer Admin</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/silk">Performance Monitoring</a>
                         <div class="dropdown-divider"></div>
                         {% endif %}
                     </div>
@@ -158,7 +166,7 @@
                     Find a bug or problem? <a href="{% url 'app_mr:index' %}">Let us know.</a>
                 </div>
                 <div class="col-sm-12 col-md-4 text-center">
-                    v1.5.3
+                    v1.6.0
                 </div>
                 <div class="col-sm-12 col-md-4">
                     <a href="https://github.com/FEMR/fEMR-OnChain-Core/wiki" target="_blank">fEMR On-Chain Wiki | </a>

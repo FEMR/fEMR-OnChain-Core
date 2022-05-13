@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     "crispy_forms",
     "axes",
     "session_security",
-    "background_task",
     "drf_yasg",
     "django_user_agents",
     "django_nose",
@@ -319,7 +318,7 @@ SILKY_PERMISSIONS = lambda user: user.is_superuser
 SILKY_MAX_RESPONSE_BODY_SIZE = 1024
 SILKY_META = True
 SILKY_INTERCEPT_PERCENT = 50
-SILKY_MAX_RECORDED_REQUESTS = 10**4
+SILKY_MAX_RECORDED_REQUESTS = 10**3
 SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 10
 
 CELERY_BROKER_URL = "redis://redis:6379"

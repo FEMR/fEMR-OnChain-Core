@@ -33,6 +33,7 @@ from main.admin_views import (
     update_user_password_view,
 )
 from main.csvio.patient_csv_export import csv_export_list, fetch_csv_export
+from main.dashboard_views import femr_admin_dashboard_view
 from main.delete_views import (
     delete_chief_complaint,
     delete_treatment_view,
@@ -48,6 +49,7 @@ from main.formulary_management import (
     delete_supply_item,
     edit_add_supply_view,
     edit_sub_supply_view,
+    edit_supply_view,
     formulary_home_view,
 )
 from main.operation_admin_views import operation_admin_home_view
@@ -164,7 +166,7 @@ app_name = "main"
 schema_view = get_schema_view(
     openapi.Info(
         title="fEMR OnChain API",
-        default_version="v1.5.3",
+        default_version="v1.6.0",
         description="API endpoints providing an interface with the fEMR OnChain application.",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="info@teamfemr.org"),
@@ -316,8 +318,8 @@ urlpatterns = [
         chief_complaint_list_view,
         name="chief_complaint_list_view",
     ),
-    url(
-        r"^patient_csv_export_view/$",
+    path(
+        r"patient_csv_export_view/<int:timeframe>",
         patient_csv_export_view,
         name="patient_csv_export_view",
     ),
@@ -414,6 +416,7 @@ urlpatterns = [
     # Formulary Management
     url(r"^formulary_home_view/$", formulary_home_view, name="formulary_home_view"),
     url(r"^add_supply_view/$", add_supply_view, name="add_supply_view"),
+    path(r"edit_supply/<int:entry_id>", edit_supply_view, name="edit_supply_view"),
     path(
         r"edit_add_supply_view/<int:entry_id>",
         edit_add_supply_view,
@@ -508,6 +511,11 @@ urlpatterns = [
     ),
     url(r"^forgot_username", forgot_username, name="forgot_username"),
     url(r"^help_messages_off", help_messages_off, name="help_messages_off"),
+    url(
+        r"^femr_admin_dashboard_view",
+        femr_admin_dashboard_view,
+        name="femr_admin_dashboard_view",
+    ),
     url(
         r"^diagnosis-autocomplete/$",
         DiagnosisAutocomplete.as_view(create_field="text"),

@@ -3,10 +3,10 @@ This file contains a single function which handles exporting
 patient records as CSV files.
 """
 import csv
-from datetime import datetime
 from io import StringIO
 import math
 import os
+from datetime import datetime, timedelta
 
 from celery import shared_task
 from silk.profiling.profiler import silk_profile
@@ -16,6 +16,11 @@ from django.http.response import HttpResponse
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.core.files.base import ContentFile
+from django.core.paginator import Paginator
+from django.core.mail import send_mail
+from django.db.models import Q
+from django.utils import timezone
+
 from clinic_messages.models import Message
 
 from main.background_tasks import check_admin_permission
@@ -76,14 +81,14 @@ def dict_builder(patient_data, vitals_dict, treatments_dict, hpis_dict):
     max_treatments = 0
     max_hpis = 0
     max_vitals = 0
-    for _, encounters in patient_data.items():
-        for encounter in encounters:
-            vitals = list(encounter.vitals_set.all())
-            vitals_count = len(vitals)
-            treatments = list(encounter.treatment_set.all())
-            treatments_count = len(treatments)
-            hpis = list(encounter.historyofpresentillness_set.all())
-            hpis_count = len(hpis)
+    for patient in patient_data:
+        for encounter in patient.patientencounter_set.all():
+            vitals = encounter.vitals_set.all()
+            vitals_count = vitals.count()
+            treatments = encounter.treatment_set.all()
+            treatments_count = treatments.count()
+            hpis = encounter.historyofpresentillness_set.all()
+            hpis_count = hpis.count()
 
             vitals_dict[encounter] = (vitals, vitals_count)
             treatments_dict[encounter] = (treatments, treatments_count)
@@ -219,8 +224,6 @@ def write_result_file(writer, title_row, patient_rows):
 def patient_processing_loop(
     patient_data,
     patient_rows,
-    campaign_time_zone,
-    campaign_time_zone_b,
     campaign,
     vitals_dict,
     max_vitals,
@@ -229,9 +232,11 @@ def patient_processing_loop(
     hpis_dict,
     max_hpis,
 ):
+    campaign_time_zone = pytz_timezone(campaign.timezone)
+    campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
     export_id = 1
-    for patient, encounters in patient_data.items():
-        for encounter in encounters:
+    for patient in patient_data:
+        for encounter in patient.patientencounter_set.all():
             row = [
                 export_id,
                 patient.sex_assigned_at_birth,
@@ -268,11 +273,50 @@ def patient_processing_loop(
             extend_hpis_list(row, hpis_dict[encounter], max_hpis)
             patient_rows.append(row)
         export_id += 1
+    return len(patient_rows)
+
+
+@silk_profile("--filter-patients-by-week")
+def __filter_patients_by_week(campaign):
+    timestamp_from = timezone.now() - timedelta(days=7)
+    timestamp_to = timezone.now()
+    return Patient.objects.filter(
+        Q(campaign=campaign)
+        & (
+            Q(
+                patientencounter__timestamp__gte=timestamp_from,
+                patientencounter__timestamp__lt=timestamp_to,
+            )
+            | Q(
+                timestamp__gte=timestamp_from,
+                timestamp__lt=timestamp_to,
+            )
+        )
+    ).distinct()
+
+
+@silk_profile("--filter-patients-by-month")
+def __filter_patients_by_month(campaign):
+    timestamp_from = timezone.now() - timedelta(days=30)
+    timestamp_to = timezone.now()
+    return Patient.objects.filter(
+        Q(campaign=campaign)
+        & (
+            Q(
+                patientencounter__timestamp__gte=timestamp_from,
+                patientencounter__timestamp__lt=timestamp_to,
+            )
+            | Q(
+                timestamp__gte=timestamp_from,
+                timestamp__lt=timestamp_to,
+            )
+        )
+    ).distinct()
 
 
 @shared_task
 @silk_profile("csv-export-handler")
-def csv_export_handler(user_id, campaign_id):
+def csv_export_handler(user_id, campaign_id, timeframe):
     campaign = Campaign.objects.get(pk=campaign_id)
     export_file = StringIO()
     writer = csv.writer(export_file)
@@ -298,12 +342,12 @@ def csv_export_handler(user_id, campaign_id):
         "Current Medications",
         "Family History",
     ]
-    patient_data = {
-        patient: list(patient.patientencounter_set.all())
-        for patient in Patient.objects.filter(campaign=campaign)
-    }
-    campaign_time_zone = pytz_timezone(campaign.timezone)
-    campaign_time_zone_b = datetime.now(tz=campaign_time_zone).strftime("%Z%z")
+    if timeframe == 2:
+        patient_data = __filter_patients_by_week(campaign)
+    elif timeframe == 3:
+        patient_data = __filter_patients_by_month(campaign)
+    else:
+        patient_data = Patient.objects.filter(campaign=campaign)
     patient_rows = []
     vitals_dict = {}
     treatments_dict = {}
@@ -314,8 +358,6 @@ def csv_export_handler(user_id, campaign_id):
     patient_processing_loop(
         patient_data,
         patient_rows,
-        campaign_time_zone,
-        campaign_time_zone_b,
         campaign,
         vitals_dict,
         max_vitals,
@@ -328,11 +370,14 @@ def csv_export_handler(user_id, campaign_id):
     write_result_file(writer, title_row, patient_rows)
     user = fEMRUser.objects.get(pk=user_id)
     export = CSVExport()
-    csv_file = ContentFile(export_file.getvalue().encode("utf-8"))
-    export.file.save(f"patient-export-{campaign.name}-{datetime.now()}.csv", csv_file)
+    export.file.save(
+        f"patient-export-{campaign.name}-{datetime.now()}.csv",
+        ContentFile(export_file.getvalue().encode("utf-8")),
+    )
     export.user = user
+    export.campaign = campaign
     export.save()
-    Message.objects.create(
+    message = Message.objects.create(
         subject="CSV Export Finished",
         content="""
         This message is to let you know that the CSV export you began has finished. You can go back to the View Finished Exports page to download it.
@@ -340,6 +385,14 @@ def csv_export_handler(user_id, campaign_id):
         sender=fEMRUser.objects.get(username="admin"),
         recipient=user,
     )
+    if os.environ.get("DEFAULT_FROM_EMAIL", None) is not None:
+        send_mail(
+            f"Message from {message.sender}",
+            # pylint: disable=C0301
+            f"{message.content}\n\n\nTHIS IS AN AUTOMATED MESSAGE. PLEASE DO NOT REPLY TO THIS EMAIL. PLEASE LOG IN TO REPLY.",
+            os.environ.get("DEFAULT_FROM_EMAIL"),
+            [message.recipient.email],
+        )
 
 
 @silk_profile("csv-export-list")
@@ -347,8 +400,11 @@ def csv_export_list(request):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
             exports = CSVExport.objects.filter(user=request.user).order_by("-id")
+            paginator = Paginator(exports, 10)
+            page_number = request.GET.get("page")
+            page_obj = paginator.get_page(page_number)
             return_response = render(
-                request, "admin/export_list.html", {"exports": exports}
+                request, "admin/export_list.html", {"exports": page_obj}
             )
         else:
             return_response = redirect("main:permission_denied")
@@ -376,14 +432,14 @@ def fetch_csv_export(request, export_id=None):
 
 
 @silk_profile("run-patient-csv-export")
-def run_patient_csv_export(request):
+def run_patient_csv_export(request, timeframe=1):
     if request.user.is_authenticated:
         if check_admin_permission(request.user):
             campaign = Campaign.objects.get(name=request.user.current_campaign)
-            csv_export_handler.delay(request.user.pk, campaign.id)
+            csv_export_handler.delay(request.user.pk, campaign.id, timeframe)
             messages.info(
                 request,
-                "We're building your CSV - you'll receive a message once it's done.",
+                "We're building your CSV - you'll receive a message once it's done. This may take up to 10 minutes.",
             )
             return_response = render(
                 request, "admin/home.html", {"user": request.user, "page_name": "Admin"}

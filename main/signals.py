@@ -26,6 +26,7 @@ def user_logged_in_callback(sender, request, user, **kwargs):
         username=user.username,
         campaign=campaign,
         browser_user_agent=request.user_agent.browser.family,
+        system_user_agent=request.user_agent.os.family,
     )
 
 
@@ -44,6 +45,7 @@ def user_logged_out_callback(sender, request, user, **kwargs):
             username=user.username,
             campaign=campaign,
             browser_user_agent=request.user_agent.browser.family,
+            system_user_agent=request.user_agent.os.family,
         )
     except AttributeError:
         pass
@@ -71,7 +73,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 @receiver(ticket_activity)
 def handle_ticket_activity(sender, ticket, **kwargs):
     ticket = SupportTicket.objects.get(pk=ticket)
-    for user in Group.objects.get(name="Developer").user_set.all():
+    for user in Group.objects.get(name="Developer").user_set.all().iterator():
         Message.objects.create(
             subject="Ticket Update",
             content=f"This message is to let you know that an update was posted to ticket {ticket.id}. Use the Let Us Know link to view the new information.",

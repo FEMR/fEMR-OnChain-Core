@@ -272,9 +272,7 @@ class Patient(models.Model):
     email_address = models.CharField(max_length=40, null=True, blank=True)
     shared_email_address = models.BooleanField()
 
-    timestamp = models.DateTimeField(
-        auto_now=True, editable=False, null=False, blank=False
-    )
+    timestamp = models.DateTimeField(auto_now=True, null=False, blank=False)
 
     campaign = models.ManyToManyField(Campaign, default=1)
 
@@ -371,7 +369,11 @@ class CSVExport(models.Model):
     user = models.ForeignKey(
         "fEMRUser", on_delete=models.CASCADE, blank=True, null=True
     )
+    campaign = models.ForeignKey(
+        "Campaign", on_delete=models.CASCADE, blank=True, null=True
+    )
     file = models.FileField(upload_to="export/")
+    timestamp = models.DateTimeField(auto_now=True, editable=False)
 
 
 class PatientEncounter(models.Model):
@@ -665,6 +667,7 @@ class AuditEntry(models.Model):
         Campaign, on_delete=models.CASCADE, blank=True, null=True
     )
     browser_user_agent = models.CharField(max_length=256, null=True)
+    system_user_agent = models.CharField(max_length=256, null=True)
 
     def __str__(self):
         return f"{self.action} - {self.username} - {self.ip} - {self.timestamp} - {self.campaign}"

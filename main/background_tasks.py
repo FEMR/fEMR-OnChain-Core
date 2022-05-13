@@ -2,7 +2,8 @@
 Non-view functions used to carry out background processes.
 """
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime
+from celery import shared_task
 
 from django.db.models.query_utils import Q
 from django.utils import timezone
@@ -11,6 +12,7 @@ from django.core.mail import send_mail
 from silk.profiling.profiler import silk_profile
 
 from main.models import (
+    CSVExport,
     Campaign,
     Patient,
     PatientEncounter,
@@ -20,26 +22,29 @@ from main.models import (
 )
 
 
+@shared_task
 @silk_profile("run-encounter-close")
-def run_encounter_close(campaign: Campaign):
+def run_encounter_close():
     """
     When triggered, this function will search for expired PatientEncounter
     objects and set them as inactive.
     """
     now = timezone.now()
 
-    close_time = campaign.encounter_close
-    delta = now - timedelta(days=close_time)
+    for campaign in Campaign.objects.all().iterator():
+        close_time = campaign.encounter_close
+        delta = now - timedelta(days=close_time)
 
-    patients = Patient.objects.filter(campaign=campaign)
-    encounters = PatientEncounter.objects.filter(
-        Q(patient__in=patients) & Q(active=True) & Q(timestamp__lt=delta)
-    )
-    for encounter in encounters:
-        encounter.active = False
-        encounter.save_no_timestamp()
+        patients = Patient.objects.filter(campaign=campaign)
+        encounters = PatientEncounter.objects.filter(
+            Q(patient__in=patients) & Q(active=True) & Q(timestamp__lt=delta)
+        )
+        for encounter in encounters:
+            encounter.active = False
+            encounter.save_no_timestamp()
 
 
+@shared_task
 @silk_profile("run-user-deactivate")
 def run_user_deactivate(now=timezone.now()):
     """
@@ -65,6 +70,7 @@ def run_user_deactivate(now=timezone.now()):
             user.save()
 
 
+@shared_task
 @silk_profile("reset-sessions")
 def reset_sessions() -> None:
     """
@@ -73,9 +79,8 @@ def reset_sessions() -> None:
     """
     now = timezone.now()
     delta = now - timedelta(minutes=1)
-    for session in UserSession.objects.all():
-        if session.timestamp < delta:
-            session.delete()
+    for session in UserSession.objects.filter(timestamp__lt=delta):
+        session.delete()
 
 
 @silk_profile("check-browser")
@@ -104,14 +109,17 @@ def check_admin_permission(user):
     :param user: A user to check for permissions.
     :return: Whether the user is in an administrative group.
     """
-    return user.groups.filter(
-        Q(name="fEMR Admin")
-        | Q(name="Campaign Manager")
-        | Q(name="Organization Admin")
-        | Q(name="Operation Admin")
-    ).exists()
+    admin_groups = {
+        "fEMR Admin",
+        "Campaign Manager",
+        "Organization Admin",
+        "Operation Admin",
+    }
+    user_groups = {group.name for group in user.groups.all().iterator()}
+    return admin_groups.intersection(user_groups)
 
 
+@shared_task
 @silk_profile("assign-broken-patients")
 def assign_broken_patient():
     """
@@ -122,4 +130,27 @@ def assign_broken_patient():
     """
     for patient in Patient.objects.filter(campaign_key=None):
         patient.campaign_key = cal_key(patient.id)
+        patient.save()
+
+
+@shared_task
+@silk_profile("delete-old-export")
+def delete_old_export():
+    now = timezone.now()
+    delta = now - timedelta(weeks=2)
+    for export in CSVExport.objects.filter(timestamp__lt=delta).iterator():
+        export.delete()
+
+
+@shared_task
+@silk_profile("assign_new_timestamp")
+def assign_new_timestamp():
+    now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
+    now = now.astimezone(timezone.get_current_timezone())
+    for patient in Patient.objects.filter(
+        (Q(patientencounter__timestamp__date=now) | Q(timestamp__date=now))
+    ).order_by("-timestamp"):
+        patient.timestamp = (
+            patient.patientencounter_set.all().order_by("-timestamp")[0].timestamp
+        )
         patient.save()

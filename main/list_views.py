@@ -6,17 +6,17 @@ to check for a valid and authenticated user.
 
 If one is not found, they will direct to the appropriate error page.
 """
-import itertools
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.utils import timezone
 from silk.profiling.profiler import silk_profile
 
 from main.csvio.patient_csv_export import run_patient_csv_export
+from main.decorators import is_authenticated
 
 from .models import (
     ChiefComplaint,
@@ -27,12 +27,10 @@ from .models import (
 
 @silk_profile("get-latest-timestamp")
 def get_latest_timestamp(patient):
-    try:
-        return patient.patientencounter_set.all().order_by("-timestamp")[0].timestamp
-    except IndexError:
-        return patient.timestamp
+    return patient.timestamp
 
 
+@is_authenticated
 @silk_profile("patient_list_view")
 def patient_list_view(request):
     """
@@ -41,118 +39,57 @@ def patient_list_view(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    if request.user.is_authenticated:
-        try:
-            patients = Patient.objects.filter(
-                campaign=Campaign.objects.get(name=request.user.current_campaign)
-            )
-            now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
-            now = now.astimezone(timezone.get_current_timezone())
-            data = set(
-                list(
-                    itertools.chain(
-                        patients.filter(patientencounter__timestamp__date=now),
-                        patients.filter(timestamp__date=now),
-                    )
-                )
-            )
-        except ObjectDoesNotExist:
-            data = []
-        data = sorted(data, reverse=True, key=get_latest_timestamp)
-        paginator = Paginator(data, 25)
-        page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-        return_response = render(
-            request,
-            "list/patient.html",
-            {
-                "user": request.user,
-                "page_obj": page_obj,
-                "page_name": "Manager",
-                # pylint: disable=C0301
-                "page_tip": "This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.",
-            },
-        )
-    else:
-        return_response = redirect("main:not_logged_in")
-    return return_response
+    try:
+        now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
+        now = now.astimezone(timezone.get_current_timezone())
+        data = Patient.objects.filter(
+            (Q(patientencounter__timestamp__date=now) | Q(timestamp__date=now))
+            & Q(campaign=Campaign.objects.get(name=request.user.current_campaign))
+        ).order_by("-timestamp")
+    except ObjectDoesNotExist:
+        data = []
+    paginator = Paginator(data, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    return render(
+        request,
+        "list/patient.html",
+        {
+            "user": request.user,
+            "page_obj": page_obj,
+            "page_name": "Manager",
+            # pylint: disable=C0301
+            "page_tip": "This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.",
+        },
+    )
 
 
-def patient_csv_export_view(request):
+@is_authenticated
+def patient_csv_export_view(request, timeframe=1):
     """
     CSV Export of an Administrative/Clinician list of patients entered into the system.
 
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    if request.user.is_authenticated:
-        return_response = run_patient_csv_export(request)
-    else:
-        return_response = redirect("main:not_logged_in")
-    return return_response
+    return run_patient_csv_export(request, timeframe)
 
 
 @silk_profile("--run-patient-list-filter-one")
-def __run_patient_list_filter_one(request, campaign):
+def __run_patient_list_filter_one(_, campaign):
     now = timezone.make_aware(datetime.today(), timezone.get_default_timezone())
     now = now.astimezone(timezone.get_current_timezone())
     data = Patient.objects.filter(
         Q(campaign=campaign)
         & (Q(patientencounter__timestamp__date=now) | Q(timestamp__date=now))
-    ).distinct()
+    ).order_by("-timestamp")
     return data
 
 
-@silk_profile("--run-patient-list-filter-two")
-def __run_patient_list_filter_two(request, campaign):
-    timestamp_from = timezone.now() - timedelta(days=7)
-    timestamp_to = timezone.now()
-    data = Patient.objects.filter(
-        Q(campaign=campaign)
-        & (
-            Q(
-                patientencounter__timestamp__gte=timestamp_from,
-                patientencounter__timestamp__lt=timestamp_to,
-            )
-            | Q(
-                timestamp__gte=timestamp_from,
-                timestamp__lt=timestamp_to,
-            )
-        )
-    ).distinct()
-    return data
-
-
-@silk_profile("--run-patient-list-filter-three")
-def __run_patient_list_filter_three(request, campaign):
-    timestamp_from = timezone.now() - timedelta(days=30)
-    timestamp_to = timezone.now()
-    data = Patient.objects.filter(
-        Q(campaign=campaign)
-        & (
-            Q(
-                patientencounter__timestamp__gte=timestamp_from,
-                patientencounter__timestamp__lt=timestamp_to,
-            )
-            | Q(
-                timestamp__gte=timestamp_from,
-                timestamp__lt=timestamp_to,
-            )
-        )
-    ).distinct()
-    return data
-
-
-@silk_profile("--run-patient-list-filter-four")
-def __run_patient_list_filter_four(request, campaign):
-    try:
-        timestamp_from = datetime.strptime(
-            request.GET["date_filter_day"], "%Y-%m-%d"
-        ).replace(hour=0, minute=0, second=0, microsecond=0)
-        timestamp_to = datetime.strptime(
-            request.GET["date_filter_day"], "%Y-%m-%d"
-        ).replace(hour=23, minute=59, second=59, microsecond=0)
-        data = Patient.objects.filter(
+@silk_profile("--run_timestamp_filter")
+def __run_timestamp_filter(campaign, timestamp_to, timestamp_from):
+    return (
+        Patient.objects.filter(
             Q(campaign=campaign)
             & (
                 Q(
@@ -164,7 +101,36 @@ def __run_patient_list_filter_four(request, campaign):
                     timestamp__lt=timestamp_to,
                 )
             )
-        ).distinct()
+        )
+        .order_by("-timestamp")
+        .distinct()
+    )
+
+
+@silk_profile("--run-patient-list-filter-two")
+def __run_patient_list_filter_two(_, campaign):
+    timestamp_from = timezone.now() - timedelta(days=7)
+    timestamp_to = timezone.now()
+    return __run_timestamp_filter(campaign, timestamp_to, timestamp_from)
+
+
+@silk_profile("--run-patient-list-filter-three")
+def __run_patient_list_filter_three(_, campaign):
+    timestamp_from = timezone.now() - timedelta(days=30)
+    timestamp_to = timezone.now()
+    return __run_timestamp_filter(campaign, timestamp_to, timestamp_from)
+
+
+@silk_profile("--run-patient-list-filter-four")
+def __run_patient_list_filter_four(request, campaign):
+    try:
+        timestamp_from = datetime.strptime(
+            request.GET["date_filter_day"], "%Y-%m-%d"
+        ).replace(hour=0, minute=0, second=0, microsecond=0)
+        timestamp_to = datetime.strptime(
+            request.GET["date_filter_day"], "%Y-%m-%d"
+        ).replace(hour=23, minute=59, second=59, microsecond=0)
+        data = __run_timestamp_filter(campaign, timestamp_to, timestamp_from)
     except ValueError:
         data = []
     return data
@@ -177,19 +143,7 @@ def __run_patient_list_filter_five(request, campaign):
         timestamp_to = datetime.strptime(
             request.GET["date_filter_end"], "%Y-%m-%d"
         ) + timedelta(days=1)
-        data = Patient.objects.filter(
-            Q(campaign=campaign)
-            & (
-                Q(
-                    patientencounter__timestamp__gte=timestamp_from,
-                    patientencounter__timestamp__lt=timestamp_to,
-                )
-                | Q(
-                    timestamp__gte=timestamp_from,
-                    timestamp__lt=timestamp_to,
-                )
-            ),
-        ).distinct()
+        data = __run_timestamp_filter(campaign, timestamp_to, timestamp_from)
     except ValueError:
         data = []
     return data
@@ -211,16 +165,19 @@ def __run_patient_list_filter(request):
             data = __run_patient_list_filter_five(request, current_campaign)
         elif request.GET["filter_list"] == "6":
             try:
-                data = Patient.objects.filter(campaign=current_campaign)
+                data = Patient.objects.filter(campaign=current_campaign).order_by(
+                    "-timestamp"
+                )
             except ValueError:
                 data = []
         else:
             data = []
     except ObjectDoesNotExist:
         data = []
-    return data
+    return list(data)
 
 
+@is_authenticated
 @silk_profile("filter-patient-list-view")
 def filter_patient_list_view(request):
     """
@@ -229,32 +186,28 @@ def filter_patient_list_view(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    if request.user.is_authenticated:
-        data = __run_patient_list_filter(request)
-        data = sorted(data, reverse=True, key=get_latest_timestamp)
-        paginator = Paginator(data, 25)
-        page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-        return_response = render(
-            request,
-            "list/patient_filter.html",
-            {
-                "user": request.user,
-                "page_name": "Manager",
-                "page_obj": page_obj,
-                "selected": int(request.GET["filter_list"]),
-                "filter_day": request.GET["date_filter_day"],
-                "filter_start": request.GET["date_filter_start"],
-                "filter_end": request.GET["date_filter_end"],
-                # pylint: disable=C0301
-                "page_tip": "This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.",
-            },
-        )
-    else:
-        return_response = redirect("main:not_logged_in")
-    return return_response
+    data = __run_patient_list_filter(request)
+    paginator = Paginator(data, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    return render(
+        request,
+        "list/patient_filter.html",
+        {
+            "user": request.user,
+            "page_name": "Manager",
+            "page_obj": page_obj,
+            "selected": int(request.GET["filter_list"]),
+            "filter_day": request.GET["date_filter_day"],
+            "filter_start": request.GET["date_filter_start"],
+            "filter_end": request.GET["date_filter_end"],
+            # pylint: disable=C0301
+            "page_tip": "This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.",
+        },
+    )
 
 
+@is_authenticated
 @silk_profile("search-patient-list-view")
 def search_patient_list_view(request):
     """
@@ -263,57 +216,47 @@ def search_patient_list_view(request):
     :param request: Django Request object.
     :return: HTTPResponse.
     """
-    if request.user.is_authenticated:
-        try:
-            current_campaign = Campaign.objects.get(name=request.user.current_campaign)
-            patients = Patient.objects.filter(campaign=current_campaign)
-            data = None
-            for term in request.GET["name_search"].split():
-                data = set(
-                    list(
-                        itertools.chain(
-                            patients.filter(
-                                Q(campaign_key__icontains=request.GET["name_search"])
-                                | Q(first_name__icontains=request.GET["name_search"])
-                                | Q(last_name__icontains=request.GET["name_search"])
-                                | Q(phone_number__icontains=request.GET["name_search"])
-                                | Q(
-                                    phone_number__icontains=__parse_phone_number(
-                                        request.GET["name_search"]
-                                    )
-                                )
-                                | Q(email_address__iexact=request.GET["name_search"])
-                            ),
-                            patients.filter(
-                                Q(first_name__icontains=term)
-                                | Q(last_name__icontains=term)
-                            ),
-                        )
+    try:
+        current_campaign = Campaign.objects.get(name=request.user.current_campaign)
+        patients = Patient.objects.filter(campaign=current_campaign)
+        data = None
+        break_search = Q()
+        for term in request.GET["name_search"].split():
+            break_search |= Q(first_name__icontains=term) | Q(last_name__icontains=term)
+        data = patients.filter(
+            (
+                Q(campaign_key__icontains=request.GET["name_search"])
+                | Q(first_name__icontains=request.GET["name_search"])
+                | Q(last_name__icontains=request.GET["name_search"])
+                | Q(phone_number__icontains=request.GET["name_search"])
+                | Q(
+                    phone_number__icontains=__parse_phone_number(
+                        request.GET["name_search"]
                     )
                 )
-            data = data if data is not None else []
-        except ObjectDoesNotExist:
-            data = []
-        data = sorted(data, reverse=True, key=get_latest_timestamp)
-        paginator = Paginator(data, 25)
-        page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-        return_response = render(
-            request,
-            "list/patient_search.html",
-            {
-                "user": request.user,
-                "page_obj": page_obj,
-                "name_search": request.GET.get("name_search")
-                if request.GET.get("name_search") is not None
-                else "",
-                # pylint: disable=C0301
-                "page_tip": "This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.",
-            },
-        )
-    else:
-        return_response = redirect("main:not_logged_in")
-    return return_response
+                | Q(email_address__iexact=request.GET["name_search"])
+                | break_search
+            )
+        ).order_by("-timestamp")
+        data = data if data is not None else []
+    except ObjectDoesNotExist:
+        data = []
+    paginator = Paginator(data, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    return render(
+        request,
+        "list/patient_search.html",
+        {
+            "user": request.user,
+            "page_obj": page_obj,
+            "name_search": request.GET.get("name_search")
+            if request.GET.get("name_search") is not None
+            else "",
+            # pylint: disable=C0301
+            "page_tip": "This provides an overview of all patients in a campaign or location seen that day, week, month, etc. Campaign is listed at the top of the page.",
+        },
+    )
 
 
 def __parse_phone_number(input_string):
@@ -326,18 +269,15 @@ def __parse_phone_number(input_string):
     return return_response
 
 
+@is_authenticated
 def chief_complaint_list_view(request, patient_id=None, encounter_id=None):
-    if request.user.is_authenticated:
-        return_response = render(
-            request,
-            "list/chief_complaint.html",
-            {
-                "list_view": ChiefComplaint.objects.filter(active=True),
-                "patient_id": patient_id,
-                "encounter_id": encounter_id,
-                "new": (encounter_id is None),
-            },
-        )
-    else:
-        return_response = redirect("main:not_logged_in")
-    return return_response
+    return render(
+        request,
+        "list/chief_complaint.html",
+        {
+            "list_view": ChiefComplaint.objects.filter(active=True),
+            "patient_id": patient_id,
+            "encounter_id": encounter_id,
+            "new": (encounter_id is None),
+        },
+    )
