@@ -31,6 +31,7 @@ services:
       - .:/build
       - staticvol:/opt/app/static
       - mediavol:/opt/app/mediafiles
+      - localdb:/opt/app/db
     ports:
       - "8081:8081"
     environment:
@@ -62,6 +63,7 @@ services:
       dockerfile: Dockerfile-celery
     volumes:
       - .:/build
+      - localdb:/opt/app/db
     entrypoint: "./build-celery-beat.sh"
     environment:
       - DEBUG=True
@@ -95,6 +97,7 @@ services:
       dockerfile: Dockerfile-celery
     volumes:
       - .:/build
+      - localdb:/opt/app/db
     entrypoint: "./build-celery.sh"
     environment:
       - DEBUG=True
@@ -139,3 +142,4 @@ volumes:
   db:
   staticvol:
   mediavol:
+  localdb:

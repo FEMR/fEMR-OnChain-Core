@@ -1,4 +1,4 @@
-FROM amd64/ubuntu:latest
+FROM ubuntu:latest
 
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update -y && \
@@ -17,6 +17,7 @@ RUN pip install sphinx
 COPY requirements.txt /opt/app/requirements.txt
 RUN mkdir /opt/app/static
 RUN mkdir /opt/app/mediafiles
+RUN mkdir /opt/app/db
 WORKDIR /opt/app
 RUN pip3 install -r requirements.txt
 
