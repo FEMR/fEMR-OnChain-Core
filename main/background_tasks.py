@@ -150,7 +150,8 @@ def assign_new_timestamp():
     for patient in Patient.objects.filter(
         (Q(patientencounter__timestamp__date=now) | Q(timestamp__date=now))
     ).order_by("-timestamp"):
-        patient.timestamp = (
-            patient.patientencounter_set.all().order_by("-timestamp")[0].timestamp
-        )
-        patient.save()
+        if patient.patientencounter_set.count() > 0:
+            patient.timestamp = (
+                patient.patientencounter_set.all().order_by("-timestamp")[0].timestamp
+            )
+            patient.save()

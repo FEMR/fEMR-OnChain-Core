@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM amd64/ubuntu:latest
 
 RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update -y && \
