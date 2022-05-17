@@ -28,7 +28,7 @@ class TimezoneMiddleware:
                 try:
                     request.user.current_campaign = request.user.campaigns.filter(
                         active=True
-                    )[0].name
+                    ).first().name
                     request.user.save()
                     tzname = Campaign.objects.get(
                         name=request.user.current_campaign
@@ -79,7 +79,7 @@ class CampaignActivityCheckMiddleware:
                 campaigns.get(name=user.current_campaign)
             except Campaign.DoesNotExist:
                 if len(campaigns) != 0:
-                    user.current_campaign = campaigns[0].name
+                    user.current_campaign = campaigns.first().name
                     user.save()
 
     def __user_not_admin(self, request):
@@ -111,7 +111,7 @@ class CampaignActivityCheckMiddleware:
     def __campaign_is_none(self, request):
         campaigns = request.user.campaigns.filter(active=True)
         if len(campaigns) != 0:
-            request.user.current_campaign = campaigns[0].name
+            request.user.current_campaign = campaigns.first().name
             request.user.save()
             return_response = self.get_response(request)
         else:
@@ -142,9 +142,7 @@ class CampaignActivityCheckMiddleware:
 
     def __campaign_name_is_none(self, request):
         if len(request.user.campaigns.filter(active=True)) != 0:
-            request.user.current_campaign = request.user.campaigns.filter(active=True)[
-                0
-            ].name
+            request.user.current_campaign = request.user.campaigns.filter(active=True).first().name
         else:
             request.user.current_campaign = "RECOVERY MODE"
         request.user.save()
@@ -156,7 +154,7 @@ class CampaignActivityCheckMiddleware:
             if len(request.user.campaigns.filter(active=True)) != 0:
                 request.user.current_campaign = request.user.campaigns.filter(
                     active=True
-                )[0].name
+                ).first().name
             else:
                 request.user.current_campaign = "RECOVERY MODE"
             request.user.save()
@@ -173,9 +171,7 @@ class ClinicMessageMiddleware:
 
     def __call__(self, request):
         if request.user.is_authenticated:
-            request.message_number = len(
-                Message.objects.filter(recipient=request.user).filter(read=False)
-            )
+            request.message_number = Message.objects.filter(recipient=request.user).filter(read=False).count()
         return self.get_response(request)
 
 

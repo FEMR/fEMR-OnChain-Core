@@ -157,7 +157,7 @@ def __login_view_post_success(request, user):
                 "form": form,
             },
         )
-    elif len(user.campaigns.all()) == 1 and not user.campaigns.all()[0].active:
+    elif user.campaigns.count() == 1 and not user.campaigns.first().active:
         user_is_admin = request.user.groups.filter(name="fEMR Admin").exists()
         if not user_is_admin:
             return_response = redirect("main:all_locked")

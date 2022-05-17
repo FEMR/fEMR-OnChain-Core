@@ -112,7 +112,7 @@ function celery() {
 }
 
 function gunicorn_run() {
-  gunicorn --workers=1 --threads=5 femr_onchain.wsgi:application --bind 0.0.0.0:8081
+  gunicorn --workers=2 --threads=5 --max-requests 5 femr_onchain.wsgi:application --bind 0.0.0.0:8081
 }
 
 case "$1" in
