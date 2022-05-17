@@ -26,9 +26,9 @@ class TimezoneMiddleware:
         if request.user.is_authenticated and not AnonymousUser:
             if request.user.current_campaign == "RECOVERY MODE":
                 try:
-                    request.user.current_campaign = request.user.campaigns.filter(
-                        active=True
-                    ).first().name
+                    request.user.current_campaign = (
+                        request.user.campaigns.filter(active=True).first().name
+                    )
                     request.user.save()
                     tzname = Campaign.objects.get(
                         name=request.user.current_campaign
@@ -142,7 +142,9 @@ class CampaignActivityCheckMiddleware:
 
     def __campaign_name_is_none(self, request):
         if len(request.user.campaigns.filter(active=True)) != 0:
-            request.user.current_campaign = request.user.campaigns.filter(active=True).first().name
+            request.user.current_campaign = (
+                request.user.campaigns.filter(active=True).first().name
+            )
         else:
             request.user.current_campaign = "RECOVERY MODE"
         request.user.save()
@@ -152,9 +154,9 @@ class CampaignActivityCheckMiddleware:
         campaign = Campaign.objects.get(name=request.user.current_campaign)
         if not campaign.active:
             if len(request.user.campaigns.filter(active=True)) != 0:
-                request.user.current_campaign = request.user.campaigns.filter(
-                    active=True
-                ).first().name
+                request.user.current_campaign = (
+                    request.user.campaigns.filter(active=True).first().name
+                )
             else:
                 request.user.current_campaign = "RECOVERY MODE"
             request.user.save()
@@ -171,7 +173,11 @@ class ClinicMessageMiddleware:
 
     def __call__(self, request):
         if request.user.is_authenticated:
-            request.message_number = Message.objects.filter(recipient=request.user).filter(read=False).count()
+            request.message_number = (
+                Message.objects.filter(recipient=request.user)
+                .filter(read=False)
+                .count()
+            )
         return self.get_response(request)
 
 
