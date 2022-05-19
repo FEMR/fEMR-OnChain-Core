@@ -19,8 +19,6 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - db:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
 
   dev:
     build:
@@ -32,8 +30,6 @@ services:
       - staticvol:/opt/app/static
       - mediavol:/opt/app/mediafiles
       - localdb:/opt/app/db
-    ports:
-      - "8081:8081"
     environment:
       - DEBUG=True
       - QLDB_ENABLED="FALSE"
@@ -127,13 +123,9 @@ services:
   
   redis:
     image: redis:6-alpine
-    ports:
-      - "6379:6379"
 
   cache:
    image: memcached
-   ports:
-    - "11211:11211"
    entrypoint:
     - memcached
     - -m 64
