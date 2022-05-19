@@ -158,7 +158,7 @@ from .small_forms_views import (
     medication_form_view,
     treatment_form_view,
 )
-from .views import forgot_username, index, home, faqs, healthcheck, help_messages_off
+from .views import begin_stress_test_view, forgot_username, index, home, faqs, healthcheck, help_messages_off, request_stress_test_view
 
 # pylint: disable=C0103
 app_name = "main"
@@ -217,6 +217,10 @@ urlpatterns = [
     url(r"^all_locked/$", all_locked, name="all_locked"),
     url(r"^healthcheck/$", healthcheck, name="healthcheck"),
     url(r"^patient_form_view/$", patient_form_view, name="patient_form_view"),
+
+    path(r"request_stress_test_view/", request_stress_test_view, name="request_stress_test_view"),
+    path(r"begin_stress_test_view/", begin_stress_test_view, name="begin_stress_test_view"),
+
     path(
         r"patient_edit_form_view/<int:patient_id>",
         patient_edit_form_view,

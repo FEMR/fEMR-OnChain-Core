@@ -11,8 +11,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.core.mail import send_mail
+from main.background_tasks import start_stress_test
 from silk.profiling.profiler import silk_profile
-from main.decorators import is_admin, is_authenticated
+from main.decorators import is_admin, is_authenticated, is_femr_admin
 from main.forms import ForgotUsernameForm
 from main.models import Campaign, MessageOfTheDay, fEMRUser
 
@@ -132,6 +133,19 @@ def help_messages_off(request):
         None if request.session.get("tags_off", None) else True
     )
     return redirect(request.META.get("HTTP_REFERER", "/"))
+
+
+@is_authenticated
+@is_femr_admin
+def request_stress_test_view(request):
+    return render(request, "admin/stress_test.html")
+
+
+@is_authenticated
+@is_femr_admin
+def begin_stress_test_view(request):
+    start_stress_test.delay(request.user.current_campaign)
+    return redirect("main:home")
 
 
 # open .json file and convert it into a dictionary object, to display in the FAQs page:

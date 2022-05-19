@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.core.mail import send_mail
 
 from silk.profiling.profiler import silk_profile
+from model_bakery import baker
 
 from main.models import (
     CSVExport,
@@ -155,3 +156,17 @@ def assign_new_timestamp():
                 patient.patientencounter_set.all().order_by("-timestamp")[0].timestamp
             )
             patient.save()
+
+
+@shared_task
+@silk_profile("stress-test")
+def start_stress_test(campaign_name):
+    campaign = Campaign.objects.get_or_create(name=campaign_name)[0]
+    for _ in range(1000):
+        patient = baker.make("main.Patient")
+        patient.campaign.add(campaign)
+        for _ in range(10):
+            encounter = baker.make("main.PatientEncounter")
+            encounter.patient = patient
+            encounter.campaign = campaign
+            encounter.save()
