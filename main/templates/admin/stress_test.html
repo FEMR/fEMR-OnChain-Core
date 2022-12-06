@@ -1,0 +1,15 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+{% load crispy_forms_tags %}
+<div>
+    <div>
+        <h1>WARNING</h1>
+    </div>
+
+    Continuing here will generate 1000 patients with 10 patient encounters each. This may lead to instability and is only intended for use in system stress texting. ONLY continue with the understanding that this should never be used in production.
+
+    <a href="{% url 'main:begin_stress_test_view' %}" class="btn btn-primary">Continue. I accept the risks.</a>
+    <a href="{% url 'main:home' %}" class="btn btn-primary">No, please don't.</a>
+</div>
+{% endblock %}
