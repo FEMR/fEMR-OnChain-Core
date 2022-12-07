@@ -22,7 +22,7 @@ coreschema==0.0.4
 coverage==6.3.2
 Deprecated==1.2.13
 dill==0.3.4
-Django==3.2.14
+Django==3.2.15
 django-autocomplete-light==3.9.4
 django-axes==5.32.0
 django-background-tasks==1.2.5
@@ -45,7 +45,7 @@ django-timezone-utils==0.13
 django-user-agents==0.4.0
 djangorestframework==3.13.1
 docutils==0.18
-dparse==0.5.1
+dparse==0.5.2
 drf-yasg==1.20.0
 flake8==4.0.1
 gprof2dot==2021.2.21
@@ -97,7 +97,7 @@ toml==0.10.2
 tomli==2.0.1
 typed-ast==1.5.1
 typing-extensions==4.0.1
-ua-parser==0.10.0
+ua-parser==0.15.0
 uritemplate==4.1.1
 urllib3==1.26.7
 user-agents==2.2.0
