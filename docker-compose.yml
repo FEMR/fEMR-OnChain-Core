@@ -1,4 +1,4 @@
-version: '3'
+# version: '3' version is deprecated
 
 services:
   nginx:
@@ -82,7 +82,7 @@ services:
       - POSTGRES_PASS=postgres
       - POSTGRES_NAME=database
       - ENVIRONMENT=LOCAL
-    depends_on: 
+    depends_on:
       - "dev"
       - "redis"
       - "database"
@@ -116,19 +116,19 @@ services:
       - POSTGRES_PASS=postgres
       - POSTGRES_NAME=database
       - ENVIRONMENT=LOCAL
-    depends_on: 
+    depends_on:
       - "dev"
       - "redis"
       - "database"
-  
+
   redis:
     image: redis:6-alpine
 
   cache:
-   image: memcached
-   entrypoint:
-    - memcached
-    - -m 64
+    image: memcached
+    entrypoint:
+      - memcached
+      - -m 64
 
 volumes:
   db:
