@@ -1,0 +1,11 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+{% load crispy_forms_tags %}
+<div>
+    <div>Message sent.</div>
+    <div>
+        <a class="nav-link" href="{% url 'clinic_messages:index' %}">Back</a>
+    </div>
+</div>
+{% endblock %}

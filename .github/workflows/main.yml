@@ -12,7 +12,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     env:
       SECRET_KEY: quxWeHk_L^F7%ZjR&rLVpTqD8|jzHzU?rlG(i8|Wp)aH^_}=?z

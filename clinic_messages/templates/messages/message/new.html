@@ -1,0 +1,10 @@
+{% extends "data/base.html" %}
+{% block content %}
+{% load static %}
+{% load crispy_forms_tags %}
+<div>
+    <form action="{% url 'clinic_messages:new_message' %}" method="POST">
+        {% crispy form %}
+    </form>
+</div>
+{% endblock %}
