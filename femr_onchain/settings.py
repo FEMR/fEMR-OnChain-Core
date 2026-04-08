@@ -267,7 +267,7 @@ SESSIONS_ENGINE = "django.contrib.sessions.backends.cache"
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
-        "LOCATION": "cache:11211",
+        "LOCATION": os.environ.get("MEMCACHED_ENDPOINT", "cache:11211"),
     }
 }
 
@@ -321,5 +321,5 @@ SILKY_INTERCEPT_PERCENT = 50
 SILKY_MAX_RECORDED_REQUESTS = 10**3
 SILKY_MAX_RECORDED_REQUESTS_CHECK_PERCENT = 10
 
-CELERY_BROKER_URL = "redis://redis:6379"
-CELERY_RESULT_BACKEND = "redis://redis:6379"
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://redis:6379")

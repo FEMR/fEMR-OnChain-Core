@@ -1,0 +1,13 @@
+.git
+*.pyc
+__pycache__
+*.pyo
+.env
+db/
+docs/
+nginx/
+Dockerfile
+Dockerfile-celery
+docker-compose.yml
+.docker/
+Vagrantfile
