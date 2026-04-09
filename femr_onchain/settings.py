@@ -50,25 +50,12 @@ INSTALLED_APPS = [
     "session_security",
     "drf_yasg",
     "django_user_agents",
-    "django_nose",
-    "silk",
 ]
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
-        "LOCATION": "cache:11211",
-    }
-}
+if os.environ.get("DEBUG") == "True" and os.environ.get("SILK_OFF", None) is None:
+    INSTALLED_APPS += ["django_nose", "silk"]
 
-TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
-
-NOSE_ARGS = [
-    "--with-coverage",
-    "--cover-package=main,app_mr,clinic_messages",
-    "--cover-html",
-    "--cover-inclusive",
-]
+TEST_RUNNER = "django.test.runner.DiscoverRunner"
 
 AUTHENTICATION_BACKENDS = [
     "axes.backends.AxesBackend",
@@ -93,7 +80,7 @@ MIDDLEWARE = [
     "django_user_agents.middleware.UserAgentMiddleware",
 ]
 
-if os.environ.get("SILK_OFF", None) is None:
+if os.environ.get("DEBUG") == "True" and os.environ.get("SILK_OFF", None) is None:
     MIDDLEWARE += ["silk.middleware.SilkyMiddleware"]
 
 ROOT_URLCONF = "femr_onchain.urls"
@@ -146,6 +133,9 @@ elif "RDS_HOSTNAME" in os.environ:
             "PASSWORD": os.environ["RDS_PASSWORD"],
             "HOST": os.environ["RDS_HOSTNAME"],
             "PORT": os.environ["RDS_PORT"],
+            "OPTIONS": {
+                "sslmode": "require",
+            },
         }
     }
 else:
@@ -266,10 +256,17 @@ SESSIONS_ENGINE = "django.contrib.sessions.backends.cache"
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
-        "LOCATION": os.environ.get("MEMCACHED_ENDPOINT", "cache:11211"),
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
     }
 }
+
+if os.environ.get("MEMCACHED_ENDPOINT"):
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+            "LOCATION": os.environ.get("MEMCACHED_ENDPOINT"),
+        }
+    }
 
 AXES_RESET_ON_SUCCESS = True
 AXES_ENABLE_ADMIN_SITE = True

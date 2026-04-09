@@ -13,7 +13,8 @@ import sys
 from django.core.wsgi import get_wsgi_application
 
 path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(path)
+if path not in sys.path:
+    sys.path.insert(0, path)
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "femr_onchain.settings")
 
 application = get_wsgi_application()

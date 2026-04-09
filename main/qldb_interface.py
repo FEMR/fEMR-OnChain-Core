@@ -3,7 +3,10 @@ Application-wide functions for interfacing with AWS QLDB.
 """
 import os
 
-from pyqldb.driver.qldb_driver import QldbDriver
+try:
+    from pyqldb.driver.qldb_driver import QldbDriver
+except ImportError:
+    QldbDriver = None
 from silk.profiling.profiler import silk_profile
 
 try:

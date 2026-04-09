@@ -1,6 +1,7 @@
 """
 Main URL configurations for fEMR-OnChain-Core. This redirects to the other apps in this project.
 """
+from django.conf import settings
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
@@ -19,7 +20,6 @@ urlpatterns = [
     path("", include("main.urls", namespace="main")),
     path("app_mr/", include("app_mr.urls", namespace="app_mr")),
     path("messages/", include("clinic_messages.urls", namespace="clinic_messages")),
-    path("silk/", include("silk.urls", namespace="silk")),
     url(r"session_security/", include("session_security.urls")),
     url(
         r"^password_reset/$",
@@ -57,3 +57,6 @@ urlpatterns = [
         name="required_change_password",
     ),
 ]
+
+if "silk" in settings.INSTALLED_APPS:
+    urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]
