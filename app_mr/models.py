@@ -25,6 +25,10 @@ class Comment(models.Model):
         auto_now=True, editable=False, null=False, blank=False
     )
     attachment = models.FileField(upload_to="attachments/", blank=True, null=True)
+    
+    def __str__(self):
+        author = self.author.username if self.author else "Anonymous"
+        return f"{author}: {self.comment[:50]}"
 
 
 class SupportTicket(models.Model):
